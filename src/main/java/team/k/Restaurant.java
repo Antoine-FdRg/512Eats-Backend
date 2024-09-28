@@ -20,4 +20,10 @@ public class Restaurant {
     public boolean isAvailable(){
         return true; // TODO: missing this implementation
     }
+
+    public void updateRestaurantInfos(String name, String open, String close){
+        this.name = name;
+        this.open = open;
+        this.close = close;
+    }
 }
