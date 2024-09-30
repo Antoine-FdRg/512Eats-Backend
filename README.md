@@ -9,9 +9,17 @@ _Template for classroom SI4-COO_
 
 ## TEAM
 
-Présentez vous! 
+Ce projet a été concu par 4 personnes.\
+En plus du role de Software Developer (SD), chacun possède des spécificités complémentaires: 
+
+- [Emma ALLAIN](https://github.com/emmaallain): Quality Assurance Engineer (QA)
+- [Roxane BACON](https://github.com/RoxaneBacon): Continuous Integration and Repository Manager (Ops)
+- [Antoine FADDA-RODRIGUEZ](https://github.com/Antoine-FdRg): Software Architect (SA)
+- [Clément LEFEVRE](https://github.com/Firelods): Business Analyst and Product Owner (PO)
+
 
 ## doc
+[Voir la documentation](doc/README.md) \
 Contient vos rapports et les documents qui présentent votre projet.
 Précisez le chemin dans votre structure.
 
