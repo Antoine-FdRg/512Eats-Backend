@@ -19,7 +19,13 @@ public class SubOrder {
     private Restaurant restaurant;
     private RegisteredUser user;
     private List<Dish> dishes;
-    public Dish getCheaperDish(){
+    private OrderStatus status;
+
+    public Dish getCheaperDish() {
         return dishes.stream().min(Comparator.comparingDouble(Dish::getPrice)).orElse(null);
+    }
+
+    public boolean addDish(Dish dish) {
+        return dishes.add(dish);
     }
 }

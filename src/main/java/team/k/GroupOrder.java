@@ -14,6 +14,7 @@ public class GroupOrder {
     private int id;
     private Date date;
     private List<SubOrder> subOrders;
+    private Location deliveryLocation;
 
     public boolean addSubOrder(SubOrder subOrder) {
         return subOrders.add(subOrder);

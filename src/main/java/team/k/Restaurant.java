@@ -16,7 +16,8 @@ public class Restaurant {
     private String close;
     private List<TimeSlot> timeSlots;
     private List<Dish> dishes;
-
+    private List<FoodType> foodTypes;
+    private List<SubOrder> orders;
     public boolean isAvailable() {
         return true; // TODO: missing this implementation
     }

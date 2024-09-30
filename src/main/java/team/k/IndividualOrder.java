@@ -11,5 +11,5 @@ import java.util.Date;
 @AllArgsConstructor
 public class IndividualOrder extends SubOrder {
     private Date date;
-
+    private Location deliveryLocation;
 }
