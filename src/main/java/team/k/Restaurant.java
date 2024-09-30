@@ -14,14 +14,14 @@ public class Restaurant {
     private int id;
     private String open;
     private String close;
-//    private List<TimeSlot> timeSlots;  TODO: à décommenter une fois la classe TimeSlot créée
-//    private List<Dish> dishes;  TODO: à décommenter une fois la classe Dish créée
+    private List<TimeSlot> timeSlots;
+    private List<Dish> dishes;
 
-    public boolean isAvailable(){
+    public boolean isAvailable() {
         return true; // TODO: missing this implementation
     }
 
-    public void updateRestaurantInfos(String name, String open, String close){
+    public void updateRestaurantInfos(String name, String open, String close) {
         this.name = name;
         this.open = open;
         this.close = close;

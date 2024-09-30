@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegisteredUser {
-    // private Role role; TODO: à décommenter une fois la classe Role créée
+    private Role role;
     private List<SubOrder> orders;
     private int id;
 

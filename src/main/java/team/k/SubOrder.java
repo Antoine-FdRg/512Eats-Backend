@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Comparator;
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -15,10 +18,8 @@ public class SubOrder {
     private GroupOrder groupOrder;
     private Restaurant restaurant;
     private RegisteredUser user;
-//    private List<Dish> dishes; TODO: à décommenter une fois la classe Dish créée
-    /* méthod à décommenter une fois la classe Dish créée
+    private List<Dish> dishes;
     public Dish getCheaperDish(){
-        return new Dish();
+        return dishes.stream().min(Comparator.comparingDouble(Dish::getPrice)).orElse(null);
     }
-     */
 }
