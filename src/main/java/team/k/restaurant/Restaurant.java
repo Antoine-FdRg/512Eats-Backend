@@ -6,6 +6,7 @@ import lombok.Setter;
 import team.k.common.Dish;
 import team.k.enumerations.FoodType;
 import team.k.order.SubOrder;
+import team.k.restaurant.discount.DiscountStrategy;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class Restaurant {
     private List<Dish> dishes;
     private List<FoodType> foodTypes;
     private List<SubOrder> orders;
+    private DiscountStrategy discountStrategy;
     public boolean isAvailable() {
         return true; // TODO: missing this implementation
     }
