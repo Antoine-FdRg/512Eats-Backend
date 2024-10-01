@@ -1,4 +1,4 @@
-package team.k;
+package team.k.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,9 +1,13 @@
-package team.k;
+package team.k.order;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import team.k.common.Dish;
+import team.k.RegisteredUser;
+import team.k.restaurant.Restaurant;
+import team.k.enumerations.OrderStatus;
 
 import java.util.Comparator;
 import java.util.List;

@@ -1,8 +1,11 @@
-package team.k;
+package team.k.restaurant;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import team.k.common.Dish;
+import team.k.enumerations.FoodType;
+import team.k.order.SubOrder;
 
 import java.util.List;
 

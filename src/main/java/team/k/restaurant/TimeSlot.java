@@ -1,4 +1,4 @@
-package team.k;
+package team.k.restaurant;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
