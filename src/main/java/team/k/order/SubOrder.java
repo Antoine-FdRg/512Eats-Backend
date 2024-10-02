@@ -8,7 +8,9 @@ import team.k.common.Dish;
 import team.k.RegisteredUser;
 import team.k.restaurant.Restaurant;
 import team.k.enumerations.OrderStatus;
+import team.k.restaurant.TimeSlot;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
@@ -24,6 +26,7 @@ public class SubOrder {
     private RegisteredUser user;
     private List<Dish> dishes;
     private OrderStatus status;
+    private LocalDateTime date;
 
     public Dish getCheaperDish() {
         return dishes.stream().min(Comparator.comparingDouble(Dish::getPrice)).orElse(null);
