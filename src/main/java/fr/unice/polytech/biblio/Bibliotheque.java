@@ -71,7 +71,7 @@ public class Bibliotheque {
 	}
 
 	//Cette méthode viole la loi de Demeter car elle connait trop de choses sur l'étudiant...
-	protected boolean rend(Livre l) {
+    public boolean rend(Livre l) {
 		if (!l.estEmprunte()) {
 			return false;
 		}
