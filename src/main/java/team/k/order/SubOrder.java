@@ -8,7 +8,6 @@ import team.k.common.Dish;
 import team.k.RegisteredUser;
 import team.k.restaurant.Restaurant;
 import team.k.enumerations.OrderStatus;
-import team.k.restaurant.TimeSlot;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
