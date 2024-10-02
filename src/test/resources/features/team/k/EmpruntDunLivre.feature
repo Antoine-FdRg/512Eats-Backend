@@ -10,8 +10,8 @@ Feature: : Emprunter un livre
   Scenario: emprunt d'un livre
     When "Marcel" emprunte le livre "UML pour les nuls"
     Then Il y a 1 dans son nombre d'emprunts
-      And Il y a le livre "UML pour les nuls" dans un emprunt de la liste d'emprunts
-      And Le livre "UML pour les nuls" est indisponible
+    And Il y a le livre "UML pour les nuls" dans un emprunt de la liste d'emprunts
+    And Le livre "UML pour les nuls" est indisponible
 
   Scenario: emprunt d'un exemplaire d'un livre
     When "Marcel" emprunte le livre "Design Patterns for dummies"
@@ -20,7 +20,7 @@ Feature: : Emprunter un livre
     And Le livre "Design Patterns for dummies" est disponible
 
   Scenario: rendu d'un livre
-    Given que "Marcel" a emprunté le livre "UML pour les nuls"
+    Given "Marcel" a emprunté le livre "UML pour les nuls"
     When "Marcel" rend le livre "UML pour les nuls"
     Then Il y a 0 dans son nombre d'emprunts
     And Le livre "UML pour les nuls" est disponible
@@ -32,6 +32,6 @@ Feature: : Emprunter un livre
     And Il y a le livre <titreLivre> dans un emprunt de la liste d'emprunts
     And Le livre <titreLivre> est indisponible
     Examples:
-      | nomEtudiant | titreLivre          | nombredEmprunts |
-      | "Marcel"    | "UML pour les nuls" | 1               |
-      | "Walid"     | "Design Patterns for dummies" | 2     |
+      | nomEtudiant | titreLivre                    | nombredEmprunts |
+      | "Marcel"    | "UML pour les nuls"           | 1               |
+      | "Walid"     | "Design Patterns for dummies" | 2               |
