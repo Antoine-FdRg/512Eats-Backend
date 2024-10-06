@@ -81,6 +81,7 @@ classDiagram
         DELIVERING
         COMPLETED
         DISCOUNT_USED
+        CANCELED
     }
     class RegisteredUser {
         id: int
