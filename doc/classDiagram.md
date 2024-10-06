@@ -3,12 +3,13 @@
 ```mermaid
 classDiagram
     TimeSlot "1..* timeSlots" <-- "1" Restaurant
+    TimeSlot "1" --> "1..* orders" SubOrder
     Dishes "* dishes" <-- "1" Restaurant
     SubOrder "0..* orders" -- "1 user" RegisteredUser
     RegisteredUser "1" --> "1 role" Role
     SubOrder "1" --> "1 status" OrderStatus
     FoodType " 1..* types" <-- "1..*" Restaurant
-    SubOrder "0..* orders" -- "1 restaurant" Restaurant
+    SubOrder "0..*" --> "1 restaurant" Restaurant
     Dishes "* dishes" <-- "1..*" SubOrder
     IndividualOrder --|> SubOrder
     Payment "1 payment" <-- "1" SubOrder
@@ -47,7 +48,6 @@ classDiagram
         -name: String
     }
     class IndividualOrder {
-        -date: Date
     }
     class Payment {
     }
@@ -60,6 +60,8 @@ classDiagram
     class SubOrder {
         -id: int
         -price: double
+        -placedDate: Date
+        -deliveryDate: Date
         +getCheaperDish() Dish
         +getGroupOrder() GroupOrder
         +chooseSubOrderRestaurant() void
@@ -67,7 +69,8 @@ classDiagram
     }
     class GroupOrder {
         -id: int
-        -date: Date
+        -placedDate: Date
+        -deliveryDate: Date
         +addSubOrderInGroupOrder() void
     }
     class OrderStatus {
