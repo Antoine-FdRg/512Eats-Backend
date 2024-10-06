@@ -76,6 +76,7 @@ classDiagram
     class OrderStatus {
         <<Enumeration>>
         CREATED
+        PAID
         PLACED
         DELIVERING
         COMPLETED
