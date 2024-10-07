@@ -22,4 +22,9 @@ public class GroupOrder {
     public boolean addSubOrder(SubOrder subOrder) {
         return subOrders.add(subOrder);
     }
+
+    public void close() {
+        status = OrderStatus.CANCELED;
+        this.subOrders.forEach(subOrder -> subOrder.cancel());
+    }
 }

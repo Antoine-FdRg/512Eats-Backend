@@ -34,4 +34,12 @@ public class SubOrder {
     public boolean addDish(Dish dish) {
         return dishes.add(dish);
     }
+
+    public int getPreparationTime() {
+        return dishes.stream().mapToInt(Dish::getPreparationTime).sum();
+    }
+
+    public void cancel() {
+        status = OrderStatus.CANCELED;
+    }
 }
