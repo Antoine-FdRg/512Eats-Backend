@@ -8,6 +8,7 @@ classDiagram
     SubOrder "0..* orders" -- "1 user" RegisteredUser
     RegisteredUser "1" --> "1 role" Role
     SubOrder "1" --> "1 status" OrderStatus
+    GroupOrder "1" --> "1 status" OrderStatus
     FoodType " 1..* types" <-- "1..*" Restaurant
     SubOrder "0..*" --> "1 restaurant" Restaurant
     Dishes "* dishes" <-- "1..*" SubOrder
