@@ -6,6 +6,7 @@ classDiagram
     TimeSlot "1" --> "1..* orders" SubOrder
     Dishes "* dishes" <-- "1" Restaurant
     SubOrder "0..* orders" -- "1 user" RegisteredUser
+    SubOrder "0..1 activeOrder" -- "1 user" RegisteredUser
     RegisteredUser "1" --> "1 role" Role
     SubOrder "1" --> "1 status" OrderStatus
     GroupOrder "1" --> "1 status" OrderStatus
@@ -38,12 +39,14 @@ classDiagram
         -close: Time
         +isAvailable() boolean
         +updateRestaurantInfos(name, open, close) void
+        +getAvailableDishes(time)
     }
     class TimeSlot {
         -final duration: int$
         -start: String
         -productionCapacity: int
         -maxNbOrders: int
+        +updateCapacity(int) void
     }
     class FoodType {
         -name: String
@@ -51,6 +54,8 @@ classDiagram
     class IndividualOrder {
     }
     class Payment {
+        -amount:double
+        -date: Date
     }
     class Location {
         -id: int
@@ -66,13 +71,14 @@ classDiagram
         +getCheaperDish() Dish
         +getGroupOrder() GroupOrder
         +chooseSubOrderRestaurant() void
-        +addDishToSubOrder(dish) void
+        +addDish(dish) void
     }
     class GroupOrder {
         -id: int
         -placedDate: Date
         -deliveryDate: Date
         +addSubOrderInGroupOrder() void
+        +close() void
     }
     class OrderStatus {
         <<Enumeration>>
@@ -86,6 +92,7 @@ classDiagram
     }
     class RegisteredUser {
         id: int
+        name: string
         +addOrderToHistory(order)
     }
     class Role {
