@@ -5,12 +5,9 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+
 import team.k.common.Dish;
 import team.k.enumerations.FoodType;
-import team.k.repository.RestaurantRepository;
 import team.k.restaurant.Restaurant;
 import team.k.restaurant.TimeSlot;
 import team.k.service.RestaurantService;
@@ -20,7 +17,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
 public class InternetUserBrowsesMenusStepdefs {
