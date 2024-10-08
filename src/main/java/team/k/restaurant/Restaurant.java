@@ -58,6 +58,13 @@ public class Restaurant {
     }
 
 
+    /**
+     * Update the restaurant's information.
+     *
+     * @param name  the new name
+     * @param open  the new opening time
+     * @param close the new closing time
+     */
     public void updateRestaurantInfos(String name, String open, String close) {
         this.name = name;
         this.open = LocalTime.parse(open);
