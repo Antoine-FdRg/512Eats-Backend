@@ -1,8 +1,6 @@
 package team.k.order;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import team.k.common.Dish;
 import team.k.RegisteredUser;
@@ -15,8 +13,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class SubOrder {
     private int id;
     private double price;
@@ -28,11 +24,24 @@ public class SubOrder {
     private LocalDateTime placedDate;
     private LocalDateTime deliveryDate;
 
+    SubOrder(int id, double price, GroupOrder groupOrder, Restaurant restaurant, RegisteredUser user, List<Dish> dish, OrderStatus orderStatus, LocalDateTime placedDate, LocalDateTime deliveryDate) {
+        this.id = id;
+        this.price = price;
+        this.groupOrder = groupOrder;
+        this.restaurant = restaurant;
+        this.user = user;
+        this.dishes = dish;
+        this.status = orderStatus;
+        this.placedDate = placedDate;
+        this.deliveryDate = deliveryDate;
+    }
+
     public Dish getCheaperDish() {
         return dishes.stream().min(Comparator.comparingDouble(Dish::getPrice)).orElse(null);
     }
 
     public boolean addDish(Dish dish) {
+        this.price += dish.getPrice();
         return dishes.add(dish);
     }
 

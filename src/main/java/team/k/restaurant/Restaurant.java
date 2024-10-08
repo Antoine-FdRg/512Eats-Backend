@@ -1,6 +1,5 @@
 package team.k.restaurant;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import team.k.common.Dish;
@@ -12,7 +11,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
 public class Restaurant {
     private String name;
     private int id;
@@ -23,11 +21,12 @@ public class Restaurant {
     private List<FoodType> foodTypes;
     private DiscountStrategy discountStrategy;
 
-    public Restaurant(String name, int id, LocalTime open, LocalTime close, List<Dish> dishes, List<FoodType> foodTypes, DiscountStrategy discountStrategy) {
+    Restaurant(String name, int id, LocalTime open, LocalTime close, List<TimeSlot> timeSlots, List<Dish> dishes, List<FoodType> foodTypes, DiscountStrategy discountStrategy) {
         this.name = name;
         this.id = id;
         this.open = open;
         this.close = close;
+        this.timeSlots = timeSlots;
         this.dishes = dishes;
         this.foodTypes = foodTypes;
         this.discountStrategy = discountStrategy;
@@ -94,5 +93,17 @@ public class Restaurant {
 
     private List<Dish> getDishesReadyInLessThan(int time) {
         return dishes.stream().filter(dish -> dish.getPreparationTime() <= time).toList();
+    }
+
+    public void addTimeSlot(TimeSlot timeSlot) {
+        timeSlots.add(timeSlot);
+    }
+
+    public void addDish(Dish dish) {
+        dishes.add(dish);
+    }
+
+    public void addFoodType(FoodType foodType) {
+        foodTypes.add(foodType);
     }
 }

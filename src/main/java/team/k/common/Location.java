@@ -1,6 +1,5 @@
 package team.k.common;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +9,6 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@AllArgsConstructor
 @EqualsAndHashCode
 public class Location {
 
@@ -21,6 +19,13 @@ public class Location {
     private String address;
 
     private String city;
+
+    Location(int id, int number, String address, String city) {
+        this.id = id;
+        this.number = number;
+        this.address = address;
+        this.city = city;
+    }
 
     public String toString() {
         return "Location [id=" + id + ", number=" + number + ", address=" + address + ", city=" + city + "]";
