@@ -11,6 +11,10 @@ public class RestaurantService {
 
     private RestaurantRepository restaurantRepository;
 
+    public RestaurantService() {
+        this.restaurantRepository = new RestaurantRepository();
+    }
+
     public List<Restaurant> getAllRestaurants() {
         return this.restaurantRepository.findAll();
     }

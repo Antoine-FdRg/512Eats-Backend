@@ -19,9 +19,9 @@ public class RestaurantRepository {
 
     private Restaurant fruitsResturant = new Restaurant("512BankFruitsRestaurants", 1, LocalTime.of(8, 0, 0), LocalTime.of(22, 0, 0, 0), List.of(new TimeSlot(List.of(), LocalDateTime.now(), 3, 3)), List.of(dishApple, dishStrawberry), List.of(FoodType.VEGAN), null);
     private Restaurant burgerResturant = new Restaurant("512BankBurger", 1, LocalTime.of(8, 0, 0), LocalTime.of(22, 0, 0, 0), List.of(new TimeSlot(List.of(), LocalDateTime.now(), 3, 3)), List.of(dishBurger), List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL), null);
-    List<Restaurant> restaurants = List.of(
+    List<Restaurant> restaurants = new ArrayList<>(List.of(
             fruitsResturant,
-            burgerResturant);
+            burgerResturant));
 
 
     /**
