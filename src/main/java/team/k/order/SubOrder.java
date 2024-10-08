@@ -25,7 +25,8 @@ public class SubOrder {
     private RegisteredUser user;
     private List<Dish> dishes;
     private OrderStatus status;
-    private LocalDateTime date;
+    private LocalDateTime placedDate;
+    private LocalDateTime deliveryDate;
 
     public Dish getCheaperDish() {
         return dishes.stream().min(Comparator.comparingDouble(Dish::getPrice)).orElse(null);
