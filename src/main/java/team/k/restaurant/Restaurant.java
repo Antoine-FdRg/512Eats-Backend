@@ -70,4 +70,19 @@ public class Restaurant {
         this.open = LocalTime.parse(open);
         this.close = LocalTime.parse(close);
     }
+
+    public List<Dish> getAvailableDishesInTimeSlot(TimeSlot timeSlot) {
+        if(timeSlot == null) {
+            return List.of();
+        }
+        if(timeSlot.isFull()) {
+            return List.of();
+        }
+        int freeProductionCapacity = timeSlot.getFreeProductionCapacity();
+        return getDishesReadyInLessThan(freeProductionCapacity);
+    }
+
+    private List<Dish> getDishesReadyInLessThan(int time) {
+        return dishes.stream().filter(dish -> dish.getPreparationTime() <= time).toList();
+    }
 }
