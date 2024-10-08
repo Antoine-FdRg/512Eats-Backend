@@ -23,6 +23,25 @@ public class Restaurant {
     private List<FoodType> foodTypes;
     private DiscountStrategy discountStrategy;
 
+    public Restaurant(String name, int id, LocalTime open, LocalTime close, List<Dish> dishes, List<FoodType> foodTypes, DiscountStrategy discountStrategy) {
+        this.name = name;
+        this.id = id;
+        this.open = open;
+        this.close = close;
+        this.dishes = dishes;
+        this.foodTypes = foodTypes;
+        this.discountStrategy = discountStrategy;
+    }
+
+    /**
+     * set the time slots of the restaurant
+     *
+     * @param timeSlots
+     */
+    public void setTimeSlots(List<TimeSlot> timeSlots) {
+        this.timeSlots = timeSlots;
+    }
+
     /**
      * Check if the restaurant is available by checking if it is open and if there is a time slot available.
      *

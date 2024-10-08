@@ -17,6 +17,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
 public class InternetUserBrowsesMenusStepdefs {
@@ -44,7 +45,7 @@ public class InternetUserBrowsesMenusStepdefs {
         dishes = new ArrayList<>();
         dishes.add(new Dish(1, dishNameA, "Description", 5, 3, ""));
         dishes.add(new Dish(2, dishNameB, "Description", 5, 3, ""));
-        Restaurant restaurantA = new Restaurant(restaurantName, 1, LocalTime.of(8, 0, 0), LocalTime.of(22, 0, 0, 0), List.of(new TimeSlot(List.of(), LocalDateTime.now(), 3, 3)), dishes, List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL), null);
+        Restaurant restaurantA = new Restaurant(restaurantName, 1, LocalTime.of(8, 0, 0), LocalTime.of(22, 0, 0, 0), dishes, List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL), null);
         restaurantService.addRestaurant(restaurantA);
     }
 
@@ -57,7 +58,7 @@ public class InternetUserBrowsesMenusStepdefs {
     @Then("L'utilisateur reçoit les dishes {string} et {string} enregistrés dans le restaurant préselectionné")
     public void lUtilisateurReçoitLesDishesEtEnregistrésDansLeRestaurantPréselectionné(String dishNameA, String dishNameB) {
         List<Dish> restaurantDishes = restaurant.getDishes();
-        assertTrue(restaurantDishes.stream().filter(dish -> dish.getName().equals(dishNameA)).count() == 1);
-        assertTrue(restaurantDishes.stream().filter(dish -> dish.getName().equals(dishNameB)).count() == 1);
+        assertEquals(1, restaurantDishes.stream().filter(dish -> dish.getName().equals(dishNameA)).count());
+        assertEquals(1, restaurantDishes.stream().filter(dish -> dish.getName().equals(dishNameB)).count());
     }
 }

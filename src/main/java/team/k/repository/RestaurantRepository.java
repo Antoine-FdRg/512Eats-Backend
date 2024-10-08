@@ -17,11 +17,11 @@ public class RestaurantRepository {
     private final Dish dishApple = new Dish(2, "Pomme d'amour", "Pomme enrobée de sucre", 10, 10, "");
     private final Dish dishBurger = new Dish(3, "cheeseburger", "Burger avec du fromage en tranche", 30, 3, "");
 
-    private Restaurant fruitsResturant = new Restaurant("512BankFruitsRestaurants", 1, LocalTime.of(8, 0, 0), LocalTime.of(22, 0, 0, 0), List.of(new TimeSlot(List.of(), LocalDateTime.now(), 3, 3)), List.of(dishApple, dishStrawberry), List.of(FoodType.VEGAN), null);
-    private Restaurant burgerResturant = new Restaurant("512BankBurger", 1, LocalTime.of(8, 0, 0), LocalTime.of(22, 0, 0, 0), List.of(new TimeSlot(List.of(), LocalDateTime.now(), 3, 3)), List.of(dishBurger), List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL), null);
+    private Restaurant fruitsRestaurant = new Restaurant("512BankFruitsRestaurants", 1, LocalTime.of(8, 0, 0), LocalTime.of(22, 0, 0, 0), List.of(dishApple, dishStrawberry), List.of(FoodType.VEGAN), null);
+    private Restaurant burgerRestaurant = new Restaurant("512BankBurger", 1, LocalTime.of(8, 0, 0), LocalTime.of(22, 0, 0, 0), List.of(dishBurger), List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL), null);
     List<Restaurant> restaurants = new ArrayList<>(List.of(
-            fruitsResturant,
-            burgerResturant));
+            fruitsRestaurant,
+            burgerRestaurant));
 
 
     /**
