@@ -40,7 +40,7 @@ public class InternetUserBrowsesMenusStepdefs {
         }
     }
 
-    @Given("A restaurant {string} exists in the list of restaurants with a dish {string} and a dish {string}")
+    @Given("A restaurant {string} with a dish {string} and a dish {string}")
     public void aRestaurantExistInTheListOfRestaurantsWithADishAndADish(String restaurantName, String dishNameA, String dishNameB) {
         dishes = new ArrayList<>();
         dishes.add(new Dish(1, dishNameA, "Description", 5, 3, ""));

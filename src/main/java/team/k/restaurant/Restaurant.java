@@ -34,15 +34,6 @@ public class Restaurant {
     }
 
     /**
-     * set the time slots of the restaurant
-     *
-     * @param timeSlots
-     */
-    public void setTimeSlots(List<TimeSlot> timeSlots) {
-        this.timeSlots = timeSlots;
-    }
-
-    /**
      * Check if the restaurant is available by checking if it is open and if there is a time slot available.
      *
      * @return true if the restaurant is available, false otherwise

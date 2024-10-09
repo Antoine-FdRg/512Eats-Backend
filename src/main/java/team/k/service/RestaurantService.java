@@ -26,7 +26,7 @@ public class RestaurantService {
      * @return the restaurant if found, null otherwise
      */
     public Restaurant getRestaurantByName(String restaurantName) {
-        return restaurantRepository.findByName(restaurantName);
+        return this.restaurantRepository.findByName(restaurantName);
     }
 
     /**
@@ -46,11 +46,11 @@ public class RestaurantService {
      * @param restaurant the restaurant to add
      */
     public void addRestaurant(Restaurant restaurant) {
-        restaurantRepository.add(restaurant);
+        this.restaurantRepository.add(restaurant);
     }
 
     public void deleteRestaurant(Restaurant restaurant) {
-        restaurantRepository.delete(restaurant);
+        this.restaurantRepository.delete(restaurant);
     }
 
 
