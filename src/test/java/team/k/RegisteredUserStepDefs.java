@@ -47,7 +47,7 @@ public class RegisteredUserStepDefs {
 
     @Then("the group order is created and the delivery location is initialized")
     public void theGroupOrderIsCreatedAndTheDeliveryLocationIsInitialized() {
-        groupOrder = orderService.getGroupOrderRepository().getGroupOrders().getFirst();
+        groupOrder = orderService.getGroupOrderRepository().getGroupOrders().get(0);
         assertEquals(0, groupOrder.getDeliveryLocation().getId());
         assertEquals(location, groupOrder.getDeliveryLocation());
     }
