@@ -44,7 +44,7 @@ public class RestaurantService {
      * @param restaurant the restaurant to add
      */
     public void addRestaurant(Restaurant restaurant) {
-        this.restaurantRepository.save(restaurant);
+        this.restaurantRepository.add(restaurant);
     }
 
     public void deleteRestaurant(Restaurant restaurant) {

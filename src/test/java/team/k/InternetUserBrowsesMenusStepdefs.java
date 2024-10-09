@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import team.k.common.Dish;
-import team.k.common.DishBuilder;
 import team.k.enumerations.FoodType;
 import team.k.repository.DishRepository;
 import team.k.repository.RestaurantRepository;
@@ -57,10 +56,10 @@ public class InternetUserBrowsesMenusStepdefs {
     @Given("A restaurant {string} with a dish {string} and a dish {string}")
     public void aRestaurantExistInTheListOfRestaurantsWithADishAndADish(String restaurantName, String dishNameA, String dishNameB) {
         dishes = new ArrayList<>();
-        Dish dishA = new DishBuilder().setName(dishNameA).setDescription("Description").setPrice(5).setPreparationTime(3).build();
+        Dish dishA = new Dish.Builder().setName(dishNameA).setDescription("Description").setPrice(5).setPreparationTime(3).build();
         when(dishRepository.findById(dishA.getId())).thenReturn(dishA);
         dishes.add(dishA);
-        Dish dishB = new DishBuilder().setName(dishNameB).setDescription("Description").setPrice(5).setPreparationTime(3).build();
+        Dish dishB = new Dish.Builder().setName(dishNameB).setDescription("Description").setPrice(5).setPreparationTime(3).build();
         when(dishRepository.findById(dishB.getId())).thenReturn(dishB);
         dishes.add(dishB);
         when(dishRepository.findAll()).thenReturn(dishes);

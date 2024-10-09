@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import team.k.common.Dish;
-import team.k.common.DishBuilder;
 import team.k.enumerations.OrderStatus;
 import team.k.enumerations.Role;
 import team.k.repository.DishRepository;
@@ -87,7 +86,7 @@ public class IndividualOrderStepdefs {
     
     @And("a dish named {string} that costs {double} and takes {int} minutes to be prepared")
     public void aDishNamedThatCostsAndTakesMinutesToBePrepared(String dishName, double price, int preparationTime) {
-        Dish dish = new DishBuilder().setName(dishName).setPrice(price).setPreparationTime(preparationTime).build();
+        Dish dish = new Dish.Builder().setName(dishName).setPrice(price).setPreparationTime(preparationTime).build();
         when(dishRepository.findById(dish.getId())).thenReturn(dish);
         restaurantService.addDishToRestaurant(restaurant, dish);
     }

@@ -30,7 +30,11 @@ public class RegisteredUserStepDefs {
 
     @Given("a delivery location")
     public void aDeliveryLocation() {
-        location = new Location(1, 123, "123 Main St", "Springfield");
+        location = new Location.Builder()
+                .setNumber(123)
+                .setAddress("123 Main St")
+                .setCity("Springfield")
+                .build();
         Mockito.when(locationRepository.findLocationById(1)).thenReturn(location);
     }
 
@@ -44,7 +48,7 @@ public class RegisteredUserStepDefs {
     @Then("the group order is created and the delivery location is initialized")
     public void theGroupOrderIsCreatedAndTheDeliveryLocationIsInitialized() {
         groupOrder = orderService.getGroupOrderRepository().getGroupOrders().getFirst();
-        assertEquals(1, groupOrder.getDeliveryLocation().getId());
+        assertEquals(0, groupOrder.getDeliveryLocation().getId());
         assertEquals(location, groupOrder.getDeliveryLocation());
     }
 

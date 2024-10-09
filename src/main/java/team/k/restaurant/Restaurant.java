@@ -22,7 +22,7 @@ public class Restaurant {
     private List<FoodType> foodTypes;
     private DiscountStrategy discountStrategy;
 
-    Restaurant(Builder builder) {
+    private Restaurant(Builder builder) {
         this.id = builder.id;
         this.name = builder.name;
         this.open = builder.open;
