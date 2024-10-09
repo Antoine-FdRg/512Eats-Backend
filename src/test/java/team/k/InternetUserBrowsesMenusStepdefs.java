@@ -40,8 +40,8 @@ public class InternetUserBrowsesMenusStepdefs {
         }
     }
 
-    @Given("Un restaurant {string} existe dans la liste des restaurants avec un plat {string} et un plat {string}")
-    public void unRestaurantExisteDansLaListeDesRestaurantsAvecUnPlatEtUnPlat(String restaurantName, String dishNameA, String dishNameB) {
+    @Given("A restaurant {string} exists in the list of restaurants with a dish {string} and a dish {string}")
+    public void aRestaurantExistInTheListOfRestaurantsWithADishAndADish(String restaurantName, String dishNameA, String dishNameB) {
         dishes = new ArrayList<>();
         dishes.add(new Dish(1, dishNameA, "Description", 5, 3, ""));
         dishes.add(new Dish(2, dishNameB, "Description", 5, 3, ""));
@@ -49,14 +49,13 @@ public class InternetUserBrowsesMenusStepdefs {
         restaurantService.addRestaurant(restaurantA);
     }
 
-    @When("L'utilisateur demande à accéder aux plats du restaurant {string}")
-    public void lUtilisateurDemandeÀAccéderAuxPlatsDuRestaurant(String restaurantName) {
+    @When("The user wants to have dishes of the restaurant {string}")
+    public void theUserWantsToHaveDishesOfTheRestaurant(String restaurantName) {
         restaurant = restaurantService.getRestaurantByName(restaurantName);
     }
 
-
-    @Then("L'utilisateur reçoit les dishes {string} et {string} enregistrés dans le restaurant préselectionné")
-    public void lUtilisateurReçoitLesDishesEtEnregistrésDansLeRestaurantPréselectionné(String dishNameA, String dishNameB) {
+    @Then("the user gets the dishes {string} and {string} registered in the restaurant selected")
+    public void theUserGetsTheDishesAndRegisteredInTheRestaurantSelected(String dishNameA, String dishNameB) {
         List<Dish> restaurantDishes = restaurant.getDishes();
         assertEquals(1, restaurantDishes.stream().filter(dish -> dish.getName().equals(dishNameA)).count());
         assertEquals(1, restaurantDishes.stream().filter(dish -> dish.getName().equals(dishNameB)).count());
