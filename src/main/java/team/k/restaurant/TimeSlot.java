@@ -17,6 +17,7 @@ import java.util.List;
 @Setter()
 @AllArgsConstructor
 public class TimeSlot {
+    private int id;
     private List<SubOrder> orders;
 
     private LocalDateTime start;
@@ -29,12 +30,15 @@ public class TimeSlot {
 
     private int maxNumberOfOrders;
 
+    private static int idCounter = 0;
+
     public TimeSlot(LocalDateTime start, Restaurant restaurant, int productionCapacity, int maxNumberOfOrders) {
         this.start = start;
         this.restaurant = restaurant;
         this.productionCapacity = productionCapacity;
         this.maxNumberOfOrders = maxNumberOfOrders;
         this.orders = new ArrayList<>();
+        this.id = idCounter++;
     }
 
     public boolean isFull() {

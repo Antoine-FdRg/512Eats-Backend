@@ -63,6 +63,7 @@ public class OrderBuilder {
         }
         if(this.groupOrder == null) {
             return new IndividualOrder(id, price, null, restaurant, user, dishes, OrderStatus.CREATED, null, deliveryDate, deliveryLocation);
+
         }
         return new SubOrder(id, price, groupOrder, restaurant, user, dishes, OrderStatus.CREATED, null, deliveryDate);
     }
