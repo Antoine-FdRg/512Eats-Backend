@@ -1,4 +1,4 @@
-Feature: Créer une order
+Feature: Create an individual order
 
   Background:
     Given a registeredUser named "Jack" with the role STUDENT
@@ -8,5 +8,5 @@ Feature: Créer une order
 
     Scenario: creation d'une order
         When a registeredUser adds "Poulet nouilles" to his basket
-        Then his current order contains 1 dish
+        Then his current order contains 1 dishes
         And his current order has the status CREATED

@@ -41,7 +41,7 @@ public class RestaurantRepository {
      *
      * @param restaurant the restaurant to add
      */
-    public void save(Restaurant restaurant) {
+    public void add(Restaurant restaurant) {
         restaurants.add(restaurant);
     }
 

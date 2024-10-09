@@ -13,11 +13,11 @@ public class DishRepository {
         return dishes.get(dishId);
     }
 
-    public void addDish(Dish dish) {
+    public void add(Dish dish) {
         dishes.add(dish);
     }
 
-    public void removeDish(Dish dish) {
+    public void remove(Dish dish) {
         dishes.remove(dish);
     }
 

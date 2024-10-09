@@ -12,7 +12,7 @@ public class TimeSlotRepository {
         return timeSlots.get(timeSlotId);
     }
 
-    public void save(TimeSlot timeSlot) {
+    public void add(TimeSlot timeSlot) {
         timeSlots.add(timeSlot);
     }
 

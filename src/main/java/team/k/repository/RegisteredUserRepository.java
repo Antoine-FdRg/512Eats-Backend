@@ -9,7 +9,7 @@ public class RegisteredUserRepository {
 
     private final List<RegisteredUser> registeredUsers = new ArrayList<>();
 
-    public void save(RegisteredUser registeredUser) {
+    public void add(RegisteredUser registeredUser) {
         registeredUsers.add(registeredUser);
     }
 

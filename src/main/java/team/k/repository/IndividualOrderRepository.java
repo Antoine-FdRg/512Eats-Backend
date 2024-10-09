@@ -9,7 +9,7 @@ public class IndividualOrderRepository {
 
     private final List<IndividualOrder> individualOrders = new ArrayList<>();
 
-    public void save(IndividualOrder individualOrder) {
+    public void add(IndividualOrder individualOrder) {
         individualOrders.add(individualOrder);
     }
 

@@ -9,7 +9,7 @@ public class SubOrderRepository {
 
     private final List<SubOrder> subOrders = new ArrayList<>();
 
-    public void save(SubOrder subOrder) {
+    public void add(SubOrder subOrder) {
         subOrders.add(subOrder);
     }
 

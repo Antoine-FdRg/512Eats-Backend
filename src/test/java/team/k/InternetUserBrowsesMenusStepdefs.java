@@ -16,7 +16,6 @@ import team.k.repository.DishRepository;
 import team.k.repository.RestaurantRepository;
 import team.k.repository.TimeSlotRepository;
 import team.k.restaurant.Restaurant;
-import team.k.restaurant.RestaurantBuilder;
 import team.k.service.RestaurantService;
 
 import java.time.LocalTime;
@@ -65,7 +64,7 @@ public class InternetUserBrowsesMenusStepdefs {
         when(dishRepository.findById(dishB.getId())).thenReturn(dishB);
         dishes.add(dishB);
         when(dishRepository.findAll()).thenReturn(dishes);
-        Restaurant restaurantA = new RestaurantBuilder().setName(restaurantName).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).build();
+        Restaurant restaurantA = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).build();
         restaurantA.addDish(dishA);
         restaurantA.addDish(dishB);
         when(restaurantRepository.findByName(restaurantName)).thenReturn(restaurantA);
