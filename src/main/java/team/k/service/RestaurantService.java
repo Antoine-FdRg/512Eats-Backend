@@ -61,4 +61,16 @@ public class RestaurantService {
     public void addDishToRestaurant(Restaurant restaurant, Dish dish) {
         restaurant.addDish(dish);
     }
+
+    public List<Restaurant> getRestaurantsByFoodType(List<String> foodTypes) {
+        return this.restaurantRepository.findRestaurantByFoodType(foodTypes);
+    }
+
+    public List<Restaurant> getRestaurantsByAvailability() {
+        return this.restaurantRepository.findRestaurantsByAvailability();
+    }
+
+    public List<Restaurant> getRestaurantsByName(String name) {
+        return this.restaurantRepository.findRestaurantByName(name);
+    }
 }
