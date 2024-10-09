@@ -1,15 +1,13 @@
-package team.k;
+package team.k.order;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Date;
+import team.k.common.Location;
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class IndividualOrder extends SubOrder {
-    private Date date;
     private Location deliveryLocation;
 }

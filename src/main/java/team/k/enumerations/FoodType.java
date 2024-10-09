@@ -1,4 +1,4 @@
-package team.k;
+package team.k.enumerations;
 
 import lombok.AllArgsConstructor;
 

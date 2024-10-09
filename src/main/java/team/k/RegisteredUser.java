@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import team.k.enumerations.Role;
+import team.k.order.SubOrder;
 
 import java.util.List;
 
@@ -12,9 +14,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegisteredUser {
-    private Role role;
-    private List<SubOrder> orders;
     private int id;
+    private String name;
+    private Role role;
+    private SubOrder currentOrder;
+    private List<SubOrder> orders;
 
     public boolean addOrderToHistory(SubOrder order) {
         return orders.add(order);
