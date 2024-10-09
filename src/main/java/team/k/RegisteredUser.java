@@ -23,4 +23,5 @@ public class RegisteredUser {
     public boolean addOrderToHistory(SubOrder order) {
         return orders.add(order);
     }
+
 }

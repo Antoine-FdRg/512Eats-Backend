@@ -1,6 +1,7 @@
 package team.k.common;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,9 +11,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
+@EqualsAndHashCode
 public class Location {
 
-    private int id;
+    private final int id;
 
     private int number;
 
