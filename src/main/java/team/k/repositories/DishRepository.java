@@ -7,7 +7,7 @@ import java.util.List;
 
 
 public class DishRepository {
-    private List<Dish> dishes = new ArrayList<>();
+    private final List<Dish> dishes = new ArrayList<>();
 
     public Dish findById(int dishId) {
         return dishes.get(dishId);

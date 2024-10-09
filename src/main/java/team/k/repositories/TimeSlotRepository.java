@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TimeSlotRepository {
-    private List<TimeSlot> timeSlots = new ArrayList<>();
+    private final List<TimeSlot> timeSlots = new ArrayList<>();
 
     public TimeSlot findById(int timeSlotId) {
         return timeSlots.get(timeSlotId);
