@@ -12,7 +12,7 @@ import java.util.List;
 public class GroupOrderRepository {
     List<GroupOrder> groupOrders = new ArrayList<>();
 
-    public GroupOrder getGroupOrderById(int id) {
+    public GroupOrder findGroupOrderById(int id) {
         return groupOrders.stream().filter(groupOrder -> groupOrder.getId() == id).findFirst().orElse(null);
     }
 

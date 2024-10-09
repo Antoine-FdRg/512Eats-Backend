@@ -19,7 +19,7 @@ public class RegisteredUserStepDefs {
     @Mock
     LocationRepository locationRepository;
     @InjectMocks
-    OrderService orderService = new OrderService();
+    OrderService orderService;
     GroupOrder groupOrder;
     Location location;
 
@@ -31,7 +31,7 @@ public class RegisteredUserStepDefs {
     @Given("a delivery location")
     public void aDeliveryLocation() {
         location = new Location(1, 123, "123 Main St", "Springfield");
-        Mockito.when(locationRepository.getLocationById(1)).thenReturn(location);
+        Mockito.when(locationRepository.findLocationById(1)).thenReturn(location);
     }
 
 

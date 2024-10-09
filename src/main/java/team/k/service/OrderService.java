@@ -12,7 +12,7 @@ public class OrderService {
     GroupOrderRepository groupOrderRepository = new GroupOrderRepository();
 
     public void createGroupOrder(int deliveryLocation) {
-        Location location = locationRepository.getLocationById(deliveryLocation);
+        Location location = locationRepository.findLocationById(deliveryLocation);
         if (location == null) {
             throw new IllegalArgumentException("Location not found");
         }

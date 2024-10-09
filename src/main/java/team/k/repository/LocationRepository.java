@@ -18,7 +18,7 @@ public class LocationRepository {
      * @param id the id of the location to return.
      * @return the location with the given id, or null if no such location exists.
      */
-    public Location getLocationById(int id) {
+    public Location findLocationById(int id) {
         return locations.stream().filter(location -> location.getId() == id).findFirst().orElse(null);
     }
 
