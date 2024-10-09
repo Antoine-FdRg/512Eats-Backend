@@ -13,22 +13,21 @@ import team.k.common.Dish;
 import team.k.common.DishBuilder;
 import team.k.enumerations.OrderStatus;
 import team.k.enumerations.Role;
-import team.k.repositories.DishRepository;
-import team.k.repositories.RegisteredUserRepository;
-import team.k.repositories.RestaurantRepository;
-import team.k.repositories.SubOrderRepository;
-import team.k.repositories.TimeSlotRepository;
+import team.k.repository.DishRepository;
+import team.k.repository.RegisteredUserRepository;
+import team.k.repository.RestaurantRepository;
+import team.k.repository.SubOrderRepository;
+import team.k.repository.TimeSlotRepository;
 import team.k.restaurant.Restaurant;
 import team.k.restaurant.RestaurantBuilder;
 import team.k.restaurant.TimeSlot;
-import team.k.services.OrderService;
-import team.k.services.RestaurantService;
+import team.k.service.OrderService;
+import team.k.service.RestaurantService;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 public class IndividualOrderStepdefs {
@@ -36,7 +35,6 @@ public class IndividualOrderStepdefs {
     Restaurant restaurant;
     @Mock
     RestaurantRepository restaurantRepository;
-
     @Mock
     DishRepository dishRepository;
     @Mock

@@ -62,6 +62,10 @@ public class RestaurantBuilder {
         this.discountStrategy = discountStrategy;
         return this;
     }
+    public RestaurantBuilder setFoodTypes(List<FoodType> foodTypes) {
+        this.foodTypes.addAll(foodTypes);
+        return this;
+    }
 
     public Restaurant build() {
         return new Restaurant(name, id, open, close, timeSlots, dishes, foodTypes, discountStrategy);

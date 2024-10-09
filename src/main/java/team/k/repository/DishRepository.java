@@ -1,4 +1,4 @@
-package team.k.repositories;
+package team.k.repository;
 
 import team.k.common.Dish;
 
