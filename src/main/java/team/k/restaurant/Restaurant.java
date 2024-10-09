@@ -23,6 +23,16 @@ public class Restaurant {
     private List<FoodType> foodTypes;
     private DiscountStrategy discountStrategy;
 
+    public Restaurant(String name, int id, LocalTime open, LocalTime close, List<Dish> dishes, List<FoodType> foodTypes, DiscountStrategy discountStrategy) {
+        this.name = name;
+        this.id = id;
+        this.open = open;
+        this.close = close;
+        this.dishes = dishes;
+        this.foodTypes = foodTypes;
+        this.discountStrategy = discountStrategy;
+    }
+
     /**
      * Check if the restaurant is available by checking if it is open and if there is a time slot available.
      *
@@ -58,6 +68,13 @@ public class Restaurant {
     }
 
 
+    /**
+     * Update the restaurant's information.
+     *
+     * @param name  the new name
+     * @param open  the new opening time
+     * @param close the new closing time
+     */
     public void updateRestaurantInfos(String name, String open, String close) {
         this.name = name;
         this.open = LocalTime.parse(open);
