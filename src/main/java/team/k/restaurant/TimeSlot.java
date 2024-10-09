@@ -7,6 +7,7 @@ import team.k.enumerations.OrderStatus;
 import team.k.order.SubOrder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,6 +17,7 @@ import java.util.List;
 @Setter()
 @AllArgsConstructor
 public class TimeSlot {
+    private int id;
     private List<SubOrder> orders;
 
     private LocalDateTime start;
@@ -27,6 +29,17 @@ public class TimeSlot {
     public static final int DURATION = 30;
 
     private int maxNumberOfOrders;
+
+    private static int idCounter = 0;
+
+    public TimeSlot(LocalDateTime start, Restaurant restaurant, int productionCapacity, int maxNumberOfOrders) {
+        this.start = start;
+        this.restaurant = restaurant;
+        this.productionCapacity = productionCapacity;
+        this.maxNumberOfOrders = maxNumberOfOrders;
+        this.orders = new ArrayList<>();
+        this.id = idCounter++;
+    }
 
     public boolean isFull() {
         int totalPreparationTime = getTotalPreparationTime();

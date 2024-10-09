@@ -1,6 +1,5 @@
 package team.k.restaurant;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import team.k.common.Dish;
@@ -8,11 +7,11 @@ import team.k.enumerations.FoodType;
 import team.k.restaurant.discount.DiscountStrategy;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
 public class Restaurant {
     private String name;
     private int id;
@@ -23,14 +22,15 @@ public class Restaurant {
     private List<FoodType> foodTypes;
     private DiscountStrategy discountStrategy;
 
-    public Restaurant(String name, int id, LocalTime open, LocalTime close, List<Dish> dishes, List<FoodType> foodTypes, DiscountStrategy discountStrategy) {
-        this.name = name;
-        this.id = id;
-        this.open = open;
-        this.close = close;
-        this.dishes = dishes;
-        this.foodTypes = foodTypes;
-        this.discountStrategy = discountStrategy;
+    private Restaurant(Builder builder) {
+        this.id = builder.id;
+        this.name = builder.name;
+        this.open = builder.open;
+        this.close = builder.close;
+        this.timeSlots = builder.timeSlots;
+        this.dishes = builder.dishes;
+        this.foodTypes = builder.foodTypes;
+        this.discountStrategy = builder.discountStrategy;
     }
 
     /**
@@ -94,5 +94,79 @@ public class Restaurant {
 
     private List<Dish> getDishesReadyInLessThan(int time) {
         return dishes.stream().filter(dish -> dish.getPreparationTime() <= time).toList();
+    }
+
+    public void addTimeSlot(TimeSlot timeSlot) {
+        timeSlots.add(timeSlot);
+    }
+
+    public void addDish(Dish dish) {
+        dishes.add(dish);
+    }
+
+    public void addFoodType(FoodType foodType) {
+        foodTypes.add(foodType);
+    }
+
+    public static class Builder {
+        private final int id;
+        private String name;
+        private LocalTime open;
+        private LocalTime close;
+        private final List<TimeSlot> timeSlots;
+        private final List<Dish> dishes;
+        private final List<FoodType> foodTypes;
+        private DiscountStrategy discountStrategy;
+        private static int idCounter = 0;
+
+        public Builder() {
+            id = idCounter++;
+            timeSlots = new ArrayList<>();
+            dishes = new ArrayList<>();
+            foodTypes = new ArrayList<>();
+        }
+
+        public Builder addTimeSlot(TimeSlot timeSlot) {
+            timeSlots.add(timeSlot);
+            return this;
+        }
+
+        public Builder addDish(Dish dish) {
+            dishes.add(dish);
+            return this;
+        }
+
+        public Builder addFoodType(FoodType foodType) {
+            foodTypes.add(foodType);
+            return this;
+        }
+
+        public Builder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder setOpen(LocalTime open) {
+            this.open = open;
+            return this;
+        }
+
+        public Builder setClose(LocalTime close) {
+            this.close = close;
+            return this;
+        }
+
+        public Builder setDiscountStrategy(DiscountStrategy discountStrategy) {
+            this.discountStrategy = discountStrategy;
+            return this;
+        }
+        public Builder setFoodTypes(List<FoodType> foodTypes) {
+            this.foodTypes.addAll(foodTypes);
+            return this;
+        }
+
+        public Restaurant build() {
+            return new Restaurant(this);
+        }
     }
 }

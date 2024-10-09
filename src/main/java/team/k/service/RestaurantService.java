@@ -2,18 +2,16 @@ package team.k.service;
 
 import team.k.common.Dish;
 import team.k.repository.RestaurantRepository;
+import team.k.repository.TimeSlotRepository;
 import team.k.restaurant.Restaurant;
+import team.k.restaurant.TimeSlot;
 
 import java.util.List;
 
 public class RestaurantService {
 
-
     private RestaurantRepository restaurantRepository;
-
-    public RestaurantService() {
-        this.restaurantRepository = new RestaurantRepository();
-    }
+    private TimeSlotRepository timeSlotRepository;
 
     public List<Restaurant> getAllRestaurants() {
         return this.restaurantRepository.findAll();
@@ -54,4 +52,13 @@ public class RestaurantService {
     }
 
 
+    public void addTimeSlotToRestaurant(int restaurantId, int timeSlotId) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId);
+        TimeSlot ts = timeSlotRepository.findById(timeSlotId);
+        restaurant.addTimeSlot(ts);
+    }
+
+    public void addDishToRestaurant(Restaurant restaurant, Dish dish) {
+        restaurant.addDish(dish);
+    }
 }
