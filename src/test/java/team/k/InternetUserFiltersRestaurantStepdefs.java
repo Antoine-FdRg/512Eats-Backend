@@ -19,6 +19,7 @@ import team.k.service.RestaurantService;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.mockito.Mockito.mockStatic;
@@ -39,6 +40,8 @@ public class InternetUserFiltersRestaurantStepdefs {
 
     Restaurant restaurantB;
 
+    private NoSuchElementException exception;
+
     @Before
     public void setUp() {
         this.restaurantRepository = new RestaurantRepository();
@@ -47,8 +50,9 @@ public class InternetUserFiltersRestaurantStepdefs {
 
     @After
     public void tearDown() {
-        this.restaurantRepository = null;
-        this.restaurantService = null;
+        this.restaurantRepository.delete(restaurantA);
+        this.restaurantRepository.delete(restaurantB);
+
     }
 
 
@@ -66,34 +70,58 @@ public class InternetUserFiltersRestaurantStepdefs {
         this.restaurantRepository.add(restaurantB);
     }
 
-
-    @When("Registered user selects a food type : {string}")
-    public void registeredUserSelectsAFoodType(String foodType) {
-        restaurantsByFoodType = this.restaurantService.getRestaurantsByFoodType(List.of(foodType));
+    //By Name//
+    @When("Registered user searches for a restaurant with name {string}")
+    public void registeredUserSearchesForARestaurantWithNameButDoesnTExist(String restaurantName) {
+        try {
+            restaurantsByName = this.restaurantService.getRestaurantsByName(restaurantName);
+        } catch (NoSuchElementException e) {
+            this.exception = e;
+        }
     }
 
+    @Then("Registered user should see the restaurant that matches the name {string} for his name choice")
+    public void registeredUserShouldSeeTheRestaurantThatMatchesTheName(String restaurantName) {
+        assertEquals(1, restaurantsByName.size());
+    }
+
+    //By Type of food//
+
+    @When("Registered user selects a food type : {string}")
+    public void registeredUserSelectsAFoodType(String type) {
+        try {
+            restaurantsByFoodType = this.restaurantService.getRestaurantsByFoodType(List.of(type));
+        } catch (NoSuchElementException e) {
+            this.exception = e;
+        }
+    }
     @Then("Registered user should see the restaurant that serves that food type")
     public void registeredUserShouldSeeTheRestaurantThatServesThatFoodType() {
         assertEquals(1, restaurantsByFoodType.size());
     }
 
-    @When("Registered user selects restaurants that are open at {int}h {int}")
+    //By Availability//
+
+    @When("Registered user selects restaurants that are open at {int}: {int}")
     public void registeredUserSelectsRestaurantsThatAreOpenAtOClock(int currentTime, int min) {
-        restaurantsAvailable = this.restaurantService.getRestaurantsByAvailability(LocalTime.of(currentTime, min, 0));
+        try {
+            restaurantsAvailable = this.restaurantService.getRestaurantsByAvailability(LocalTime.of(currentTime, min, 0));
+        } catch (NoSuchElementException e) {
+            this.exception = e;
+        }
     }
     @Then("Registered user should see the restaurant that are open")
     public void registeredUserShouldSeeTheRestaurantThatAreOpen() {
         assertEquals(1, restaurantsAvailable.size());
     }
 
-    @When("Registered user searches for a restaurant with name {string}")
-    public void registeredUserSearchesForARestaurantWithName(String restaurantName) {
-        restaurantsByName = this.restaurantService.getRestaurantsByName(restaurantName);
+
+    //Exceptions//
+
+    @Then("Registered user should see a message {string}")
+    public void registeredUserShouldSeeAMessage(String expectedMessage) {
+        assertEquals(expectedMessage, this.exception.getMessage());
     }
 
-    @Then("Registered user should see the restaurant that matches the name {string}")
-    public void registeredUserShouldSeeTheRestaurantThatMatchesTheName(String restaurantName) {
-        assertEquals(1, restaurantsByName.size());
-    }
 
 }

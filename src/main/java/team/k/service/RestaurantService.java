@@ -9,6 +9,7 @@ import team.k.restaurant.TimeSlot;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @NoArgsConstructor
 public class RestaurantService {
@@ -68,15 +69,27 @@ public class RestaurantService {
         restaurant.addDish(dish);
     }
 
-    public List<Restaurant> getRestaurantsByFoodType(List<String> foodTypes) {
-        return this.restaurantRepository.findRestaurantByFoodType(foodTypes);
+    public List<Restaurant> getRestaurantsByFoodType(List<String> foodTypes) throws NoSuchElementException {
+        List<Restaurant> restaurants = this.restaurantRepository.findRestaurantByFoodType(foodTypes);
+        if (restaurants.isEmpty()) {
+            throw new NoSuchElementException("No restaurants found with the food types: " + foodTypes);
+        }
+        return restaurants;
     }
 
-    public List<Restaurant> getRestaurantsByAvailability(LocalTime timeChosen) {
-        return this.restaurantRepository.findRestaurantsByAvailability(timeChosen);
+    public List<Restaurant> getRestaurantsByAvailability(LocalTime timeChosen) throws NoSuchElementException {
+        List<Restaurant> restaurants = this.restaurantRepository.findRestaurantsByAvailability(timeChosen);
+        if (restaurants.isEmpty()) {
+            throw new NoSuchElementException("No restaurants found with availability at: " + timeChosen);
+        }
+        return restaurants;
     }
 
-    public List<Restaurant> getRestaurantsByName(String name) {
-        return this.restaurantRepository.findRestaurantByName(name);
+    public List<Restaurant> getRestaurantsByName(String name) throws NoSuchElementException {
+        List<Restaurant> restaurants = this.restaurantRepository.findRestaurantByName(name);
+        if (restaurants.isEmpty()) {
+            throw new NoSuchElementException("No restaurants found with the name: " + name);
+        }
+        return restaurants;
     }
 }
