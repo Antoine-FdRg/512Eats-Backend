@@ -14,7 +14,7 @@ public class Location {
 
     private final int id;
 
-    private int number;
+    private String streetNumber;
 
     private String address;
 
@@ -22,18 +22,18 @@ public class Location {
 
     private Location(Builder builder) {
         this.id = builder.id;
-        this.number = builder.number;
+        this.streetNumber = builder.streetNumber;
         this.address = builder.address;
         this.city = builder.city;
     }
 
     public String toString() {
-        return "Location [id=" + id + ", number=" + number + ", address=" + address + ", city=" + city + "]";
+        return "Location [id=" + id + ", number=" + streetNumber + ", address=" + address + ", city=" + city + "]";
     }
 
     public static class Builder {
         private final int id;
-        private int number;
+        private String streetNumber;
         private String address;
         private String city;
 
@@ -43,8 +43,8 @@ public class Location {
             id = idCounter++;
         }
 
-        public Builder setNumber(int number) {
-            this.number = number;
+        public Builder setNumber(String streetNumber) {
+            this.streetNumber = streetNumber;
             return this;
         }
 

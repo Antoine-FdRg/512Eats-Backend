@@ -9,13 +9,12 @@ import io.cucumber.java.en.When;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import team.k.common.Dish;
+import team.k.common.Location;
 import team.k.enumerations.OrderStatus;
 import team.k.enumerations.Role;
-import team.k.repository.DishRepository;
+import team.k.repository.LocationRepository;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
-import team.k.repository.SubOrderRepository;
 import team.k.repository.TimeSlotRepository;
 import team.k.restaurant.Restaurant;
 import team.k.restaurant.TimeSlot;
@@ -31,16 +30,15 @@ import static org.mockito.Mockito.when;
 public class IndividualOrderStepdefs {
     RegisteredUser registeredUser;
     Restaurant restaurant;
+    Location deliveryLocation;
     @Mock
     RestaurantRepository restaurantRepository;
-    @Mock
-    DishRepository dishRepository;
     @Mock
     RegisteredUserRepository registeredUserRepository;
     @Mock
     TimeSlotRepository timeSlotRepository;
     @Mock
-    SubOrderRepository subOrderRepository;
+    LocationRepository locationRepository;
 
     @InjectMocks
     RestaurantService restaurantService;
@@ -83,28 +81,30 @@ public class IndividualOrderStepdefs {
         when(timeSlotRepository.findById(timeSlot.getId())).thenReturn(timeSlot);
         restaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
     }
-    
-    @And("a dish named {string} that costs {double} and takes {int} minutes to be prepared")
-    public void aDishNamedThatCostsAndTakesMinutesToBePrepared(String dishName, double price, int preparationTime) {
-        Dish dish = new Dish.Builder().setName(dishName).setPrice(price).setPreparationTime(preparationTime).build();
-        when(dishRepository.findById(dish.getId())).thenReturn(dish);
-        restaurantService.addDishToRestaurant(restaurant, dish);
+
+    @And("a delivery location with the number {string}, the street {string} and the city {string}")
+    public void aDeliveryLocationWithTheNumberTheStreetAndTheCity(String streetNumber, String street, String city) {
+        deliveryLocation = new Location.Builder()
+                .setNumber(String.valueOf(streetNumber))
+                .setAddress(street)
+                .setCity(city)
+                .build();
+        when(locationRepository.findLocationById(deliveryLocation.getId())).thenReturn(deliveryLocation);
     }
 
-    @When("a registeredUser adds {string} to his basket")
-    public void aRegisteredUserAddsToHisBasket(String dishName) {
-        Dish dish = restaurant.getDishes().stream().filter(d -> d.getName().equals(dishName)).findFirst().orElseThrow();
-        orderService.addDishToRegisteredUserBasket(registeredUser.getId(), dish.getId(), restaurant.getId());
-        when(subOrderRepository.findById(registeredUser.getCurrentOrder().getId())).thenReturn(registeredUser.getCurrentOrder());
+    @When("a registeredUser creates an order for the restaurant Naga with the deliveryPlace created for {int}h on {int}-{int}-{int}")
+    public void aRegisteredUserCreatesAnOrderForTheRestaurantNagaWithTheDeliveryPlaceOfIdForH(int deliveryTimeHours, int deliveryTimeDay, int deliveryTimeMonth, int deliveryTimeYear) {
+        LocalDateTime deliveryTime = LocalDateTime.of(deliveryTimeYear, deliveryTimeMonth, deliveryTimeDay, deliveryTimeHours, 0);
+        orderService.createIndividualOrder(registeredUser.getId(), restaurant.getId(), deliveryLocation.getId(), deliveryTime);
     }
 
-    @Then("his current order contains {int} dishes")
-    public void hisCurrentOrderContainsDishes(int nbOfDishes) {
-        assertEquals(nbOfDishes,registeredUser.getCurrentOrder().getDishes().size());
+    @Then("the registeredUser should have his currentOrder with the status CREATED")
+    public void theRegisteredUserShouldHaveACurrentOrderWithTheStatusCREATED() {
+        assertEquals(OrderStatus.CREATED, registeredUser.getCurrentOrder().getStatus());
     }
 
-    @And("his current order has the status {status}")
-    public void hisCurrentOrderHasTheStatus(OrderStatus status) {
-        assertEquals(status, registeredUser.getCurrentOrder().getStatus());
+    @Then("the registeredUser should have his currentOrder with no dishes")
+    public void theRegisteredUserShouldHaveHisCurrentOrderWithNoDished() {
+        assertEquals(0, registeredUser.getCurrentOrder().getDishes().size());
     }
 }
