@@ -1,18 +1,24 @@
 package team.k.service;
 
+import lombok.NoArgsConstructor;
 import team.k.common.Dish;
 import team.k.repository.RestaurantRepository;
 import team.k.repository.TimeSlotRepository;
 import team.k.restaurant.Restaurant;
 import team.k.restaurant.TimeSlot;
 
+import java.time.LocalTime;
 import java.util.List;
 
+@NoArgsConstructor
 public class RestaurantService {
 
     private RestaurantRepository restaurantRepository;
     private TimeSlotRepository timeSlotRepository;
 
+    public RestaurantService(RestaurantRepository restaurantRepository) {
+        this.restaurantRepository = restaurantRepository;
+    }
     public List<Restaurant> getAllRestaurants() {
         return this.restaurantRepository.findAll();
     }
@@ -66,8 +72,8 @@ public class RestaurantService {
         return this.restaurantRepository.findRestaurantByFoodType(foodTypes);
     }
 
-    public List<Restaurant> getRestaurantsByAvailability() {
-        return this.restaurantRepository.findRestaurantsByAvailability();
+    public List<Restaurant> getRestaurantsByAvailability(LocalTime timeChosen) {
+        return this.restaurantRepository.findRestaurantsByAvailability(timeChosen);
     }
 
     public List<Restaurant> getRestaurantsByName(String name) {

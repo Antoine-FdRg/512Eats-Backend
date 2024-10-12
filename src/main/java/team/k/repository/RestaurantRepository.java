@@ -3,9 +3,11 @@ package team.k.repository;
 import team.k.enumerations.FoodType;
 import team.k.restaurant.Restaurant;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class RestaurantRepository {
     private final List<Restaurant> restaurants = new ArrayList<>();
@@ -57,15 +59,14 @@ public class RestaurantRepository {
     }
 
     public List<Restaurant> findRestaurantByFoodType(List<String> foodTypes) {
-        return this.findAll().stream().filter(restaurant -> restaurant.getFoodTypes()
-                        .stream()
-                        .map(FoodType::getName)
+        return this.restaurants.stream()
+                .filter(restaurant -> restaurant.getFoodTypes().stream().map(FoodType::getName)
                         .anyMatch(foodTypes::contains))
-                .toList();
+                .collect(Collectors.toList());
     }
 
-    public List<Restaurant> findRestaurantsByAvailability() {
-        return this.findAll().stream().filter(Restaurant::isAvailable).toList();
+    public List<Restaurant> findRestaurantsByAvailability(LocalTime timeChosen) {
+        return this.findAll().stream().filter(restaurant -> restaurant.isAvailable(timeChosen)).toList();
     }
 
     public List<Restaurant> findRestaurantByName(String name) {

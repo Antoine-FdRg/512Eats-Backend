@@ -38,9 +38,8 @@ public class Restaurant {
      *
      * @return true if the restaurant is available, false otherwise
      */
-    public boolean isAvailable() {
-        LocalTime now = LocalTime.now();
-        if (!now.isAfter(open) || !now.isBefore(close)) {
+    public boolean isAvailable(LocalTime timeChosen) {
+        if (!timeChosen.isAfter(open) || !timeChosen.isBefore(close)) {
             return false;
         }
         TimeSlot currentTimeSlot = searchForCurrentTimeSlot();
