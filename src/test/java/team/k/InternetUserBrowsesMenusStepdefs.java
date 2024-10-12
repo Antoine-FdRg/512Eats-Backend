@@ -20,6 +20,7 @@ import team.k.service.RestaurantService;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.mockito.Mockito.when;
@@ -37,7 +38,12 @@ public class InternetUserBrowsesMenusStepdefs {
     @InjectMocks
     private RestaurantService restaurantService;
     private Restaurant restaurant;
+    Restaurant restaurantB;
+
     List<Dish> dishes;
+    List<Dish> restaurantDishes;
+
+    private NoSuchElementException errorMessage;
 
     // Create a restaurant before each scenario
     @Before
@@ -71,9 +77,27 @@ public class InternetUserBrowsesMenusStepdefs {
         restaurantService.addRestaurant(restaurantA);
     }
 
+    @When("The user wants to have dishes non registered of the restaurant {string}")
+    public void theUserWantsToHaveDishesNonRegisteredOfTheRestaurant(String restaurantName) {
+        when(restaurantRepository.findByName(restaurantName)).thenReturn(restaurantB);
+        try {
+            restaurantDishes = restaurantService.getAllDishesFromRestaurant(restaurantName);
+        } catch (NoSuchElementException e) {
+            this.errorMessage = e;
+        }
+
+    }
+
     @When("The user wants to have dishes of the restaurant {string}")
     public void theUserWantsToHaveDishesOfTheRestaurant(String restaurantName) {
         restaurant = restaurantService.getRestaurantByName(restaurantName);
+
+        try {
+            restaurantDishes = restaurant.getDishes();
+        } catch (NoSuchElementException e) {
+            this.errorMessage = e;
+        }
+
     }
 
     @Then("the user gets the dishes {string} and {string} registered in the restaurant selected")
@@ -83,4 +107,18 @@ public class InternetUserBrowsesMenusStepdefs {
         assertEquals(1, restaurantDishes.stream().filter(dish -> dish.getName().equals(dishNameA)).count());
         assertEquals(1, restaurantDishes.stream().filter(dish -> dish.getName().equals(dishNameB)).count());
     }
+
+    @Given("A restaurant {string} with no dishes registered")
+    public void aRestaurantWithNoDishesRegistered(String restaurantName) {
+        restaurantB = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).build();
+        restaurantService.addRestaurant(restaurantB);
+    }
+
+    @Then("The user gets no dishes registered in the restaurant selected and have this message :{string}")
+    public void theUserGetsNoDishesRegisteredInTheRestaurantSelectedAndHaveThisMessage(String expectedMessage) {
+        assertEquals(this.errorMessage.getMessage(), expectedMessage);
+    }
+
+
+
 }

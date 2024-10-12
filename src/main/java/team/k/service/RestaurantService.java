@@ -40,9 +40,16 @@ public class RestaurantService {
      * @param restaurantName the name of the restaurant
      * @return the list of dishes if the restaurant is found, null otherwise
      */
-    public List<Dish> getAllDishesFromRestaurant(String restaurantName) {
+    public List<Dish> getAllDishesFromRestaurant(String restaurantName) throws NoSuchElementException {
         Restaurant restaurant = this.getRestaurantByName(restaurantName);
-        return restaurant.getDishes();
+        if (restaurant == null) {
+            throw new NoSuchElementException("Restaurant not found");
+        }
+        List<Dish> dishes = restaurant.getDishes();
+        if (dishes.isEmpty()) {
+            throw new NoSuchElementException("No dishes available");
+        }
+        return dishes;
     }
 
     /**
