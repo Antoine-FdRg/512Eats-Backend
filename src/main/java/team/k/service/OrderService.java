@@ -49,4 +49,8 @@ public class OrderService {
 
         groupOrderRepository.add(groupOrder);
     }
+
+    public void placeSubOrder(int orderId){
+        subOrderRepository.findById(orderId).place();
+    }
 }
