@@ -1,5 +1,6 @@
 package team.k.service;
 
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import team.k.common.Dish;
 import team.k.repository.RestaurantRepository;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @NoArgsConstructor
+@AllArgsConstructor
 public class RestaurantService {
 
     private RestaurantRepository restaurantRepository;
