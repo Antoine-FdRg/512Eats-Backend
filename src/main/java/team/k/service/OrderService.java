@@ -4,6 +4,7 @@ import lombok.Getter;
 import team.k.RegisteredUser;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
+import team.k.repository.SubOrderRepository;
 import team.k.restaurant.Restaurant;
 import team.k.common.Location;
 import team.k.order.GroupOrder;
@@ -11,31 +12,32 @@ import team.k.repository.GroupOrderRepository;
 import team.k.repository.LocationRepository;
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 
 public class OrderService {
 
     LocationRepository locationRepository;
+    SubOrderRepository subOrderRepository;
     private RestaurantRepository restaurantRepository;
     @Getter
     GroupOrderRepository groupOrderRepository = new GroupOrderRepository();
-
     private RegisteredUserRepository registeredUserRepository;
 
 
     public void createIndividualOrder(int registeredUserID, int restaurantId, int deliveryLocationId, LocalDateTime deliveryTime) {
         RegisteredUser registeredUser = registeredUserRepository.findById(registeredUserID);
-        Restaurant restaurant = restaurantRepository.findById(restaurantId);
-        Location deliveryLocation = locationRepository.findLocationById(deliveryLocationId);
         if (registeredUser.getCurrentOrder() != null) {
-            throw new IllegalArgumentException("User already has an active order");
+            throw new NoSuchElementException("User already has an active order");
         }
+        Restaurant restaurant = restaurantRepository.findById(restaurantId);
         if (restaurant == null) {
-            throw new IllegalArgumentException("Restaurant not found");
+            throw new NoSuchElementException("Restaurant not found");
         }
+        Location deliveryLocation = locationRepository.findLocationById(deliveryLocationId);
         if (deliveryLocation == null) {
-            throw new IllegalArgumentException("Location not found");
+            throw new NoSuchElementException("Location not found");
         }
-        registeredUser.initializeOrder(restaurant, deliveryLocation, deliveryTime);
+        registeredUser.initializeIndividualOrder(restaurant, deliveryLocation, deliveryTime);
     }
 
     public void createGroupOrder(int deliveryLocation) {
