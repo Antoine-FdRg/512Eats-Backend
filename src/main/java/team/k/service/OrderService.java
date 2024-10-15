@@ -60,7 +60,5 @@ public class OrderService {
             throw new NoSuchElementException("SubOrder not found");
         }
         subOrder.place();
-
-
     }
 }
