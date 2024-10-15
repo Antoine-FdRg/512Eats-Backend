@@ -3,6 +3,7 @@ package team.k.service;
 import lombok.Getter;
 import team.k.RegisteredUser;
 import team.k.common.Dish;
+import team.k.order.SubOrder;
 import team.k.repository.DishRepository;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
@@ -12,6 +13,8 @@ import team.k.common.Location;
 import team.k.order.GroupOrder;
 import team.k.repository.GroupOrderRepository;
 import team.k.repository.LocationRepository;
+
+import java.util.NoSuchElementException;
 
 public class OrderService {
 
@@ -50,8 +53,14 @@ public class OrderService {
         groupOrderRepository.add(groupOrder);
     }
 
-    public void placeSubOrder(int orderId){
-    // TODO : verify restaurant availibity, create a Payment, call PaymentProcessor to make the user pay, place if the payment is successful
-        subOrderRepository.findById(orderId).place();
-    }
+    public void placeSubOrder(int orderId) throws NoSuchElementException {
+        // TODO : verify restaurant availibity, create a Payment, call PaymentProcessor to make the user pay, place if the payment is successful
+        SubOrder subOrder = subOrderRepository.findById(orderId);
+        if (subOrder == null){
+            throw new NoSuchElementException("SubOrder not found");
+        }
+        subOrder.place();
+
+
+
 }
