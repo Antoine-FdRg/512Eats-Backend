@@ -56,11 +56,11 @@ public class OrderService {
     public void placeSubOrder(int orderId) throws NoSuchElementException {
         // TODO : verify restaurant availibity, create a Payment, call PaymentProcessor to make the user pay, place if the payment is successful
         SubOrder subOrder = subOrderRepository.findById(orderId);
-        if (subOrder == null){
+        if (subOrder == null) {
             throw new NoSuchElementException("SubOrder not found");
         }
         subOrder.place();
 
 
-
+    }
 }
