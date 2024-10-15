@@ -37,7 +37,6 @@ public class InternetUserBrowsesMenusStepdefs {
     private Restaurant restaurant;
     List<Dish> dishes;
 
-
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
