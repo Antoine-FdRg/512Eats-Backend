@@ -52,4 +52,8 @@ public class SubOrder {
     public void cancel() {
         status = OrderStatus.CANCELED;
     }
+
+    public void place(){
+        this.setStatus(OrderStatus.PLACED);
+    }
 }
