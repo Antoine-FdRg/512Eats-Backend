@@ -28,9 +28,12 @@ import static org.mockito.Mockito.when;
 public class InternetUserFiltersRestaurantStepdefs {
 
 
+    @Mock
     private RestaurantRepository restaurantRepository;
 
+    @InjectMocks
     private RestaurantService restaurantService;
+
     List<Restaurant> restaurantsByFoodType;
     List<Restaurant> restaurantsAvailable;
     List<Restaurant> restaurantsByName;
@@ -44,30 +47,25 @@ public class InternetUserFiltersRestaurantStepdefs {
 
     @Before
     public void setUp() {
-        this.restaurantRepository = new RestaurantRepository();
-        this.restaurantService = new RestaurantService(restaurantRepository);
+        MockitoAnnotations.openMocks(this);
     }
-
-    @After
-    public void tearDown() {
-        this.restaurantRepository.delete(restaurantA);
-        this.restaurantRepository.delete(restaurantB);
-
-    }
-
 
     @Given("a list of restaurants {string} a {string} restaurant which is open from {int} to {int} and {string} a {string} restaurant opened from {int} to {int} with registered dishes")
     public void aListOfRestaurantsARestaurantWhichIsOpenFromToAndARestaurantOpenedFromToWithRegisteredDishes(String restaurantNameA, String restaurantTypeA, int openningA, int closingA, String restaurantNameB, String restaurantTypeB, int openningB, int closingB) {
         restaurantA = new Restaurant.Builder().setName(restaurantNameA).setOpen(LocalTime.of(openningA, 0, 0)).setClose(LocalTime.of(closingA, 0, 0)).setFoodTypes(List.of(FoodType.SUSHI)).build();
-        restaurantB = new Restaurant.Builder().setName(restaurantNameB).setOpen(LocalTime.of(openningB, 0, 0)).setClose(LocalTime.of(closingB, 0, 0)).setFoodTypes(List.of(FoodType.BURGER)).build();
+        restaurantB = new Restaurant.Builder().setName(restaurantNameB).setOpen(LocalTime.of(openningB, 0, 0)).setClose(LocalTime.of(closingB, 0, 0)).setFoodTypes(List.of(FoodType.SUSHI)).build();
         Dish dishA = new Dish.Builder().setName("sushi").setDescription("Description").setPrice(5).setPreparationTime(0).build();
         Dish dishB = new Dish.Builder().setName("burger").setDescription("Description").setPrice(5).setPreparationTime(0).build();
         restaurantA.addTimeSlot(new TimeSlot(LocalDateTime.of(2024, 10, 12, openningA, 0, 0), restaurantA, 500, 10));
         restaurantB.addTimeSlot(new TimeSlot(LocalDateTime.of(2024, 10, 12, openningB, 0, 0), restaurantB, 500, 10));
         restaurantA.addDish(dishA);
         restaurantB.addDish(dishB);
-        this.restaurantRepository.add(restaurantA);
-        this.restaurantRepository.add(restaurantB);
+        when(restaurantRepository.findRestaurantByFoodType(List.of("Sushi"))).thenReturn(List.of(restaurantA, restaurantB));
+        when(restaurantRepository.findRestaurantByFoodType(List.of("Burger"))).thenReturn(List.of());
+        when(restaurantRepository.findRestaurantsByAvailability(LocalTime.of(12, 10, 0))).thenReturn(List.of(restaurantA));
+        when(restaurantRepository.findRestaurantsByAvailability(LocalTime.of(10, 10, 0))).thenReturn(List.of());
+        when(restaurantRepository.findRestaurantByName(restaurantNameB)).thenReturn(List.of(restaurantB));
+        when(restaurantRepository.findRestaurantByName("512PizzaRestaurant")).thenReturn(List.of());
     }
 
     //By Name//
@@ -97,7 +95,7 @@ public class InternetUserFiltersRestaurantStepdefs {
     }
     @Then("Registered user should see the restaurant that serves that food type")
     public void registeredUserShouldSeeTheRestaurantThatServesThatFoodType() {
-        assertEquals(1, restaurantsByFoodType.size());
+        assertEquals(2, restaurantsByFoodType.size());
     }
 
     //By Availability//

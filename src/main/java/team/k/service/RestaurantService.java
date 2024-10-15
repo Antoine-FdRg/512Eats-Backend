@@ -12,16 +12,12 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@NoArgsConstructor
-@AllArgsConstructor
+
 public class RestaurantService {
 
     private RestaurantRepository restaurantRepository;
     private TimeSlotRepository timeSlotRepository;
 
-    public RestaurantService(RestaurantRepository restaurantRepository) {
-        this.restaurantRepository = restaurantRepository;
-    }
     public List<Restaurant> getAllRestaurants() {
         return this.restaurantRepository.findAll();
     }
