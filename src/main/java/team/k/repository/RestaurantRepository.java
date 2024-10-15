@@ -58,10 +58,9 @@ public class RestaurantRepository {
         restaurants.remove(restaurant);
     }
 
-    public List<Restaurant> findRestaurantByFoodType(List<String> foodTypes) {
+    public List<Restaurant> findRestaurantByFoodType(List<FoodType> foodTypes) {
         return this.restaurants.stream()
-                .filter(restaurant -> restaurant.getFoodTypes().stream().map(FoodType::getName)
-                        .anyMatch(foodTypes::contains))
+                .filter(restaurant -> restaurant.getFoodTypes().stream().anyMatch(foodTypes::contains))
                 .collect(Collectors.toList());
     }
 

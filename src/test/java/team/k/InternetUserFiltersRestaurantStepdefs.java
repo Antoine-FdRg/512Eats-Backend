@@ -60,8 +60,8 @@ public class InternetUserFiltersRestaurantStepdefs {
         restaurantB.addTimeSlot(new TimeSlot(LocalDateTime.of(2024, 10, 12, openningB, 0, 0), restaurantB, 500, 10));
         restaurantA.addDish(dishA);
         restaurantB.addDish(dishB);
-        when(restaurantRepository.findRestaurantByFoodType(List.of("Sushi"))).thenReturn(List.of(restaurantA, restaurantB));
-        when(restaurantRepository.findRestaurantByFoodType(List.of("Burger"))).thenReturn(List.of());
+        when(restaurantRepository.findRestaurantByFoodType(List.of(FoodType.SUSHI))).thenReturn(List.of(restaurantA, restaurantB));
+        when(restaurantRepository.findRestaurantByFoodType(List.of(FoodType.BURGER))).thenReturn(List.of());
         when(restaurantRepository.findRestaurantsByAvailability(LocalTime.of(12, 10, 0))).thenReturn(List.of(restaurantA));
         when(restaurantRepository.findRestaurantsByAvailability(LocalTime.of(10, 10, 0))).thenReturn(List.of());
         when(restaurantRepository.findRestaurantByName(restaurantNameB)).thenReturn(List.of(restaurantB));
@@ -88,7 +88,7 @@ public class InternetUserFiltersRestaurantStepdefs {
     @When("Registered user selects a food type : {string}")
     public void registeredUserSelectsAFoodType(String type) {
         try {
-            restaurantsByFoodType = this.restaurantService.getRestaurantsByFoodType(List.of(type));
+            restaurantsByFoodType = this.restaurantService.getRestaurantsByFoodType(List.of(FoodType.valueOf(type)));
         } catch (NoSuchElementException e) {
             this.exception = e;
         }

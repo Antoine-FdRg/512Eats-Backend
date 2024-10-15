@@ -4,12 +4,12 @@ Feature: Registered user can filter  restaurant
     Given a list of restaurants "512EatRestaurant" a "Sushi" restaurant which is open from 12 to 15 and "512PokeRestaurant" a "Sushi" restaurant opened from 12 to 13 with registered dishes
 
   Scenario: Registered user can filter restaurant by food type
-    When Registered user selects a food type : "Sushi"
+    When Registered user selects a food type : "SUSHI"
     Then Registered user should see the restaurant that serves that food type
 
   Scenario: Registered user can filter restaurant by type of food but no restaurant found
-    When Registered user selects a food type : "Banane"
-    Then Registered user should see a message "No restaurants found with the food types: [Banane]"
+    When Registered user selects a food type : "PIZZA"
+    Then Registered user should see a message "No restaurants found with the food types: [PIZZA]"
 
 
 

@@ -3,6 +3,7 @@ package team.k.service;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import team.k.common.Dish;
+import team.k.enumerations.FoodType;
 import team.k.repository.RestaurantRepository;
 import team.k.repository.TimeSlotRepository;
 import team.k.restaurant.Restaurant;
@@ -74,7 +75,7 @@ public class RestaurantService {
         restaurant.addDish(dish);
     }
 
-    public List<Restaurant> getRestaurantsByFoodType(List<String> foodTypes) throws NoSuchElementException {
+    public List<Restaurant> getRestaurantsByFoodType(List<FoodType> foodTypes) throws NoSuchElementException {
         List<Restaurant> restaurants = this.restaurantRepository.findRestaurantByFoodType(foodTypes);
         if (restaurants.isEmpty()) {
             throw new NoSuchElementException("No restaurants found with the food types: " + foodTypes);
