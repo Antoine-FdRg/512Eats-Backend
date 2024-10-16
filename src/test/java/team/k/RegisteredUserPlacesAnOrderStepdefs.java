@@ -15,13 +15,15 @@ import team.k.order.SubOrder;
 
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.SubOrderRepository;
+import team.k.restaurant.Restaurant;
 import team.k.service.OrderService;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 
-public class RegisteredUserPlaceAnOrderStepdefs {
+public class RegisteredUserPlacesAnOrderStepdefs {
 
     RegisteredUser registeredUser;
     SubOrder order;
@@ -32,6 +34,8 @@ public class RegisteredUserPlaceAnOrderStepdefs {
     @Mock
     RegisteredUserRepository registeredUserRepository;
 
+    @Mock
+    Restaurant restaurant;
 
     @InjectMocks
     OrderService orderService;
@@ -46,7 +50,9 @@ public class RegisteredUserPlaceAnOrderStepdefs {
     public void anOrderIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(String name, Role role) {
         registeredUser = new RegisteredUser(name, role);
         when(registeredUserRepository.findById(registeredUser.getId())).thenReturn(registeredUser);
-        order = new OrderBuilder().setUser(registeredUser).build();
+        when(restaurant.isAvailable(any())).thenReturn(true);
+        order = new OrderBuilder().setUser(registeredUser).setRestaurant(restaurant).build();
+        registeredUser.setCurrentOrder(order);
         when(subOrderRepository.findById(order.getId())).thenReturn(order);
     }
 
@@ -58,6 +64,12 @@ public class RegisteredUserPlaceAnOrderStepdefs {
     @Then("the status of the order is placed now")
     public void theStatusOfTheOrderIsNow() {
         assertEquals(order.getStatus(), OrderStatus.PLACED);
+    }
+
+
+    @When("The user pays the order")
+    public void theUserPaysTheOrder() {
+        orderService.paySubOrder(registeredUser.getId(), order.getId());
     }
 
 
