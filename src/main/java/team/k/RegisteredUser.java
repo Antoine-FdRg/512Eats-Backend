@@ -42,5 +42,5 @@ public class RegisteredUser {
                 .build();
     }
 
-    //TODO #65 add initializeGroupOrder method with only restaurant and groupOrder as parameters
+    //TODO #65 add initializeSubOrder method with only restaurant and groupOrder as parameters
 }

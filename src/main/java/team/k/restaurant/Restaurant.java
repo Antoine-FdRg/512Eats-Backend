@@ -38,14 +38,17 @@ public class Restaurant {
      *
      * @return true if the restaurant is available, false otherwise
      */
-    public boolean isAvailable(LocalTime timeChosen) {
-        if (!timeChosen.isAfter(open) || !timeChosen.isBefore(close)) {
+    public boolean isAvailable(LocalTime deliveryTimeWanted) {
+        // Check if the order is created after opening time + 50 minutes (30min for the timeslot and 20min for the delivery ) and before closing time - 20 minutes (for the delivery)
+        if (!deliveryTimeWanted.isAfter(open.plusMinutes(50)) || !deliveryTimeWanted.isBefore(close.plusMinutes(20))) {
             return false;
         }
-        TimeSlot currentTimeSlot = searchForCurrentTimeSlot(timeChosen);
+        // Check if the restaurant has a time slot available 20 minutes (of delivery) before the chosen time
+        TimeSlot currentTimeSlot = searchForPreviousTimeSlot(deliveryTimeWanted.minusMinutes(20));
         if (currentTimeSlot == null) {
             return false;
         }
+        // Check that the time slot is not full
         return currentTimeSlot.getOrders().size() < currentTimeSlot.getMaxNumberOfOrders();
     }
 
@@ -63,6 +66,15 @@ public class Restaurant {
             }
         }
         return null;
+    }
+
+    /**
+     * Search for the time slot that precedes the time slto containing the given time.
+     * @param time the time to search for
+     * @return the time slot that precedes the time slot containing the given time
+     */
+    private TimeSlot searchForPreviousTimeSlot(LocalTime time) {
+        return searchForCurrentTimeSlot(time.minusMinutes(TimeSlot.DURATION));
     }
 
 

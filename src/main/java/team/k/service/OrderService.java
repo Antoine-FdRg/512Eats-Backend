@@ -16,6 +16,7 @@ import team.k.restaurant.TimeSlot;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 public class OrderService {
 
@@ -27,7 +28,7 @@ public class OrderService {
     private RegisteredUserRepository registeredUserRepository;
 
 
-    public void createIndividualOrder(int registeredUserID, int restaurantId, int deliveryLocationId, LocalDateTime deliveryTime) {
+    public void createIndividualOrder(int registeredUserID, int restaurantId, int deliveryLocationId, LocalDateTime deliveryTime, LocalDateTime now) {
         RegisteredUser registeredUser = registeredUserRepository.findById(registeredUserID);
         if (registeredUser.getCurrentOrder() != null) {
             throw new NoSuchElementException("User already has an active order");
@@ -39,6 +40,15 @@ public class OrderService {
         Location deliveryLocation = locationRepository.findLocationById(deliveryLocationId);
         if (deliveryLocation == null) {
             throw new NoSuchElementException("Location not found");
+        }
+        if (Objects.isNull(deliveryTime)) {
+            throw new IllegalArgumentException("Delivery time cannot be null when creating an individual order");
+        }
+        if (deliveryTime.isBefore(now)) {
+            throw new IllegalArgumentException("Delivery time cannot be in the past");
+        }
+        if (!restaurant.isAvailable(deliveryTime.toLocalTime())) {
+            throw new IllegalArgumentException("Restaurant is not available at the chosen time");
         }
         registeredUser.initializeIndividualOrder(restaurant, deliveryLocation, deliveryTime);
     }
