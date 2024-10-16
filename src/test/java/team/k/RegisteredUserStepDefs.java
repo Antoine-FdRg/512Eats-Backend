@@ -35,7 +35,7 @@ public class RegisteredUserStepDefs {
                 .setAddress("123 Main St")
                 .setCity("Springfield")
                 .build();
-        Mockito.when(locationRepository.findLocationById(1)).thenReturn(location);
+        Mockito.when(locationRepository.findLocationById(location.getId())).thenReturn(location);
     }
 
 
