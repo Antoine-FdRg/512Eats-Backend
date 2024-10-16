@@ -52,8 +52,8 @@ public class OrderService {
         groupOrderRepository.add(groupOrder);
     }
 
-    public void placeSubOrder(int orderId){
-    // TODO : verify restaurant availibity, create a Payment, call PaymentProcessor to make the user pay, place if the payment is successful
+    public void placeSubOrder(int orderId) {
+        // TODO : verify restaurant availibity, create a Payment, call PaymentProcessor to make the user pay, place if the payment is successful
         subOrderRepository.findById(orderId).place();
     }
 }

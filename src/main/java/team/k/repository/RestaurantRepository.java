@@ -1,9 +1,13 @@
 package team.k.repository;
 
+import team.k.enumerations.FoodType;
 import team.k.restaurant.Restaurant;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class RestaurantRepository {
     private final List<Restaurant> restaurants = new ArrayList<>();
@@ -53,5 +57,20 @@ public class RestaurantRepository {
     public void delete(Restaurant restaurant) {
         restaurants.remove(restaurant);
     }
+
+    public List<Restaurant> findRestaurantByFoodType(List<FoodType> foodTypes) {
+        return this.restaurants.stream()
+                .filter(restaurant -> restaurant.getFoodTypes().stream().anyMatch(foodTypes::contains))
+                .collect(Collectors.toList());
+    }
+
+    public List<Restaurant> findRestaurantsByAvailability(LocalTime timeChosen) {
+        return this.findAll().stream().filter(restaurant -> restaurant.isAvailable(timeChosen)).toList();
+    }
+
+    public List<Restaurant> findRestaurantByName(String name) {
+        return this.findAll().stream().filter(restaurant -> Objects.equals(restaurant.getName(), name)).toList();
+    }
+
 
 }
