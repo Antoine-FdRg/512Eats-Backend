@@ -7,6 +7,7 @@ import io.cucumber.java.en.When;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import team.k.common.Dish;
 import team.k.enumerations.OrderStatus;
 import team.k.enumerations.Role;
 
@@ -37,6 +38,9 @@ public class RegisteredUserPlacesAnOrderStepdefs {
     SubOrderRepository subOrderRepository;
 
     @Mock
+    Dish dish;
+
+    @Mock
     RegisteredUserRepository registeredUserRepository;
 
     @Mock
@@ -63,6 +67,7 @@ public class RegisteredUserPlacesAnOrderStepdefs {
         when(restaurant.isAvailable(any())).thenReturn(true);
         order = new OrderBuilder().setUser(registeredUser).setRestaurant(restaurant).build();
         registeredUser.setCurrentOrder(order);
+        order.addDish(dish);
         when(subOrderRepository.findById(order.getId())).thenReturn(order);
     }
 
