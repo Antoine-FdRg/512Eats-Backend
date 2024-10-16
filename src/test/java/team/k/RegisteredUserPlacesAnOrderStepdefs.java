@@ -79,6 +79,7 @@ public class RegisteredUserPlacesAnOrderStepdefs {
 
     @When("The user pays the order")
     public void theUserPaysTheOrder() {
+        when(paymentProcessor.processPayment()).thenReturn(true);
         orderService.paySubOrder(registeredUser.getId(), order.getId());
     }
 
