@@ -31,8 +31,6 @@ public class InternetUserBrowsesMenusStepdefs {
     @Mock
     RestaurantRepository restaurantRepository;
     @Mock
-    TimeSlotRepository timeSlotRepository;
-    @Mock
     DishRepository dishRepository;
 
     @InjectMocks
@@ -45,7 +43,6 @@ public class InternetUserBrowsesMenusStepdefs {
 
     private NoSuchElementException errorMessage;
 
-    // Create a restaurant before each scenario
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);

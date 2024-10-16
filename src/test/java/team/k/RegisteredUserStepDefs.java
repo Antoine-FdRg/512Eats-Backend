@@ -31,7 +31,7 @@ public class RegisteredUserStepDefs {
     @Given("a delivery location")
     public void aDeliveryLocation() {
         location = new Location.Builder()
-                .setNumber(123)
+                .setNumber("123")
                 .setAddress("123 Main St")
                 .setCity("Springfield")
                 .build();
@@ -41,14 +41,14 @@ public class RegisteredUserStepDefs {
 
     @When("the user creates a group order by initializing the delivery location")
     public void theUserCreatesAGroupOrderByInitializingTheDeliveryLocation() {
-        orderService.createGroupOrder(1);
+        orderService.createGroupOrder(location.getId());
 
     }
 
     @Then("the group order is created and the delivery location is initialized")
     public void theGroupOrderIsCreatedAndTheDeliveryLocationIsInitialized() {
-        groupOrder = orderService.getGroupOrderRepository().getGroupOrders().get(0);
-        assertEquals(0, groupOrder.getDeliveryLocation().getId());
+        groupOrder = orderService.getGroupOrderRepository().getGroupOrders().getFirst();
+        assertEquals(location.getId(), groupOrder.getDeliveryLocation().getId());
         assertEquals(location, groupOrder.getDeliveryLocation());
     }
 
