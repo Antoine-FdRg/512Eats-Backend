@@ -2,6 +2,7 @@ package team.k.service;
 
 import lombok.Getter;
 import team.k.RegisteredUser;
+import team.k.common.Dish;
 import team.k.order.SubOrder;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
@@ -11,6 +12,7 @@ import team.k.common.Location;
 import team.k.order.GroupOrder;
 import team.k.repository.GroupOrderRepository;
 import team.k.repository.LocationRepository;
+import team.k.restaurant.TimeSlot;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
@@ -53,6 +55,19 @@ public class OrderService {
         groupOrderRepository.add(groupOrder);
     }
 
+    public void addDishToOrder(int orderId, Dish dish) {
+        //Il faut que le total des ingrédients du plat soit inférieur à DURATION
+        SubOrder subOrder = subOrderRepository.findById(orderId);
+        if (subOrder == null) {
+            throw new NoSuchElementException("SubOrder not found");
+        }
+        int preparationTime = subOrder.getDishes().stream().map(Dish::getPreparationTime).reduce(0, Integer::sum);
+        if (preparationTime >= TimeSlot.DURATION) {
+            throw new IllegalArgumentException("The total preparation time of the dishes is greater than 30 minutes");
+        }
+        subOrder.addDish(dish);
+    }
+
     public void placeSubOrder(int orderId) throws NoSuchElementException {
         // TODO : verify restaurant availibity, create a Payment, call PaymentProcessor to make the user pay, place if the payment is successful
         SubOrder subOrder = subOrderRepository.findById(orderId);
@@ -60,5 +75,13 @@ public class OrderService {
             throw new NoSuchElementException("SubOrder not found");
         }
         subOrder.place();
+        addOrderInTheCorrectTimeSlot(subOrder);
+    }
+
+
+    public void addOrderInTheCorrectTimeSlot(SubOrder subOrder) {
+        //TODO : add the order in the correct time slot
+        //Prendre le bon timeSlot
+        //Ajouter l'order dans le timeSlot
     }
 }
