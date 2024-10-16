@@ -10,6 +10,7 @@ import team.k.order.OrderBuilder;
 import team.k.restaurant.Restaurant;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -27,6 +28,7 @@ public class RegisteredUser {
         this.id = idCounter++;
         this.name = name;
         this.role = role;
+        this.orders = new ArrayList<>();
     }
 
     public boolean addOrderToHistory(SubOrder order) {
