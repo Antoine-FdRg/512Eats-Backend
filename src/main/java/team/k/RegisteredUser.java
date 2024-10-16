@@ -33,13 +33,14 @@ public class RegisteredUser {
         return orders.add(order);
     }
 
-    public void initializeIndividualOrder(Restaurant restaurant, Location deliveryLocation, LocalDateTime deliveryTime) {
+    public SubOrder initializeIndividualOrder(Restaurant restaurant, Location deliveryLocation, LocalDateTime deliveryTime) {
         currentOrder = new OrderBuilder()
                 .setUser(this)
                 .setRestaurant(restaurant)
                 .setDeliveryLocation(deliveryLocation)
                 .setDeliveryTime(deliveryTime)
                 .build();
+        return currentOrder;
     }
 
     //TODO #65 add initializeSubOrder method with only restaurant and groupOrder as parameters

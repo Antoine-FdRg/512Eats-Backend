@@ -48,7 +48,9 @@ public class OrderService {
         if (!restaurant.isAvailable(deliveryTime.toLocalTime())) {
             throw new IllegalArgumentException("Restaurant is not available at the chosen time");
         }
-        registeredUser.initializeIndividualOrder(restaurant, deliveryLocation, deliveryTime);
+        SubOrder order = registeredUser.initializeIndividualOrder(restaurant, deliveryLocation, deliveryTime);
+        subOrderRepository.add(order);
+        restaurant.addOrderToTimeslot(order);
     }
 
     public void createGroupOrder(int deliveryLocation) {

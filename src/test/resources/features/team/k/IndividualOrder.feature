@@ -10,6 +10,8 @@ Feature: Create an individual order
         When a registeredUser creates an order for the restaurant Naga with the deliveryPlace created for 12h55 on 01-01-2025 the current date being 01-01-2025 10:00
         Then the registeredUser should have his currentOrder with the status CREATED
         And the registeredUser should have his currentOrder with no dishes
+        And the restaurant should have 1 order with the status CREATED
+        And the order should have been added to the suborder repository
 
     Scenario: creation d'une order en erreur (date de livraison non renseignée)
       When a registeredUser creates an order for the restaurant Naga with the deliveryPlace created but without delivery date the current date being 01-01-2025 10:00
@@ -21,4 +23,9 @@ Feature: Create an individual order
 
     Scenario: creation d'une order en erreur (date de livraison postérieure à la date de fermeture du restaurant + 20min de livraison)
       When a registeredUser creates an order for the restaurant Naga with the deliveryPlace created for 15h00 on 01-01-2025 the current date being 01-01-2025 10:00
+      Then the registeredUser should not have any currentOrder
+
+    Scenario: creation d'une order en erreur (timeslot complet)
+      Given another timeslot at Naga beginning at 12h30 on 01-01-2025 but to many order already created on this timeslot
+      When a registeredUser creates an order for the restaurant Naga with the deliveryPlace created for 13h35 on 01-01-2025 the current date being 01-01-2025 10:00
       Then the registeredUser should not have any currentOrder
