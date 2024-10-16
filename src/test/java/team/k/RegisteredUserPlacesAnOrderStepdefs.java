@@ -63,7 +63,7 @@ public class RegisteredUserPlacesAnOrderStepdefs {
 
     @Then("the status of the order is placed now")
     public void theStatusOfTheOrderIsNow() {
-        assertEquals(order.getStatus(), OrderStatus.PLACED);
+        assertEquals(OrderStatus.PLACED, order.getStatus());
     }
 
 
@@ -72,5 +72,8 @@ public class RegisteredUserPlacesAnOrderStepdefs {
         orderService.paySubOrder(registeredUser.getId(), order.getId());
     }
 
-
+    @Then("the order appears in the user's history")
+    public void theOrderAppearsInTheUserSHistory() {
+        assertEquals(registeredUser.getOrders().getFirst(), order);
+    }
 }
