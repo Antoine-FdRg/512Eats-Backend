@@ -53,7 +53,7 @@ public class SubOrder {
         status = OrderStatus.CANCELED;
     }
 
-    public void place(){
+    public void place() {
         this.setStatus(OrderStatus.PLACED);
     }
 }

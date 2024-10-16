@@ -44,9 +44,9 @@ public class RegisteredUserPlaceAnOrderStepdefs {
 
     @Given("an order is created by a registered user whose name is {string} and his role is {role}")
     public void anOrderIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(String name, Role role) {
-        registeredUser = new RegisteredUser(name,role);
+        registeredUser = new RegisteredUser(name, role);
         when(registeredUserRepository.findById(registeredUser.getId())).thenReturn(registeredUser);
-        order= new OrderBuilder().setUser(registeredUser).build();
+        order = new OrderBuilder().setUser(registeredUser).build();
         when(subOrderRepository.findById(order.getId())).thenReturn(order);
     }
 
@@ -57,9 +57,8 @@ public class RegisteredUserPlaceAnOrderStepdefs {
 
     @Then("the status of the order is placed now")
     public void theStatusOfTheOrderIsNow() {
-        assertEquals(order.getStatus(),OrderStatus.PLACED);
+        assertEquals(order.getStatus(), OrderStatus.PLACED);
     }
-
 
 
 }

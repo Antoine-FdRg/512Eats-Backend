@@ -38,12 +38,11 @@ public class Restaurant {
      *
      * @return true if the restaurant is available, false otherwise
      */
-    public boolean isAvailable() {
-        LocalTime now = LocalTime.now();
-        if (!now.isAfter(open) || !now.isBefore(close)) {
+    public boolean isAvailable(LocalTime timeChosen) {
+        if (!timeChosen.isAfter(open) || !timeChosen.isBefore(close)) {
             return false;
         }
-        TimeSlot currentTimeSlot = searchForCurrentTimeSlot();
+        TimeSlot currentTimeSlot = searchForCurrentTimeSlot(timeChosen);
         if (currentTimeSlot == null) {
             return false;
         }
@@ -55,8 +54,7 @@ public class Restaurant {
      *
      * @return the current time slot if found, null otherwise
      */
-    private TimeSlot searchForCurrentTimeSlot() {
-        LocalTime now = LocalTime.now();
+    private TimeSlot searchForCurrentTimeSlot(LocalTime now) {
         for (TimeSlot timeSlot : timeSlots) {
             LocalTime timeSlotStart = timeSlot.getStart().toLocalTime();
             LocalTime timeSlotEnd = timeSlotStart.plusMinutes(TimeSlot.DURATION);
