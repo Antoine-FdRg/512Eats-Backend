@@ -2,9 +2,7 @@ package team.k.service;
 
 import lombok.Getter;
 import team.k.RegisteredUser;
-import team.k.common.Dish;
 import team.k.order.SubOrder;
-import team.k.repository.DishRepository;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
 import team.k.repository.SubOrderRepository;
@@ -14,31 +12,34 @@ import team.k.order.GroupOrder;
 import team.k.repository.GroupOrderRepository;
 import team.k.repository.LocationRepository;
 
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
+
 
 public class OrderService {
 
     LocationRepository locationRepository;
+    SubOrderRepository subOrderRepository;
     private RestaurantRepository restaurantRepository;
-    private DishRepository dishRepository;
-    private SubOrderRepository subOrderRepository;
     @Getter
     GroupOrderRepository groupOrderRepository = new GroupOrderRepository();
-
     private RegisteredUserRepository registeredUserRepository;
 
-    public void addDishToRegisteredUserBasket(int registeredUserID, int dishId, int restaurantId) {
-        Dish dish = dishRepository.findById(dishId);
+
+    public void createIndividualOrder(int registeredUserID, int restaurantId, int deliveryLocationId, LocalDateTime deliveryTime) {
+        RegisteredUser registeredUser = registeredUserRepository.findById(registeredUserID);
+        if (registeredUser.getCurrentOrder() != null) {
+            throw new NoSuchElementException("User already has an active order");
+        }
         Restaurant restaurant = restaurantRepository.findById(restaurantId);
-        if(!restaurant.getDishes().contains(dish)) {
-            throw new IllegalArgumentException("Dish not found in restaurant");
+        if (restaurant == null) {
+            throw new NoSuchElementException("Restaurant not found");
         }
-        RegisteredUser registeredUser  = registeredUserRepository.findById(registeredUserID);
-        if (registeredUser.getCurrentOrder()!= null && registeredUser.getCurrentOrder().getRestaurant() != restaurant) {
-            throw new IllegalArgumentException("Dishes of an order can only be from the same restaurant");
+        Location deliveryLocation = locationRepository.findLocationById(deliveryLocationId);
+        if (deliveryLocation == null) {
+            throw new NoSuchElementException("Location not found");
         }
-        registeredUser.addDishToBasket(dish, restaurant);
-        subOrderRepository.add(registeredUser.getCurrentOrder());
+        registeredUser.initializeIndividualOrder(restaurant, deliveryLocation, deliveryTime);
     }
 
     public void createGroupOrder(int deliveryLocation) {

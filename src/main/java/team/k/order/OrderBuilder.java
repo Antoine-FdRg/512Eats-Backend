@@ -17,7 +17,7 @@ public class OrderBuilder {
     private Restaurant restaurant;
     private RegisteredUser user;
     private final List<Dish> dishes;
-    private LocalDateTime deliveryDate;
+    private LocalDateTime deliveryTime;
     private Location deliveryLocation;
     private static int idCounter = 0;
 
@@ -51,8 +51,8 @@ public class OrderBuilder {
         return this;
     }
 
-    public OrderBuilder setDeliveryDate(LocalDateTime deliveryDate) {
-        this.deliveryDate = deliveryDate;
+    public OrderBuilder setDeliveryTime(LocalDateTime deliveryTime) {
+        this.deliveryTime = deliveryTime;
         return this;
     }
 
@@ -62,9 +62,9 @@ public class OrderBuilder {
                     "It needs a groupOrder to create a SubOrder or a deliveryLocation to create an IndividualOrder");
         }
         if(this.groupOrder == null) {
-            return new IndividualOrder(id, price, null, restaurant, user, dishes, OrderStatus.CREATED, null, deliveryDate, deliveryLocation);
+            return new IndividualOrder(id, price, null, restaurant, user, dishes, OrderStatus.CREATED, null, deliveryTime, deliveryLocation);
 
         }
-        return new SubOrder(id, price, groupOrder, restaurant, user, dishes, OrderStatus.CREATED, null, deliveryDate);
+        return new SubOrder(id, price, groupOrder, restaurant, user, dishes, OrderStatus.CREATED, null, deliveryTime);
     }
 }
