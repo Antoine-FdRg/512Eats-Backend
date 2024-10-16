@@ -10,6 +10,7 @@ import org.mockito.MockitoAnnotations;
 import team.k.enumerations.OrderStatus;
 import team.k.enumerations.Role;
 
+import team.k.external.PaymentProcessor;
 import team.k.order.OrderBuilder;
 import team.k.order.SubOrder;
 
@@ -20,6 +21,10 @@ import team.k.service.OrderService;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -37,6 +42,11 @@ public class RegisteredUserPlacesAnOrderStepdefs {
     @Mock
     Restaurant restaurant;
 
+    @Mock
+    PaymentProcessor paymentProcessor;
+
+    Exception exception;
+
     @InjectMocks
     OrderService orderService;
 
@@ -48,7 +58,7 @@ public class RegisteredUserPlacesAnOrderStepdefs {
 
     @Given("an order is created by a registered user whose name is {string} and his role is {role}")
     public void anOrderIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(String name, Role role) {
-        registeredUser = new RegisteredUser(name, role);
+        registeredUser = spy(new RegisteredUser(name, role));
         when(registeredUserRepository.findById(registeredUser.getId())).thenReturn(registeredUser);
         when(restaurant.isAvailable(any())).thenReturn(true);
         order = new OrderBuilder().setUser(registeredUser).setRestaurant(restaurant).build();
@@ -75,5 +85,24 @@ public class RegisteredUserPlacesAnOrderStepdefs {
     @Then("the order appears in the user's history")
     public void theOrderAppearsInTheUserSHistory() {
         assertEquals(registeredUser.getOrders().getFirst(), order);
+        verify(paymentProcessor, times(1)).processPayment();
+    }
+
+    @When("The user pays the order and the payment fails")
+    public void theUserPaysTheOrderAndThePaymentFails() {
+        when(paymentProcessor.processPayment()).thenReturn(false);
+        try {
+            orderService.paySubOrder(registeredUser.getId(), order.getId());
+        } catch (IllegalStateException e) {
+            exception = e;
+        }
+    }
+
+
+    @Then("the order does not appears in the user's history")
+    public void theOrderDoesNotAppearsInTheUserSHistory() {
+        verify(registeredUser, never()).addOrderToHistory(order);
+        assertEquals(IllegalStateException.class, exception.getClass());
+        verify(paymentProcessor, times(1)).processPayment();
     }
 }
