@@ -15,7 +15,6 @@ import team.k.repository.LocationRepository;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
-
 public class OrderService {
 
     LocationRepository locationRepository;

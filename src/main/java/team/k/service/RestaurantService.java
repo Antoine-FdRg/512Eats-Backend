@@ -1,12 +1,18 @@
 package team.k.service;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import team.k.common.Dish;
+import team.k.enumerations.FoodType;
 import team.k.repository.RestaurantRepository;
 import team.k.repository.TimeSlotRepository;
 import team.k.restaurant.Restaurant;
 import team.k.restaurant.TimeSlot;
 
+import java.time.LocalTime;
 import java.util.List;
+import java.util.NoSuchElementException;
+
 
 public class RestaurantService {
 
@@ -33,9 +39,16 @@ public class RestaurantService {
      * @param restaurantName the name of the restaurant
      * @return the list of dishes if the restaurant is found, null otherwise
      */
-    public List<Dish> getAllDishesFromRestaurant(String restaurantName) {
+    public List<Dish> getAllDishesFromRestaurant(String restaurantName) throws NoSuchElementException {
         Restaurant restaurant = this.getRestaurantByName(restaurantName);
-        return restaurant.getDishes();
+        if (restaurant == null) {
+            throw new NoSuchElementException("Restaurant not found");
+        }
+        List<Dish> dishes = restaurant.getDishes();
+        if (dishes.isEmpty()) {
+            throw new NoSuchElementException("No dishes available");
+        }
+        return dishes;
     }
 
     /**
@@ -60,5 +73,29 @@ public class RestaurantService {
 
     public void addDishToRestaurant(Restaurant restaurant, Dish dish) {
         restaurant.addDish(dish);
+    }
+
+    public List<Restaurant> getRestaurantsByFoodType(List<FoodType> foodTypes) throws NoSuchElementException {
+        List<Restaurant> restaurants = this.restaurantRepository.findRestaurantByFoodType(foodTypes);
+        if (restaurants.isEmpty()) {
+            throw new NoSuchElementException("No restaurants found with the food types: " + foodTypes);
+        }
+        return restaurants;
+    }
+
+    public List<Restaurant> getRestaurantsByAvailability(LocalTime timeChosen) throws NoSuchElementException {
+        List<Restaurant> restaurants = this.restaurantRepository.findRestaurantsByAvailability(timeChosen);
+        if (restaurants.isEmpty()) {
+            throw new NoSuchElementException("No restaurants found with availability at: " + timeChosen);
+        }
+        return restaurants;
+    }
+
+    public List<Restaurant> getRestaurantsByName(String name) throws NoSuchElementException {
+        List<Restaurant> restaurants = this.restaurantRepository.findRestaurantByName(name);
+        if (restaurants.isEmpty()) {
+            throw new NoSuchElementException("No restaurants found with the name: " + name);
+        }
+        return restaurants;
     }
 }

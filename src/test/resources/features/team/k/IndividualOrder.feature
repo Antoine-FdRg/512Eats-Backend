@@ -7,6 +7,6 @@ Feature: Create an individual order
     And a delivery location with the number "930", the street "Rte des Colles" and the city "Biot"
 
     Scenario: creation d'une order
-        When a registeredUser creates an order for the restaurant Naga with the deliveryPlace created for 13h on 01-01-2025
-        Then the registeredUser should have his currentOrder with the status CREATED
-        Then the registeredUser should have his currentOrder with no dishes
+      When a registeredUser creates an order for the restaurant Naga with the deliveryPlace created for 13h on 01-01-2025
+      Then the registeredUser should have his currentOrder with the status CREATED
+      Then the registeredUser should have his currentOrder with no dishes
