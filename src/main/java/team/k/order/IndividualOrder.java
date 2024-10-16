@@ -20,4 +20,10 @@ public class IndividualOrder extends SubOrder {
         super(id, price, groupOrder, restaurant, user, dish, orderStatus, placedDate, deliveryDate);
         this.deliveryLocation = deliveryLocation;
     }
+
+    @Override
+    public void pay() {
+        super.pay();
+        super.place();
+    }
 }

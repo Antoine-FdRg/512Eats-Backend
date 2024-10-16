@@ -55,5 +55,10 @@ public class SubOrder {
 
     public void place() {
         this.setStatus(OrderStatus.PLACED);
+        this.user.addOrderToHistory(this);
+    }
+
+    public void pay() {
+        this.setStatus(OrderStatus.PAID);
     }
 }
