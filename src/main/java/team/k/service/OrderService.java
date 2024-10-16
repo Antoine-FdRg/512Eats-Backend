@@ -25,6 +25,7 @@ public class OrderService {
     @Getter
     GroupOrderRepository groupOrderRepository = new GroupOrderRepository();
     private RegisteredUserRepository registeredUserRepository;
+    PaymentProcessor paymentProcessor;
 
 
     public void createIndividualOrder(int registeredUserID, int restaurantId, int deliveryLocationId, LocalDateTime deliveryTime) {
@@ -76,7 +77,6 @@ public class OrderService {
         if (!currentOrder.getRestaurant().isAvailable(LocalTime.now())) {
             throw new IllegalArgumentException("Restaurant is not available");
         }
-        PaymentProcessor paymentProcessor = new PaymentProcessor(registeredUser, currentOrder);
         if (paymentProcessor.processPayment()) {
             subOrderRepository.findById(orderId).pay();
         } else {
