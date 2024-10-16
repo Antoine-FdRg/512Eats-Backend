@@ -77,6 +77,9 @@ public class OrderService {
         if (!currentOrder.getRestaurant().isAvailable(LocalTime.now())) {
             throw new IllegalArgumentException("Restaurant is not available");
         }
+        if (currentOrder.getDishes().isEmpty()) {
+            throw new IllegalArgumentException("Basket is empty");
+        }
         if (paymentProcessor.processPayment()) {
             subOrderRepository.findById(orderId).pay();
         } else {
