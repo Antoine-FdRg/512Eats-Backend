@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
 public class IndividualOrderStepdefs {
@@ -45,6 +46,8 @@ public class IndividualOrderStepdefs {
 
     @InjectMocks
     OrderService orderService;
+
+    private IllegalArgumentException orderNotCreatedException;
 
     @ParameterType("STUDENT|CAMPUS_EMPLOYEE")
     public Role role(String role) {
@@ -92,10 +95,15 @@ public class IndividualOrderStepdefs {
         when(locationRepository.findLocationById(deliveryLocation.getId())).thenReturn(deliveryLocation);
     }
 
-    @When("a registeredUser creates an order for the restaurant Naga with the deliveryPlace created for {int}h on {int}-{int}-{int}")
-    public void aRegisteredUserCreatesAnOrderForTheRestaurantNagaWithTheDeliveryPlaceOfIdForH(int deliveryTimeHours, int deliveryTimeDay, int deliveryTimeMonth, int deliveryTimeYear) {
+    @When("a registeredUser creates an order for the restaurant Naga with the deliveryPlace created for {int}h on {int}-{int}-{int} the current date being {int}-{int}-{int} {int}:{int}")
+    public void aRegisteredUserCreatesAnOrderForTheRestaurantNagaWithTheDeliveryPlaceCreatedForHOnTheCurrentDateBeing(int deliveryTimeHours, int deliveryTimeDay, int deliveryTimeMonth, int deliveryTimeYear, int currentDay, int currentMonth, int currentYear, int currentHours, int currentMinutes) {
         LocalDateTime deliveryTime = LocalDateTime.of(deliveryTimeYear, deliveryTimeMonth, deliveryTimeDay, deliveryTimeHours, 0);
-        orderService.createIndividualOrder(registeredUser.getId(), restaurant.getId(), deliveryLocation.getId(), deliveryTime);
+        LocalDateTime now = LocalDateTime.of(currentYear, currentMonth, currentDay, currentHours, currentMinutes);
+        try {
+            orderService.createIndividualOrder(registeredUser.getId(), restaurant.getId(), deliveryLocation.getId(), deliveryTime, now);
+        } catch (IllegalArgumentException e) {
+            orderNotCreatedException = e;
+        }
     }
 
     @Then("the registeredUser should have his currentOrder with the status CREATED")
@@ -103,8 +111,26 @@ public class IndividualOrderStepdefs {
         assertEquals(OrderStatus.CREATED, registeredUser.getCurrentOrder().getStatus());
     }
 
-    @Then("the registeredUser should have his currentOrder with no dishes")
+    @And("the registeredUser should have his currentOrder with no dishes")
     public void theRegisteredUserShouldHaveHisCurrentOrderWithNoDished() {
         assertEquals(0, registeredUser.getCurrentOrder().getDishes().size());
     }
+
+    @When("a registeredUser creates an order for the restaurant Naga with the deliveryPlace created but without delivery date the current date being {int}-{int}-{int} {int}:{int}")
+    public void aRegisteredUserCreatesAnOrderForTheRestaurantNagaWithTheDeliveryPlaceCreatedButWithoutDeliveryDateTheCurrentDateBeing(int currentDay, int currentMonth, int currentYear, int currentHours, int currentMinutes) {
+        LocalDateTime now = LocalDateTime.of(currentYear, currentMonth, currentDay, currentHours, currentMinutes);
+        try {
+            orderService.createIndividualOrder(registeredUser.getId(), restaurant.getId(), deliveryLocation.getId(), null, now);
+        } catch (IllegalArgumentException e) {
+            orderNotCreatedException = e;
+        }
+    }
+
+    @Then("the registeredUser should not have any currentOrder")
+    public void theRegisteredUserShouldNotHaveAnyCurrentOrder() {
+        assertEquals(IllegalArgumentException.class, orderNotCreatedException.getClass());
+        assertNull(registeredUser.getCurrentOrder());
+    }
+
+
 }
