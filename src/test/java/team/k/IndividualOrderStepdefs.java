@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
@@ -95,9 +96,9 @@ public class IndividualOrderStepdefs {
         when(locationRepository.findLocationById(deliveryLocation.getId())).thenReturn(deliveryLocation);
     }
 
-    @When("a registeredUser creates an order for the restaurant Naga with the deliveryPlace created for {int}h on {int}-{int}-{int} the current date being {int}-{int}-{int} {int}:{int}")
-    public void aRegisteredUserCreatesAnOrderForTheRestaurantNagaWithTheDeliveryPlaceCreatedForHOnTheCurrentDateBeing(int deliveryTimeHours, int deliveryTimeDay, int deliveryTimeMonth, int deliveryTimeYear, int currentDay, int currentMonth, int currentYear, int currentHours, int currentMinutes) {
-        LocalDateTime deliveryTime = LocalDateTime.of(deliveryTimeYear, deliveryTimeMonth, deliveryTimeDay, deliveryTimeHours, 0);
+    @When("a registeredUser creates an order for the restaurant Naga with the deliveryPlace created for {int}h{int} on {int}-{int}-{int} the current date being {int}-{int}-{int} {int}:{int}")
+    public void aRegisteredUserCreatesAnOrderForTheRestaurantNagaWithTheDeliveryPlaceCreatedForHOnTheCurrentDateBeing(int deliveryTimeHours, int deliveryTimeMinutes, int deliveryTimeDay, int deliveryTimeMonth, int deliveryTimeYear, int currentDay, int currentMonth, int currentYear, int currentHours, int currentMinutes) {
+        LocalDateTime deliveryTime = LocalDateTime.of(deliveryTimeYear, deliveryTimeMonth, deliveryTimeDay, deliveryTimeHours, deliveryTimeMinutes);
         LocalDateTime now = LocalDateTime.of(currentYear, currentMonth, currentDay, currentHours, currentMinutes);
         try {
             orderService.createIndividualOrder(registeredUser.getId(), restaurant.getId(), deliveryLocation.getId(), deliveryTime, now);
@@ -108,6 +109,7 @@ public class IndividualOrderStepdefs {
 
     @Then("the registeredUser should have his currentOrder with the status CREATED")
     public void theRegisteredUserShouldHaveACurrentOrderWithTheStatusCREATED() {
+        assertNotNull(registeredUser.getCurrentOrder());
         assertEquals(OrderStatus.CREATED, registeredUser.getCurrentOrder().getStatus());
     }
 

@@ -45,6 +45,9 @@ public class OrderService {
         if (deliveryTime.isBefore(now)) {
             throw new IllegalArgumentException("Delivery time cannot be in the past");
         }
+        if (!restaurant.isAvailable(deliveryTime.toLocalTime())) {
+            throw new IllegalArgumentException("Restaurant is not available at the chosen time");
+        }
         registeredUser.initializeIndividualOrder(restaurant, deliveryLocation, deliveryTime);
     }
 
