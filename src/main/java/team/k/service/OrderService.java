@@ -3,6 +3,7 @@ package team.k.service;
 import lombok.Getter;
 import team.k.RegisteredUser;
 import team.k.common.Dish;
+import team.k.external.PaymentProcessor;
 import team.k.order.SubOrder;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
@@ -15,6 +16,7 @@ import team.k.repository.LocationRepository;
 import team.k.restaurant.TimeSlot;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -27,6 +29,7 @@ public class OrderService {
     GroupOrderRepository groupOrderRepository = new GroupOrderRepository();
 
     private RegisteredUserRepository registeredUserRepository;
+    PaymentProcessor paymentProcessor;
 
 
     public OrderService(SubOrderRepository subOrderRepository) {
@@ -54,7 +57,9 @@ public class OrderService {
         if (!restaurant.isAvailable(deliveryTime.toLocalTime())) {
             throw new IllegalArgumentException("Restaurant is not available at the chosen time");
         }
-        registeredUser.initializeIndividualOrder(restaurant, deliveryLocation, deliveryTime);
+        SubOrder order = registeredUser.initializeIndividualOrder(restaurant, deliveryLocation, deliveryTime);
+        subOrderRepository.add(order);
+        restaurant.addOrderToTimeslot(order);
     }
 
     public void createGroupOrder(int deliveryLocation) {
@@ -83,11 +88,33 @@ public class OrderService {
     }
 
     public void placeSubOrder(int orderId) throws NoSuchElementException {
-        // TODO : verify restaurant availibity, create a Payment, call PaymentProcessor to make the user pay, place if the payment is successful
         SubOrder subOrder = subOrderRepository.findById(orderId);
         if (subOrder == null) {
             throw new NoSuchElementException("SubOrder not found");
         }
         subOrder.place();
+
+    }
+
+    public void paySubOrder(int registeredUserID, int orderId) throws IllegalStateException {
+        RegisteredUser registeredUser = registeredUserRepository.findById(registeredUserID);
+        SubOrder currentOrder = registeredUser.getCurrentOrder();
+        if (currentOrder == null) {
+            throw new IllegalArgumentException("User has no current order");
+        }
+        if (currentOrder.getId() != orderId) {
+            throw new IllegalArgumentException("User can only pay for his current order");
+        }
+        if (!currentOrder.getRestaurant().isAvailable(LocalTime.now())) {
+            throw new IllegalArgumentException("Restaurant is not available");
+        }
+        if (currentOrder.getDishes().isEmpty()) {
+            throw new IllegalArgumentException("Basket is empty");
+        }
+        if (paymentProcessor.processPayment()) {
+            subOrderRepository.findById(orderId).pay();
+        } else {
+            throw new IllegalStateException("Payment failed");
+        }
     }
 }
