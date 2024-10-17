@@ -61,6 +61,10 @@ public class TimeSlot {
         return orders.stream().filter(subOrder -> OrderStatus.CREATED.equals(subOrder.getStatus())).toArray().length;
     }
 
+    public LocalDateTime getEnd() {
+        return start.plusMinutes(DURATION);
+    }
+
     public String toString() {
         return "TimeSlot [start=" + start + ", productionCapacity=" + productionCapacity + ", maxNumberOfOrders=" + maxNumberOfOrders + "]";
     }

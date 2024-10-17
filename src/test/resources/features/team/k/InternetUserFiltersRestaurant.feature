@@ -11,15 +11,13 @@ Feature: Registered user can filter  restaurant
     When Registered user selects a food type : "PIZZA"
     Then Registered user should see a message "No restaurants found with the food types: [PIZZA]"
 
-
-
   Scenario: Registered user can filter restaurant by availability
-    When Registered user selects restaurants that are open at 12: 10
+    When Registered user selects restaurants that are open at 12:10 on 01-01-2025
     Then Registered user should see the restaurant that are open
 
   Scenario: Registered user can filter restaurant by availability but no restaurant found
-    When Registered user selects restaurants that are open at 10: 10
-    Then Registered user should see a message "No restaurants found with availability at: 10:10"
+    When Registered user selects restaurants that are open at 10:10 on 01-01-2025
+    Then Registered user should see a message "No restaurants found with availability at: 2025-01-01T10:10"
 
 
   Scenario: Registered user can filter restaurant by name

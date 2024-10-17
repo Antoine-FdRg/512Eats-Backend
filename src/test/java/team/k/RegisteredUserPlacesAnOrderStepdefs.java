@@ -20,6 +20,8 @@ import team.k.repository.SubOrderRepository;
 import team.k.restaurant.Restaurant;
 import team.k.service.OrderService;
 
+import java.time.LocalDateTime;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -82,10 +84,11 @@ public class RegisteredUserPlacesAnOrderStepdefs {
     }
 
 
-    @When("The user pays the order")
-    public void theUserPaysTheOrder() {
+    @When("The user pays the order at {int}:{int} on {int}-{int}-{int}")
+    public void theUserPaysTheOrder(int hour, int minute, int day, int month, int year) {
+        LocalDateTime paymentTime = LocalDateTime.of(year, month, day, hour, minute);
         when(paymentProcessor.processPayment()).thenReturn(true);
-        orderService.paySubOrder(registeredUser.getId(), order.getId());
+        orderService.paySubOrder(registeredUser.getId(), order.getId(),paymentTime);
     }
 
     @Then("the order appears in the user's history")
@@ -94,11 +97,11 @@ public class RegisteredUserPlacesAnOrderStepdefs {
         verify(paymentProcessor, times(1)).processPayment();
     }
 
-    @When("The user pays the order and the payment fails")
-    public void theUserPaysTheOrderAndThePaymentFails() {
+    @When("The user pays the order and the payment fails at {int}:{int} on {int}-{int}-{int}")
+    public void theUserPaysTheOrderAndThePaymentFails(int hour, int minute, int day, int month, int year) {
         when(paymentProcessor.processPayment()).thenReturn(false);
         try {
-            orderService.paySubOrder(registeredUser.getId(), order.getId());
+            orderService.paySubOrder(registeredUser.getId(), order.getId(), LocalDateTime.of(year, month, day, hour, minute));
         } catch (IllegalStateException e) {
             exception = e;
         }

@@ -59,8 +59,7 @@ public class InternetUserFiltersRestaurantStepdefs {
         restaurantB.addDish(dishB);
         when(restaurantRepository.findRestaurantByFoodType(List.of(FoodType.SUSHI))).thenReturn(List.of(restaurantA, restaurantB));
         when(restaurantRepository.findRestaurantByFoodType(List.of(FoodType.BURGER))).thenReturn(List.of());
-        when(restaurantRepository.findRestaurantsByAvailability(LocalTime.of(12, 10, 0))).thenReturn(List.of(restaurantA));
-        when(restaurantRepository.findRestaurantsByAvailability(LocalTime.of(10, 10, 0))).thenReturn(List.of());
+        when(restaurantRepository.findRestaurantsByAvailability(LocalDateTime.of(2025,1,1,12, 10, 0))).thenReturn(List.of(restaurantA)).thenReturn(List.of());
         when(restaurantRepository.findRestaurantByName(restaurantNameB)).thenReturn(List.of(restaurantB));
         when(restaurantRepository.findRestaurantByName("512PizzaRestaurant")).thenReturn(List.of());
     }
@@ -97,10 +96,10 @@ public class InternetUserFiltersRestaurantStepdefs {
 
     //By Availability//
 
-    @When("Registered user selects restaurants that are open at {int}: {int}")
-    public void registeredUserSelectsRestaurantsThatAreOpenAtOClock(int currentTime, int min) {
+    @When("Registered user selects restaurants that are open at {int}:{int} on {int}-{int}-{int}")
+    public void registeredUserSelectsRestaurantsThatAreOpenAtOClock(int hours, int minutes, int day, int month, int year) {
         try {
-            restaurantsAvailable = this.restaurantService.getRestaurantsByAvailability(LocalTime.of(currentTime, min, 0));
+            restaurantsAvailable = this.restaurantService.getRestaurantsByAvailability(LocalDateTime.of(year, month, day, hours, minutes, 0));
         } catch (NoSuchElementException e) {
             this.exception = e;
         }

@@ -1,7 +1,5 @@
 package team.k.service;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import team.k.common.Dish;
 import team.k.enumerations.FoodType;
 import team.k.repository.RestaurantRepository;
@@ -9,7 +7,8 @@ import team.k.repository.TimeSlotRepository;
 import team.k.restaurant.Restaurant;
 import team.k.restaurant.TimeSlot;
 
-import java.time.LocalTime;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -18,20 +17,6 @@ public class RestaurantService {
 
     private RestaurantRepository restaurantRepository;
     private TimeSlotRepository timeSlotRepository;
-
-    public List<Restaurant> getAllRestaurants() {
-        return this.restaurantRepository.findAll();
-    }
-
-    /**
-     * Get a restaurant by its name
-     *
-     * @param restaurantName the name of the restaurant
-     * @return the restaurant if found, null otherwise
-     */
-    public Restaurant getRestaurantByName(String restaurantName) {
-        return this.restaurantRepository.findByName(restaurantName);
-    }
 
     /**
      * Get all dishes from a restaurant
@@ -52,6 +37,25 @@ public class RestaurantService {
     }
 
     /**
+     * Get all available delivery times of a restaurant on a specific day
+     *
+     * @param restaurantId the id of the restaurant
+     * @param day          the day to check
+     * @return the list of available delivery times
+     */
+    public List<LocalDateTime> getAllAvailableDeliveryTimesOfRestaurantOnDay(int restaurantId, LocalDate day) throws NoSuchElementException {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId);
+        if (restaurant == null) {
+            throw new NoSuchElementException("Restaurant not found");
+        }
+        List<LocalDateTime> availableTimes = restaurant.getAvailableDeliveryTimesOnDay(day);
+        if (availableTimes.isEmpty()) {
+            throw new NoSuchElementException("No available delivery times");
+        }
+        return availableTimes;
+    }
+
+    /**
      * Add a restaurant to the repository
      *
      * @param restaurant the restaurant to add
@@ -64,7 +68,7 @@ public class RestaurantService {
         this.restaurantRepository.delete(restaurant);
     }
 
-
+    /***** Update *****/
     public void addTimeSlotToRestaurant(int restaurantId, int timeSlotId) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId);
         TimeSlot ts = timeSlotRepository.findById(timeSlotId);
@@ -75,6 +79,21 @@ public class RestaurantService {
         restaurant.addDish(dish);
     }
 
+    /***** Searching methods *****/
+    public List<Restaurant> getAllRestaurants() {
+        return this.restaurantRepository.findAll();
+    }
+
+    /**
+     * Get a restaurant by its name
+     *
+     * @param restaurantName the name of the restaurant
+     * @return the restaurant if found, null otherwise
+     */
+    public Restaurant getRestaurantByName(String restaurantName) {
+        return this.restaurantRepository.findByName(restaurantName);
+    }
+
     public List<Restaurant> getRestaurantsByFoodType(List<FoodType> foodTypes) throws NoSuchElementException {
         List<Restaurant> restaurants = this.restaurantRepository.findRestaurantByFoodType(foodTypes);
         if (restaurants.isEmpty()) {
@@ -83,7 +102,7 @@ public class RestaurantService {
         return restaurants;
     }
 
-    public List<Restaurant> getRestaurantsByAvailability(LocalTime timeChosen) throws NoSuchElementException {
+    public List<Restaurant> getRestaurantsByAvailability(LocalDateTime timeChosen) throws NoSuchElementException {
         List<Restaurant> restaurants = this.restaurantRepository.findRestaurantsByAvailability(timeChosen);
         if (restaurants.isEmpty()) {
             throw new NoSuchElementException("No restaurants found with availability at: " + timeChosen);
