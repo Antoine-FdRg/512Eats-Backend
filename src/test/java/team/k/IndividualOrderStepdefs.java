@@ -8,13 +8,16 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import team.k.common.Location;
 import team.k.enumerations.OrderStatus;
 import team.k.enumerations.Role;
+import team.k.order.SubOrder;
 import team.k.repository.LocationRepository;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
+import team.k.repository.SubOrderRepository;
 import team.k.repository.TimeSlotRepository;
 import team.k.restaurant.Restaurant;
 import team.k.restaurant.TimeSlot;
@@ -27,6 +30,7 @@ import java.time.LocalTime;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class IndividualOrderStepdefs {
@@ -41,10 +45,10 @@ public class IndividualOrderStepdefs {
     TimeSlotRepository timeSlotRepository;
     @Mock
     LocationRepository locationRepository;
-
     @InjectMocks
     RestaurantService restaurantService;
-
+    @Mock
+    SubOrderRepository subOrderRepository;
     @InjectMocks
     OrderService orderService;
 
@@ -74,14 +78,14 @@ public class IndividualOrderStepdefs {
     public void aRestaurantNamedOpenFromTo(String name, int openHours, int openMinutes, int closeHours, int closeMinutes) {
         LocalTime openTime = LocalTime.of(openHours, openMinutes);
         LocalTime closeTime = LocalTime.of(closeHours, closeMinutes);
-        restaurant = new Restaurant.Builder().setName(name).setOpen(openTime).setClose(closeTime).build();
+        restaurant = new Restaurant.Builder().setName(name).setOpen(openTime).setClose(closeTime).setAverageOrderPreparationTime(30).build();
         when(restaurantRepository.findById(restaurant.getId())).thenReturn(restaurant);
     }
 
     @And("with a productionCapacity of {int} for the timeslot beginning at {int}:{int} on {int}-{int}-{int}")
     public void withAProduvtionCapacityOfForTheTimeslotAtOn(int productionCapacity, int startHours, int startMinutes, int startDay, int startMonth, int startYear) {
         LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, startHours, startMinutes);
-        TimeSlot timeSlot = new TimeSlot(startTime, restaurant, productionCapacity, 10);
+        TimeSlot timeSlot = new TimeSlot(startTime, restaurant, productionCapacity);
         when(timeSlotRepository.findById(timeSlot.getId())).thenReturn(timeSlot);
         restaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
     }
@@ -118,6 +122,16 @@ public class IndividualOrderStepdefs {
         assertEquals(0, registeredUser.getCurrentOrder().getDishes().size());
     }
 
+    @And("the restaurant should have {int} order with the status CREATED")
+    public void theRestaurantShouldHaveAnOrderWithTheStatusCREATED(int numberOfOrders) {
+        assertEquals(numberOfOrders,restaurant.getPreviousTimeSlot(registeredUser.getCurrentOrder().getDeliveryDate().toLocalTime()).getNumberOfCreatedOrders());
+    }
+
+    @And("the order should have been added to the suborder repository")
+    public void theOrderShouldHaveBeenAddedToTheSuborderRepository() {
+        verify(subOrderRepository).add(registeredUser.getCurrentOrder());
+    }
+
     @When("a registeredUser creates an order for the restaurant Naga with the deliveryPlace created but without delivery date the current date being {int}-{int}-{int} {int}:{int}")
     public void aRegisteredUserCreatesAnOrderForTheRestaurantNagaWithTheDeliveryPlaceCreatedButWithoutDeliveryDateTheCurrentDateBeing(int currentDay, int currentMonth, int currentYear, int currentHours, int currentMinutes) {
         LocalDateTime now = LocalDateTime.of(currentYear, currentMonth, currentDay, currentHours, currentMinutes);
@@ -135,4 +149,16 @@ public class IndividualOrderStepdefs {
     }
 
 
+
+    @Given("another timeslot at Naga beginning at {int}h{int} on {int}-{int}-{int} but to many order already created on this timeslot")
+    public void anotherTimeslotAtNagaBeginningAtHOnButToManyOrderAlreadyCreatedOnThisTimeslot(int startHours, int startMinutes, int startDay, int startMonth, int startYear) {
+        LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, startHours, startMinutes);
+        TimeSlot timeSlot = new TimeSlot(startTime, restaurant, 0);
+        SubOrder orderToFillTimeSlot1 = Mockito.mock(SubOrder.class);
+        SubOrder orderToFillTimeSlot2 = Mockito.mock(SubOrder.class);
+        timeSlot.addOrder(orderToFillTimeSlot1);
+        timeSlot.addOrder(orderToFillTimeSlot2);
+        when(timeSlotRepository.findById(timeSlot.getId())).thenReturn(timeSlot);
+        restaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
+    }
 }

@@ -14,48 +14,58 @@ import java.util.List;
  * Represents a time slot for a restaurant in the database.
  */
 @Getter
-@Setter()
+@Setter
 @AllArgsConstructor
 public class TimeSlot {
     private int id;
-    private List<SubOrder> orders;
-
-    private LocalDateTime start;
-
-    private Restaurant restaurant;
-
-    private int productionCapacity; //number of cooks
-
     public static final int DURATION = 30;
-
+    private List<SubOrder> orders;
+    private LocalDateTime start;
+    private Restaurant restaurant;
+    private int productionCapacity; //number of cooks
     private int maxNumberOfOrders;
 
     private static int idCounter = 0;
 
-    public TimeSlot(LocalDateTime start, Restaurant restaurant, int productionCapacity, int maxNumberOfOrders) {
+    public TimeSlot(LocalDateTime start, Restaurant restaurant, int productionCapacity) {
         this.start = start;
         this.restaurant = restaurant;
         this.productionCapacity = productionCapacity;
-        this.maxNumberOfOrders = maxNumberOfOrders;
+        this.maxNumberOfOrders = getTotalMaxPreparationTime() / restaurant.getAverageOrderPreparationTime();
         this.orders = new ArrayList<>();
         this.id = idCounter++;
     }
 
+    public int getTotalMaxPreparationTime() {
+        return productionCapacity * DURATION;
+    }
+
     public boolean isFull() {
-        int totalPreparationTime = getTotalPreparationTime();
-        return orders.size() >= maxNumberOfOrders && totalPreparationTime >= productionCapacity*DURATION;
+        return orders.size() >= maxNumberOfOrders || getTotalPreparationTime() >= getTotalMaxPreparationTime();
     }
 
     public int getFreeProductionCapacity() {
         int totalPreparationTime = getTotalPreparationTime();
-        return productionCapacity*DURATION - totalPreparationTime;
+        return getTotalMaxPreparationTime() - totalPreparationTime;
     }
 
     private int getTotalPreparationTime() {
         return orders.stream().filter(order -> order.getStatus().equals(OrderStatus.PLACED)).mapToInt(SubOrder::getPreparationTime).sum();
     }
 
+    private int getNumberOfPlacedOrders() {
+        return orders.stream().filter(subOrder -> OrderStatus.PLACED.equals(subOrder.getStatus())).toArray().length;
+    }
+
+    public int getNumberOfCreatedOrders() {
+        return orders.stream().filter(subOrder -> OrderStatus.CREATED.equals(subOrder.getStatus())).toArray().length;
+    }
+
     public String toString() {
         return "TimeSlot [start=" + start + ", productionCapacity=" + productionCapacity + ", maxNumberOfOrders=" + maxNumberOfOrders + "]";
+    }
+
+    public void addOrder(SubOrder order) {
+        orders.add(order);
     }
 }

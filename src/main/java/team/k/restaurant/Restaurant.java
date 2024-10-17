@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import team.k.common.Dish;
 import team.k.enumerations.FoodType;
+import team.k.order.SubOrder;
 import team.k.restaurant.discount.DiscountStrategy;
 
 import java.time.LocalTime;
@@ -21,6 +22,7 @@ public class Restaurant {
     private List<Dish> dishes;
     private List<FoodType> foodTypes;
     private DiscountStrategy discountStrategy;
+    private int averageOrderPreparationTime;
 
     private Restaurant(Builder builder) {
         this.id = builder.id;
@@ -30,6 +32,7 @@ public class Restaurant {
         this.timeSlots = builder.timeSlots;
         this.dishes = builder.dishes;
         this.foodTypes = builder.foodTypes;
+        this.averageOrderPreparationTime = builder.averageOrderPreparationTime;
         this.discountStrategy = builder.discountStrategy;
     }
 
@@ -44,12 +47,12 @@ public class Restaurant {
             return false;
         }
         // Check if the restaurant has a time slot available 20 minutes (of delivery) before the chosen time
-        TimeSlot currentTimeSlot = searchForPreviousTimeSlot(deliveryTimeWanted.minusMinutes(20));
+        TimeSlot currentTimeSlot = getPreviousTimeSlot(deliveryTimeWanted.minusMinutes(20));
         if (currentTimeSlot == null) {
             return false;
         }
         // Check that the time slot is not full
-        return currentTimeSlot.getOrders().size() < currentTimeSlot.getMaxNumberOfOrders();
+        return !currentTimeSlot.isFull();
     }
 
     /**
@@ -57,7 +60,7 @@ public class Restaurant {
      *
      * @return the current time slot if found, null otherwise
      */
-    private TimeSlot searchForCurrentTimeSlot(LocalTime now) {
+    private TimeSlot getCurrentTimeSlot(LocalTime now) {
         for (TimeSlot timeSlot : timeSlots) {
             LocalTime timeSlotStart = timeSlot.getStart().toLocalTime();
             LocalTime timeSlotEnd = timeSlotStart.plusMinutes(TimeSlot.DURATION);
@@ -73,8 +76,8 @@ public class Restaurant {
      * @param time the time to search for
      * @return the time slot that precedes the time slot containing the given time
      */
-    private TimeSlot searchForPreviousTimeSlot(LocalTime time) {
-        return searchForCurrentTimeSlot(time.minusMinutes(TimeSlot.DURATION));
+    public TimeSlot getPreviousTimeSlot(LocalTime time) {
+        return getCurrentTimeSlot(time.minusMinutes(TimeSlot.DURATION));
     }
 
 
@@ -118,11 +121,19 @@ public class Restaurant {
         foodTypes.add(foodType);
     }
 
+    public void addOrderToTimeslot(SubOrder order) {
+        TimeSlot currentTimeSlot = getPreviousTimeSlot(order.getDeliveryDate().toLocalTime().minusMinutes(20));
+        if (currentTimeSlot != null && !currentTimeSlot.isFull()) {
+            currentTimeSlot.addOrder(order);
+        }
+    }
+
     public static class Builder {
         private final int id;
         private String name;
         private LocalTime open;
         private LocalTime close;
+        private int averageOrderPreparationTime;
         private final List<TimeSlot> timeSlots;
         private final List<Dish> dishes;
         private final List<FoodType> foodTypes;
@@ -163,6 +174,11 @@ public class Restaurant {
 
         public Builder setClose(LocalTime close) {
             this.close = close;
+            return this;
+        }
+
+        public Builder setAverageOrderPreparationTime(int averageOrderPreparationTime) {
+            this.averageOrderPreparationTime = averageOrderPreparationTime;
             return this;
         }
 
