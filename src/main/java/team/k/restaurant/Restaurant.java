@@ -73,7 +73,7 @@ public class Restaurant {
      * @param time the time to search for
      * @return the time slot that precedes the time slot containing the given time
      */
-    private TimeSlot searchForPreviousTimeSlot(LocalTime time) {
+    public TimeSlot searchForPreviousTimeSlot(LocalTime time) {
         return searchForCurrentTimeSlot(time.minusMinutes(TimeSlot.DURATION));
     }
 

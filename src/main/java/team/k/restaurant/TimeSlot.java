@@ -55,6 +55,10 @@ public class TimeSlot {
         return orders.stream().filter(order -> order.getStatus().equals(OrderStatus.PLACED)).mapToInt(SubOrder::getPreparationTime).sum();
     }
 
+    public void addOrder(SubOrder order) {
+        orders.add(order);
+    }
+
     public String toString() {
         return "TimeSlot [start=" + start + ", productionCapacity=" + productionCapacity + ", maxNumberOfOrders=" + maxNumberOfOrders + "]";
     }

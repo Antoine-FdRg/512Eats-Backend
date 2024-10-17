@@ -25,9 +25,13 @@ public class OrderService {
     private RestaurantRepository restaurantRepository;
     @Getter
     GroupOrderRepository groupOrderRepository = new GroupOrderRepository();
+
     private RegisteredUserRepository registeredUserRepository;
 
 
+    public OrderService(SubOrderRepository subOrderRepository) {
+        this.subOrderRepository = subOrderRepository;
+    }
     public void createIndividualOrder(int registeredUserID, int restaurantId, int deliveryLocationId, LocalDateTime deliveryTime, LocalDateTime now) {
         RegisteredUser registeredUser = registeredUserRepository.findById(registeredUserID);
         if (registeredUser.getCurrentOrder() != null) {
@@ -85,13 +89,5 @@ public class OrderService {
             throw new NoSuchElementException("SubOrder not found");
         }
         subOrder.place();
-        addOrderInTheCorrectTimeSlot(subOrder);
-    }
-
-
-    public void addOrderInTheCorrectTimeSlot(SubOrder subOrder) {
-        //TODO : add the order in the correct time slot
-        //Prendre le bon timeSlot
-        //Ajouter l'order dans le timeSlot
     }
 }
