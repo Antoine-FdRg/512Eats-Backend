@@ -1,6 +1,8 @@
 package team.k.service;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import team.k.RegisteredUser;
 import team.k.common.Dish;
 import team.k.external.PaymentProcessor;
@@ -20,21 +22,18 @@ import java.time.LocalTime;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class OrderService {
 
-    LocationRepository locationRepository;
-    SubOrderRepository subOrderRepository;
-    private RestaurantRepository restaurantRepository;
     @Getter
-    GroupOrderRepository groupOrderRepository = new GroupOrderRepository();
-
-    private RegisteredUserRepository registeredUserRepository;
+    final GroupOrderRepository groupOrderRepository;
+    final LocationRepository locationRepository;
+    final SubOrderRepository subOrderRepository;
+    final RestaurantRepository restaurantRepository;
+    final RegisteredUserRepository registeredUserRepository;
     PaymentProcessor paymentProcessor;
 
-
-    public OrderService(SubOrderRepository subOrderRepository) {
-        this.subOrderRepository = subOrderRepository;
-    }
     public void createIndividualOrder(int registeredUserID, int restaurantId, int deliveryLocationId, LocalDateTime deliveryTime, LocalDateTime now) {
         RegisteredUser registeredUser = registeredUserRepository.findById(registeredUserID);
         if (registeredUser.getCurrentOrder() != null) {

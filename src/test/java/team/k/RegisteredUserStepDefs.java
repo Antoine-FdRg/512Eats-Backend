@@ -6,18 +6,29 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import team.k.common.Location;
 import team.k.order.GroupOrder;
+import team.k.repository.GroupOrderRepository;
 import team.k.repository.LocationRepository;
+import team.k.repository.RegisteredUserRepository;
+import team.k.repository.RestaurantRepository;
+import team.k.repository.SubOrderRepository;
 import team.k.service.OrderService;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 public class RegisteredUserStepDefs {
     @Mock
+    RestaurantRepository restaurantRepository;
+    @Mock
     LocationRepository locationRepository;
+    @Mock
+    SubOrderRepository subOrderRepository;
+    GroupOrderRepository groupOrderRepository = new GroupOrderRepository();
+    @Mock
+    RegisteredUserRepository registeredUserRepository;
     @InjectMocks
     OrderService orderService;
     GroupOrder groupOrder;
@@ -26,6 +37,12 @@ public class RegisteredUserStepDefs {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        orderService = new OrderService(
+                groupOrderRepository,
+                locationRepository,
+                subOrderRepository,
+                restaurantRepository,
+                registeredUserRepository);
     }
 
     @Given("a delivery location")
@@ -35,7 +52,7 @@ public class RegisteredUserStepDefs {
                 .setAddress("123 Main St")
                 .setCity("Springfield")
                 .build();
-        Mockito.when(locationRepository.findLocationById(location.getId())).thenReturn(location);
+        when(locationRepository.findLocationById(location.getId())).thenReturn(location);
     }
 
 

@@ -1,7 +1,5 @@
 package team.k.service;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import team.k.common.Dish;
 import team.k.enumerations.FoodType;
 import team.k.repository.RestaurantRepository;

@@ -5,29 +5,25 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import team.k.common.Dish;
 import team.k.enumerations.FoodType;
 import team.k.enumerations.OrderStatus;
-import team.k.order.IndividualOrder;
 import team.k.order.OrderBuilder;
 import team.k.order.SubOrder;
+import team.k.repository.GroupOrderRepository;
+import team.k.repository.LocationRepository;
+import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
 import team.k.repository.SubOrderRepository;
 import team.k.restaurant.Restaurant;
 import team.k.restaurant.TimeSlot;
 import team.k.service.OrderService;
-import team.k.service.RestaurantService;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 public class ManagingRestaurantPreparationCapacityStepDefs {
@@ -44,11 +40,23 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
     SubOrder order;
     Dish dish;
 
-
+    @Mock
+    RestaurantRepository restaurantRepository;
+    @Mock
+    LocationRepository locationRepository;
+    @Mock
+    GroupOrderRepository groupOrderRepository;
+    @Mock
+    RegisteredUserRepository registeredUserRepository;
     @Before
     public void setUp() {
         subOrderRepository = new SubOrderRepository();
-        orderService = new OrderService(subOrderRepository);
+        orderService = new OrderService(
+                groupOrderRepository,
+                locationRepository,
+                subOrderRepository,
+                restaurantRepository,
+                registeredUserRepository);
     }
 
     @Given("an order with the status {string} in the restaurant {string} with a chosen dish {string} with a production capacity of {int} with a delivery time at {int}:{int}")
@@ -73,7 +81,7 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
     public void aRegisteredUserPlacesTheCommand() {
 
         timeSlot.addOrder(order);
-        orderService.addDishToOrder(0, dish);
+        orderService.addDishToOrder(order.getId(), dish);
         order.setStatus(OrderStatus.PLACED);
 
     }

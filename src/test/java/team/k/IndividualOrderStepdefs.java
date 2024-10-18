@@ -38,17 +38,18 @@ public class IndividualOrderStepdefs {
     Restaurant restaurant;
     Location deliveryLocation;
     @Mock
-    RestaurantRepository restaurantRepository;
-    @Mock
-    RegisteredUserRepository registeredUserRepository;
-    @Mock
     TimeSlotRepository timeSlotRepository;
     @Mock
-    LocationRepository locationRepository;
+    RestaurantRepository restaurantRepository;
     @InjectMocks
     RestaurantService restaurantService;
+
+    @Mock
+    LocationRepository locationRepository;
     @Mock
     SubOrderRepository subOrderRepository;
+    @Mock
+    RegisteredUserRepository registeredUserRepository;
     @InjectMocks
     OrderService orderService;
 
