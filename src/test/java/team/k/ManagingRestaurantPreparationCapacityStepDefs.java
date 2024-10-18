@@ -79,7 +79,6 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
 
     @When("a registered user places the command")
     public void aRegisteredUserPlacesTheCommand() {
-
         timeSlot.addOrder(order);
         orderService.addDishToOrder(order.getId(), dish);
         order.setStatus(OrderStatus.PLACED);

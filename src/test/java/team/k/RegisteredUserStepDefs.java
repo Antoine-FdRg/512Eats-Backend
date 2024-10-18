@@ -29,7 +29,6 @@ public class RegisteredUserStepDefs {
     GroupOrderRepository groupOrderRepository = new GroupOrderRepository();
     @Mock
     RegisteredUserRepository registeredUserRepository;
-    @InjectMocks
     OrderService orderService;
     GroupOrder groupOrder;
     Location location;
