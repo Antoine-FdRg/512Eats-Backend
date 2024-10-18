@@ -125,7 +125,10 @@ public class IndividualOrderStepdefs {
 
     @And("the restaurant should have {int} order with the status CREATED")
     public void theRestaurantShouldHaveAnOrderWithTheStatusCREATED(int numberOfOrders) {
-        assertEquals(numberOfOrders, restaurant.getPreviousTimeSlot(registeredUser.getCurrentOrder().getDeliveryDate().toLocalTime()).getNumberOfCreatedOrders());
+        TimeSlot timeSlot = restaurant.getPreviousTimeSlot(registeredUser.getCurrentOrder().getDeliveryDate().toLocalTime());
+        System.out.println(timeSlot.toString());
+        int numberOfCreatedOrders = timeSlot.getNumberOfCreatedOrders();
+        assertEquals(numberOfOrders, numberOfCreatedOrders);
     }
 
     @And("the order should have been added to the suborder repository")

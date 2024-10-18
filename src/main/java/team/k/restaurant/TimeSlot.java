@@ -3,6 +3,7 @@ package team.k.restaurant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import team.k.enumerations.OrderStatus;
 import team.k.order.SubOrder;
 
@@ -13,6 +14,7 @@ import java.util.List;
 /**
  * Represents a time slot for a restaurant in the database.
  */
+@ToString
 @Getter
 @Setter
 @AllArgsConstructor
@@ -65,7 +67,4 @@ public class TimeSlot {
         orders.add(order);
     }
 
-    public String toString() {
-        return "TimeSlot [start=" + start + ", productionCapacity=" + productionCapacity + ", maxNumberOfOrders=" + maxNumberOfOrders + "]";
-    }
 }

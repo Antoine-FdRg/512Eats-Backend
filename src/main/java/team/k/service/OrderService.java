@@ -79,7 +79,7 @@ public class OrderService {
         if (subOrder == null) {
             throw new NoSuchElementException("SubOrder not found");
         }
-        int preparationTime = subOrder.getDishes().stream().map(Dish::getPreparationTime).reduce(0, Integer::sum);
+        int preparationTime = subOrder.getPreparationTime();
         if (preparationTime >= TimeSlot.DURATION) {
             throw new IllegalArgumentException("The total preparation time of the dishes is greater than 30 minutes");
         }
