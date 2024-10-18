@@ -11,6 +11,7 @@ import team.k.common.Dish;
 import team.k.enumerations.OrderStatus;
 import team.k.enumerations.Role;
 
+import team.k.external.PaymentFailedException;
 import team.k.external.PaymentProcessor;
 import team.k.order.OrderBuilder;
 import team.k.order.SubOrder;
@@ -102,7 +103,7 @@ public class RegisteredUserPlacesAnOrderStepdefs {
         when(paymentProcessor.processPayment()).thenReturn(false);
         try {
             orderService.paySubOrder(registeredUser.getId(), order.getId(), LocalDateTime.of(year, month, day, hour, minute));
-        } catch (IllegalStateException e) {
+        } catch (PaymentFailedException e) {
             exception = e;
         }
     }
@@ -111,7 +112,7 @@ public class RegisteredUserPlacesAnOrderStepdefs {
     @Then("the order does not appears in the user's history")
     public void theOrderDoesNotAppearsInTheUserSHistory() {
         verify(registeredUser, never()).addOrderToHistory(order);
-        assertEquals(IllegalStateException.class, exception.getClass());
+        assertEquals(PaymentFailedException.class, exception.getClass());
         verify(paymentProcessor, times(1)).processPayment();
     }
 }

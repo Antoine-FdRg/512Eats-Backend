@@ -25,10 +25,7 @@ public class RestaurantService {
      * @return the list of dishes if the restaurant is found, null otherwise
      */
     public List<Dish> getAllDishesFromRestaurant(String restaurantName) throws NoSuchElementException {
-        Restaurant restaurant = this.getRestaurantByName(restaurantName);
-        if (restaurant == null) {
-            throw new NoSuchElementException("Restaurant not found");
-        }
+        Restaurant restaurant = getRestaurantOrThrowIfNull(this.getRestaurantByName(restaurantName));
         List<Dish> dishes = restaurant.getDishes();
         if (dishes.isEmpty()) {
             throw new NoSuchElementException("No dishes available");
@@ -44,10 +41,7 @@ public class RestaurantService {
      * @return the list of available delivery times
      */
     public List<LocalDateTime> getAllAvailableDeliveryTimesOfRestaurantOnDay(int restaurantId, LocalDate day) throws NoSuchElementException {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId);
-        if (restaurant == null) {
-            throw new NoSuchElementException("Restaurant not found");
-        }
+        Restaurant restaurant = getRestaurantOrThrowIfNull(restaurantRepository.findById(restaurantId));
         List<LocalDateTime> availableTimes = restaurant.getAvailableDeliveryTimesOnDay(day);
         if (availableTimes.isEmpty()) {
             throw new NoSuchElementException("No available delivery times");
@@ -70,9 +64,19 @@ public class RestaurantService {
 
     /***** Update *****/
     public void addTimeSlotToRestaurant(int restaurantId, int timeSlotId) {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId);
+        Restaurant restaurant = getRestaurantOrThrowIfNull(restaurantRepository.findById(restaurantId));
         TimeSlot ts = timeSlotRepository.findById(timeSlotId);
+        if(ts == null) {
+            throw new NoSuchElementException("Time slot not found");
+        }
         restaurant.addTimeSlot(ts);
+    }
+
+    private Restaurant getRestaurantOrThrowIfNull(Restaurant restaurantFound) {
+        if (restaurantFound == null) {
+            throw new NoSuchElementException("Restaurant not found");
+        }
+        return restaurantFound;
     }
 
     public void addDishToRestaurant(Restaurant restaurant, Dish dish) {

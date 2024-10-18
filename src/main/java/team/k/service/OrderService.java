@@ -2,6 +2,7 @@ package team.k.service;
 
 import lombok.Getter;
 import team.k.RegisteredUser;
+import team.k.external.PaymentFailedException;
 import team.k.external.PaymentProcessor;
 import team.k.order.SubOrder;
 import team.k.repository.RegisteredUserRepository;
@@ -83,7 +84,7 @@ public class OrderService {
 
     }
 
-    public void paySubOrder(int registeredUserID, int orderId, LocalDateTime currentDateTime) throws IllegalStateException {
+    public void paySubOrder(int registeredUserID, int orderId, LocalDateTime currentDateTime) throws PaymentFailedException {
         RegisteredUser registeredUser = registeredUserRepository.findById(registeredUserID);
         SubOrder currentOrder = registeredUser.getCurrentOrder();
         if (currentOrder == null) {
@@ -101,7 +102,7 @@ public class OrderService {
         if (paymentProcessor.processPayment()) {
             subOrderRepository.findById(orderId).pay();
         } else {
-            throw new IllegalStateException("Payment failed");
+            throw new PaymentFailedException("Payment failed");
         }
     }
 }
