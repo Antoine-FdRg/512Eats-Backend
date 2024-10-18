@@ -63,6 +63,10 @@ public class TimeSlot {
         return orders.stream().filter(subOrder -> OrderStatus.CREATED.equals(subOrder.getStatus())).toArray().length;
     }
 
+    public LocalDateTime getEnd() {
+        return start.plusMinutes(DURATION);
+    }
+
     public void addOrder(SubOrder order) {
         orders.add(order);
     }

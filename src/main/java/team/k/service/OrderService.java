@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import team.k.RegisteredUser;
 import team.k.common.Dish;
+import team.k.external.PaymentFailedException;
 import team.k.external.PaymentProcessor;
 import team.k.order.SubOrder;
 import team.k.repository.RegisteredUserRepository;
@@ -18,7 +19,6 @@ import team.k.repository.LocationRepository;
 import team.k.restaurant.TimeSlot;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -34,6 +34,15 @@ public class OrderService {
     final RegisteredUserRepository registeredUserRepository;
     PaymentProcessor paymentProcessor;
 
+    /**
+     * Create an individual order
+     *
+     * @param registeredUserID   the id of the user who wants to create the order
+     * @param restaurantId       the id of the restaurant where the order is placed
+     * @param deliveryLocationId the id of the location where the order will be delivered
+     * @param deliveryTime       the time at which the order will be delivered
+     * @param now                the time at which the order is created (should be the current time in REST controller but can be changed as parameter for testing)
+     */
     public void createIndividualOrder(int registeredUserID, int restaurantId, int deliveryLocationId, LocalDateTime deliveryTime, LocalDateTime now) {
         RegisteredUser registeredUser = registeredUserRepository.findById(registeredUserID);
         if (registeredUser.getCurrentOrder() != null) {
@@ -53,7 +62,7 @@ public class OrderService {
         if (deliveryTime.isBefore(now)) {
             throw new IllegalArgumentException("Delivery time cannot be in the past");
         }
-        if (!restaurant.isAvailable(deliveryTime.toLocalTime())) {
+        if (!restaurant.isAvailable(deliveryTime)) {
             throw new IllegalArgumentException("Restaurant is not available at the chosen time");
         }
         SubOrder order = registeredUser.initializeIndividualOrder(restaurant, deliveryLocation, deliveryTime);
@@ -79,8 +88,8 @@ public class OrderService {
         if (subOrder == null) {
             throw new NoSuchElementException("SubOrder not found");
         }
-        int preparationTime = subOrder.getPreparationTime();
-        if (preparationTime >= TimeSlot.DURATION) {
+        int preparationTimePredicted = subOrder.getPreparationTime() + dish.getPreparationTime();
+        if (preparationTimePredicted > TimeSlot.DURATION) {
             throw new IllegalArgumentException("The total preparation time of the dishes is greater than 30 minutes");
         }
         subOrder.addDish(dish);
@@ -95,7 +104,7 @@ public class OrderService {
 
     }
 
-    public void paySubOrder(int registeredUserID, int orderId) throws IllegalStateException {
+    public void paySubOrder(int registeredUserID, int orderId, LocalDateTime currentDateTime) throws PaymentFailedException {
         RegisteredUser registeredUser = registeredUserRepository.findById(registeredUserID);
         SubOrder currentOrder = registeredUser.getCurrentOrder();
         if (currentOrder == null) {
@@ -104,7 +113,7 @@ public class OrderService {
         if (currentOrder.getId() != orderId) {
             throw new IllegalArgumentException("User can only pay for his current order");
         }
-        if (!currentOrder.getRestaurant().isAvailable(LocalTime.now())) {
+        if (!currentOrder.getRestaurant().isAvailable(currentDateTime)) {
             throw new IllegalArgumentException("Restaurant is not available");
         }
         if (currentOrder.getDishes().isEmpty()) {
@@ -113,7 +122,7 @@ public class OrderService {
         if (paymentProcessor.processPayment()) {
             subOrderRepository.findById(orderId).pay();
         } else {
-            throw new IllegalStateException("Payment failed");
+            throw new PaymentFailedException("Payment failed");
         }
     }
 }
