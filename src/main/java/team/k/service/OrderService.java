@@ -1,7 +1,10 @@
 package team.k.service;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import team.k.RegisteredUser;
+import team.k.common.Dish;
 import team.k.external.PaymentFailedException;
 import team.k.external.PaymentProcessor;
 import team.k.order.SubOrder;
@@ -13,28 +16,32 @@ import team.k.common.Location;
 import team.k.order.GroupOrder;
 import team.k.repository.GroupOrderRepository;
 import team.k.repository.LocationRepository;
+import team.k.restaurant.TimeSlot;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class OrderService {
 
-    LocationRepository locationRepository;
-    SubOrderRepository subOrderRepository;
-    private RestaurantRepository restaurantRepository;
     @Getter
-    GroupOrderRepository groupOrderRepository = new GroupOrderRepository();
-    private RegisteredUserRepository registeredUserRepository;
+    final GroupOrderRepository groupOrderRepository;
+    final LocationRepository locationRepository;
+    final SubOrderRepository subOrderRepository;
+    final RestaurantRepository restaurantRepository;
+    final RegisteredUserRepository registeredUserRepository;
     PaymentProcessor paymentProcessor;
 
     /**
      * Create an individual order
-     * @param registeredUserID the id of the user who wants to create the order
-     * @param restaurantId the id of the restaurant where the order is placed
+     *
+     * @param registeredUserID   the id of the user who wants to create the order
+     * @param restaurantId       the id of the restaurant where the order is placed
      * @param deliveryLocationId the id of the location where the order will be delivered
-     * @param deliveryTime the time at which the order will be delivered
-     * @param now the time at which the order is created (should be the current time in REST controller but can be changed as parameter for testing)
+     * @param deliveryTime       the time at which the order will be delivered
+     * @param now                the time at which the order is created (should be the current time in REST controller but can be changed as parameter for testing)
      */
     public void createIndividualOrder(int registeredUserID, int restaurantId, int deliveryLocationId, LocalDateTime deliveryTime, LocalDateTime now) {
         RegisteredUser registeredUser = registeredUserRepository.findById(registeredUserID);
@@ -73,6 +80,19 @@ public class OrderService {
                 .build();
 
         groupOrderRepository.add(groupOrder);
+    }
+
+    public void addDishToOrder(int orderId, Dish dish) {
+        //Il faut que le total des ingrédients du plat soit inférieur à DURATION
+        SubOrder subOrder = subOrderRepository.findById(orderId);
+        if (subOrder == null) {
+            throw new NoSuchElementException("SubOrder not found");
+        }
+        int preparationTimePredicted = subOrder.getPreparationTime() + dish.getPreparationTime();
+        if (preparationTimePredicted > TimeSlot.DURATION) {
+            throw new IllegalArgumentException("The total preparation time of the dishes is greater than 30 minutes");
+        }
+        subOrder.addDish(dish);
     }
 
     public void placeSubOrder(int orderId) throws NoSuchElementException {

@@ -66,7 +66,7 @@ public class RestaurantService {
     public void addTimeSlotToRestaurant(int restaurantId, int timeSlotId) {
         Restaurant restaurant = getRestaurantOrThrowIfNull(restaurantRepository.findById(restaurantId));
         TimeSlot ts = timeSlotRepository.findById(timeSlotId);
-        if(ts == null) {
+        if (ts == null) {
             throw new NoSuchElementException("Time slot not found");
         }
         restaurant.addTimeSlot(ts);

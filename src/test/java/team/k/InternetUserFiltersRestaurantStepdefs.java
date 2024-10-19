@@ -59,7 +59,7 @@ public class InternetUserFiltersRestaurantStepdefs {
         restaurantB.addDish(dishB);
         when(restaurantRepository.findRestaurantByFoodType(List.of(FoodType.SUSHI))).thenReturn(List.of(restaurantA, restaurantB));
         when(restaurantRepository.findRestaurantByFoodType(List.of(FoodType.BURGER))).thenReturn(List.of());
-        when(restaurantRepository.findRestaurantsByAvailability(LocalDateTime.of(2025,1,1,12, 10, 0))).thenReturn(List.of(restaurantA)).thenReturn(List.of());
+        when(restaurantRepository.findRestaurantsByAvailability(LocalDateTime.of(2025, 1, 1, 12, 10, 0))).thenReturn(List.of(restaurantA)).thenReturn(List.of());
         when(restaurantRepository.findRestaurantByName(restaurantNameB)).thenReturn(List.of(restaurantB));
         when(restaurantRepository.findRestaurantByName("512PizzaRestaurant")).thenReturn(List.of());
     }

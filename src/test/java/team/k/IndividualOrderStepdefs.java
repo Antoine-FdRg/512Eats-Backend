@@ -42,17 +42,18 @@ public class IndividualOrderStepdefs {
     Restaurant restaurant;
     Location deliveryLocation;
     @Mock
-    RestaurantRepository restaurantRepository;
-    @Mock
-    RegisteredUserRepository registeredUserRepository;
-    @Mock
     TimeSlotRepository timeSlotRepository;
     @Mock
-    LocationRepository locationRepository;
+    RestaurantRepository restaurantRepository;
     @InjectMocks
     RestaurantService restaurantService;
+
+    @Mock
+    LocationRepository locationRepository;
     @Mock
     SubOrderRepository subOrderRepository;
+    @Mock
+    RegisteredUserRepository registeredUserRepository;
     @InjectMocks
     OrderService orderService;
 
@@ -135,7 +136,9 @@ public class IndividualOrderStepdefs {
 
     @And("the restaurant should have {int} order with the status CREATED")
     public void theRestaurantShouldHaveAnOrderWithTheStatusCREATED(int numberOfOrders) {
-        assertEquals(numberOfOrders,restaurant.getPreviousTimeSlot(registeredUser.getCurrentOrder().getDeliveryDate()).getNumberOfCreatedOrders());
+        TimeSlot timeSlot = restaurant.getPreviousTimeSlot(registeredUser.getCurrentOrder().getDeliveryDate());
+        int nbOfOrderCreated = timeSlot.getNumberOfCreatedOrders();
+        assertEquals(numberOfOrders, nbOfOrderCreated);
     }
 
     @And("the order should have been added to the suborder repository")
@@ -158,7 +161,6 @@ public class IndividualOrderStepdefs {
         assertEquals(IllegalArgumentException.class, orderNotCreatedException.getClass());
         assertNull(registeredUser.getCurrentOrder());
     }
-
 
 
     @Given("another timeslot at Naga beginning at {int}h{int} on {int}-{int}-{int} but to many order already created on this timeslot")

@@ -2,6 +2,7 @@ package team.k.restaurant;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import team.k.common.Dish;
 import team.k.enumerations.FoodType;
 import team.k.order.SubOrder;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Getter
 @Setter
@@ -139,8 +141,8 @@ public class Restaurant {
         List<LocalDateTime> availableTimes = new ArrayList<>();
         for (TimeSlot timeSlot : timeSlots) {
             if (!timeSlot.isFull()) {
-                LocalTime deliveryTime = LocalTime.of(timeSlot.getEnd().getHour(),timeSlot.getEnd().getMinute()+20);
-                LocalDateTime deliveryDateTime = LocalDateTime.of(day,deliveryTime);
+                LocalTime deliveryTime = LocalTime.of(timeSlot.getEnd().getHour(), timeSlot.getEnd().getMinute() + 20);
+                LocalDateTime deliveryDateTime = LocalDateTime.of(day, deliveryTime);
                 availableTimes.add(deliveryDateTime);
             }
         }

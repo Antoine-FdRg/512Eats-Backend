@@ -89,7 +89,7 @@ public class RegisteredUserPlacesAnOrderStepdefs {
     public void theUserPaysTheOrder(int hour, int minute, int day, int month, int year) {
         LocalDateTime paymentTime = LocalDateTime.of(year, month, day, hour, minute);
         when(paymentProcessor.processPayment()).thenReturn(true);
-        orderService.paySubOrder(registeredUser.getId(), order.getId(),paymentTime);
+        orderService.paySubOrder(registeredUser.getId(), order.getId(), paymentTime);
     }
 
     @Then("the order appears in the user's history")
