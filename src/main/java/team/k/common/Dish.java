@@ -30,6 +30,22 @@ public class Dish {
         return "Dish [id=" + id + ", name=" + name + ", description=" + description + ", price=" + price + ", preparationTime=" + preparationTime + ", picture=" + picture + "]";
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Dish dish)) {
+            return false;
+        }
+        return id == dish.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
     public static class Builder {
         private int id;
         private String name;

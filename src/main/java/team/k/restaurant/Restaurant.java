@@ -2,7 +2,6 @@ package team.k.restaurant;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import team.k.common.Dish;
 import team.k.enumerations.FoodType;
 import team.k.order.SubOrder;
@@ -78,13 +77,23 @@ public class Restaurant {
     }
 
     /**
-     * Search for the time slot that precedes the time slto containing the given time.
+     * Search for the time slot that precedes the time slot containing the given time.
      *
      * @param time the time to search for
      * @return the time slot that precedes the time slot containing the given time
      */
     public TimeSlot getPreviousTimeSlot(LocalDateTime time) {
         return getCurrentTimeSlot(time.minusMinutes(TimeSlot.DURATION));
+    }
+
+    /**
+     * Get the time slot containing the given time.
+     *
+     * @param time the time to search for
+     * @return the time slot containing the given time
+     */
+    public TimeSlot getTimeSlot(LocalDateTime time) {
+        return getCurrentTimeSlot(time);
     }
 
 
@@ -108,11 +117,10 @@ public class Restaurant {
         if (timeSlot.isFull()) {
             return List.of();
         }
-        int freeProductionCapacity = timeSlot.getFreeProductionCapacity();
-        return getDishesReadyInLessThan(freeProductionCapacity);
+        return getDishesReadyInLessThan(TimeSlot.DURATION);
     }
 
-    private List<Dish> getDishesReadyInLessThan(int time) {
+    public List<Dish> getDishesReadyInLessThan(int time) {
         return dishes.stream().filter(dish -> dish.getPreparationTime() <= time).toList();
     }
 

@@ -47,8 +47,7 @@ public class TimeSlot {
     }
 
     public int getFreeProductionCapacity() {
-        int totalPreparationTime = getTotalPreparationTime();
-        return getTotalMaxPreparationTime() - totalPreparationTime;
+        return getTotalMaxPreparationTime() - getTotalPreparationTime();
     }
 
     private int getTotalPreparationTime() {
