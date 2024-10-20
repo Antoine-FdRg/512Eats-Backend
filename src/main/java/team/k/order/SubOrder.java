@@ -56,6 +56,7 @@ public class SubOrder {
     public void place() {
         this.setStatus(OrderStatus.PLACED);
         this.user.addOrderToHistory(this);
+        this.price= this.restaurant.getDiscountStrategy().applyDiscount(this); //Appliquer la discount
     }
 
     public void pay() {
