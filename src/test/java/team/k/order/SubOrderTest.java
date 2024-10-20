@@ -71,7 +71,7 @@ class SubOrderTest {
     @Test
     void cancelOrderTest() {
         subOrder.cancel();
-        assertEquals(OrderStatus.CANCELED, subOrder.getStatus());  // Ensure the status is changed to CANCELED
+        assertEquals(OrderStatus.CANCELED, subOrder.getStatus());
     }
 
     @Test

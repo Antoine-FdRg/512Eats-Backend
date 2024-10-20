@@ -22,4 +22,7 @@ public class LocationRepository {
         return locations.stream().filter(location -> location.getId() == id).findFirst().orElse(null);
     }
 
+    public void add(Location location) {
+        locations.add(location);
+    }
 }

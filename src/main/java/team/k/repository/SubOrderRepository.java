@@ -28,4 +28,8 @@ public class SubOrderRepository {
     public void clear() {
         subOrders.clear();
     }
+
+    public SubOrder findByUserId(int id) {
+        return subOrders.stream().filter(subOrder -> subOrder.getUser().getId() == id).findFirst().orElse(null);
+    }
 }
