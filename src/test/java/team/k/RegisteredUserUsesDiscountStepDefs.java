@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import team.k.common.Dish;
 import team.k.enumerations.Role;
+import team.k.external.PaymentProcessor;
 import team.k.order.OrderBuilder;
 import team.k.order.SubOrder;
 import team.k.repository.RegisteredUserRepository;
@@ -19,6 +20,8 @@ import team.k.restaurant.discount.FreeDishAfterXOrders;
 import team.k.restaurant.discount.RoleDiscount;
 import team.k.restaurant.discount.UnconditionalDiscount;
 import team.k.service.OrderService;
+
+import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -44,6 +47,9 @@ public class RegisteredUserUsesDiscountStepDefs {
     SubOrder previousOrder;
 
     @Mock
+    PaymentProcessor paymentProcessor;
+
+    @Mock
     RegisteredUserRepository registeredUserRepository;
 
     @Mock
@@ -63,7 +69,7 @@ public class RegisteredUserUsesDiscountStepDefs {
         registeredUser = spy(new RegisteredUser(name, role));
         when(registeredUserRepository.findById(registeredUser.getId())).thenReturn(registeredUser);
         when(previousOrder.getRestaurant()).thenReturn(restaurant);
-        for (int i=0; i<9; i++){
+        for (int i=0; i<10; i++){
             registeredUser.addOrderToHistory(previousOrder);
         }
         when(restaurant.isAvailable(any())).thenReturn(true);
@@ -84,9 +90,10 @@ public class RegisteredUserUsesDiscountStepDefs {
         when(restaurant.getDiscountStrategy()).thenReturn(freeDiscount);
     }
 
-    @When("The user places the order with the discount")
-    public void theUserPlacesTheOrderWithTheDiscount() {
-        orderService.placeSubOrder(order.getId());
+    @When("The user pays the order with the discount")
+    public void theUserPaysTheOrderWithTheDiscount() {
+        when(paymentProcessor.processPayment()).thenReturn(true);
+        orderService.paySubOrder(registeredUser.getId(),order.getId(), LocalDateTime.now());
     }
 
     @Then("the cheapest dish is free in the order")
@@ -115,5 +122,11 @@ public class RegisteredUserUsesDiscountStepDefs {
     @Then("the price is lower than the previous one")
     public void thePriceIsLowerThanThePreviousOne() {
         assertEquals(76, order.getPrice(),0);
+    }
+
+
+    @Then("the price does not change")
+    public void thePriceDoesNotChange() {
+        assertEquals(95.0,order.getPrice(),0);
     }
 }

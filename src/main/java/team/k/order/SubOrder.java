@@ -56,12 +56,13 @@ public class SubOrder {
     public void place() {
         this.setStatus(OrderStatus.PLACED);
         this.user.addOrderToHistory(this);
-        if(restaurant.getDiscountStrategy()!=null){
-            this.price= this.restaurant.getDiscountStrategy().applyDiscount(this); //Appliquer la discount
-        }
+
     }
 
     public void pay() {
+        if(restaurant.getDiscountStrategy()!=null){
+            this.price= this.restaurant.getDiscountStrategy().applyDiscount(this); //Appliquer la discount
+        }
         this.setStatus(OrderStatus.PAID);
     }
 }
