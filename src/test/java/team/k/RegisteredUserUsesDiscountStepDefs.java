@@ -10,13 +10,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import team.k.common.Dish;
 import team.k.enumerations.Role;
-import team.k.external.PaymentProcessor;
 import team.k.order.OrderBuilder;
 import team.k.order.SubOrder;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.SubOrderRepository;
 import team.k.restaurant.Restaurant;
 import team.k.restaurant.discount.FreeDishAfterXOrders;
+import team.k.restaurant.discount.RoleDiscount;
+import team.k.restaurant.discount.UnconditionalDiscount;
 import team.k.service.OrderService;
 
 import static org.junit.Assert.assertEquals;
@@ -28,7 +29,9 @@ public class RegisteredUserUsesDiscountStepDefs {
 
     RegisteredUser registeredUser;
     SubOrder order;
-
+    FreeDishAfterXOrders freeDiscount;
+    UnconditionalDiscount unconditionalDiscount;
+    RoleDiscount roleDiscount;
     @Mock
     SubOrderRepository subOrderRepository;
 
@@ -45,12 +48,6 @@ public class RegisteredUserUsesDiscountStepDefs {
 
     @Mock
     Restaurant restaurant;
-
-    @Mock
-    PaymentProcessor paymentProcessor;
-
-    FreeDishAfterXOrders freeDiscount;
-
 
     @InjectMocks
     OrderService orderService;
@@ -81,7 +78,7 @@ public class RegisteredUserUsesDiscountStepDefs {
         order.addDish(dishCheapest);
     }
 
-    @And("the restaurant have a unconditional discount")
+    @And("the restaurant have freeDishAfterXOrders discount")
     public void theRestaurantHaveAUnconditionalDiscount() {
         freeDiscount = new FreeDishAfterXOrders(restaurant, 10);
         when(restaurant.getDiscountStrategy()).thenReturn(freeDiscount);
@@ -95,5 +92,28 @@ public class RegisteredUserUsesDiscountStepDefs {
     @Then("the cheapest dish is free in the order")
     public void theCheapestDishIsFreeInTheOrder() {
         assertEquals(90.0, order.getPrice(), 0);
+    }
+
+
+    @And("the restaurant have unconditional discount")
+    public void theRestaurantHaveUnconditionalDiscount() {
+        unconditionalDiscount = new UnconditionalDiscount(restaurant,0.25);
+        when(restaurant.getDiscountStrategy()).thenReturn(unconditionalDiscount);
+    }
+
+    @Then("the price is lower than before")
+    public void thePriceIsLowerThanBefore() {
+        assertEquals(71.25,order.getPrice(),0);
+    }
+
+    @And("the restaurant have Role discount")
+    public void theRestaurantHaveRoleDiscount() {
+        roleDiscount = new RoleDiscount(restaurant, 0.2, Role.STUDENT);
+        when(restaurant.getDiscountStrategy()).thenReturn(roleDiscount);
+    }
+
+    @Then("the price is lower than the previous one")
+    public void thePriceIsLowerThanThePreviousOne() {
+        assertEquals(76, order.getPrice(),0);
     }
 }
