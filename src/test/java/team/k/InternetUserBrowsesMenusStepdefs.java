@@ -13,7 +13,6 @@ import team.k.common.Dish;
 import team.k.enumerations.FoodType;
 import team.k.repository.DishRepository;
 import team.k.repository.RestaurantRepository;
-import team.k.repository.TimeSlotRepository;
 import team.k.restaurant.Restaurant;
 import team.k.service.RestaurantService;
 
@@ -115,7 +114,6 @@ public class InternetUserBrowsesMenusStepdefs {
     public void theUserGetsNoDishesRegisteredInTheRestaurantSelectedAndHaveThisMessage(String expectedMessage) {
         assertEquals(this.errorMessage.getMessage(), expectedMessage);
     }
-
 
 
 }

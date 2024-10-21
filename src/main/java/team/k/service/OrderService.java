@@ -20,6 +20,7 @@ import team.k.repository.LocationRepository;
 import team.k.restaurant.TimeSlot;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -128,5 +129,17 @@ public class OrderService {
         } else {
             throw new PaymentFailedException("Payment failed");
         }
+    }
+
+    public List<Dish> getAvailableDishes(int restaurantId, int orderId) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId);
+        SubOrder order = subOrderRepository.findById(orderId);
+        if (restaurant == null) {
+            throw new NoSuchElementException("Restaurant not found");
+        }
+        if (order == null) {
+            throw new NoSuchElementException("Order not found");
+        }
+        return restaurant.getDishesReadyInLessThan(TimeSlot.DURATION - order.getPreparationTime());
     }
 }

@@ -2,7 +2,6 @@ package team.k.restaurant;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import team.k.common.Dish;
 import team.k.enumerations.FoodType;
 import team.k.order.SubOrder;
@@ -78,7 +77,7 @@ public class Restaurant {
     }
 
     /**
-     * Search for the time slot that precedes the time slto containing the given time.
+     * Search for the time slot that precedes the time slot containing the given time.
      *
      * @param time the time to search for
      * @return the time slot that precedes the time slot containing the given time
@@ -87,32 +86,7 @@ public class Restaurant {
         return getCurrentTimeSlot(time.minusMinutes(TimeSlot.DURATION));
     }
 
-
-    /**
-     * Update the restaurant's information.
-     *
-     * @param name  the new name
-     * @param open  the new opening time
-     * @param close the new closing time
-     */
-    public void updateRestaurantInfos(String name, String open, String close) {
-        this.name = name;
-        this.open = LocalTime.parse(open);
-        this.close = LocalTime.parse(close);
-    }
-
-    public List<Dish> getAvailableDishesInTimeSlot(TimeSlot timeSlot) {
-        if (timeSlot == null) {
-            return List.of();
-        }
-        if (timeSlot.isFull()) {
-            return List.of();
-        }
-        int freeProductionCapacity = timeSlot.getFreeProductionCapacity();
-        return getDishesReadyInLessThan(freeProductionCapacity);
-    }
-
-    private List<Dish> getDishesReadyInLessThan(int time) {
+    public List<Dish> getDishesReadyInLessThan(int time) {
         return dishes.stream().filter(dish -> dish.getPreparationTime() <= time).toList();
     }
 
@@ -124,10 +98,6 @@ public class Restaurant {
 
     public void addDish(Dish dish) {
         dishes.add(dish);
-    }
-
-    public void addFoodType(FoodType foodType) {
-        foodTypes.add(foodType);
     }
 
     public void addOrderToTimeslot(SubOrder order) {
@@ -168,21 +138,6 @@ public class Restaurant {
             foodTypes = new ArrayList<>();
         }
 
-        public Builder addTimeSlot(TimeSlot timeSlot) {
-            timeSlots.add(timeSlot);
-            return this;
-        }
-
-        public Builder addDish(Dish dish) {
-            dishes.add(dish);
-            return this;
-        }
-
-        public Builder addFoodType(FoodType foodType) {
-            foodTypes.add(foodType);
-            return this;
-        }
-
         public Builder setName(String name) {
             this.name = name;
             return this;
@@ -200,11 +155,6 @@ public class Restaurant {
 
         public Builder setAverageOrderPreparationTime(int averageOrderPreparationTime) {
             this.averageOrderPreparationTime = averageOrderPreparationTime;
-            return this;
-        }
-
-        public Builder setDiscountStrategy(DiscountStrategy discountStrategy) {
-            this.discountStrategy = discountStrategy;
             return this;
         }
 

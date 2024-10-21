@@ -6,24 +6,24 @@ Feature: Create an individual order
     And with a productionCapacity of 2 for the timeslot beginning at 12:00 on 01-01-2025
     And a delivery location with the number "930", the street "Rte des Colles" and the city "Biot"
 
-    Scenario: creation d'une order avec succes
-        When a registeredUser creates an order for the restaurant Naga with the deliveryPlace created for 12h55 on 01-01-2025 the current date being 01-01-2025 10:00
-        Then the registeredUser should have his currentOrder with the status CREATED
-        And the registeredUser should have his currentOrder with no dishes
-      And the restaurant should have 1 order with the status CREATED
-      And the order should have been added to the suborder repository
+  Scenario: creation d'une order avec succes
+    When a registeredUser creates an order for the restaurant Naga with the deliveryPlace created for 12h55 on 01-01-2025 the current date being 01-01-2025 10:00
+    Then the registeredUser should have his currentOrder with the status CREATED
+    And the registeredUser should have his currentOrder with no dishes
+    And the restaurant should have 1 order with the status CREATED
+    And the order should have been added to the suborder repository
 
-    Scenario: creation d'une order en erreur (date de livraison non renseignée)
-      When a registeredUser creates an order for the restaurant Naga with the deliveryPlace created but without delivery date the current date being 01-01-2025 10:00
-      Then the registeredUser should not have any currentOrder
+  Scenario: creation d'une order en erreur (date de livraison non renseignée)
+    When a registeredUser creates an order for the restaurant Naga with the deliveryPlace created but without delivery date the current date being 01-01-2025 10:00
+    Then the registeredUser should not have any currentOrder
 
-    Scenario: creation d'une order en erreur (date de livraison antérieure à la date courante)
-      When a registeredUser creates an order for the restaurant Naga with the deliveryPlace created for 8h00 on 01-01-2025 the current date being 01-01-2025 10:00
-      Then the registeredUser should not have any currentOrder
+  Scenario: creation d'une order en erreur (date de livraison antérieure à la date courante)
+    When a registeredUser creates an order for the restaurant Naga with the deliveryPlace created for 8h00 on 01-01-2025 the current date being 01-01-2025 10:00
+    Then the registeredUser should not have any currentOrder
 
-    Scenario: creation d'une order en erreur (date de livraison postérieure à la date de fermeture du restaurant + 20min de livraison)
-      When a registeredUser creates an order for the restaurant Naga with the deliveryPlace created for 15h00 on 01-01-2025 the current date being 01-01-2025 10:00
-      Then the registeredUser should not have any currentOrder
+  Scenario: creation d'une order en erreur (date de livraison postérieure à la date de fermeture du restaurant + 20min de livraison)
+    When a registeredUser creates an order for the restaurant Naga with the deliveryPlace created for 15h00 on 01-01-2025 the current date being 01-01-2025 10:00
+    Then the registeredUser should not have any currentOrder
 
   Scenario: creation d'une order en erreur (timeslot complet)
     Given another timeslot at Naga beginning at 12h30 on 01-01-2025 but to many order already created on this timeslot
@@ -59,3 +59,42 @@ Feature: Create an individual order
       | 12:20 |
       | 12:50 |
       | 13:20 |
+
+
+  Scenario: A RegisteredUser creates a individual order and select a delivery time should see only the available items for this time
+    Given the restaurant "Naga" has the following dishes with preparation time
+      | id | name   | price | preparationTime |
+      | 1  | Sushi  | 10    | 20              |
+      | 2  | Burger | 16    | 10              |
+      | 3  | Pizza  | 12    | 40              |
+    And User "Jack" has a currentOrder for the restaurant Naga in the timeslot beginning at 12:00 on 01-01-2025
+    When Jack consults the available dishes of the restaurant Naga
+    Then he can see only the following dishes
+      | id | name   | price | preparationTime |
+      | 1  | Sushi  | 10    | 20              |
+      | 2  | Burger | 16    | 10              |
+
+  Scenario: A RegisteredUser creates a individual order and select a delivery time and add an item in his basket should see only the available items for this time
+    Given the restaurant "Naga" has the following dishes with preparation time
+      | id | name   | price | preparationTime |
+      | 1  | Sushi  | 10    | 20              |
+      | 2  | Burger | 16    | 10              |
+      | 3  | Pizza  | 12    | 20              |
+    And User "Jack" has a currentOrder for the restaurant Naga in the timeslot beginning at 12:00 on 01-01-2025
+    And Jack adds the dish "Sushi" to his basket
+    When Jack consults the available dishes of the restaurant Naga
+    Then he can see only the following dishes
+      | id | name   | price | preparationTime |
+      | 2  | Burger | 16    | 10              |
+
+  Scenario: A RegisteredUser creates a individual order and select a delivery time and add an item in his basket should see only the available items for this time
+    Given the restaurant "Naga" has the following dishes with preparation time
+      | id | name   | price | preparationTime |
+      | 1  | Sushi  | 10    | 20              |
+      | 2  | Burger | 16    | 10              |
+      | 3  | Pizza  | 12    | 30              |
+    And User "Jack" has a currentOrder for the restaurant Naga in the timeslot beginning at 12:00 on 01-01-2025
+    And Jack adds the dish "Pizza" to his basket
+    When Jack consults the available dishes of the restaurant Naga
+    Then he can see only the following dishes
+      | id | name | price | preparationTime |
