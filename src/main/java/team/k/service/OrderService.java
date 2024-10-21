@@ -7,6 +7,7 @@ import team.k.RegisteredUser;
 import team.k.common.Dish;
 import team.k.external.PaymentFailedException;
 import team.k.external.PaymentProcessor;
+import team.k.order.Payment;
 import team.k.order.SubOrder;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
@@ -120,7 +121,10 @@ public class OrderService {
             throw new IllegalArgumentException("Basket is empty");
         }
         if (paymentProcessor.processPayment()) {
-            subOrderRepository.findById(orderId).pay();
+            SubOrder subOrder = subOrderRepository.findById(orderId);
+            subOrder.pay();
+            subOrder.setPayment(new Payment(subOrder.getPrice(), LocalDateTime.now()));
+
         } else {
             throw new PaymentFailedException("Payment failed");
         }

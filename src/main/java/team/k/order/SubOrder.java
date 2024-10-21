@@ -23,6 +23,7 @@ public class SubOrder {
     private OrderStatus status;
     private LocalDateTime placedDate;
     private LocalDateTime deliveryDate;
+    private Payment payment;
 
     SubOrder(int id, double price, GroupOrder groupOrder, Restaurant restaurant, RegisteredUser user, List<Dish> dish, OrderStatus orderStatus, LocalDateTime placedDate, LocalDateTime deliveryDate) {
         this.id = id;
@@ -64,5 +65,6 @@ public class SubOrder {
             this.price= this.restaurant.getDiscountStrategy().applyDiscount(this); //Appliquer la discount
         }
         this.setStatus(OrderStatus.PAID);
+
     }
 }

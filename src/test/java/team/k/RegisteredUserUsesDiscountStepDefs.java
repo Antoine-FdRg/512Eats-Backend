@@ -69,7 +69,7 @@ public class RegisteredUserUsesDiscountStepDefs {
         registeredUser = spy(new RegisteredUser(name, role));
         when(registeredUserRepository.findById(registeredUser.getId())).thenReturn(registeredUser);
         when(previousOrder.getRestaurant()).thenReturn(restaurant);
-        for (int i=0; i<10; i++){
+        for (int i = 0; i < 10; i++) {
             registeredUser.addOrderToHistory(previousOrder);
         }
         when(restaurant.isAvailable(any())).thenReturn(true);
@@ -93,24 +93,26 @@ public class RegisteredUserUsesDiscountStepDefs {
     @When("The user pays the order with the discount")
     public void theUserPaysTheOrderWithTheDiscount() {
         when(paymentProcessor.processPayment()).thenReturn(true);
-        orderService.paySubOrder(registeredUser.getId(),order.getId(), LocalDateTime.now());
+        orderService.paySubOrder(registeredUser.getId(), order.getId(), LocalDateTime.now());
     }
 
     @Then("the cheapest dish is free in the order")
     public void theCheapestDishIsFreeInTheOrder() {
         assertEquals(90.0, order.getPrice(), 0);
+        assertEquals(90.0, order.getPayment().getAmount(), 0);
     }
 
 
     @And("the restaurant have unconditional discount")
     public void theRestaurantHaveUnconditionalDiscount() {
-        unconditionalDiscount = new UnconditionalDiscount(restaurant,0.25);
+        unconditionalDiscount = new UnconditionalDiscount(restaurant, 0.25);
         when(restaurant.getDiscountStrategy()).thenReturn(unconditionalDiscount);
     }
 
     @Then("the price is lower than before")
     public void thePriceIsLowerThanBefore() {
-        assertEquals(71.25,order.getPrice(),0);
+        assertEquals(71.25, order.getPrice(), 0);
+        assertEquals(71.25, order.getPayment().getAmount(), 0);
     }
 
     @And("the restaurant have Role discount")
@@ -121,12 +123,13 @@ public class RegisteredUserUsesDiscountStepDefs {
 
     @Then("the price is lower than the previous one")
     public void thePriceIsLowerThanThePreviousOne() {
-        assertEquals(76, order.getPrice(),0);
+        assertEquals(76, order.getPrice(), 0);
+        assertEquals(76, order.getPayment().getAmount(), 0);
     }
 
 
     @Then("the price does not change")
     public void thePriceDoesNotChange() {
-        assertEquals(95.0,order.getPrice(),0);
+        assertEquals(95.0, order.getPrice(), 0);
     }
 }
