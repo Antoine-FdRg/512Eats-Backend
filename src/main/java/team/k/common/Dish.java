@@ -43,7 +43,7 @@ public class Dish {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Integer.hashCode(id);
     }
 
     public static class Builder {
