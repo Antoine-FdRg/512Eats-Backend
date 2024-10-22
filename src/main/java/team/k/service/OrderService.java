@@ -148,9 +148,6 @@ public class OrderService {
         if (!registeredUser.getRole().canOrder()) {
             throw new IllegalArgumentException("User cannot order");
         }
-        if (registeredUser.getCurrentOrder() != null) {
-            throw new NoSuchElementException("User already has an active order");
-        }
         return registeredUser;
     }
 }

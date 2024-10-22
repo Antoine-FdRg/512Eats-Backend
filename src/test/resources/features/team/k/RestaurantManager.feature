@@ -28,5 +28,5 @@ Feature: Restaurant Manager updates his restaurant info
 
   Scenario: Restaurant Manager updates a dish
     When the restaurant manager adds a new dish "Beef" with price 12.00
-    And the restaurant manager updates the dish 1 price to 15.00 with preparation time 20
-    Then the restaurant Naga should have the dish 1 with price 15.00 and preparation time 20
+    And the restaurant manager updates a dish with price to 15.00 with preparation time 20
+    Then the restaurant Naga should have the dish updated with price 15.00 and preparation time 20

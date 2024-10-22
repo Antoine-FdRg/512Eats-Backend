@@ -28,6 +28,7 @@ public class ManagingRestaurant {
     private ManageRestaurantService manageRestaurantService;
     private Restaurant nagaRestaurant;
     private int dishAdded;
+    private int dishUpdated;
 
     @Before
     public void setUp() {
@@ -67,15 +68,15 @@ public class ManagingRestaurant {
     }
 
     @When("the restaurant manager adds a new dish {string} with price {double}")
-    public void theRestaurantManagerAddsANewDishWithPrice(String dishName, String dishPrice) {
-        manageRestaurantService.addDish(1, dishName, "Description", Double.parseDouble(dishPrice), 0);
+    public void theRestaurantManagerAddsANewDishWithPrice(String dishName, double dishPrice) {
+        manageRestaurantService.addDish(1, dishName, "Description", dishPrice, 0);
         this.dishAdded = nagaRestaurant.getDishes().stream().filter(d -> d.getName().equals(dishName)).findFirst().orElse(null).getId();
     }
 
     @Then("the restaurant Naga should have the new dish {string} with price {double}")
-    public void theRestaurantNagaShouldHaveTheNewDishWithPrice(String dishName, String dishPrice) {
+    public void theRestaurantNagaShouldHaveTheNewDishWithPrice(String dishName, double dishPrice) {
         assertEquals(dishName, nagaRestaurant.getDishes().getLast().getName());
-        assertEquals(Integer.parseInt(dishPrice), nagaRestaurant.getDishes().getLast().getPrice(), 0);
+        assertEquals(dishPrice, nagaRestaurant.getDishes().getLast().getPrice(), 0);
     }
 
     @And("the restaurant manager removes the dish recently added")
@@ -93,14 +94,17 @@ public class ManagingRestaurant {
         manageRestaurantService.updateDish(1, dishId, newPrice, 0);
     }
 
-    @And("the restaurant manager updates the dish {int} price to {double} with preparation time {int}")
-    public void theRestaurantManagerUpdatesTheDishPriceToWithPreparationTime(int dishId, double price, int preparationTime) {
-        manageRestaurantService.updateDish(1, dishId, price, preparationTime);
+    @And("the restaurant manager updates a dish with price to {double} with preparation time {int}")
+    public void theRestaurantManagerUpdatesTheDishPriceToWithPreparationTime(double price, int preparationTime) {
+        Dish dish = nagaRestaurant.getDishes().stream().findFirst().orElse(null);
+        assertNotNull(dish);
+        this.dishUpdated = dish.getId();
+        manageRestaurantService.updateDish(1, dishUpdated, price, preparationTime);
     }
 
-    @Then("the restaurant Naga should have the dish {int} with price {double} and preparation time {int}")
-    public void theRestaurantNagaShouldHaveTheDishWithPriceAndPreparationTime(int dishId, double price, int preparatioTime) {
-        Dish dish = nagaRestaurant.getDishes().stream().filter(d -> d.getId() == dishId).findFirst().orElse(null);
+    @Then("the restaurant Naga should have the dish updated with price {double} and preparation time {int}")
+    public void theRestaurantNagaShouldHaveTheDishWithPriceAndPreparationTime(double price, int preparatioTime) {
+        Dish dish = nagaRestaurant.getDishes().stream().filter(d -> d.getId() == dishUpdated).findFirst().orElse(null);
         assertNotNull(dish);
         assertEquals(price, dish.getPrice(), 0);
         assertEquals(preparatioTime, dish.getPreparationTime());
