@@ -46,10 +46,7 @@ public class OrderService {
      * @param now                the time at which the order is created (should be the current time in REST controller but can be changed as parameter for testing)
      */
     public void createIndividualOrder(int registeredUserID, int restaurantId, int deliveryLocationId, LocalDateTime deliveryTime, LocalDateTime now) {
-        RegisteredUser registeredUser = registeredUserRepository.findById(registeredUserID);
-        if (registeredUser.getCurrentOrder() != null) {
-            throw new NoSuchElementException("User already has an active order");
-        }
+        RegisteredUser registeredUser = this.registeredUserMiddleware(registeredUserID);
         Restaurant restaurant = restaurantRepository.findById(restaurantId);
         if (restaurant == null) {
             throw new NoSuchElementException("Restaurant not found");
@@ -107,7 +104,7 @@ public class OrderService {
     }
 
     public void paySubOrder(int registeredUserID, int orderId, LocalDateTime currentDateTime) throws PaymentFailedException {
-        RegisteredUser registeredUser = registeredUserRepository.findById(registeredUserID);
+        RegisteredUser registeredUser = this.registeredUserMiddleware(registeredUserID);
         SubOrder currentOrder = registeredUser.getCurrentOrder();
         if (currentOrder == null) {
             throw new IllegalArgumentException("User has no current order");
@@ -141,5 +138,19 @@ public class OrderService {
             throw new NoSuchElementException("Order not found");
         }
         return restaurant.getDishesReadyInLessThan(TimeSlot.DURATION - order.getPreparationTime());
+    }
+
+    public RegisteredUser registeredUserMiddleware(int registeredUserID) {
+        RegisteredUser registeredUser = registeredUserRepository.findById(registeredUserID);
+        if (registeredUser == null) {
+            throw new NoSuchElementException("User not found");
+        }
+        if (!registeredUser.getRole().canOrder()) {
+            throw new IllegalArgumentException("User cannot order");
+        }
+        if (registeredUser.getCurrentOrder() != null) {
+            throw new NoSuchElementException("User already has an active order");
+        }
+        return registeredUser;
     }
 }

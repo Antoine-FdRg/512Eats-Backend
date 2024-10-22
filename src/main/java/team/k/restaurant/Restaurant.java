@@ -119,6 +119,7 @@ public class Restaurant {
         return availableTimes;
     }
 
+
     public static class Builder {
         private final int id;
         private String name;
