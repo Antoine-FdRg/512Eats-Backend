@@ -119,6 +119,10 @@ public class Restaurant {
         return availableTimes;
     }
 
+    public void removeDish(int dishId) {
+        dishes.removeIf(dish -> dish.getId() == dishId);
+    }
+
 
     public static class Builder {
         private final int id;

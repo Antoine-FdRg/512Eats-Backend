@@ -1,6 +1,7 @@
 package team.k;
 
 import io.cucumber.java.Before;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -16,6 +17,8 @@ import java.time.LocalTime;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
 public class ManagingRestaurant {
@@ -24,6 +27,7 @@ public class ManagingRestaurant {
     @InjectMocks
     private ManageRestaurantService manageRestaurantService;
     private Restaurant nagaRestaurant;
+    private int dishAdded;
 
     @Before
     public void setUp() {
@@ -60,5 +64,45 @@ public class ManagingRestaurant {
     public void theRestaurantShouldHaveTheFollowingInformation(Map<String, String> expectedInfo) {
         assertEquals(LocalTime.parse(expectedInfo.get("open")), nagaRestaurant.getOpen());
         assertEquals(LocalTime.parse(expectedInfo.get("closed")), nagaRestaurant.getClose());
+    }
+
+    @When("the restaurant manager adds a new dish {string} with price {double}")
+    public void theRestaurantManagerAddsANewDishWithPrice(String dishName, String dishPrice) {
+        manageRestaurantService.addDish(1, dishName, "Description", Double.parseDouble(dishPrice), 0);
+        this.dishAdded = nagaRestaurant.getDishes().stream().filter(d -> d.getName().equals(dishName)).findFirst().orElse(null).getId();
+    }
+
+    @Then("the restaurant Naga should have the new dish {string} with price {double}")
+    public void theRestaurantNagaShouldHaveTheNewDishWithPrice(String dishName, String dishPrice) {
+        assertEquals(dishName, nagaRestaurant.getDishes().getLast().getName());
+        assertEquals(Integer.parseInt(dishPrice), nagaRestaurant.getDishes().getLast().getPrice(), 0);
+    }
+
+    @And("the restaurant manager removes the dish recently added")
+    public void theRestaurantManagerRemovesTheDish() {
+        manageRestaurantService.removeDish(1, this.dishAdded);
+    }
+
+    @Then("the restaurant Naga should not have the dish {string}")
+    public void theRestaurantNagaShouldNotHaveTheDish(String dishName) {
+        assertNull(nagaRestaurant.getDishes().stream().filter(d -> d.getName().equals(dishName)).findFirst().orElse(null));
+    }
+
+    @And("the restaurant manager updates the dish {int} price to {double}")
+    public void theRestaurantManagerUpdatesTheDishPriceTo(int dishId, double newPrice) {
+        manageRestaurantService.updateDish(1, dishId, newPrice, 0);
+    }
+
+    @And("the restaurant manager updates the dish {int} price to {double} with preparation time {int}")
+    public void theRestaurantManagerUpdatesTheDishPriceToWithPreparationTime(int dishId, double price, int preparationTime) {
+        manageRestaurantService.updateDish(1, dishId, price, preparationTime);
+    }
+
+    @Then("the restaurant Naga should have the dish {int} with price {double} and preparation time {int}")
+    public void theRestaurantNagaShouldHaveTheDishWithPriceAndPreparationTime(int dishId, double price, int preparatioTime) {
+        Dish dish = nagaRestaurant.getDishes().stream().filter(d -> d.getId() == dishId).findFirst().orElse(null);
+        assertNotNull(dish);
+        assertEquals(price, dish.getPrice(), 0);
+        assertEquals(preparatioTime, dish.getPreparationTime());
     }
 }
