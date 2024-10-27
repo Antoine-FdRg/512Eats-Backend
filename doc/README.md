@@ -6,6 +6,6 @@
 
 [Diagramme de séquence](./sequenceDiagram.md)
 
-[Rapport]()
+[Rapport](./TeamK-renduD1.pdf)
 
-[Slide O1]()
+[Slide O1](./512Eats%20O1.pdf)
