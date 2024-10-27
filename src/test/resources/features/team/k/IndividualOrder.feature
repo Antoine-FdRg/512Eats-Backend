@@ -1,4 +1,4 @@
-Feature: Create an individual order
+Feature: Individual order
 
   Background:
     Given a registeredUser named "Jack" with the role STUDENT
