@@ -16,7 +16,7 @@ En plus du role de Software Developer (SD), chacun possède des spécificités c
 
 ## User story :  A registered user place an individual order
 
-- [Lien user story](https://github.com/PNS-Conception/STE-24-25--teamk/issues/57)
+- [Lien user story #57](https://github.com/PNS-Conception/STE-24-25--teamk/issues/57)
 
 ### As a Registered user, I want to place my order so that the restaurant can prepare the order
 
@@ -80,6 +80,10 @@ Ce package contient les classes communes utilisées dans tout le projet, telles 
 ### [`team.k.enumerations`](src/main/java/team/k/enumerations)
 
 Ce package contient les énumérations utilisées dans le projet, telles que `FoodType`, `OrderStatus`, et `Role`.
+
+### [`team.k.enumerations`](src/main/java/team/k/external)
+
+Ce package est composé de la relation avec l'acteur externe (ie le paiement)
 
 ### [`team.k.order`](src/main/java/team/k/order)
 
