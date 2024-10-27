@@ -8,4 +8,4 @@
 
 [Rapport](./TeamK-renduD1.pdf)
 
-[Slide O1](./512Eats%20O1.pdf)
+[Slide O1](./512Eats.pdf)
