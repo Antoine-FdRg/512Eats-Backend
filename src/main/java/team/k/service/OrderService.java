@@ -81,11 +81,15 @@ public class OrderService {
         groupOrderRepository.add(groupOrder);
     }
 
-    public void addDishToOrder(int orderId, Dish dish) {
+    public void addDishToOrder(int orderId, int dishId) {
         //Il faut que le total des ingrédients du plat soit inférieur à DURATION
         SubOrder subOrder = subOrderRepository.findById(orderId);
         if (subOrder == null) {
             throw new NoSuchElementException("SubOrder not found");
+        }
+        Dish dish = subOrder.getRestaurant().getDishById(dishId);
+        if (dish == null) {
+            throw new NoSuchElementException("Dish not found");
         }
         int preparationTimePredicted = subOrder.getPreparationTime() + dish.getPreparationTime();
         if (preparationTimePredicted > TimeSlot.DURATION) {

@@ -123,6 +123,10 @@ public class Restaurant {
         dishes.removeIf(dish -> dish.getId() == dishId);
     }
 
+    public Dish getDishById(int dishId) {
+        return dishes.stream().filter(dish -> dish.getId() == dishId).findFirst().orElse(null);
+    }
+
 
     public static class Builder {
         private final int id;
