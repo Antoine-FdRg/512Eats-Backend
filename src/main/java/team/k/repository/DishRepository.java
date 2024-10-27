@@ -1,0 +1,31 @@
+package team.k.repository;
+
+import team.k.common.Dish;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class DishRepository {
+    private final List<Dish> dishes = new ArrayList<>();
+
+    public Dish findById(int dishId) {
+        return dishes.get(dishId);
+    }
+
+    public void add(Dish dish) {
+        dishes.add(dish);
+    }
+
+    public void remove(Dish dish) {
+        dishes.remove(dish);
+    }
+
+    public List<Dish> findAll() {
+        return dishes;
+    }
+
+    public void clear() {
+        dishes.clear();
+    }
+}

@@ -1,18 +1,21 @@
 package team.k.restaurant;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import team.k.common.Dish;
 import team.k.enumerations.FoodType;
+import team.k.order.SubOrder;
 import team.k.restaurant.discount.DiscountStrategy;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+
 
 @Getter
 @Setter
-@AllArgsConstructor
 public class Restaurant {
     private String name;
     private int id;
@@ -22,15 +25,18 @@ public class Restaurant {
     private List<Dish> dishes;
     private List<FoodType> foodTypes;
     private DiscountStrategy discountStrategy;
+    private int averageOrderPreparationTime;
 
-    public Restaurant(String name, int id, LocalTime open, LocalTime close, List<Dish> dishes, List<FoodType> foodTypes, DiscountStrategy discountStrategy) {
-        this.name = name;
-        this.id = id;
-        this.open = open;
-        this.close = close;
-        this.dishes = dishes;
-        this.foodTypes = foodTypes;
-        this.discountStrategy = discountStrategy;
+    private Restaurant(Builder builder) {
+        this.id = builder.id;
+        this.name = builder.name;
+        this.open = builder.open;
+        this.close = builder.close;
+        this.timeSlots = builder.timeSlots;
+        this.dishes = builder.dishes;
+        this.foodTypes = builder.foodTypes;
+        this.averageOrderPreparationTime = builder.averageOrderPreparationTime;
+        this.discountStrategy = builder.discountStrategy;
     }
 
     /**
@@ -38,61 +44,136 @@ public class Restaurant {
      *
      * @return true if the restaurant is available, false otherwise
      */
-    public boolean isAvailable() {
-        LocalTime now = LocalTime.now();
-        if (!now.isAfter(open) || !now.isBefore(close)) {
+    public boolean isAvailable(LocalDateTime deliveryTimeWanted) {
+        // Check if the order is created after opening time + 50 minutes (30min for the timeslot and 20min for the delivery ) and before closing time - 20 minutes (for the delivery)
+        if (!deliveryTimeWanted.toLocalTime().isAfter(open.plusMinutes(50))
+                || !deliveryTimeWanted.toLocalTime().isBefore(close.plusMinutes(20))) {
             return false;
         }
-        TimeSlot currentTimeSlot = searchForCurrentTimeSlot();
+        // Check if the restaurant has a time slot available 20 minutes (of delivery) before the chosen time
+        TimeSlot currentTimeSlot = getPreviousTimeSlot(deliveryTimeWanted.minusMinutes(20));
         if (currentTimeSlot == null) {
             return false;
         }
-        return currentTimeSlot.getOrders().size() < currentTimeSlot.getMaxNumberOfOrders();
+        // Check that the time slot is not full
+        return !currentTimeSlot.isFull();
     }
 
     /**
      * Search for the current time slot.
      *
+     * @param now the current time (should be the current time in REST controller but can be changed as parameter for testing)
      * @return the current time slot if found, null otherwise
      */
-    private TimeSlot searchForCurrentTimeSlot() {
-        LocalTime now = LocalTime.now();
+    public TimeSlot getCurrentTimeSlot(LocalDateTime now) {
         for (TimeSlot timeSlot : timeSlots) {
-            LocalTime timeSlotStart = timeSlot.getStart().toLocalTime();
-            LocalTime timeSlotEnd = timeSlotStart.plusMinutes(TimeSlot.DURATION);
-            if (now.isAfter(timeSlotStart) && now.isBefore(timeSlotEnd)) {
+            LocalDateTime timeSlotStart = timeSlot.getStart();
+            LocalDateTime timeSlotEnd = timeSlot.getEnd();
+            if (now.isAfter(timeSlotStart) && now.isBefore(timeSlotEnd) || now.equals(timeSlotStart)) {
                 return timeSlot;
             }
         }
         return null;
     }
 
-
     /**
-     * Update the restaurant's information.
+     * Search for the time slot that precedes the time slot containing the given time.
      *
-     * @param name  the new name
-     * @param open  the new opening time
-     * @param close the new closing time
+     * @param time the time to search for
+     * @return the time slot that precedes the time slot containing the given time
      */
-    public void updateRestaurantInfos(String name, String open, String close) {
-        this.name = name;
-        this.open = LocalTime.parse(open);
-        this.close = LocalTime.parse(close);
+    public TimeSlot getPreviousTimeSlot(LocalDateTime time) {
+        return getCurrentTimeSlot(time.minusMinutes(TimeSlot.DURATION));
     }
 
-    public List<Dish> getAvailableDishesInTimeSlot(TimeSlot timeSlot) {
-        if(timeSlot == null) {
-            return List.of();
-        }
-        if(timeSlot.isFull()) {
-            return List.of();
-        }
-        int freeProductionCapacity = timeSlot.getFreeProductionCapacity();
-        return getDishesReadyInLessThan(freeProductionCapacity);
-    }
-
-    private List<Dish> getDishesReadyInLessThan(int time) {
+    public List<Dish> getDishesReadyInLessThan(int time) {
         return dishes.stream().filter(dish -> dish.getPreparationTime() <= time).toList();
+    }
+
+    public void addTimeSlot(TimeSlot timeSlot) {
+        if (this.timeSlots.stream().noneMatch(ts -> ts.getStart().equals(timeSlot.getStart()))) {
+            timeSlots.add(timeSlot);
+        }
+    }
+
+    public void addDish(Dish dish) {
+        dishes.add(dish);
+    }
+
+    public void addOrderToTimeslot(SubOrder order) {
+        TimeSlot currentTimeSlot = getPreviousTimeSlot(order.getDeliveryDate().minusMinutes(20));
+        if (currentTimeSlot != null && !currentTimeSlot.isFull()) {
+            currentTimeSlot.addOrder(order);
+        }
+    }
+
+    public List<LocalDateTime> getAvailableDeliveryTimesOnDay(LocalDate day) {
+        List<LocalDateTime> availableTimes = new ArrayList<>();
+        for (TimeSlot timeSlot : timeSlots) {
+            if (!timeSlot.isFull()) {
+                LocalTime deliveryTime = LocalTime.of(timeSlot.getEnd().getHour(), timeSlot.getEnd().getMinute() + 20);
+                LocalDateTime deliveryDateTime = LocalDateTime.of(day, deliveryTime);
+                availableTimes.add(deliveryDateTime);
+            }
+        }
+        return availableTimes;
+    }
+
+    public void removeDish(int dishId) {
+        dishes.removeIf(dish -> dish.getId() == dishId);
+    }
+
+    public Dish getDishById(int dishId) {
+        return dishes.stream().filter(dish -> dish.getId() == dishId).findFirst().orElse(null);
+    }
+
+
+    public static class Builder {
+        private final int id;
+        private String name;
+        private LocalTime open;
+        private LocalTime close;
+        private int averageOrderPreparationTime;
+        private final List<TimeSlot> timeSlots;
+        private final List<Dish> dishes;
+        private final List<FoodType> foodTypes;
+        private DiscountStrategy discountStrategy;
+        private static int idCounter = 0;
+
+        public Builder() {
+            id = idCounter++;
+            timeSlots = new ArrayList<>();
+            dishes = new ArrayList<>();
+            foodTypes = new ArrayList<>();
+        }
+
+        public Builder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder setOpen(LocalTime open) {
+            this.open = open;
+            return this;
+        }
+
+        public Builder setClose(LocalTime close) {
+            this.close = close;
+            return this;
+        }
+
+        public Builder setAverageOrderPreparationTime(int averageOrderPreparationTime) {
+            this.averageOrderPreparationTime = averageOrderPreparationTime;
+            return this;
+        }
+
+        public Builder setFoodTypes(List<FoodType> foodTypes) {
+            this.foodTypes.addAll(foodTypes);
+            return this;
+        }
+
+        public Restaurant build() {
+            return new Restaurant(this);
+        }
     }
 }

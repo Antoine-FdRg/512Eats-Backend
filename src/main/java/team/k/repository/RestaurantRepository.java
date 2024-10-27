@@ -1,28 +1,15 @@
 package team.k.repository;
 
-import team.k.common.Dish;
 import team.k.enumerations.FoodType;
 import team.k.restaurant.Restaurant;
-import team.k.restaurant.TimeSlot;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class RestaurantRepository {
-
-
-    private final Dish dishStrawberry = new Dish(1, "Salade de fraise", "Salade fraise de saison", 5, 3, "");
-    private final Dish dishApple = new Dish(2, "Pomme d'amour", "Pomme enrobée de sucre", 10, 10, "");
-    private final Dish dishBurger = new Dish(3, "cheeseburger", "Burger avec du fromage en tranche", 30, 3, "");
-
-    private Restaurant fruitsRestaurant = new Restaurant("512BankFruitsRestaurants", 1, LocalTime.of(8, 0, 0), LocalTime.of(22, 0, 0, 0), List.of(dishApple, dishStrawberry), List.of(FoodType.VEGAN), null);
-    private Restaurant burgerRestaurant = new Restaurant("512BankBurger", 1, LocalTime.of(8, 0, 0), LocalTime.of(22, 0, 0, 0), List.of(dishBurger), List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL), null);
-    List<Restaurant> restaurants = new ArrayList<>(List.of(
-            fruitsRestaurant,
-            burgerRestaurant));
-
+    private final List<Restaurant> restaurants = new ArrayList<>();
 
     /**
      * Find a restaurant by its name.
@@ -32,6 +19,15 @@ public class RestaurantRepository {
      */
     public Restaurant findByName(String name) {
         return restaurants.stream().filter(restaurant -> restaurant.getName().equals(name)).findFirst().orElse(null);
+    }
+
+    /**
+     * Find a restaurant by its id.
+     * @param id the id of the restaurant
+     * @return the restaurant if found, null otherwise
+     */
+    public Restaurant findById(int id) {
+        return restaurants.stream().filter(restaurant -> restaurant.getId() == id).findFirst().orElse(null);
     }
 
     /**
@@ -60,5 +56,20 @@ public class RestaurantRepository {
     public void delete(Restaurant restaurant) {
         restaurants.remove(restaurant);
     }
+
+    public List<Restaurant> findRestaurantByFoodType(List<FoodType> foodTypes) {
+        return this.restaurants.stream()
+                .filter(restaurant -> restaurant.getFoodTypes().stream().anyMatch(foodTypes::contains))
+                .toList();
+    }
+
+    public List<Restaurant> findRestaurantsByAvailability(LocalDateTime timeChosen) {
+        return this.findAll().stream().filter(restaurant -> restaurant.isAvailable(timeChosen)).toList();
+    }
+
+    public List<Restaurant> findRestaurantByName(String name) {
+        return this.findAll().stream().filter(restaurant -> Objects.equals(restaurant.getName(), name)).toList();
+    }
+
 
 }

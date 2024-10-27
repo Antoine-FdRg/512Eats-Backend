@@ -1,4 +1,11 @@
 # Emplacement pour la documentation
 
 ## Description
-On doit trouver ici vos documents de conception, , etc.
+
+[Diagramme de classes](./classDiagram.md)
+
+[Diagramme de séquence](./sequenceDiagram.md)
+
+[Rapport](./TeamK-renduD1.pdf)
+
+[Slide O1](./512Eats%20O1.pdf)
