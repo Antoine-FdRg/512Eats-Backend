@@ -16,7 +16,7 @@ En plus du role de Software Developer (SD), chacun possède des spécificités c
 
 ## User story :  A registered user place an individual order
 
-- #57
+- [Lien user story](https://github.com/PNS-Conception/STE-24-25--teamk/issues/57)
 
 ### As a Registered user, I want to place my order so that the restaurant can prepare the order
 
