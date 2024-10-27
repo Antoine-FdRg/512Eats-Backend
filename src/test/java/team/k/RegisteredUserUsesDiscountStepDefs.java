@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -92,7 +93,7 @@ public class RegisteredUserUsesDiscountStepDefs {
 
     @When("The user pays the order with the discount")
     public void theUserPaysTheOrderWithTheDiscount() {
-        when(paymentProcessor.processPayment()).thenReturn(true);
+        when(paymentProcessor.processPayment(anyDouble())).thenReturn(true);
         orderService.paySubOrder(registeredUser.getId(), order.getId(), LocalDateTime.now());
     }
 

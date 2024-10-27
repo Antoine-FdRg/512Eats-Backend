@@ -122,7 +122,7 @@ public class OrderService {
         if (currentOrder.getDishes().isEmpty()) {
             throw new IllegalArgumentException("Basket is empty");
         }
-        if (paymentProcessor.processPayment()) {
+        if (paymentProcessor.processPayment(currentOrder.getPrice())) {
             SubOrder subOrder = subOrderRepository.findById(orderId);
             subOrder.pay();
             subOrder.setPayment(new Payment(subOrder.getPrice(), LocalDateTime.now()));
