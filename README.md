@@ -118,7 +118,7 @@ Regroupe les tests unitaires et fonctionnels
 - #### [README](doc/README.md) : Ce fichier regroupe les liens vers les documents illustrant le projet
 - #### [classDiagram](doc/classDiagram.md) : Illustration de notre diagramme de classe
 - #### [sequenceDiagram](doc/sequenceDiagram.md): Représentation de notre diagramme de séquence
-- #### [SlideO1](doc/512Eats O1.pdf): Slide de l'oral O1
+- #### [SlideO1](doc/512Eats.pdf): Slide de l'oral O1
 - #### [Rapport](doc/TeamK-renduD1.pdf): Rapport rédigé concernant la modélisation et  l'organisation du projet
 
 ## 4. [pom.xml](pom.xml)
