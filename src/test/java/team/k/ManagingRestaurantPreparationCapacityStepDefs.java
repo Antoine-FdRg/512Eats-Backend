@@ -48,6 +48,7 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
     GroupOrderRepository groupOrderRepository;
     @Mock
     RegisteredUserRepository registeredUserRepository;
+
     @Before
     public void setUp() {
         subOrderRepository = new SubOrderRepository();
@@ -80,9 +81,8 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
     @When("a registered user places the command")
     public void aRegisteredUserPlacesTheCommand() {
         timeSlot.addOrder(order);
-        orderService.addDishToOrder(order.getId(), dish);
+        orderService.addDishToOrder(order.getId(), dish.getId());
         order.setStatus(OrderStatus.PLACED);
-
     }
 
 

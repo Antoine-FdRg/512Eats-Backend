@@ -14,14 +14,14 @@ import java.util.List;
 @AllArgsConstructor
 public class GroupOrder {
     private final int id;
-    private Date date;
+    private Date deliveryDateTime;
     private OrderStatus status;
     private List<SubOrder> subOrders;
     private Location deliveryLocation;
 
     private GroupOrder(Builder builder) {
         this.id = builder.id;
-        this.date = builder.date;
+        this.deliveryDateTime = builder.deliveryDateTime;
         this.status = builder.status;
         this.subOrders = builder.subOrders;
         this.deliveryLocation = builder.deliveryLocation;
@@ -39,7 +39,7 @@ public class GroupOrder {
     public static class Builder {
         private static int nextId = 0;
         private final int id;
-        private Date date;
+        private Date deliveryDateTime;
         private final OrderStatus status;
         private List<SubOrder> subOrders;
         private Location deliveryLocation;
@@ -50,7 +50,7 @@ public class GroupOrder {
         }
 
         public Builder withDate(Date date) {
-            this.date = date;
+            this.deliveryDateTime = date;
             return this;
         }
 

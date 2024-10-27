@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -88,19 +89,19 @@ public class RegisteredUserPlacesAnOrderStepdefs {
     @When("The user pays the order at {int}:{int} on {int}-{int}-{int}")
     public void theUserPaysTheOrder(int hour, int minute, int day, int month, int year) {
         LocalDateTime paymentTime = LocalDateTime.of(year, month, day, hour, minute);
-        when(paymentProcessor.processPayment()).thenReturn(true);
+        when(paymentProcessor.processPayment(anyDouble())).thenReturn(true);
         orderService.paySubOrder(registeredUser.getId(), order.getId(), paymentTime);
     }
 
     @Then("the order appears in the user's history")
     public void theOrderAppearsInTheUserSHistory() {
         assertEquals(registeredUser.getOrders().getFirst(), order);
-        verify(paymentProcessor, times(1)).processPayment();
+        verify(paymentProcessor, times(1)).processPayment(anyDouble());
     }
 
     @When("The user pays the order and the payment fails at {int}:{int} on {int}-{int}-{int}")
     public void theUserPaysTheOrderAndThePaymentFails(int hour, int minute, int day, int month, int year) {
-        when(paymentProcessor.processPayment()).thenReturn(false);
+        when(paymentProcessor.processPayment(anyDouble())).thenReturn(false);
         try {
             orderService.paySubOrder(registeredUser.getId(), order.getId(), LocalDateTime.of(year, month, day, hour, minute));
         } catch (PaymentFailedException e) {
@@ -113,6 +114,6 @@ public class RegisteredUserPlacesAnOrderStepdefs {
     public void theOrderDoesNotAppearsInTheUserSHistory() {
         verify(registeredUser, never()).addOrderToHistory(order);
         assertEquals(PaymentFailedException.class, exception.getClass());
-        verify(paymentProcessor, times(1)).processPayment();
+        verify(paymentProcessor, times(1)).processPayment(anyDouble());
     }
 }
