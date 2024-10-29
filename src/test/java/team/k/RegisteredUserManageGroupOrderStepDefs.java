@@ -5,42 +5,33 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import team.k.common.Location;
 import team.k.order.GroupOrder;
 import team.k.repository.GroupOrderRepository;
 import team.k.repository.LocationRepository;
-import team.k.repository.RegisteredUserRepository;
-import team.k.repository.RestaurantRepository;
-import team.k.repository.SubOrderRepository;
-import team.k.service.OrderService;
+import team.k.service.GroupOrderService;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 public class RegisteredUserStepDefs {
-    @Mock
-    RestaurantRepository restaurantRepository;
-    @Mock
     LocationRepository locationRepository;
+    GroupOrderRepository groupOrderRepository;
     @Mock
-    SubOrderRepository subOrderRepository;
-    GroupOrderRepository groupOrderRepository = new GroupOrderRepository();
-    @Mock
-    RegisteredUserRepository registeredUserRepository;
-    OrderService orderService;
-    GroupOrder groupOrder;
+    GroupOrderService groupOrderService;
+    int codeToShare;
     Location location;
 
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        orderService = new OrderService(
+        locationRepository = Mockito.mock(LocationRepository.class);
+        groupOrderRepository = new GroupOrderRepository();
+        groupOrderService = new GroupOrderService(
                 groupOrderRepository,
-                locationRepository,
-                subOrderRepository,
-                restaurantRepository,
-                registeredUserRepository);
+                locationRepository);
     }
 
     @Given("a delivery location")
@@ -54,15 +45,14 @@ public class RegisteredUserStepDefs {
     }
 
 
-    @When("the user creates a group order by initializing the delivery location")
-    public void theUserCreatesAGroupOrderByInitializingTheDeliveryLocation() {
-        orderService.createGroupOrder(location.getId());
-
+    @When("the user creates a group order with the delivery location")
+    public void theUserCreatesAGroupOrderWithTheDeliveryLocation() {
+        codeToShare = groupOrderService.createGroupOrder(location.getId());
     }
 
     @Then("the group order is created and the delivery location is initialized")
     public void theGroupOrderIsCreatedAndTheDeliveryLocationIsInitialized() {
-        groupOrder = orderService.getGroupOrderRepository().getGroupOrders().getFirst();
+        GroupOrder groupOrder = groupOrderService.findGroupOrderById(codeToShare);
         assertEquals(location.getId(), groupOrder.getDeliveryLocation().getId());
         assertEquals(location, groupOrder.getDeliveryLocation());
     }

@@ -14,7 +14,6 @@ import team.k.repository.RestaurantRepository;
 import team.k.repository.SubOrderRepository;
 import team.k.restaurant.Restaurant;
 import team.k.common.Location;
-import team.k.order.GroupOrder;
 import team.k.repository.GroupOrderRepository;
 import team.k.repository.LocationRepository;
 import team.k.restaurant.TimeSlot;
@@ -69,17 +68,6 @@ public class OrderService {
         restaurant.addOrderToTimeslot(order);
     }
 
-    public void createGroupOrder(int deliveryLocation) {
-        Location location = locationRepository.findLocationById(deliveryLocation);
-        if (location == null) {
-            throw new IllegalArgumentException("Location not found");
-        }
-        GroupOrder groupOrder = new GroupOrder.Builder()
-                .withDeliveryLocation(location)
-                .build();
-
-        groupOrderRepository.add(groupOrder);
-    }
 
     public void addDishToOrder(int orderId, int dishId) {
         //Il faut que le total des ingrédients du plat soit inférieur à DURATION
