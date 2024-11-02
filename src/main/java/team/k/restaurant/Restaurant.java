@@ -17,6 +17,12 @@ import java.util.List;
 @Getter
 @Setter
 public class Restaurant {
+
+    public static final long DELIVERY_DURATION = 20;
+    /**
+     * Time to prepare and deliver an order
+     */
+    public static final long ORDER_PROCESSING_TIME_MINUTES = DELIVERY_DURATION + TimeSlot.DURATION;
     private String name;
     private int id;
     private LocalTime open;
@@ -46,12 +52,12 @@ public class Restaurant {
      */
     public boolean isAvailable(LocalDateTime deliveryTimeWanted) {
         // Check if the order is created after opening time + 50 minutes (30min for the timeslot and 20min for the delivery ) and before closing time - 20 minutes (for the delivery)
-        if (!deliveryTimeWanted.toLocalTime().isAfter(open.plusMinutes(50))
-                || !deliveryTimeWanted.toLocalTime().isBefore(close.plusMinutes(20))) {
+        if (!deliveryTimeWanted.toLocalTime().isAfter(open.plusMinutes(ORDER_PROCESSING_TIME_MINUTES))
+                || !deliveryTimeWanted.toLocalTime().isBefore(close.plusMinutes(DELIVERY_DURATION))) {
             return false;
         }
         // Check if the restaurant has a time slot available 20 minutes (of delivery) before the chosen time
-        TimeSlot currentTimeSlot = getPreviousTimeSlot(deliveryTimeWanted.minusMinutes(20));
+        TimeSlot currentTimeSlot = getPreviousTimeSlot(deliveryTimeWanted.minusMinutes(DELIVERY_DURATION));
         if (currentTimeSlot == null) {
             return false;
         }
@@ -101,7 +107,7 @@ public class Restaurant {
     }
 
     public void addOrderToTimeslot(SubOrder order) {
-        TimeSlot currentTimeSlot = getPreviousTimeSlot(order.getDeliveryDate().minusMinutes(20));
+        TimeSlot currentTimeSlot = getPreviousTimeSlot(order.getDeliveryDate().minusMinutes(DELIVERY_DURATION));
         if (currentTimeSlot != null && !currentTimeSlot.isFull()) {
             currentTimeSlot.addOrder(order);
         }
@@ -111,7 +117,7 @@ public class Restaurant {
         List<LocalDateTime> availableTimes = new ArrayList<>();
         for (TimeSlot timeSlot : timeSlots) {
             if (!timeSlot.isFull()) {
-                LocalTime deliveryTime = LocalTime.of(timeSlot.getEnd().getHour(), timeSlot.getEnd().getMinute() + 20);
+                LocalTime deliveryTime = LocalTime.of(timeSlot.getEnd().getHour(), (int) (timeSlot.getEnd().getMinute() + DELIVERY_DURATION));
                 LocalDateTime deliveryDateTime = LocalDateTime.of(day, deliveryTime);
                 availableTimes.add(deliveryDateTime);
             }

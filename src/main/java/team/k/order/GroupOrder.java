@@ -6,7 +6,7 @@ import lombok.Setter;
 import team.k.common.Location;
 import team.k.enumerations.OrderStatus;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class GroupOrder {
     private final int id;
-    private Date deliveryDateTime;
+    private LocalDateTime deliveryDateTime;
     private OrderStatus status;
     private List<SubOrder> subOrders;
     private final Location deliveryLocation;
@@ -39,7 +39,7 @@ public class GroupOrder {
     public static class Builder {
         private static int nextId = 0;
         private final int id;
-        private Date deliveryDateTime;
+        private LocalDateTime deliveryDateTime;
         private final OrderStatus status;
         private List<SubOrder> subOrders;
         private Location deliveryLocation;
@@ -50,7 +50,7 @@ public class GroupOrder {
         }
 
         /**
-         * Generate a non-trivial of 6 digits for the group
+         * Generate a non-trivial number of 6 digits for the group
          * @param seed the seed to generate the id
          */
         private static int generateId(int seed) {
@@ -65,7 +65,7 @@ public class GroupOrder {
             return identifier;
         }
 
-        public Builder withDate(Date date) {
+        public Builder withDate(LocalDateTime date) {
             this.deliveryDateTime = date;
             return this;
         }

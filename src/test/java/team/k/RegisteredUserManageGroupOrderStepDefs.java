@@ -13,6 +13,9 @@ import team.k.repository.GroupOrderRepository;
 import team.k.repository.LocationRepository;
 import team.k.service.GroupOrderService;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
@@ -49,10 +52,17 @@ public class RegisteredUserManageGroupOrderStepDefs {
         when(locationRepository.findLocationById(location.getId())).thenReturn(location);
     }
 
-
-    @When("the user creates a group order with the delivery location")
-    public void theUserCreatesAGroupOrderWithTheDeliveryLocation() {
-        codeToShare = groupOrderService.createGroupOrder(location.getId());
+    @When("the user creates a group order with the delivery location for the {string} at {string} on {string} at {string}")
+    public void theUserCreatesAGroupOrderWithTheDeliveryLocationForTheAtOnAt(String orderDate, String orderTime, String currentDate, String currentTime) {
+        LocalDateTime deliveryDateTime = LocalDateTime.of(
+                LocalDate.parse(orderDate),
+                LocalTime.parse(orderTime)
+        );
+        LocalDateTime currentDateTime = LocalDateTime.of(
+                LocalDate.parse(currentDate),
+                LocalTime.parse(currentTime)
+        );
+        codeToShare = groupOrderService.createGroupOrder(location.getId(), deliveryDateTime, currentDateTime);
     }
 
     @Then("the group order is created and the delivery location is initialized")
@@ -63,10 +73,18 @@ public class RegisteredUserManageGroupOrderStepDefs {
     }
 
 
-    @When("the user creates a group order without the delivery location")
-    public void theUserCreatesAGroupOrderWithoutTheDeliveryLocation() {
+    @When("the user creates a group order without the delivery location for the {string} at {string} on {string} at {string}")
+    public void theUserCreatesAGroupOrderWithoutTheDeliveryLocationForTheAtOnAt(String orderDate, String orderTime, String currentDate, String currentTime) {
+        LocalDateTime deliveryDateTime = LocalDateTime.of(
+                LocalDate.parse(orderDate),
+                LocalTime.parse(orderTime)
+        );
+        LocalDateTime currentDateTime = LocalDateTime.of(
+                LocalDate.parse(currentDate),
+                LocalTime.parse(currentTime)
+        );
         try {
-            codeToShare = groupOrderService.createGroupOrder(-1);
+            codeToShare = groupOrderService.createGroupOrder(-1, deliveryDateTime, currentDateTime);
         } catch (Exception e) {
             exception = e;
         }
