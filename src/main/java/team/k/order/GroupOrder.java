@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class GroupOrder {
+    static final int GROUP_ORDER_CODE_LENGTH = 6;
     private final int id;
     private LocalDateTime deliveryDateTime;
     private OrderStatus status;
@@ -51,14 +52,15 @@ public class GroupOrder {
 
         /**
          * Generate a non-trivial number of 6 digits for the group
+         *
          * @param seed the seed to generate the id
          */
-        private static int generateId(int seed) {
+        static int generateId(int seed) {
             int transformed = (seed * 31 + 7) ^ 0x5A5A5A5A;
             int hash = Integer.hashCode(transformed);
-            int identifier = Math.abs(hash) % 1000000;
+            int identifier = (int) (Math.abs(hash) % Math.pow(10, GROUP_ORDER_CODE_LENGTH));
             int maxNbOfIterations = 50;
-            while (identifier < 100000 && maxNbOfIterations > 0) {
+            while (identifier < Math.pow(10, GROUP_ORDER_CODE_LENGTH - 1.0) && maxNbOfIterations > 0) {
                 identifier *= 10;
                 maxNbOfIterations--;
             }
