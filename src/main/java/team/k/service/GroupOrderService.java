@@ -6,6 +6,8 @@ import team.k.order.GroupOrder;
 import team.k.repository.GroupOrderRepository;
 import team.k.repository.LocationRepository;
 
+import java.util.NoSuchElementException;
+
 @RequiredArgsConstructor
 public class GroupOrderService {
     private final GroupOrderRepository groupOrderRepository;
@@ -19,7 +21,7 @@ public class GroupOrderService {
     public int createGroupOrder(int deliveryLocation) {
         Location location = locationRepository.findLocationById(deliveryLocation);
         if (location == null) {
-            throw new IllegalArgumentException("Location not found");
+            throw new NoSuchElementException("Location not found");
         }
         GroupOrder groupOrder = new GroupOrder.Builder()
                 .withDeliveryLocation(location)

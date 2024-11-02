@@ -17,7 +17,7 @@ public class GroupOrder {
     private Date deliveryDateTime;
     private OrderStatus status;
     private List<SubOrder> subOrders;
-    private Location deliveryLocation;
+    private final Location deliveryLocation;
 
     private GroupOrder(Builder builder) {
         this.id = builder.id;

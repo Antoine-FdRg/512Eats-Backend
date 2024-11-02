@@ -13,16 +13,21 @@ import team.k.repository.GroupOrderRepository;
 import team.k.repository.LocationRepository;
 import team.k.service.GroupOrderService;
 
+import java.util.NoSuchElementException;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
-public class RegisteredUserStepDefs {
+public class RegisteredUserManageGroupOrderStepDefs {
     LocationRepository locationRepository;
     GroupOrderRepository groupOrderRepository;
     @Mock
     GroupOrderService groupOrderService;
     int codeToShare;
     Location location;
+    Exception exception;
 
     @Before
     public void setUp() {
@@ -58,4 +63,19 @@ public class RegisteredUserStepDefs {
     }
 
 
+    @When("the user creates a group order without the delivery location")
+    public void theUserCreatesAGroupOrderWithoutTheDeliveryLocation() {
+        try {
+            codeToShare = groupOrderService.createGroupOrder(-1);
+        } catch (Exception e) {
+            exception = e;
+        }
+    }
+
+    @Then("the group order is not created")
+    public void theGroupOrderIsNotCreated() {
+        assertNull(groupOrderService.findGroupOrderById(codeToShare));
+        assertNotNull(exception);
+        assertEquals(NoSuchElementException.class, exception.getClass());
+    }
 }
