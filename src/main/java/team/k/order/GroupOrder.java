@@ -6,18 +6,19 @@ import lombok.Setter;
 import team.k.common.Location;
 import team.k.enumerations.OrderStatus;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class GroupOrder {
+    static final int GROUP_ORDER_CODE_LENGTH = 6;
     private final int id;
-    private Date deliveryDateTime;
+    private LocalDateTime deliveryDateTime;
     private OrderStatus status;
     private List<SubOrder> subOrders;
-    private Location deliveryLocation;
+    private final Location deliveryLocation;
 
     private GroupOrder(Builder builder) {
         this.id = builder.id;
@@ -39,17 +40,34 @@ public class GroupOrder {
     public static class Builder {
         private static int nextId = 0;
         private final int id;
-        private Date deliveryDateTime;
+        private LocalDateTime deliveryDateTime;
         private final OrderStatus status;
         private List<SubOrder> subOrders;
         private Location deliveryLocation;
 
         public Builder() {
-            this.id = nextId++;
+            this.id = generateId(nextId++);
             this.status = OrderStatus.CREATED;
         }
 
-        public Builder withDate(Date date) {
+        /**
+         * Generate a non-trivial number of 6 digits for the group
+         *
+         * @param seed the seed to generate the id
+         */
+        static int generateId(int seed) {
+            int transformed = (seed * 31 + 7) ^ 0x5A5A5A5A;
+            int hash = Integer.hashCode(transformed);
+            int identifier = (int) (Math.abs(hash) % Math.pow(10, GROUP_ORDER_CODE_LENGTH));
+            int maxNbOfIterations = 50;
+            while (identifier < Math.pow(10, GROUP_ORDER_CODE_LENGTH - 1.0) && maxNbOfIterations > 0) {
+                identifier *= 10;
+                maxNbOfIterations--;
+            }
+            return identifier;
+        }
+
+        public Builder withDate(LocalDateTime date) {
             this.deliveryDateTime = date;
             return this;
         }
