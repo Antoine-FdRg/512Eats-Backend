@@ -28,14 +28,11 @@ public class GroupOrderService {
         if (location == null) {
             throw new NoSuchElementException("Location not found");
         }
-        if (Objects.isNull(deliveryDateTime)) {
-            throw new IllegalArgumentException("Delivery time cannot be null when creating an individual order");
-        }
         if (Objects.isNull(now)) {
             throw new IllegalArgumentException("Current time cannot be null");
         }
-        if (deliveryDateTime.isBefore(now.plusMinutes(Restaurant.ORDER_PROCESSING_TIME_MINUTES))) {
-            throw new IllegalArgumentException("Delivery time cannot be in the past");
+        if (!Objects.isNull(deliveryDateTime) && deliveryDateTime.isBefore(now.plusMinutes(Restaurant.ORDER_PROCESSING_TIME_MINUTES))) {
+            throw new IllegalArgumentException("Delivery time cannot this early");
         }
         GroupOrder groupOrder = new GroupOrder.Builder()
                 .withDeliveryLocation(location)

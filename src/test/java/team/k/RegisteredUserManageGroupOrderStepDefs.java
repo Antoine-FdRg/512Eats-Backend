@@ -65,13 +65,27 @@ public class RegisteredUserManageGroupOrderStepDefs {
         codeToShare = groupOrderService.createGroupOrder(location.getId(), deliveryDateTime, currentDateTime);
     }
 
-    @Then("the group order is created and the delivery location is initialized")
-    public void theGroupOrderIsCreatedAndTheDeliveryLocationIsInitialized() {
+
+
+
+    @Then("the group order is created and the delivery location is initialized and the delivery date time is the {string} at {string}")
+    public void theGroupOrderIsCreatedAndTheDeliveryLocationIsInitializedAndTheDeliveryDateTimeIsTheAt(String orderDate, String orderTime) {
+        LocalDateTime deliveryDateTime = LocalDateTime.of(
+                LocalDate.parse(orderDate),
+                LocalTime.parse(orderTime)
+        );
+
+        GroupOrder groupOrder = groupOrderService.findGroupOrderById(codeToShare);
+        assertEquals(location.getId(), groupOrder.getDeliveryLocation().getId());
+        assertEquals(location, groupOrder.getDeliveryLocation());
+        assertEquals(deliveryDateTime, groupOrder.getDeliveryDateTime());
+    }
+    @Then("the group order is created and the delivery location and delivery date time are initialized")
+    public void theGroupOrderIsCreatedAndTheDeliveryLocationAndDeliveryDateTimeAreInitialized() {
         GroupOrder groupOrder = groupOrderService.findGroupOrderById(codeToShare);
         assertEquals(location.getId(), groupOrder.getDeliveryLocation().getId());
         assertEquals(location, groupOrder.getDeliveryLocation());
     }
-
 
     @When("the user creates a group order without the delivery location for the {string} at {string} on {string} at {string}")
     public void theUserCreatesAGroupOrderWithoutTheDeliveryLocationForTheAtOnAt(String orderDate, String orderTime, String currentDate, String currentTime) {
@@ -95,5 +109,26 @@ public class RegisteredUserManageGroupOrderStepDefs {
         assertNull(groupOrderService.findGroupOrderById(codeToShare));
         assertNotNull(exception);
         assertEquals(NoSuchElementException.class, exception.getClass());
+    }
+
+    @When("the user creates a group order with the delivery location on {string} at {string}")
+    public void theUserCreatesAGroupOrderWithTheDeliveryLocationOnAt(String currentDate, String currentTime) {
+        LocalDateTime currentDateTime = LocalDateTime.of(
+                LocalDate.parse(currentDate),
+                LocalTime.parse(currentTime)
+        );
+        try {
+            codeToShare = groupOrderService.createGroupOrder(location.getId(), null, currentDateTime);
+        } catch (Exception e) {
+            exception = e;
+        }
+    }
+
+    @Then("the group order is created and the delivery location is initialized but the delivery date time is not")
+    public void theGroupOrderIsCreatedAndTheDeliveryLocationIsInitializedButTheDeliveryDateTimeIsNot() {
+        GroupOrder groupOrder = groupOrderService.findGroupOrderById(codeToShare);
+        assertEquals(location.getId(), groupOrder.getDeliveryLocation().getId());
+        assertEquals(location, groupOrder.getDeliveryLocation());
+        assertNull(groupOrder.getDeliveryDateTime());
     }
 }
