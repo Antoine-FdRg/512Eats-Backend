@@ -4,8 +4,6 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import team.k.common.Location;
 import team.k.order.GroupOrder;
@@ -21,12 +19,10 @@ import java.util.NoSuchElementException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.when;
 
 public class RegisteredUserManageGroupOrderStepDefs {
     LocationRepository locationRepository;
     GroupOrderRepository groupOrderRepository;
-    @Mock
     GroupOrderService groupOrderService;
     int codeToShare;
     Location location;
@@ -35,7 +31,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        locationRepository = Mockito.mock(LocationRepository.class);
+        locationRepository = new LocationRepository();
         groupOrderRepository = new GroupOrderRepository();
         groupOrderService = new GroupOrderService(
                 groupOrderRepository,
@@ -49,7 +45,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 .setAddress("123 Main St")
                 .setCity("Springfield")
                 .build();
-        when(locationRepository.findLocationById(location.getId())).thenReturn(location);
+        locationRepository.add(location);
     }
 
     @When("the user creates a group order with the delivery location for the {string} at {string} on {string} at {string}")
@@ -130,5 +126,61 @@ public class RegisteredUserManageGroupOrderStepDefs {
         assertEquals(location.getId(), groupOrder.getDeliveryLocation().getId());
         assertEquals(location, groupOrder.getDeliveryLocation());
         assertNull(groupOrder.getDeliveryDateTime());
+    }
+
+    @Given("a group order created without a delivery datetime")
+    public void aGroupOrderCreatedWithoutADeliveryDatetime() {
+        GroupOrder groupOrder = new GroupOrder.Builder()
+                .withDeliveryLocation(location)
+                .build();
+        codeToShare = groupOrder.getId();
+        groupOrderRepository.add(groupOrder);
+    }
+
+    @When("the user modifies the delivery datetime to set {string} at {string} on {string} at {string}")
+    public void theUserModifiesTheDeliveryDatetimeToSetAtOnAt(String orderDate, String orderTime, String currentDate, String currentTime) {
+        LocalDateTime deliveryDateTime = LocalDateTime.of(
+                LocalDate.parse(orderDate),
+                LocalTime.parse(orderTime)
+        );
+        LocalDateTime currentDateTime = LocalDateTime.of(
+                LocalDate.parse(currentDate),
+                LocalTime.parse(currentTime)
+        );
+        try {
+            groupOrderService.modifyGroupOrderDeliveryDateTime(codeToShare, deliveryDateTime, currentDateTime);
+        } catch (Exception e) {
+            exception = e;
+        }
+    }
+
+    @Then("the group order delivery datetime is {string} at {string}")
+    public void theGroupOrderIsModifiedAndTheDeliveryDateTimeIsAt(String orderDate, String orderTime) {
+        LocalDateTime deliveryDateTime = LocalDateTime.of(
+                LocalDate.parse(orderDate),
+                LocalTime.parse(orderTime)
+        );
+        GroupOrder groupOrder = groupOrderRepository.findGroupOrderById(codeToShare);
+        assertEquals(deliveryDateTime,groupOrder.getDeliveryDateTime());
+    }
+
+    @Then("the group order is not modified and the delivery datetime is still null")
+    public void theGroupOrderIsNotModifiedAndTheDeliveryDatetimeIsStillNull() {
+        GroupOrder groupOrder = groupOrderRepository.findGroupOrderById(codeToShare);
+        assertNull(groupOrder.getDeliveryDateTime());
+    }
+
+    @Given("a group order created with {string} at {string} as delivery datetime")
+    public void aGroupOrderCreatedWithAtAsDeliveryDatetime(String orderDate, String orderTime) {
+        LocalDateTime deliveryDateTime = LocalDateTime.of(
+                LocalDate.parse(orderDate),
+                LocalTime.parse(orderTime)
+        );
+        GroupOrder groupOrder = new GroupOrder.Builder()
+                .withDeliveryLocation(location)
+                .withDate(deliveryDateTime)
+                .build();
+        codeToShare = groupOrder.getId();
+        groupOrderRepository.add(groupOrder);
     }
 }
