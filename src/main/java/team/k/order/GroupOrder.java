@@ -7,6 +7,7 @@ import team.k.common.Location;
 import team.k.enumerations.OrderStatus;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -48,6 +49,7 @@ public class GroupOrder {
         public Builder() {
             this.id = generateId(nextId++);
             this.status = OrderStatus.CREATED;
+            this.subOrders = new ArrayList<>();
         }
 
         /**

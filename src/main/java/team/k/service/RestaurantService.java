@@ -1,5 +1,6 @@
 package team.k.service;
 
+import lombok.RequiredArgsConstructor;
 import team.k.common.Dish;
 import team.k.enumerations.FoodType;
 import team.k.repository.RestaurantRepository;
@@ -12,11 +13,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-
+@RequiredArgsConstructor
 public class RestaurantService {
 
-    private RestaurantRepository restaurantRepository;
-    private TimeSlotRepository timeSlotRepository;
+    private final RestaurantRepository restaurantRepository;
+    private final TimeSlotRepository timeSlotRepository;
 
     /**
      * Get all dishes from a restaurant
