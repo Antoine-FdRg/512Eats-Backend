@@ -28,12 +28,12 @@ import java.util.Objects;
 public class OrderService {
 
     @Getter
-    final GroupOrderRepository groupOrderRepository;
-    final LocationRepository locationRepository;
-    final SubOrderRepository subOrderRepository;
-    final RestaurantRepository restaurantRepository;
-    final RegisteredUserRepository registeredUserRepository;
-    PaymentProcessor paymentProcessor;
+    private final GroupOrderRepository groupOrderRepository;
+    private final LocationRepository locationRepository;
+    private final SubOrderRepository subOrderRepository;
+    private final RestaurantRepository restaurantRepository;
+    private final RegisteredUserRepository registeredUserRepository;
+    private PaymentProcessor paymentProcessor;
 
     /**
      * Create an individual order
@@ -67,7 +67,6 @@ public class OrderService {
         subOrderRepository.add(order);
         restaurant.addOrderToTimeslot(order);
     }
-
 
     public void addDishToOrder(int orderId, int dishId) {
         //Il faut que le total des ingrédients du plat soit inférieur à DURATION
@@ -132,7 +131,7 @@ public class OrderService {
         return restaurant.getDishesReadyInLessThan(TimeSlot.DURATION - order.getPreparationTime());
     }
 
-    public RegisteredUser registeredUserValidator(int registeredUserID) {
+    private RegisteredUser registeredUserValidator(int registeredUserID) {
         RegisteredUser registeredUser = registeredUserRepository.findById(registeredUserID);
         if (registeredUser == null) {
             throw new NoSuchElementException("User not found");

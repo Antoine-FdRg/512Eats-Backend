@@ -11,7 +11,7 @@ import java.time.LocalTime;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class ManageRestaurantService {
-    public static final String RESTAURANT_NOT_FOUND = "Restaurant not found";
+    private static final String RESTAURANT_NOT_FOUND = "Restaurant not found";
     private RestaurantRepository restaurantRepository;
 
     public void updateRestaurantInfos(int restaurantId, String openTime, String closeTime) {
@@ -55,7 +55,7 @@ public class ManageRestaurantService {
 
     }
 
-    public Restaurant restaurantValidator(int restaurantId) {
+    private Restaurant restaurantValidator(int restaurantId) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId);
         if (restaurant == null) {
             throw new IllegalArgumentException(RESTAURANT_NOT_FOUND);
