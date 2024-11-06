@@ -16,8 +16,8 @@ import java.util.List;
 public class IndividualOrder extends SubOrder {
     private Location deliveryLocation;
 
-    IndividualOrder(int id, double price, GroupOrder groupOrder, Restaurant restaurant, RegisteredUser user, List<Dish> dish, OrderStatus orderStatus, LocalDateTime placedDate, LocalDateTime deliveryDate, Location deliveryLocation) {
-        super(id, price, groupOrder, restaurant, user, dish, orderStatus, placedDate, deliveryDate);
+    IndividualOrder(OrderBuilder orderBuilder, Location deliveryLocation) {
+        super(orderBuilder);
         this.deliveryLocation = deliveryLocation;
     }
 

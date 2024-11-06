@@ -11,19 +11,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderBuilder {
-    private final int id;
-    private double price;
-    private GroupOrder groupOrder;
-    private Restaurant restaurant;
-    private RegisteredUser user;
-    private final List<Dish> dishes;
-    private LocalDateTime deliveryTime;
+    final int id;
+    OrderStatus status;
+    double price;
+    GroupOrder groupOrder;
+    Restaurant restaurant;
+    RegisteredUser user;
+    final List<Dish> dishes;
+    LocalDateTime deliveryTime;
     private Location deliveryLocation;
+    LocalDateTime placedDate;
     private static int idCounter = 0;
 
     public OrderBuilder() {
         id = idCounter++;
         dishes = new ArrayList<>();
+        status = OrderStatus.CREATED;
     }
 
     public OrderBuilder setPrice(double price) {
@@ -56,14 +59,26 @@ public class OrderBuilder {
         return this;
     }
 
+    public OrderBuilder setPlacedDate(LocalDateTime placedDate) {
+        this.placedDate = placedDate;
+        return this;
+    }
+
+    public OrderBuilder setDishes(List<Dish> dishes) {
+        this.dishes.addAll(dishes);
+        return this;
+    }
+
     public SubOrder build() {
         if(groupOrder != null && deliveryLocation != null) {
             throw new IllegalArgumentException("The builder has both a group order and a delivery location, it should have only one of them.\n" +
                     "It needs a groupOrder to create a SubOrder or a deliveryLocation to create an IndividualOrder");
         }
         if(this.groupOrder == null) {
-            return new IndividualOrder(id, price, null, restaurant, user, dishes, OrderStatus.CREATED, null, deliveryTime, deliveryLocation);
+            return new IndividualOrder(this, deliveryLocation);
         }
-        return new SubOrder(id, price, groupOrder, restaurant, user, dishes, OrderStatus.CREATED, null, deliveryTime);
+        return new SubOrder(this);
     }
+
+
 }

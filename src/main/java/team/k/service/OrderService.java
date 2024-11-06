@@ -7,6 +7,8 @@ import team.k.RegisteredUser;
 import team.k.common.Dish;
 import team.k.external.PaymentFailedException;
 import team.k.external.PaymentProcessor;
+import team.k.order.GroupOrder;
+import team.k.order.OrderBuilder;
 import team.k.order.Payment;
 import team.k.order.SubOrder;
 import team.k.repository.RegisteredUserRepository;
@@ -63,7 +65,13 @@ public class OrderService {
         if (!restaurant.isAvailable(deliveryTime)) {
             throw new IllegalArgumentException("Restaurant is not available at the chosen time");
         }
-        SubOrder order = registeredUser.initializeIndividualOrder(restaurant, deliveryLocation, deliveryTime);
+        SubOrder order = new OrderBuilder()
+                .setUser(registeredUser)
+                .setRestaurant(restaurant)
+                .setDeliveryLocation(deliveryLocation)
+                .setDeliveryTime(deliveryTime)
+                .build();
+        registeredUser.setCurrentOrder(order);
         subOrderRepository.add(order);
         restaurant.addOrderToTimeslot(order);
     }
@@ -141,5 +149,34 @@ public class OrderService {
             throw new IllegalArgumentException("User cannot order");
         }
         return registeredUser;
+    }
+
+    /**
+     * Create a suborder in a group order and set the current order of the user
+     *
+     * @param registeredUserID
+     * @param restaurantId
+     * @param groupOrderId
+     */
+    public void createSuborder(int registeredUserID, int restaurantId, int groupOrderId) {
+        RegisteredUser registeredUser = this.registeredUserValidator(registeredUserID);
+        Restaurant restaurant = restaurantRepository.findById(restaurantId);
+        GroupOrder groupOrder = groupOrderRepository.findGroupOrderById(groupOrderId);
+        if (registeredUser == null) {
+            throw new NoSuchElementException("User not found");
+        }
+        if (restaurant == null) {
+            throw new NoSuchElementException("Restaurant not found");
+        }
+        if (groupOrder == null) {
+            throw new NoSuchElementException("GroupOrder does not exist");
+        }
+        SubOrder suborder = new OrderBuilder()
+                .setUser(registeredUser)
+                .setRestaurant(restaurant)
+                .setGroupOrder(groupOrder)
+                .build();
+        registeredUser.setCurrentOrder(suborder);
+        groupOrder.addSubOrder(suborder);
     }
 }

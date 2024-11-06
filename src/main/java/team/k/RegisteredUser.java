@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import team.k.common.Location;
 import team.k.enumerations.Role;
+import team.k.order.GroupOrder;
 import team.k.order.SubOrder;
 import team.k.order.OrderBuilder;
 import team.k.restaurant.Restaurant;
@@ -35,15 +36,4 @@ public class RegisteredUser {
         return orders.add(order);
     }
 
-    public SubOrder initializeIndividualOrder(Restaurant restaurant, Location deliveryLocation, LocalDateTime deliveryTime) {
-        currentOrder = new OrderBuilder()
-                .setUser(this)
-                .setRestaurant(restaurant)
-                .setDeliveryLocation(deliveryLocation)
-                .setDeliveryTime(deliveryTime)
-                .build();
-        return currentOrder;
-    }
-
-    //TODO #65 add initializeSubOrder method with only restaurant and groupOrder as parameters
 }
