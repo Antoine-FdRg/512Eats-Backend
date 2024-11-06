@@ -61,7 +61,7 @@ public class GroupOrderService {
             throw new IllegalArgumentException("Current time cannot be null");
         }
         if (deliveryDateTime.isBefore(now.plusMinutes(Restaurant.ORDER_PROCESSING_TIME_MINUTES))) {
-            throw new IllegalArgumentException("Delivery time cannot this early");
+            throw new IllegalArgumentException("Delivery time cannot be this early");
         }
         GroupOrder groupOrder = groupOrderRepository.findGroupOrderById(groupOrderId);
         if (Objects.isNull(groupOrder)) {
