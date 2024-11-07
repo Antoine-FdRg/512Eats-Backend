@@ -36,6 +36,7 @@ public class SubOrder {
         this.status = orderBuilder.status;
         this.placedDate = orderBuilder.placedDate;
         this.deliveryDate = orderBuilder.deliveryTime;
+        this.payment = orderBuilder.payment;
     }
 
     public Dish getCheaperDish() {

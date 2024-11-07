@@ -21,6 +21,7 @@ public class OrderBuilder {
     LocalDateTime deliveryTime;
     private Location deliveryLocation;
     LocalDateTime placedDate;
+    Payment payment;
     private static int idCounter = 0;
 
     public OrderBuilder() {
@@ -66,6 +67,11 @@ public class OrderBuilder {
 
     public OrderBuilder setDishes(List<Dish> dishes) {
         this.dishes.addAll(dishes);
+        return this;
+    }
+
+    public OrderBuilder setPayment(Payment payment) {
+        this.payment = payment;
         return this;
     }
 
