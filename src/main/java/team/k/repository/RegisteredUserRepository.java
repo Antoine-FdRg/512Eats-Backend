@@ -5,6 +5,7 @@ import team.k.RegisteredUser;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class RegisteredUserRepository {
 
     private final List<RegisteredUser> registeredUsers = new ArrayList<>();
