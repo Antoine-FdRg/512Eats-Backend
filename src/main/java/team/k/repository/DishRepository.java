@@ -10,7 +10,7 @@ public class DishRepository {
     private final List<Dish> dishes = new ArrayList<>();
 
     public Dish findById(int dishId) {
-        return dishes.get(dishId);
+        return dishes.stream().filter(restaurant -> restaurant.getId() == dishId).findFirst().orElse(null);
     }
 
     public void add(Dish dish) {
