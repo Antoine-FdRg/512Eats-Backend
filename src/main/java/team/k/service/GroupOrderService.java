@@ -28,14 +28,11 @@ public class GroupOrderService {
         if (location == null) {
             throw new NoSuchElementException("Location not found");
         }
-        if (Objects.isNull(deliveryDateTime)) {
-            throw new IllegalArgumentException("Delivery time cannot be null when creating an individual order");
-        }
         if (Objects.isNull(now)) {
             throw new IllegalArgumentException("Current time cannot be null");
         }
-        if (deliveryDateTime.isBefore(now.plusMinutes(Restaurant.ORDER_PROCESSING_TIME_MINUTES))) {
-            throw new IllegalArgumentException("Delivery time cannot be in the past");
+        if (!Objects.isNull(deliveryDateTime) && deliveryDateTime.isBefore(now.plusMinutes(Restaurant.ORDER_PROCESSING_TIME_MINUTES))) {
+            throw new IllegalArgumentException("Delivery time cannot be this early");
         }
         GroupOrder groupOrder = new GroupOrder.Builder()
                 .withDeliveryLocation(location)
@@ -47,6 +44,33 @@ public class GroupOrderService {
 
     public GroupOrder findGroupOrderById(int id) {
         return groupOrderRepository.findGroupOrderById(id);
+    }
+
+    /**
+     * Allow a registered user to modify a group order delivery datetime, if it was not set
+     * @param groupOrderId the id of group order to modify the delivery datetime
+     * @param deliveryDateTime the delivery datetime for the group order
+     * @param now the current time (to ensure that the chosen deliveryDateTime is not too early
+     */
+    public void modifyGroupOrderDeliveryDateTime(int groupOrderId, LocalDateTime deliveryDateTime, LocalDateTime now){
+
+        if (Objects.isNull(deliveryDateTime)) {
+            throw new IllegalArgumentException("Delivery datetime cannot be null");
+        }
+        if (Objects.isNull(now)) {
+            throw new IllegalArgumentException("Current time cannot be null");
+        }
+        if (deliveryDateTime.isBefore(now.plusMinutes(Restaurant.ORDER_PROCESSING_TIME_MINUTES))) {
+            throw new IllegalArgumentException("Delivery time cannot be this early");
+        }
+        GroupOrder groupOrder = groupOrderRepository.findGroupOrderById(groupOrderId);
+        if (Objects.isNull(groupOrder)) {
+            throw new NoSuchElementException("Group order not found");
+        }
+        if (!Objects.isNull(groupOrder.getDeliveryDateTime())) {
+            throw new UnsupportedOperationException("The group order delivery datetime cannot be changed");
+        }
+        groupOrder.setDeliveryDateTime(deliveryDateTime);
     }
 
 }
