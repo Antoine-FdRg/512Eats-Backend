@@ -7,6 +7,7 @@ import team.k.common.Location;
 import team.k.enumerations.OrderStatus;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -29,12 +30,25 @@ public class GroupOrder {
     }
 
     public boolean addSubOrder(SubOrder subOrder) {
+        subOrder.setGroupOrder(this);
         return subOrders.add(subOrder);
     }
 
     public void close() {
         status = OrderStatus.CANCELED;
         this.subOrders.forEach(SubOrder::cancel);
+    }
+
+    public void place() {
+        boolean atLeastOneSuborderisPaid = false;
+        for (SubOrder subOrder : this.getSubOrders()) {
+            if (subOrder.getStatus() == OrderStatus.PAID) {
+                subOrder.place();
+                atLeastOneSuborderisPaid = true;
+            } else subOrder.cancel();
+        }
+        if (atLeastOneSuborderisPaid) this.setStatus(OrderStatus.PLACED);
+        else this.setStatus(OrderStatus.CANCELED);
     }
 
     public static class Builder {
@@ -48,6 +62,7 @@ public class GroupOrder {
         public Builder() {
             this.id = generateId(nextId++);
             this.status = OrderStatus.CREATED;
+            this.subOrders = new ArrayList<>();
         }
 
         /**
@@ -81,6 +96,7 @@ public class GroupOrder {
             this.deliveryLocation = deliveryLocation;
             return this;
         }
+
 
         public GroupOrder build() {
             return new GroupOrder(this);

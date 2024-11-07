@@ -73,4 +73,8 @@ public class GroupOrderService {
         groupOrder.setDeliveryDateTime(deliveryDateTime);
     }
 
+    public void place(int id) {
+        groupOrderRepository.findGroupOrderById(id).place();
+    }
+
 }
