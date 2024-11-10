@@ -30,7 +30,6 @@ public class GroupOrder {
     }
 
     public boolean addSubOrder(SubOrder subOrder) {
-        subOrder.setGroupOrder(this);
         return subOrders.add(subOrder);
     }
 
@@ -39,13 +38,15 @@ public class GroupOrder {
         this.subOrders.forEach(SubOrder::cancel);
     }
 
-    public void place() {
+    public void place(LocalDateTime localDateTime) {
         boolean atLeastOneSuborderisPaid = false;
         for (SubOrder subOrder : this.getSubOrders()) {
             if (subOrder.getStatus() == OrderStatus.PAID) {
-                subOrder.place();
+                subOrder.place(localDateTime);
                 atLeastOneSuborderisPaid = true;
-            } else subOrder.cancel();
+            } else {
+                subOrder.cancel();
+            }
         }
         if (atLeastOneSuborderisPaid) this.setStatus(OrderStatus.PLACED);
         else this.setStatus(OrderStatus.CANCELED);

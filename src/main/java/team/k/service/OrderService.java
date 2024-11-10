@@ -90,7 +90,7 @@ public class OrderService {
         if (subOrder == null) {
             throw new NoSuchElementException("SubOrder not found");
         }
-        subOrder.place();
+        subOrder.place(subOrder.getPlacedDate());
 
     }
 

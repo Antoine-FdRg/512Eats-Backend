@@ -24,6 +24,6 @@ public class IndividualOrder extends SubOrder {
     @Override
     public void pay() {
         super.pay();
-        super.place();
+        super.place(this.getPlacedDate());
     }
 }

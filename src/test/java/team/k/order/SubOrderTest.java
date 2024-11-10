@@ -76,7 +76,7 @@ class SubOrderTest {
 
     @Test
     void placeOrderTest() {
-        subOrder.place();
+        subOrder.place(subOrder.getPlacedDate());
         assertEquals(OrderStatus.PLACED, subOrder.getStatus());
     }
 

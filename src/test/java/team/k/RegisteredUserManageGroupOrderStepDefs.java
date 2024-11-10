@@ -218,9 +218,13 @@ public class RegisteredUserManageGroupOrderStepDefs {
 
     }
 
-    @When("a group is placed")
-    public void aGroupIsPlaced() {
-        groupOrderService.place(groupOrder.getId());
+    @When("a group is placed at {string} at {string}")
+    public void aGroupIsPlacedAtAt(String orderDate, String orderTime) {
+        LocalDateTime placedDateTime = LocalDateTime.of(
+                LocalDate.parse(orderDate),
+                LocalTime.parse(orderTime)
+        );
+        groupOrderService.place(groupOrder.getId(), placedDateTime);
     }
 
 
@@ -243,4 +247,6 @@ public class RegisteredUserManageGroupOrderStepDefs {
         assertEquals(OrderStatus.PLACED, groupOrder.getStatus());
         assertEquals(OrderStatus.PLACED, PaidSuborder.getStatus());
     }
+
+
 }
