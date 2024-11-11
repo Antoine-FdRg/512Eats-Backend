@@ -43,6 +43,8 @@ class SubOrderTest {
                 setDeliveryTime(LocalDateTime.now().plusHours(1)).
                 setPlacedDate(LocalDateTime.now()).
                 setGroupOrder(groupOrder).build();
+
+        groupOrder.addSubOrder(subOrder);
     }
 
     @Test
