@@ -3,7 +3,7 @@ Feature: Place an order
 
   Scenario: A registered user places an order
     Given an order is created by a registered user whose name is "Tom" and his role is STUDENT
-    When The user places the order
+    When The user places the order at 12:00 on 01-01-2025
     Then the status of the order is placed now
 
   Scenario: A registered user pays for an order and his command appear in his history
