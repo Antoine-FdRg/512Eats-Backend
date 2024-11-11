@@ -73,12 +73,12 @@ public class GroupOrderService {
         groupOrder.setDeliveryDateTime(deliveryDateTime);
     }
 
-    public void place(int groupOrderId, LocalDateTime localDateTime) {
+    public void place(int groupOrderId, LocalDateTime now) {
         GroupOrder groupOrder = groupOrderRepository.findGroupOrderById(groupOrderId);
         if (Objects.isNull(groupOrder)) {
             throw new NoSuchElementException("Group order not found");
         }
-        groupOrder.place(localDateTime);
+        groupOrder.place(now);
     }
 
 }

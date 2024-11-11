@@ -38,11 +38,11 @@ public class GroupOrder {
         this.subOrders.forEach(SubOrder::cancel);
     }
 
-    public void place(LocalDateTime localDateTime) {
+    public void place(LocalDateTime now) {
         boolean atLeastOneSuborderisPaid = false;
         for (SubOrder subOrder : this.getSubOrders()) {
             if (subOrder.getStatus() == OrderStatus.PAID) {
-                subOrder.place(localDateTime);
+                subOrder.place(now);
                 atLeastOneSuborderisPaid = true;
             } else {
                 subOrder.cancel();
