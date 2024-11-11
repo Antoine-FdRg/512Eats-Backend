@@ -111,9 +111,12 @@ public class SubOrderStepdefs {
         groupOrder.addSubOrder(subOrder);
     }
 
-    @When("the registeredUser pays the suborder")
-    public void theRegisteredUserPaysTheSuborder() {
-        registeredUser.getCurrentOrder().pay();
+    @When("the registeredUser pays the suborder at {string} the {string}")
+    public void theRegisteredUserPaysTheSuborder(String hour, String day) {
+        LocalDateTime paymentTime = LocalDateTime.of(
+                LocalDate.parse(day),
+                LocalTime.parse(hour));
+        registeredUser.getCurrentOrder().pay(paymentTime);
     }
 
     @Then("the subOrder has {status} status in the groupOrder")

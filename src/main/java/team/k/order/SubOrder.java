@@ -1,6 +1,6 @@
 package team.k.order;
 
-import lombok.Builder;
+
 import lombok.Getter;
 import lombok.Setter;
 import team.k.common.Dish;
@@ -56,17 +56,16 @@ public class SubOrder {
         status = OrderStatus.CANCELED;
     }
 
-    public void place() {
+    public void place(LocalDateTime now) {
         this.setStatus(OrderStatus.PLACED);
-        this.setPlacedDate(LocalDateTime.now());
+        this.setPlacedDate(now);
         this.user.addOrderToHistory(this);
     }
 
-    public void pay() {
+    public void pay(LocalDateTime now) {
         if(restaurant.getDiscountStrategy()!=null){
             this.price= this.restaurant.getDiscountStrategy().applyDiscount(this); //Appliquer la discount
         }
         this.setStatus(OrderStatus.PAID);
-
     }
 }

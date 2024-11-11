@@ -58,8 +58,8 @@ public class RegisteredUserCreatesSuborderStepDefs {
                 registeredUserRepository);
     }
 
-    @Given("a groupOrder with the id {int} and without any suborder")
-    public void aGroupOrderWithTheId5AndWithoutAnySuborderARegisteredUserJoinTheGroupOrder(int groupOrderId) {
+    @Given("a groupOrder without any suborder")
+    public void aGroupOrderWithTheId5AndWithoutAnySuborderARegisteredUserJoinTheGroupOrder() {
         groupOrder = new GroupOrder.Builder().build();
         groupOrderRepository.add(groupOrder);
     }
@@ -73,7 +73,7 @@ public class RegisteredUserCreatesSuborderStepDefs {
                 .setClose(LocalTime.parse(closed))
                 .build();
         restaurantRepository.add(restaurant);
-        dish = new Dish.Builder().setName(dishName).setDescription("buger").setPrice(5).setPreparationTime(0).build();
+        dish = new Dish.Builder().setName(dishName).setDescription("buger").setPrice(5).setPreparationTime(3).build();
         restaurant.addDish(dish);
     }
 
@@ -85,15 +85,15 @@ public class RegisteredUserCreatesSuborderStepDefs {
         registeredUser.getCurrentOrder().addDish(dish);
     }
 
-    @Then("the suborder has the status created")
-    public void theSuborderHasTheStatusCreated() {
+    @Then("the suborder has the status {status}")
+    public void theSuborderHasTheStatusCreated(OrderStatus wantedStatus) {
 
-        assertEquals(registeredUser.getCurrentOrder().getStatus(), OrderStatus.CREATED);
+        assertEquals(registeredUser.getCurrentOrder().getStatus(), wantedStatus);
     }
 
-    @And("the groupe order with the id {int} has a suborder with the status created")
-    public void theGroupeOrderWithTheIdHasASuborderWithTheStatusCreated(int grpOrderId) {
-        assertEquals(groupOrder.getSubOrders().get(0).getStatus(), OrderStatus.CREATED);
+    @Then("the groupe order has a suborder with the status {status}")
+    public void theGroupeOrderWithTheIdHasASuborderWithTheStatusCreated(OrderStatus wantedStatus) {
+        assertEquals(groupOrder.getSubOrders().get(0).getStatus(), wantedStatus);
     }
 
     @When("the user orders a {string} in the restaurant {string} for the location : {string}")
@@ -107,8 +107,8 @@ public class RegisteredUserCreatesSuborderStepDefs {
         registeredUser.getCurrentOrder().addDish(dish);
     }
 
-    @Then("the order has the status created")
-    public void theOrderHasTheStatusCreated() {
-        assertEquals(registeredUser.getCurrentOrder().getStatus(), OrderStatus.CREATED);
+    @Then("the order has the status {status}")
+    public void theOrderHasTheStatusCreated(OrderStatus wantedStatus) {
+        assertEquals(wantedStatus, OrderStatus.CREATED);
     }
 }

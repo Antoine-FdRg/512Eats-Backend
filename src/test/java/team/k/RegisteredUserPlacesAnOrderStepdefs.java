@@ -75,9 +75,10 @@ public class RegisteredUserPlacesAnOrderStepdefs {
         when(subOrderRepository.findById(order.getId())).thenReturn(order);
     }
 
-    @When("The user places the order")
-    public void placeTheOrder() {
-        orderService.placeSubOrder(order.getId());
+    @When("The user places the order at {int}:{int} on {int}-{int}-{int}")
+    public void placeTheOrder(int hour, int minute, int day, int month, int year) {
+        LocalDateTime placedTime = LocalDateTime.of(year, month, day, hour, minute);
+        orderService.placeSubOrder(order.getId(), placedTime);
     }
 
     @Then("the status of the order is placed now")

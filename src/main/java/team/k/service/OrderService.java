@@ -93,12 +93,12 @@ public class OrderService {
         subOrder.addDish(dish);
     }
 
-    public void placeSubOrder(int orderId) throws NoSuchElementException {
+    public void placeSubOrder(int orderId, LocalDateTime now) throws NoSuchElementException {
         SubOrder subOrder = subOrderRepository.findById(orderId);
         if (subOrder == null) {
             throw new NoSuchElementException("SubOrder not found");
         }
-        subOrder.place();
+        subOrder.place(now);
 
     }
 
@@ -119,7 +119,7 @@ public class OrderService {
         }
         if (paymentProcessor.processPayment(currentOrder.getPrice())) {
             SubOrder subOrder = subOrderRepository.findById(orderId);
-            subOrder.pay();
+            subOrder.pay(currentDateTime);
             subOrder.setPayment(new Payment(subOrder.getPrice(), LocalDateTime.now()));
 
         } else {

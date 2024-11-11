@@ -22,6 +22,7 @@ public class OrderBuilder {
     private Location deliveryLocation;
     LocalDateTime placedDate;
     Payment payment;
+
     private static int idCounter = 0;
 
     public OrderBuilder() {
@@ -81,7 +82,7 @@ public class OrderBuilder {
                     "It needs a groupOrder to create a SubOrder or a deliveryLocation to create an IndividualOrder");
         }
         if(this.groupOrder == null) {
-            return new IndividualOrder(this, deliveryLocation);
+            return new IndividualOrder(this);
         }
         return new SubOrder(this);
     }
