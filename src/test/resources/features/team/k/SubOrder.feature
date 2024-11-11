@@ -9,6 +9,6 @@ Feature: Individual order
     And a suborder created in the group order for the restaurant "Naga"
 
   Scenario: a registeredUser pays its suborder
-    When the registeredUser pays the suborder
+    When the registeredUser pays the suborder at "12:20" the "2025-01-01"
     Then the subOrder has PAID status in the groupOrder
 

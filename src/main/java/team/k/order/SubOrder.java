@@ -1,5 +1,6 @@
 package team.k.order;
 
+
 import lombok.Getter;
 import lombok.Setter;
 import team.k.common.Dish;
@@ -25,16 +26,17 @@ public class SubOrder {
     private LocalDateTime deliveryDate;
     private Payment payment;
 
-    SubOrder(int id, double price, GroupOrder groupOrder, Restaurant restaurant, RegisteredUser user, List<Dish> dish, OrderStatus orderStatus, LocalDateTime placedDate, LocalDateTime deliveryDate) {
-        this.id = id;
-        this.price = price;
-        this.groupOrder = groupOrder;
-        this.restaurant = restaurant;
-        this.user = user;
-        this.dishes = dish;
-        this.status = orderStatus;
-        this.placedDate = placedDate;
-        this.deliveryDate = deliveryDate;
+    SubOrder(OrderBuilder orderBuilder) {
+        this.id = orderBuilder.id;
+        this.price = orderBuilder.price;
+        this.groupOrder = orderBuilder.groupOrder;
+        this.restaurant = orderBuilder.restaurant;
+        this.user = orderBuilder.user;
+        this.dishes = orderBuilder.dishes;
+        this.status = orderBuilder.status;
+        this.placedDate = orderBuilder.placedDate;
+        this.deliveryDate = orderBuilder.deliveryTime;
+        this.payment = orderBuilder.payment;
     }
 
     public Dish getCheaperDish() {
@@ -54,17 +56,16 @@ public class SubOrder {
         status = OrderStatus.CANCELED;
     }
 
-    public void place() {
+    public void place(LocalDateTime now) {
         this.setStatus(OrderStatus.PLACED);
+        this.setPlacedDate(now);
         this.user.addOrderToHistory(this);
-
     }
 
-    public void pay() {
+    public void pay(LocalDateTime now) {
         if(restaurant.getDiscountStrategy()!=null){
             this.price= this.restaurant.getDiscountStrategy().applyDiscount(this); //Appliquer la discount
         }
         this.setStatus(OrderStatus.PAID);
-
     }
 }
