@@ -1,7 +1,6 @@
 package team.k.repository;
 
 import team.k.RegisteredUser;
-
 import java.util.ArrayList;
 import java.util.List;
 

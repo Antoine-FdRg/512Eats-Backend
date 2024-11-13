@@ -22,27 +22,29 @@ class SubOrderTest {
     private RegisteredUser user;
     private Restaurant restaurant;
     private List<Dish> dishes;
+    private GroupOrder groupOrder;
+    LocalDateTime paymentDate;
 
     @BeforeEach
     void setUp() {
         user = new RegisteredUser("John Doe", Role.STUDENT);
         restaurant = new Restaurant.Builder().setName("512Eats").setOpen(LocalTime.of(12, 0, 0)).setClose(LocalTime.of(15, 0, 0)).setFoodTypes(List.of(FoodType.BURGER)).setAverageOrderPreparationTime(30).build();
+        groupOrder = new GroupOrder.Builder().build();
+        paymentDate = LocalDateTime.now();
         dishes = new ArrayList<>();
         dishes.add(new Dish.Builder().setName("pizza").setDescription("pizaa").setPrice(12.5).setPreparationTime(15).build());
         dishes.add(new Dish.Builder().setName("Salad").setDescription("salad").setPrice(7).setPreparationTime(5).build());
         dishes.add(new Dish.Builder().setName("Pasta").setDescription("psta").setPrice(10).setPreparationTime(10).build());
+        subOrder = new OrderBuilder().setPrice(dishes.stream().
+                        mapToDouble(Dish::getPrice).sum()).
+                setRestaurant(restaurant).
+                setUser(user).
+                setDishes(dishes).
+                setDeliveryTime(LocalDateTime.now().plusHours(1)).
+                setPlacedDate(LocalDateTime.now()).
+                setGroupOrder(groupOrder).build();
 
-        subOrder = new SubOrder(
-                1,
-                dishes.stream().mapToDouble(Dish::getPrice).sum(),
-                null,
-                restaurant,
-                user,
-                dishes,
-                OrderStatus.CREATED,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(1)
-        );
+        groupOrder.addSubOrder(subOrder);
     }
 
     @Test
@@ -76,13 +78,13 @@ class SubOrderTest {
 
     @Test
     void placeOrderTest() {
-        subOrder.place();
+        subOrder.place(paymentDate);
         assertEquals(OrderStatus.PLACED, subOrder.getStatus());
     }
 
     @Test
     void payOrderTest() {
-        subOrder.pay();
+        subOrder.pay(paymentDate);
         assertEquals(OrderStatus.PAID, subOrder.getStatus());
     }
 

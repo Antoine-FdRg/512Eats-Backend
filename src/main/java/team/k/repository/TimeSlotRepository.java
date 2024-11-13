@@ -9,7 +9,7 @@ public class TimeSlotRepository {
     private final List<TimeSlot> timeSlots = new ArrayList<>();
 
     public TimeSlot findById(int timeSlotId) {
-        return timeSlots.get(timeSlotId);
+        return timeSlots.stream().filter(restaurant -> restaurant.getId() == timeSlotId).findFirst().orElse(null);
     }
 
     public void add(TimeSlot timeSlot) {

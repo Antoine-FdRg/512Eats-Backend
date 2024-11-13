@@ -16,14 +16,13 @@ import java.util.List;
 public class IndividualOrder extends SubOrder {
     private Location deliveryLocation;
 
-    IndividualOrder(int id, double price, GroupOrder groupOrder, Restaurant restaurant, RegisteredUser user, List<Dish> dish, OrderStatus orderStatus, LocalDateTime placedDate, LocalDateTime deliveryDate, Location deliveryLocation) {
-        super(id, price, groupOrder, restaurant, user, dish, orderStatus, placedDate, deliveryDate);
-        this.deliveryLocation = deliveryLocation;
+    IndividualOrder(OrderBuilder orderBuilder) {
+        super(orderBuilder);
     }
 
     @Override
-    public void pay() {
-        super.pay();
-        super.place();
+    public void pay(LocalDateTime now) {
+        super.pay(now);
+        super.place(now);
     }
 }

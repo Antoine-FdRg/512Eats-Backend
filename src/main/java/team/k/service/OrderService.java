@@ -7,6 +7,8 @@ import team.k.RegisteredUser;
 import team.k.common.Dish;
 import team.k.external.PaymentFailedException;
 import team.k.external.PaymentProcessor;
+import team.k.order.GroupOrder;
+import team.k.order.OrderBuilder;
 import team.k.order.Payment;
 import team.k.order.SubOrder;
 import team.k.repository.RegisteredUserRepository;
@@ -14,7 +16,6 @@ import team.k.repository.RestaurantRepository;
 import team.k.repository.SubOrderRepository;
 import team.k.restaurant.Restaurant;
 import team.k.common.Location;
-import team.k.order.GroupOrder;
 import team.k.repository.GroupOrderRepository;
 import team.k.repository.LocationRepository;
 import team.k.restaurant.TimeSlot;
@@ -29,12 +30,13 @@ import java.util.Objects;
 public class OrderService {
 
     @Getter
-    final GroupOrderRepository groupOrderRepository;
-    final LocationRepository locationRepository;
-    final SubOrderRepository subOrderRepository;
-    final RestaurantRepository restaurantRepository;
-    final RegisteredUserRepository registeredUserRepository;
-    PaymentProcessor paymentProcessor;
+    private final GroupOrderRepository groupOrderRepository;
+    private final LocationRepository locationRepository;
+    private final SubOrderRepository subOrderRepository;
+    private final RestaurantRepository restaurantRepository;
+    private final RegisteredUserRepository registeredUserRepository;
+    private PaymentProcessor paymentProcessor;
+    private static final String RESTAURANT_NOT_FOUND = "Restaurant not found";
 
     /**
      * Create an individual order
@@ -49,7 +51,7 @@ public class OrderService {
         RegisteredUser registeredUser = this.registeredUserValidator(registeredUserID);
         Restaurant restaurant = restaurantRepository.findById(restaurantId);
         if (restaurant == null) {
-            throw new NoSuchElementException("Restaurant not found");
+            throw new NoSuchElementException(RESTAURANT_NOT_FOUND);
         }
         Location deliveryLocation = locationRepository.findLocationById(deliveryLocationId);
         if (deliveryLocation == null) {
@@ -64,21 +66,15 @@ public class OrderService {
         if (!restaurant.isAvailable(deliveryTime)) {
             throw new IllegalArgumentException("Restaurant is not available at the chosen time");
         }
-        SubOrder order = registeredUser.initializeIndividualOrder(restaurant, deliveryLocation, deliveryTime);
+        SubOrder order = new OrderBuilder()
+                .setUser(registeredUser)
+                .setRestaurant(restaurant)
+                .setDeliveryLocation(deliveryLocation)
+                .setDeliveryTime(deliveryTime)
+                .build();
+        registeredUser.setCurrentOrder(order);
         subOrderRepository.add(order);
         restaurant.addOrderToTimeslot(order);
-    }
-
-    public void createGroupOrder(int deliveryLocation) {
-        Location location = locationRepository.findLocationById(deliveryLocation);
-        if (location == null) {
-            throw new IllegalArgumentException("Location not found");
-        }
-        GroupOrder groupOrder = new GroupOrder.Builder()
-                .withDeliveryLocation(location)
-                .build();
-
-        groupOrderRepository.add(groupOrder);
     }
 
     public void addDishToOrder(int orderId, int dishId) {
@@ -98,12 +94,12 @@ public class OrderService {
         subOrder.addDish(dish);
     }
 
-    public void placeSubOrder(int orderId) throws NoSuchElementException {
+    public void placeSubOrder(int orderId, LocalDateTime now) throws NoSuchElementException {
         SubOrder subOrder = subOrderRepository.findById(orderId);
         if (subOrder == null) {
             throw new NoSuchElementException("SubOrder not found");
         }
-        subOrder.place();
+        subOrder.place(now);
 
     }
 
@@ -116,6 +112,9 @@ public class OrderService {
         if (currentOrder.getId() != orderId) {
             throw new IllegalArgumentException("User can only pay for his current order");
         }
+        if (currentDateTime == null) {
+            throw new IllegalArgumentException("Current datetime cant be null");
+        }
         if (!currentOrder.getRestaurant().isAvailable(currentDateTime)) {
             throw new IllegalArgumentException("Restaurant is not available");
         }
@@ -124,9 +123,8 @@ public class OrderService {
         }
         if (paymentProcessor.processPayment(currentOrder.getPrice())) {
             SubOrder subOrder = subOrderRepository.findById(orderId);
-            subOrder.pay();
-            subOrder.setPayment(new Payment(subOrder.getPrice(), LocalDateTime.now()));
-
+            subOrder.pay(currentDateTime);
+            subOrder.setPayment(new Payment(subOrder.getPrice(), currentDateTime));
         } else {
             throw new PaymentFailedException("Payment failed");
         }
@@ -136,7 +134,7 @@ public class OrderService {
         Restaurant restaurant = restaurantRepository.findById(restaurantId);
         SubOrder order = subOrderRepository.findById(orderId);
         if (restaurant == null) {
-            throw new NoSuchElementException("Restaurant not found");
+            throw new NoSuchElementException(RESTAURANT_NOT_FOUND);
         }
         if (order == null) {
             throw new NoSuchElementException("Order not found");
@@ -144,7 +142,7 @@ public class OrderService {
         return restaurant.getDishesReadyInLessThan(TimeSlot.DURATION - order.getPreparationTime());
     }
 
-    public RegisteredUser registeredUserValidator(int registeredUserID) {
+    private RegisteredUser registeredUserValidator(int registeredUserID) {
         RegisteredUser registeredUser = registeredUserRepository.findById(registeredUserID);
         if (registeredUser == null) {
             throw new NoSuchElementException("User not found");
@@ -153,5 +151,31 @@ public class OrderService {
             throw new IllegalArgumentException("User cannot order");
         }
         return registeredUser;
+    }
+
+    /**
+     * Create a suborder in a group order and set the current order of the user
+     *
+     * @param registeredUserID
+     * @param restaurantId
+     * @param groupOrderId
+     */
+    public void createSuborder(int registeredUserID, int restaurantId, int groupOrderId) {
+        RegisteredUser registeredUser = this.registeredUserValidator(registeredUserID);
+        Restaurant restaurant = restaurantRepository.findById(restaurantId);
+        GroupOrder groupOrder = groupOrderRepository.findGroupOrderById(groupOrderId);
+        if (restaurant == null) {
+            throw new NoSuchElementException(RESTAURANT_NOT_FOUND);
+        }
+        if (groupOrder == null) {
+            throw new NoSuchElementException("GroupOrder does not exist");
+        }
+        SubOrder suborder = new OrderBuilder()
+                .setUser(registeredUser)
+                .setRestaurant(restaurant)
+                .setGroupOrder(groupOrder)
+                .build();
+        registeredUser.setCurrentOrder(suborder);
+        groupOrder.addSubOrder(suborder);
     }
 }
