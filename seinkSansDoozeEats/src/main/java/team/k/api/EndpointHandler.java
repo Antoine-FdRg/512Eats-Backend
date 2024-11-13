@@ -1,6 +1,8 @@
 package team.k.api;
 
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import lombok.Setter;
 import lombok.extern.java.Log;
 
 import java.io.IOException;
@@ -15,12 +17,14 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Setter
 @Log
-public class EndpointHandler {
+public class EndpointHandler implements HttpHandler {
     private final Object controller;
     private final Method method;
     private final String methodType;
     private final List<String> paramNames;
+    private Matcher matcher;
 
     EndpointHandler(Object controller, Method method, String methodType, String originalPath) {
         this.controller = controller;
@@ -30,19 +34,22 @@ public class EndpointHandler {
     }
 
     private List<String> extractParamNames(String path) {
-        List<String> paramNames = new ArrayList<>();
-        Matcher matcher = Pattern.compile("\\{(\\w+)}").matcher(path);
+        List<String> paramNamesInternal = new ArrayList<>();
+        matcher = Pattern.compile("\\{(\\w+)}").matcher(path);
         while (matcher.find()) {
-            paramNames.add(matcher.group(1));
+            paramNamesInternal.add(matcher.group(1));
         }
-        return paramNames;
+        return paramNamesInternal;
     }
 
-    public void handle(HttpExchange exchange, Matcher matcher) throws IOException {
+    @Override
+    public void handle(HttpExchange exchange) throws IOException {
         if (!methodType.equalsIgnoreCase(exchange.getRequestMethod())) {
             exchange.sendResponseHeaders(405, -1); // Méthode non autorisée
             return;
         }
+
+        log.info("Handling "+exchange.getRequestURI().getPath());
 
         try {
             // Parse les paramètres de la requête
