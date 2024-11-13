@@ -7,6 +7,12 @@
     <groupId>fr.unice.polytech.team.k</groupId>
     <artifactId>seinksansdooze-eats</artifactId>
     <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>seinkSansDoozeEats</module>
+        <module>api</module>
+        <module>database</module>
+    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
