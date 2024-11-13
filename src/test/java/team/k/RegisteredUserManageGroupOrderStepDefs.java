@@ -1,12 +1,18 @@
 package team.k;
 
 import io.cucumber.java.Before;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+
 import org.mockito.MockitoAnnotations;
 import team.k.common.Location;
+import team.k.enumerations.OrderStatus;
+import team.k.enumerations.Role;
 import team.k.order.GroupOrder;
+import team.k.order.OrderBuilder;
+import team.k.order.SubOrder;
 import team.k.repository.GroupOrderRepository;
 import team.k.repository.LocationRepository;
 import team.k.service.GroupOrderService;
@@ -20,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+
 public class RegisteredUserManageGroupOrderStepDefs {
     LocationRepository locationRepository;
     GroupOrderRepository groupOrderRepository;
@@ -27,6 +34,15 @@ public class RegisteredUserManageGroupOrderStepDefs {
     int codeToShare;
     Location location;
     Exception exception;
+
+    SubOrder PaidSuborder;
+
+    SubOrder UnpaidSuborder;
+
+    GroupOrder groupOrder;
+    RegisteredUser user1;
+    RegisteredUser user2;
+
 
     @Before
     public void setUp() {
@@ -176,11 +192,61 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 LocalDate.parse(orderDate),
                 LocalTime.parse(orderTime)
         );
-        GroupOrder groupOrder = new GroupOrder.Builder()
+        groupOrder = new GroupOrder.Builder()
                 .withDeliveryLocation(location)
                 .withDate(deliveryDateTime)
                 .build();
         codeToShare = groupOrder.getId();
         groupOrderRepository.add(groupOrder);
     }
+
+
+    @And("a suborder of the user {string} with the status {status} added in the group order")
+    public void aSuborderWithTheStatusAddedInTheGroupOrder(String name, OrderStatus status) {
+        user1 = new RegisteredUser(name, Role.STUDENT);
+        PaidSuborder = new OrderBuilder().setUser(user1).build();
+        PaidSuborder.setStatus(status);
+        groupOrder.addSubOrder(PaidSuborder);
+    }
+
+    @And("a suborder of the user {string} not already placed with the status {status} added in the group order")
+    public void aSuborderNotAlreadyPlacedWithTheStatusCREATEDAddedInTheGroupOrder(String name, OrderStatus status) {
+        user2 = new RegisteredUser(name, Role.STUDENT);
+        UnpaidSuborder = new OrderBuilder().setUser(user2).build();
+        UnpaidSuborder.setStatus(status);
+        groupOrder.addSubOrder(UnpaidSuborder);
+
+    }
+
+    @When("a group is placed at {string} at {string}")
+    public void aGroupIsPlacedAtAt(String orderDate, String orderTime) {
+        LocalDateTime placedDateTime = LocalDateTime.of(
+                LocalDate.parse(orderDate),
+                LocalTime.parse(orderTime)
+        );
+        groupOrderService.place(groupOrder.getId(), placedDateTime);
+    }
+
+
+    @Then("one suborder is placed and the other one is canceled")
+    public void oneSuborderIsPlacedAndTheOtherOneIsCanceled() {
+        assertEquals(OrderStatus.PLACED, groupOrder.getStatus());
+        assertEquals(OrderStatus.PLACED, PaidSuborder.getStatus());
+        assertEquals(OrderStatus.CANCELED, UnpaidSuborder.getStatus());
+    }
+
+
+    @Then("the suborder and the groupOrder are canceled")
+    public void theSuborderAndTheGroupOrderIsCanceled() {
+        assertEquals(OrderStatus.CANCELED, UnpaidSuborder.getStatus());
+        assertEquals(OrderStatus.CANCELED, groupOrder.getStatus());
+    }
+
+    @Then("the suborder and the groupOrder are placed")
+    public void theSuborderAndTheGroupOrderIsPlaced() {
+        assertEquals(OrderStatus.PLACED, groupOrder.getStatus());
+        assertEquals(OrderStatus.PLACED, PaidSuborder.getStatus());
+    }
+
+
 }

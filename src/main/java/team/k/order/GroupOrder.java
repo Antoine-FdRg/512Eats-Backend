@@ -38,6 +38,23 @@ public class GroupOrder {
         this.subOrders.forEach(SubOrder::cancel);
     }
 
+    public void place(LocalDateTime now) {
+        boolean atLeastOneSuborderisPaid = false;
+        for (SubOrder subOrder : this.getSubOrders()) {
+            if (subOrder.getStatus() == OrderStatus.PAID) {
+                subOrder.place(now);
+                atLeastOneSuborderisPaid = true;
+            } else {
+                subOrder.cancel();
+            }
+        }
+        if (atLeastOneSuborderisPaid) {
+            this.setStatus(OrderStatus.PLACED);
+        } else {
+            this.setStatus(OrderStatus.CANCELED);
+        }
+    }
+
     public static class Builder {
         private static int nextId = 0;
         private final int id;
@@ -83,6 +100,7 @@ public class GroupOrder {
             this.deliveryLocation = deliveryLocation;
             return this;
         }
+
 
         public GroupOrder build() {
             return new GroupOrder(this);
