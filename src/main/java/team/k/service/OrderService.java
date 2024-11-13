@@ -36,6 +36,7 @@ public class OrderService {
     private final RestaurantRepository restaurantRepository;
     private final RegisteredUserRepository registeredUserRepository;
     private PaymentProcessor paymentProcessor;
+    private static final String RESTAURANT_NOT_FOUND = "Restaurant not found";
 
     /**
      * Create an individual order
@@ -50,7 +51,7 @@ public class OrderService {
         RegisteredUser registeredUser = this.registeredUserValidator(registeredUserID);
         Restaurant restaurant = restaurantRepository.findById(restaurantId);
         if (restaurant == null) {
-            throw new NoSuchElementException("Restaurant not found");
+            throw new NoSuchElementException(RESTAURANT_NOT_FOUND);
         }
         Location deliveryLocation = locationRepository.findLocationById(deliveryLocationId);
         if (deliveryLocation == null) {
@@ -111,6 +112,9 @@ public class OrderService {
         if (currentOrder.getId() != orderId) {
             throw new IllegalArgumentException("User can only pay for his current order");
         }
+        if (currentDateTime == null) {
+            throw new IllegalArgumentException("Current datetime cant be null");
+        }
         if (!currentOrder.getRestaurant().isAvailable(currentDateTime)) {
             throw new IllegalArgumentException("Restaurant is not available");
         }
@@ -120,8 +124,7 @@ public class OrderService {
         if (paymentProcessor.processPayment(currentOrder.getPrice())) {
             SubOrder subOrder = subOrderRepository.findById(orderId);
             subOrder.pay(currentDateTime);
-            subOrder.setPayment(new Payment(subOrder.getPrice(), LocalDateTime.now()));
-
+            subOrder.setPayment(new Payment(subOrder.getPrice(), currentDateTime));
         } else {
             throw new PaymentFailedException("Payment failed");
         }
@@ -131,7 +134,7 @@ public class OrderService {
         Restaurant restaurant = restaurantRepository.findById(restaurantId);
         SubOrder order = subOrderRepository.findById(orderId);
         if (restaurant == null) {
-            throw new NoSuchElementException("Restaurant not found");
+            throw new NoSuchElementException(RESTAURANT_NOT_FOUND);
         }
         if (order == null) {
             throw new NoSuchElementException("Order not found");
@@ -161,11 +164,8 @@ public class OrderService {
         RegisteredUser registeredUser = this.registeredUserValidator(registeredUserID);
         Restaurant restaurant = restaurantRepository.findById(restaurantId);
         GroupOrder groupOrder = groupOrderRepository.findGroupOrderById(groupOrderId);
-        if (registeredUser == null) {
-            throw new NoSuchElementException("User not found");
-        }
         if (restaurant == null) {
-            throw new NoSuchElementException("Restaurant not found");
+            throw new NoSuchElementException(RESTAURANT_NOT_FOUND);
         }
         if (groupOrder == null) {
             throw new NoSuchElementException("GroupOrder does not exist");
