@@ -1,0 +1,33 @@
+<configuration>
+    <!-- Appender pour la console -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Niveau de log pour les requêtes SQL exécutées par Ebean -->
+    <logger name="io.ebean.SQL" level="TRACE" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <!-- Niveau de log pour les transactions Ebean -->
+    <logger name="io.ebean.TXN" level="TRACE" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <!-- Niveau de log pour les événements de cache de second niveau -->
+    <logger name="io.ebean.cache" level="TRACE" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <!-- Niveau de log pour les événements de création de schéma DDL -->
+    <logger name="io.ebean.DDL" level="TRACE" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <!-- Configuration du logger racine -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

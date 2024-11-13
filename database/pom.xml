@@ -9,6 +9,7 @@
         <version>1.0.0</version>
     </parent>
 
+    <groupId>fr.unice.polytech.team.k.database</groupId>
     <artifactId>database</artifactId>
 
     <properties>
@@ -23,6 +24,62 @@
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
+        <!-- Dépendance principale d'Ebean -->
+        <dependency>
+            <groupId>io.ebean</groupId>
+            <artifactId>ebean-sqlite</artifactId>
+            <version>14.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.46.0.0</version> <!-- Remplacez par la version souhaitée -->
+        </dependency>
+
+        <!-- Dépendance SLF4J -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.12</version> <!-- Remplacez par la version souhaitée -->
+        </dependency>
+        <!-- Implémentation Logback pour SLF4J -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.4.14</version> <!-- Remplacez par la version souhaitée -->
+        </dependency>
+        <dependency>
+            <groupId>io.ebean</groupId>
+            <artifactId>ebean-ddl-generator</artifactId>
+            <version>14.5.0</version> <!-- Remplacez par la version appropriée -->
+        </dependency>
+
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin> <!-- perform ebean enhancement -->
+                <groupId>io.ebean</groupId>
+                <artifactId>ebean-maven-plugin</artifactId>
+                <version>14.5.0</version>
+                <extensions>true</extensions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path> <!-- generate ebean query beans -->
+                            <groupId>io.ebean</groupId>
+                            <artifactId>querybean-generator</artifactId>
+                            <version>14.5.0</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
 </project>
