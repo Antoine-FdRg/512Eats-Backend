@@ -48,8 +48,11 @@ public class GroupOrder {
                 subOrder.cancel();
             }
         }
-        if (atLeastOneSuborderisPaid) this.setStatus(OrderStatus.PLACED);
-        else this.setStatus(OrderStatus.CANCELED);
+        if (atLeastOneSuborderisPaid) {
+            this.setStatus(OrderStatus.PLACED);
+        } else {
+            this.setStatus(OrderStatus.CANCELED);
+        }
     }
 
     public static class Builder {
