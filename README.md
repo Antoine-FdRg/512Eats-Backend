@@ -20,7 +20,7 @@ En plus du role de Software Developer (SD), chacun possède des spécificités c
 
 ### As a Registered user, I want to place my order so that the restaurant can prepare the order
 
-### [Lien feature](SeinkSansDoozeEats/src/test/resources/features/team/k/RegisteredUserPlacesAnOrder.feature)
+### [Lien feature](seinkSansDoozeEats/src/test/resources/features/team/k/RegisteredUserPlacesAnOrder.feature)
 
 # Lancement & intallation du projet
 
@@ -69,48 +69,48 @@ facilitent la création de tickets pour le suivi des tâches ou des problèmes r
 
 ## 2. Dossier src
 
-- ### Dossier [main](SeinkSansDoozeEats/src/main) :
+- ### Dossier [main](seinkSansDoozeEats/src/main) :
 
-Contient le code applicatif du projet. Au sein du package [team.k](SeinkSansDoozeEats/src/main/java/team/k), nous
+Contient le code applicatif du projet. Au sein du package [team.k](seinkSansDoozeEats/src/main/java/team/k), nous
 retrouvons:
 
-### [`team.k.common`](SeinkSansDoozeEats/src/main/java/team/k/common)
+### [`team.k.common`](seinkSansDoozeEats/src/main/java/team/k/common)
 
 Ce package contient les classes communes utilisées dans tout le projet, telles que `Dish` et `Location`.
 
-### [`team.k.enumerations`](SeinkSansDoozeEats/src/main/java/team/k/enumerations)
+### [`team.k.enumerations`](seinkSansDoozeEats/src/main/java/team/k/enumerations)
 
 Ce package contient les énumérations utilisées dans le projet, telles que `FoodType`, `OrderStatus`, et `Role`.
 
-### [`team.k.enumerations`](SeinkSansDoozeEats/src/main/java/team/k/external)
+### [`team.k.enumerations`](seinkSansDoozeEats/src/main/java/team/k/external)
 
 Ce package est composé de la relation avec l'acteur externe (ie le paiement)
 
-### [`team.k.order`](SeinkSansDoozeEats/src/main/java/team/k/order)
+### [`team.k.order`](seinkSansDoozeEats/src/main/java/team/k/order)
 
 Ce package gère les commandes, y compris les sous-commandes (`SubOrder`), les commandes
 individuelles (`IndividualOrder`), les commandes de groupe (`GroupOrder`), et les paiements (`Payment`).
 
-### [`team.k.repository`](SeinkSansDoozeEats/src/main/java/team/k/repository)
+### [`team.k.repository`](seinkSansDoozeEats/src/main/java/team/k/repository)
 
 Ce package contient les classes de dépôt pour accéder et manipuler les données des différentes entités, telles
 que `SubOrderRepository`, `RestaurantRepository`, `LocationRepository`, et `RegisteredUserRepository`.
 
-### [`team.k.restaurant`](SeinkSansDoozeEats/src/main/java/team/k/restaurant)
+### [`team.k.restaurant`](seinkSansDoozeEats/src/main/java/team/k/restaurant)
 
 Ce package gère les restaurants, y compris les classes `Restaurant` et `TimeSlot`.
 
-### [`team.k.restaurant.discount`](SeinkSansDoozeEats/src/main/java/team/k/restaurant/discount)
+### [`team.k.restaurant.discount`](seinkSansDoozeEats/src/main/java/team/k/restaurant/discount)
 
 Ce package contient les stratégies de réduction appliquées aux commandes de restaurant, telles
 que `DiscountStrategy`, `FreeDishAfterXOrders`, `RoleDiscount`, et `UnconditionalDiscount`.
 
-### [`team.k.service`](SeinkSansDoozeEats/src/main/java/team/k/service)
+### [`team.k.service`](seinkSansDoozeEats/src/main/java/team/k/service)
 
 Ce package contient les services pour gérer les opérations sur les restaurants et les commandes,
 comme `ManageRestaurantService` et `RestaurantService`.
 
-- ### Dossier [test](SeinkSansDoozeEats/src/test) :
+- ### Dossier [test](seinkSansDoozeEats/src/test) :
 
 Regroupe les tests unitaires et fonctionnels
 
@@ -127,3 +127,6 @@ Regroupe les tests unitaires et fonctionnels
 - Ce fichier de configuration Maven gère les dépendances et les propriétés du projet telles que:
     - L'intégration de Cucumber 7 et JUnit 5 pour les tests.
     - La version du JDK (JDK 21).  
+
+# Architecture du projet
+![](doc/infrastructure.png)
