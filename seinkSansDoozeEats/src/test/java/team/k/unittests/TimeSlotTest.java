@@ -3,12 +3,12 @@ package team.k.unittests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import team.k.enumerations.FoodType;
-import team.k.enumerations.OrderStatus;
-import team.k.order.IndividualOrder;
-import team.k.order.SubOrder;
-import team.k.restaurant.Restaurant;
-import team.k.restaurant.TimeSlot;
+import team.k.common.enumerations.FoodType;
+import team.k.common.enumerations.OrderStatus;
+import team.k.common.model.order.IndividualOrder;
+import team.k.common.model.order.SubOrder;
+import team.k.common.model.restaurant.Restaurant;
+import team.k.common.model.restaurant.TimeSlot;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;

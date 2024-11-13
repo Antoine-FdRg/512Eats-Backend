@@ -2,9 +2,10 @@ package team.k.order;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import team.k.common.model.order.GroupOrder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static team.k.order.GroupOrder.GROUP_ORDER_CODE_LENGTH;
+import static team.k.common.model.order.GroupOrder.GROUP_ORDER_CODE_LENGTH;
 
 class GroupOrderTest {
 

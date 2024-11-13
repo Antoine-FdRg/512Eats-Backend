@@ -2,12 +2,15 @@ package team.k.order;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import team.k.common.Dish;
-import team.k.RegisteredUser;
-import team.k.enumerations.FoodType;
-import team.k.enumerations.Role;
-import team.k.restaurant.Restaurant;
-import team.k.enumerations.OrderStatus;
+import team.k.common.model.Dish;
+import team.k.common.model.RegisteredUser;
+import team.k.common.model.order.GroupOrder;
+import team.k.common.model.order.OrderBuilder;
+import team.k.common.model.order.SubOrder;
+import team.k.common.enumerations.FoodType;
+import team.k.common.enumerations.Role;
+import team.k.common.model.restaurant.Restaurant;
+import team.k.common.enumerations.OrderStatus;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
