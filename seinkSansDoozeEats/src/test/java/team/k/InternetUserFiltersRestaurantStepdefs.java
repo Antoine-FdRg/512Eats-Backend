@@ -7,12 +7,12 @@ import io.cucumber.java.en.When;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import team.k.common.Dish;
-import team.k.enumerations.FoodType;
-import team.k.repository.RestaurantRepository;
-import team.k.restaurant.Restaurant;
-import team.k.restaurant.TimeSlot;
-import team.k.service.RestaurantService;
+import team.k.common.model.Dish;
+import team.k.common.enumerations.FoodType;
+import team.k.common.repository.RestaurantRepository;
+import team.k.common.model.restaurant.Restaurant;
+import team.k.common.model.restaurant.TimeSlot;
+import team.k.restaurantService.RestaurantService;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
