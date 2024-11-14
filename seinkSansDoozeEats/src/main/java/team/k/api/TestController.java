@@ -9,8 +9,8 @@ class TestController {
         return greeting + ", " + surname + " " + name + "!";
     }
 
-    @WebRoute(path = "/goodbye")
-    public String goodbye() {
-        return "Goodbye, World!";
+    @WebRoute(path = "/goodbye", method = "POST")
+    public String goodbye(@RequestParam("name") String name) {
+        return "Goodbye, "+ name +"!";
     }
 }

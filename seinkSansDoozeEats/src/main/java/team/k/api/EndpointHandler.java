@@ -1,11 +1,13 @@
 package team.k.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import lombok.Setter;
 import lombok.extern.java.Log;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -25,21 +27,15 @@ public class EndpointHandler implements HttpHandler {
     private final String methodType;
     private final List<String> paramNames;
     private Matcher matcher;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private String path;
 
-    EndpointHandler(Object controller, Method method, String methodType, String originalPath) {
+
+    EndpointHandler(Object controller, Method method, String methodType, String path) {
         this.controller = controller;
         this.method = method;
         this.methodType = methodType;
-        this.paramNames = extractParamNames(originalPath);
-    }
-
-    private List<String> extractParamNames(String path) {
-        List<String> paramNamesInternal = new ArrayList<>();
-        matcher = Pattern.compile("\\{(\\w+)}").matcher(path);
-        while (matcher.find()) {
-            paramNamesInternal.add(matcher.group(1));
-        }
-        return paramNamesInternal;
+        this.paramNames = extractParamNames(path);
     }
 
     @Override
@@ -51,38 +47,15 @@ public class EndpointHandler implements HttpHandler {
 
         log.info("Handling "+exchange.getRequestURI().getPath());
 
+        Object[] params;
         try {
-            // Parse les paramètres de la requête
-            Map<String, String> queryParams = parseQueryParams(exchange.getRequestURI().getQuery());
+            params = resolveParameters(exchange);
+        } catch (Exception e) {
+            exchange.sendResponseHeaders(400, -1); // Mauvaise requête
+            return;
+        }
 
-            // Crée un tableau d'arguments pour les paramètres de la méthode
-            Object[] params = new Object[method.getParameterCount()];
-            Parameter[] parameters = method.getParameters();
-
-            for (int i = 0; i < parameters.length; i++) {
-                if (parameters[i].isAnnotationPresent(PathVariable.class)) {
-                    // Traite les PathVariables
-                    PathVariable pathVariable = parameters[i].getAnnotation(PathVariable.class);
-                    String paramName = pathVariable.value();
-                    int paramIndex = paramNames.indexOf(paramName);
-                    if (paramIndex != -1) {
-                        params[i] = matcher.group(paramIndex + 1);
-                    } else {
-                        throw new IllegalArgumentException("Paramètre de chemin manquant : " + paramName);
-                    }
-                } else if (parameters[i].isAnnotationPresent(RequestParam.class)) {
-                    // Traite les RequestParams
-                    RequestParam requestParam = parameters[i].getAnnotation(RequestParam.class);
-                    String paramName = requestParam.value();
-                    if (queryParams.containsKey(paramName)) {
-                        params[i] = queryParams.get(paramName);
-                    } else {
-                        throw new IllegalArgumentException("Paramètre de requête manquant : " + paramName);
-                    }
-                }
-            }
-
-            // Appel de la méthode avec les paramètres extraits
+        try {
             String response = (String) method.invoke(controller, params);
             exchange.sendResponseHeaders(200, response.getBytes().length);
             OutputStream os = exchange.getResponseBody();
@@ -94,16 +67,54 @@ public class EndpointHandler implements HttpHandler {
         }
     }
 
-    // Méthode pour analyser les paramètres de requête
-    private Map<String, String> parseQueryParams(String query) {
-        if (query == null || query.isEmpty()) {
-            return Map.of();
+    private Object[] resolveParameters(HttpExchange exchange) throws IOException {
+        Parameter[] parameters = method.getParameters();
+        Object[] params = new Object[parameters.length];
+
+        for (int i = 0; i < parameters.length; i++) {
+            Parameter parameter = parameters[i];
+
+            if (parameter.isAnnotationPresent(PathVariable.class)) {
+                String paramName = parameter.getAnnotation(PathVariable.class).value();
+                int paramIndex = getParamIndex(paramName);
+                params[i] = matcher.group(paramIndex + 1); // +1 car les groupes commencent à 1
+            } else if (parameter.isAnnotationPresent(RequestBody.class)) {
+                params[i] = parseRequestBody(exchange.getRequestBody(), parameter.getType());
+            } else if (parameter.isAnnotationPresent(RequestParam.class)) {
+                String paramName = parameter.getAnnotation(RequestParam.class).value();
+                params[i] = getQueryParam(exchange, paramName);
+            }
         }
-        return Stream.of(query.split("&"))
-                .map(param -> param.split("=", 2))
-                .collect(Collectors.toMap(
-                        p -> p[0],  // Nom du paramètre
-                        p -> p.length > 1 ? p[1] : ""  // Valeur du paramètre ou chaîne vide
-                ));
+        return params;
+    }
+
+    private Object parseRequestBody(InputStream requestBody, Class<?> targetType) throws IOException {
+        return objectMapper.readValue(requestBody, targetType);
+    }
+
+    private String getQueryParam(HttpExchange exchange, String paramName) {
+        String query = exchange.getRequestURI().getQuery();
+        if (query == null) return null;
+
+        for (String param : query.split("&")) {
+            String[] keyValue = param.split("=");
+            if (keyValue[0].equals(paramName) && keyValue.length == 2) {
+                return keyValue[1];
+            }
+        }
+        return null;
+    }
+
+    private List<String> extractParamNames(String path) {
+        List<String> paramNamesInternal = new ArrayList<>();
+        matcher = Pattern.compile("\\{(\\w+)}").matcher(path);
+        while (matcher.find()) {
+            paramNamesInternal.add(matcher.group(1));
+        }
+        return paramNamesInternal;
+    }
+
+    private int getParamIndex(String paramName) {
+        return paramNames.indexOf(paramName);
     }
 }
