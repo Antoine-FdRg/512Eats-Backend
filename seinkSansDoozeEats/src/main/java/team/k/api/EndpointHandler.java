@@ -58,21 +58,25 @@ public class EndpointHandler implements HttpHandler {
 
         try {
             Object result = method.invoke(controller, params);
-            String response;
+            String responseString;
+            int statusCode = 200; // Code de statut par défaut
             log.info("Result: " + result);
             if (result instanceof String stringResult) {
-                response = stringResult;
+                responseString = stringResult;
+            } else if (result instanceof Response responseObject) {
+                responseString = objectMapper.writeValueAsString(responseObject.getBody());
+                statusCode = responseObject.getStatusCode();
             } else {
-                response = objectMapper.writeValueAsString(result);
-                log.info("Response: " + response);
+                responseString = objectMapper.writeValueAsString(result);
+                log.info("Response: " + responseString);
             }
 
             // Envoyer la réponse
             exchange.getResponseHeaders().set("Content-Type", "application/json");
-            exchange.sendResponseHeaders(200, response.getBytes().length);
+            exchange.sendResponseHeaders(statusCode, responseString.getBytes().length);
 
             try (OutputStream os = exchange.getResponseBody()) {
-                os.write(response.getBytes());
+                os.write(responseString.getBytes());
             }
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();

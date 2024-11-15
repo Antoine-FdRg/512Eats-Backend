@@ -17,7 +17,7 @@ class TestController2 {
     }
 
     @WebRoute(path = "/data", method = "POST")
-    public MyData data(@RequestParam("name") String name, @RequestParam("age") double age) {
-        return new MyData(name, age);
+    public Response<MyData> data(@RequestParam("name") String name, @RequestParam("age") double age) {
+        return Response.status(201,new MyData(name, age));
     }
 }
