@@ -98,7 +98,6 @@ public class AnnotationBasedServer {
     }
 
     private void registerRoute(Object controller, String basePath, Method method) {
-        log.info("registering route "+basePath+ " + "+method.getName());
             WebRoute annotation = method.getAnnotation(WebRoute.class);
             String path = basePath + annotation.path();  // Ajoute le préfixe de classe au chemin
             String methodType = annotation.method();

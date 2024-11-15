@@ -9,11 +9,11 @@ import lombok.extern.java.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -28,7 +28,6 @@ public class EndpointHandler implements HttpHandler {
     private final List<String> paramNames;
     private Matcher matcher;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private String path;
 
 
     EndpointHandler(Object controller, Method method, String methodType, String path) {
@@ -45,7 +44,7 @@ public class EndpointHandler implements HttpHandler {
             return;
         }
 
-        log.info("Handling "+exchange.getRequestURI().getPath());
+        log.info("Handling " + exchange.getRequestURI().getPath());
 
         Object[] params;
         try {
@@ -55,15 +54,29 @@ public class EndpointHandler implements HttpHandler {
             return;
         }
 
+        log.info("Params: " + Stream.of(params).map(Object::toString).collect(Collectors.joining(", ")));
+
         try {
-            String response = (String) method.invoke(controller, params);
+            Object result = method.invoke(controller, params);
+            String response;
+            log.info("Result: " + result);
+            if (result instanceof String stringResult) {
+                response = stringResult;
+            } else {
+                response = objectMapper.writeValueAsString(result);
+                log.info("Response: " + response);
+            }
+
+            // Envoyer la réponse
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             exchange.sendResponseHeaders(200, response.getBytes().length);
-            OutputStream os = exchange.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
-        } catch (Exception e) {
-            exchange.sendResponseHeaders(500, -1); // Erreur serveur
+
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(response.getBytes());
+            }
+        } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
+            exchange.sendResponseHeaders(500, -1); // Erreur interne du serveur
         }
     }
 
@@ -73,19 +86,44 @@ public class EndpointHandler implements HttpHandler {
 
         for (int i = 0; i < parameters.length; i++) {
             Parameter parameter = parameters[i];
-
-            if (parameter.isAnnotationPresent(PathVariable.class)) {
-                String paramName = parameter.getAnnotation(PathVariable.class).value();
-                int paramIndex = getParamIndex(paramName);
-                params[i] = matcher.group(paramIndex + 1); // +1 car les groupes commencent à 1
-            } else if (parameter.isAnnotationPresent(RequestBody.class)) {
+            if (parameter.isAnnotationPresent(RequestBody.class)) {
                 params[i] = parseRequestBody(exchange.getRequestBody(), parameter.getType());
-            } else if (parameter.isAnnotationPresent(RequestParam.class)) {
-                String paramName = parameter.getAnnotation(RequestParam.class).value();
-                params[i] = getQueryParam(exchange, paramName);
+            } else {
+                Object rawParam = null;
+                if (parameter.isAnnotationPresent(PathVariable.class)) {
+                    String paramName = parameter.getAnnotation(PathVariable.class).value();
+                    int paramIndex = getParamIndex(paramName);
+                    rawParam = matcher.group(paramIndex + 1); // +1 car les groupes commencent à 1
+                } else  if (parameter.isAnnotationPresent(RequestParam.class)) {
+                    String paramName = parameter.getAnnotation(RequestParam.class).value();
+                    rawParam = getQueryParam(exchange, paramName);
+                }
+                params[i] = convertToExpectedType(rawParam, parameter.getType());
             }
         }
         return params;
+    }
+
+    private Object convertToExpectedType(Object rawParam, Class<?> targetType) {
+        if (rawParam == null) {
+            return null;
+        }
+        String rawParamStr = rawParam.toString();
+        if (targetType == Integer.class || targetType == int.class) {
+            return Integer.parseInt(rawParamStr);
+        } else if (targetType == Double.class || targetType == double.class) {
+            return Double.parseDouble(rawParamStr);
+        } else if (targetType == Boolean.class || targetType == boolean.class) {
+            return Boolean.parseBoolean(rawParamStr);
+        } else if (targetType == String.class) {
+            return rawParamStr;
+        } else {
+            try {
+                return objectMapper.readValue(rawParamStr, targetType);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to convert parameter", e);
+            }
+        }
     }
 
     private Object parseRequestBody(InputStream requestBody, Class<?> targetType) throws IOException {

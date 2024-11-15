@@ -1,6 +1,9 @@
 package team.k.api;
 
+import lombok.extern.java.Log;
+
 @RestController(path = "/ciao")
+@Log
 class TestController2 {
 
     @WebRoute(path = "/goodbye")
@@ -9,7 +12,12 @@ class TestController2 {
     }
 
     @WebRoute(path = "/post", method = "POST")
-    public String handlePostData(@RequestBody MyData data) {
-        return "Received data: " + data.toString();
+    public MyData post(@RequestBody MyData data) {
+        return data;
+    }
+
+    @WebRoute(path = "/data", method = "POST")
+    public MyData data(@RequestParam("name") String name, @RequestParam("age") double age) {
+        return new MyData(name, age);
     }
 }
