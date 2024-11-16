@@ -104,7 +104,6 @@ public class SSDBHttpServer {
     }
 
     // Enregistre les méthodes annotées avec @WebRoute dans un contrôleur donné
-    // Enregistre les méthodes annotées avec @WebRoute dans un contrôleur donné
     private void registerRoutes(Object controller, String basePath) {
         for (Method method : controller.getClass().getDeclaredMethods()) {
             if (method.isAnnotationPresent(Endpoint.class)) {
