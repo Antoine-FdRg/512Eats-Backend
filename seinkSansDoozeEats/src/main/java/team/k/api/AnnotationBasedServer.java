@@ -1,9 +1,14 @@
 package team.k.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import lombok.extern.java.Log;
+import team.k.api.annotations.RestController;
+import team.k.api.annotations.Endpoint;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.net.URL;
@@ -64,32 +69,44 @@ public class AnnotationBasedServer {
         registerRoutes(controllerInstance, basePath);
 
         // Définir le gestionnaire pour traiter toutes les requêtes avec les routes enregistrées
-        server.createContext(basePath, exchange -> {
-            String path = exchange.getRequestURI().getPath();
-            boolean found = false;
+        server.createContext(basePath, exchange -> preProcessQuery(exchange, basePath));
+    }
 
-            for (Map.Entry<Pattern, EndpointHandler> entry : routesByController.get(basePath).entrySet()) {
-                Pattern pattern = entry.getKey();
-                Matcher matcher = pattern.matcher(path);
-                if (matcher.matches()) {
-                    entry.getValue().setMatcher(matcher);
-                    entry.getValue().handle(exchange);
-                    found = true;
-                    break;
-                }
+    private void preProcessQuery(HttpExchange exchange, String basePath) throws IOException {
+        String path = exchange.getRequestURI().getPath();
+        boolean found = false;
+
+        for (Map.Entry<Pattern, EndpointHandler> entry : routesByController.get(basePath).entrySet()) {
+            Pattern pattern = entry.getKey();
+            Matcher matcher = pattern.matcher(path);
+            if (matcher.matches()) {
+                entry.getValue().setMatcher(matcher);
+                entry.getValue().handle(exchange);
+                found = true;
+                break;
             }
+        }
 
+        try{
             if (!found) {
-                exchange.sendResponseHeaders(404, -1); // Route non trouvée
+                throw new QueryProcessingException(404, "Endpoint not found");
             }
-        });
+        }catch (QueryProcessingException e){
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
+            String errorMessage = new ObjectMapper().writeValueAsString(e);
+            exchange.sendResponseHeaders(e.getStatusCode(), errorMessage.length());
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(errorMessage.getBytes());
+            }
+            log.severe(e.toString());
+        }
     }
 
     // Enregistre les méthodes annotées avec @WebRoute dans un contrôleur donné
     // Enregistre les méthodes annotées avec @WebRoute dans un contrôleur donné
     private void registerRoutes(Object controller, String basePath) {
         for (Method method : controller.getClass().getDeclaredMethods()) {
-            if (method.isAnnotationPresent(WebRoute.class)) {
+            if (method.isAnnotationPresent(Endpoint.class)) {
                 registerRoute(controller, basePath, method);
             }
         }
@@ -98,7 +115,7 @@ public class AnnotationBasedServer {
     }
 
     private void registerRoute(Object controller, String basePath, Method method) {
-            WebRoute annotation = method.getAnnotation(WebRoute.class);
+            Endpoint annotation = method.getAnnotation(Endpoint.class);
             String path = basePath + annotation.path();  // Ajoute le préfixe de classe au chemin
             String methodType = annotation.method();
 

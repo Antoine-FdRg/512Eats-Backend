@@ -5,6 +5,9 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import lombok.Setter;
 import lombok.extern.java.Log;
+import team.k.api.annotations.PathVariable;
+import team.k.api.annotations.RequestBody;
+import team.k.api.annotations.RequestParam;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,8 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Setter
 @Log
@@ -29,7 +30,6 @@ public class EndpointHandler implements HttpHandler {
     private Matcher matcher;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-
     EndpointHandler(Object controller, Method method, String methodType, String path) {
         this.controller = controller;
         this.method = method;
@@ -39,36 +39,47 @@ public class EndpointHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        if (!methodType.equalsIgnoreCase(exchange.getRequestMethod())) {
-            exchange.sendResponseHeaders(405, -1); // Méthode non autorisée
-            return;
-        }
-
-        log.info("Handling " + exchange.getRequestURI().getPath());
-
-        Object[] params;
         try {
-            params = resolveParameters(exchange);
-        } catch (Exception e) {
-            exchange.sendResponseHeaders(400, -1); // Mauvaise requête
-            return;
-        }
+            if (!methodType.equalsIgnoreCase(exchange.getRequestMethod())) {
+                throw new QueryProcessingException(405, QueryProcessingException.METHOD_NOT_ALLOWED);
+            }
 
-        log.info("Params: " + Stream.of(params).map(Object::toString).collect(Collectors.joining(", ")));
+            log.info("Handling " + exchange.getRequestURI().getPath());
 
-        try {
-            Object result = method.invoke(controller, params);
+            Object[] params;
+            try {
+                params = resolveParameters(exchange);
+            } catch (Exception e) {
+                throw new QueryProcessingException(400, QueryProcessingException.MAL_FORMED_PARAMS);
+            }
+
+            for (Object param : params) {
+                log.info("Param: " + param);
+            }
+
+            Object result = null;
+            try {
+                result = method.invoke(controller, params);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new QueryProcessingException(500, QueryProcessingException.INTERNAL_SERVER_ERROR, e.getMessage());
+            } catch (IllegalArgumentException e) {
+                throw new QueryProcessingException(400, QueryProcessingException.MAL_FORMED_PARAMS, e.getMessage());
+            }
             String responseString;
             int statusCode = 200; // Code de statut par défaut
             log.info("Result: " + result);
-            if (result instanceof String stringResult) {
-                responseString = stringResult;
-            } else if (result instanceof Response responseObject) {
-                responseString = objectMapper.writeValueAsString(responseObject.getBody());
-                statusCode = responseObject.getStatusCode();
-            } else {
-                responseString = objectMapper.writeValueAsString(result);
-                log.info("Response: " + responseString);
+            switch (result) {
+                case String stringResult -> {
+                    responseString = stringResult;
+                }
+                case Response<?> responseObject -> {
+                    responseString = objectMapper.writeValueAsString(responseObject.getBody());
+                    statusCode = responseObject.getStatusCode();
+                }
+                default -> {
+                    responseString = objectMapper.writeValueAsString(result);
+                    log.info("Response: " + responseString);
+                }
             }
 
             // Envoyer la réponse
@@ -77,14 +88,21 @@ public class EndpointHandler implements HttpHandler {
 
             try (OutputStream os = exchange.getResponseBody()) {
                 os.write(responseString.getBytes());
+            } catch (IOException e) {
+                throw new QueryProcessingException(500, QueryProcessingException.INTERNAL_SERVER_ERROR);
             }
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-            exchange.sendResponseHeaders(500, -1); // Erreur interne du serveur
+        } catch (QueryProcessingException e) {
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
+            String errorMessage = objectMapper.writeValueAsString(e);
+            exchange.sendResponseHeaders(e.getStatusCode(), errorMessage.length());
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(errorMessage.getBytes());
+            }
+            log.severe(e.toString());
         }
     }
 
-    private Object[] resolveParameters(HttpExchange exchange) throws IOException {
+    private Object[] resolveParameters(HttpExchange exchange) throws  QueryProcessingException {
         Parameter[] parameters = method.getParameters();
         Object[] params = new Object[parameters.length];
 
@@ -98,7 +116,7 @@ public class EndpointHandler implements HttpHandler {
                     String paramName = parameter.getAnnotation(PathVariable.class).value();
                     int paramIndex = getParamIndex(paramName);
                     rawParam = matcher.group(paramIndex + 1); // +1 car les groupes commencent à 1
-                } else  if (parameter.isAnnotationPresent(RequestParam.class)) {
+                } else if (parameter.isAnnotationPresent(RequestParam.class)) {
                     String paramName = parameter.getAnnotation(RequestParam.class).value();
                     rawParam = getQueryParam(exchange, paramName);
                 }
@@ -108,7 +126,7 @@ public class EndpointHandler implements HttpHandler {
         return params;
     }
 
-    private Object convertToExpectedType(Object rawParam, Class<?> targetType) {
+    private Object convertToExpectedType(Object rawParam, Class<?> targetType) throws QueryProcessingException {
         if (rawParam == null) {
             return null;
         }
@@ -125,13 +143,17 @@ public class EndpointHandler implements HttpHandler {
             try {
                 return objectMapper.readValue(rawParamStr, targetType);
             } catch (IOException e) {
-                throw new RuntimeException("Failed to convert parameter", e);
+                throw new QueryProcessingException(400, QueryProcessingException.MAL_FORMED_PARAMS);
             }
         }
     }
 
-    private Object parseRequestBody(InputStream requestBody, Class<?> targetType) throws IOException {
-        return objectMapper.readValue(requestBody, targetType);
+    private Object parseRequestBody(InputStream requestBody, Class<?> targetType) throws QueryProcessingException {
+        try {
+            return objectMapper.readValue(requestBody, targetType);
+        } catch (IOException e) {
+            throw new QueryProcessingException(400, QueryProcessingException.MAL_FORMED_PARAMS,e.getMessage());
+        }
     }
 
     private String getQueryParam(HttpExchange exchange, String paramName) {

@@ -1,4 +1,4 @@
-package team.k.api;
+package team.k.api.examples;
 
 
 import lombok.AllArgsConstructor;
