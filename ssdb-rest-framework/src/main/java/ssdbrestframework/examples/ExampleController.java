@@ -1,12 +1,12 @@
-package team.k.api.examples;
+package ssdbrestframework.examples;
 
-import team.k.api.annotations.PathVariable;
-import team.k.api.annotations.RequestParam;
-import team.k.api.annotations.RestController;
-import team.k.api.annotations.Endpoint;
+import ssdbrestframework.annotations.PathVariable;
+import ssdbrestframework.annotations.RequestParam;
+import ssdbrestframework.annotations.RestController;
+import ssdbrestframework.annotations.Endpoint;
 
 @RestController(path = "/greeter")
-public class TestController {
+public class ExampleController {
     @Endpoint(path = "/hello/{surname}/{name}")
     public String hello(@PathVariable("name") String name,
                         @PathVariable("surname") String surname,

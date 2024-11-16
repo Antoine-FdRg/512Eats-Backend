@@ -1,4 +1,4 @@
-package team.k.api;
+package ssdbrestframework;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

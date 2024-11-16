@@ -1,13 +1,13 @@
-package team.k.api;
+package ssdbrestframework;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import lombok.Setter;
 import lombok.extern.java.Log;
-import team.k.api.annotations.PathVariable;
-import team.k.api.annotations.RequestBody;
-import team.k.api.annotations.RequestParam;
+import ssdbrestframework.annotations.PathVariable;
+import ssdbrestframework.annotations.RequestBody;
+import ssdbrestframework.annotations.RequestParam;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,7 +41,7 @@ public class SSDBHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         try {
             if (!methodType.equalsIgnoreCase(exchange.getRequestMethod())) {
-                throw new QueryProcessingException(405, QueryProcessingException.METHOD_NOT_ALLOWED);
+                throw new SSDBQueryProcessingException(405, SSDBQueryProcessingException.METHOD_NOT_ALLOWED);
             }
 
             log.info("Handling " + exchange.getRequestURI().getPath());
@@ -50,7 +50,7 @@ public class SSDBHandler implements HttpHandler {
             try {
                 params = resolveParameters(exchange);
             } catch (Exception e) {
-                throw new QueryProcessingException(400, QueryProcessingException.MAL_FORMED_PARAMS);
+                throw new SSDBQueryProcessingException(400, SSDBQueryProcessingException.MAL_FORMED_PARAMS);
             }
 
             for (Object param : params) {
@@ -61,9 +61,9 @@ public class SSDBHandler implements HttpHandler {
             try {
                 result = method.invoke(controller, params);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new QueryProcessingException(500, QueryProcessingException.INTERNAL_SERVER_ERROR, e.getMessage());
+                throw new SSDBQueryProcessingException(500, SSDBQueryProcessingException.INTERNAL_SERVER_ERROR, e.getMessage());
             } catch (IllegalArgumentException e) {
-                throw new QueryProcessingException(400, QueryProcessingException.MAL_FORMED_PARAMS, e.getMessage());
+                throw new SSDBQueryProcessingException(400, SSDBQueryProcessingException.MAL_FORMED_PARAMS, e.getMessage());
             }
             String responseString;
             int statusCode = 200; // Code de statut par défaut
@@ -89,9 +89,9 @@ public class SSDBHandler implements HttpHandler {
             try (OutputStream os = exchange.getResponseBody()) {
                 os.write(responseString.getBytes());
             } catch (IOException e) {
-                throw new QueryProcessingException(500, QueryProcessingException.INTERNAL_SERVER_ERROR);
+                throw new SSDBQueryProcessingException(500, SSDBQueryProcessingException.INTERNAL_SERVER_ERROR);
             }
-        } catch (QueryProcessingException e) {
+        } catch (SSDBQueryProcessingException e) {
             exchange.getResponseHeaders().set("Content-Type", "application/json");
             String errorMessage = objectMapper.writeValueAsString(e);
             exchange.sendResponseHeaders(e.getStatusCode(), errorMessage.length());
@@ -102,7 +102,7 @@ public class SSDBHandler implements HttpHandler {
         }
     }
 
-    private Object[] resolveParameters(HttpExchange exchange) throws  QueryProcessingException {
+    private Object[] resolveParameters(HttpExchange exchange) throws SSDBQueryProcessingException {
         Parameter[] parameters = method.getParameters();
         Object[] params = new Object[parameters.length];
 
@@ -126,7 +126,7 @@ public class SSDBHandler implements HttpHandler {
         return params;
     }
 
-    private Object convertToExpectedType(Object rawParam, Class<?> targetType) throws QueryProcessingException {
+    private Object convertToExpectedType(Object rawParam, Class<?> targetType) throws SSDBQueryProcessingException {
         if (rawParam == null) {
             return null;
         }
@@ -143,16 +143,16 @@ public class SSDBHandler implements HttpHandler {
             try {
                 return objectMapper.readValue(rawParamStr, targetType);
             } catch (IOException e) {
-                throw new QueryProcessingException(400, QueryProcessingException.MAL_FORMED_PARAMS);
+                throw new SSDBQueryProcessingException(400, SSDBQueryProcessingException.MAL_FORMED_PARAMS);
             }
         }
     }
 
-    private Object parseRequestBody(InputStream requestBody, Class<?> targetType) throws QueryProcessingException {
+    private Object parseRequestBody(InputStream requestBody, Class<?> targetType) throws SSDBQueryProcessingException {
         try {
             return objectMapper.readValue(requestBody, targetType);
         } catch (IOException e) {
-            throw new QueryProcessingException(400, QueryProcessingException.MAL_FORMED_PARAMS,e.getMessage());
+            throw new SSDBQueryProcessingException(400, SSDBQueryProcessingException.MAL_FORMED_PARAMS,e.getMessage());
         }
     }
 

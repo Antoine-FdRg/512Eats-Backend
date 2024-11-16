@@ -1,4 +1,4 @@
-package team.k.api.annotations;
+package ssdbrestframework.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -1,9 +1,9 @@
-package team.k.api;
+package ssdbrestframework;
 
 import lombok.Getter;
 
 @Getter
-public class QueryProcessingException extends Exception {
+public class SSDBQueryProcessingException extends Exception {
     private final int statusCode;
     private String exception;
     public static final String MAL_FORMED_PARAMS = "Bad request, it is likely that the request parameters or body are not correctly formatted";
@@ -11,12 +11,12 @@ public class QueryProcessingException extends Exception {
     public static final String METHOD_NOT_ALLOWED = "Method not allowed";
 
 
-    public QueryProcessingException(int statusCode, String message) {
+    public SSDBQueryProcessingException(int statusCode, String message) {
         super(message);
         this.statusCode = statusCode;
     }
 
-    public QueryProcessingException(int statusCode, String message, String exception) {
+    public SSDBQueryProcessingException(int statusCode, String message, String exception) {
         super(message);
         this.statusCode = statusCode;
         this.exception = exception;

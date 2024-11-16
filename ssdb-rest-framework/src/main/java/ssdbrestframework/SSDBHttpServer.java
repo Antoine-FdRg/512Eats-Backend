@@ -1,20 +1,17 @@
-package team.k.api;
+package ssdbrestframework;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import lombok.extern.java.Log;
-import team.k.api.annotations.RestController;
-import team.k.api.annotations.Endpoint;
+import org.reflections.Reflections;
+import ssdbrestframework.annotations.RestController;
+import ssdbrestframework.annotations.Endpoint;
 
-import java.io.File;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
-import java.net.URL;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,7 +19,9 @@ import java.util.Set;
 
 import java.io.IOException;
 
-
+/**
+ * Classe principale pour le serveur HTTP SeinkSansDoozeBank
+ */
 @Log
 public class SSDBHttpServer {
     private final HttpServer server;
@@ -34,15 +33,23 @@ public class SSDBHttpServer {
         log.info("Serveur démarré sur le port " + server.getAddress().getPort());
     }
 
-    public SSDBHttpServer(int port) throws IOException {
-        server = HttpServer.create(new InetSocketAddress(port), 0);
+    public SSDBHttpServer(int port, String basePackage) {
+        try {
+            server = HttpServer.create(new InetSocketAddress(port), 0);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        this.registerControllers(basePackage);
     }
 
-    public void registerControllers(String basePackage) {
+    private void registerControllers(String basePackage) {
+        Reflections reflections = new Reflections(basePackage);
         try {
-            for (Class<?> clazz : getClasses(basePackage)) {
-                if (clazz.isAnnotationPresent(RestController.class)) {
-                    registerController(clazz);
+            Set<Class<?>> controllers = reflections.getTypesAnnotatedWith(RestController.class);
+
+            for (Class<?> controllerClass : controllers) {
+                if (controllerClass.isAnnotationPresent(RestController.class)) {
+                    registerController(controllerClass);
                 }
             }
         } catch (Exception e) {
@@ -83,9 +90,9 @@ public class SSDBHttpServer {
 
         try {
             if (!found) {
-                throw new QueryProcessingException(404, "Endpoint not found");
+                throw new SSDBQueryProcessingException(404, "Endpoint not found");
             }
-        } catch (QueryProcessingException e) {
+        } catch (SSDBQueryProcessingException e) {
             exchange.getResponseHeaders().set("Content-Type", "application/json");
             String errorMessage = new ObjectMapper().writeValueAsString(e);
             exchange.sendResponseHeaders(e.getStatusCode(), errorMessage.length());
@@ -124,33 +131,5 @@ public class SSDBHttpServer {
         server.createContext(pattern.pattern(), handler);
 
         log.info("Route enregistrée : " + methodType + " " + pattern.pattern());
-    }
-
-    // Utilitaire pour obtenir toutes les classes dans un package donné
-    private Set<Class<?>> getClasses(String packageName) throws IOException, ClassNotFoundException {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        String path = packageName.replace('.', '/');
-        Enumeration<URL> resources = classLoader.getResources(path);
-        Set<Class<?>> classes = new HashSet<>();
-        while (resources.hasMoreElements()) {
-            URL resource = resources.nextElement();
-            File directory = new File(resource.getFile());
-            if (directory.exists() && directory.isDirectory() && !directory.getName().equals("..")) {
-                findClasses(directory, packageName, classes);
-            }
-        }
-        return classes;
-    }
-
-    private void findClasses(File directory, String packageName, Set<Class<?>> classes) throws ClassNotFoundException {
-        for (File file : directory.listFiles()) {
-            if (file.isDirectory() && !file.getName().equals("..")) {
-                findClasses(file, packageName + "." + file.getName(), classes);
-            } else if (file.getName().endsWith(".class")) {
-                String className = packageName + '.' + file.getName().replace(".class", "");
-                log.info("adding class " + className + " dans la liste des classes trouvées dans le package");
-                classes.add(Class.forName(className));
-            }
-        }
     }
 }

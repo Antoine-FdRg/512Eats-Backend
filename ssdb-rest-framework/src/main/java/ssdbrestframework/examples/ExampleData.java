@@ -1,4 +1,4 @@
-package team.k.api.examples;
+package ssdbrestframework.examples;
 
 
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MyData {
+public class ExampleData {
     private String name;
     private double age;
 
