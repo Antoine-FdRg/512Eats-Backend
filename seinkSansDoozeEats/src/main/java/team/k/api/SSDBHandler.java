@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 @Setter
 @Log
-public class EndpointHandler implements HttpHandler {
+public class SSDBHandler implements HttpHandler {
     private final Object controller;
     private final Method method;
     private final String methodType;
@@ -30,7 +30,7 @@ public class EndpointHandler implements HttpHandler {
     private Matcher matcher;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    EndpointHandler(Object controller, Method method, String methodType, String path) {
+    SSDBHandler(Object controller, Method method, String methodType, String path) {
         this.controller = controller;
         this.method = method;
         this.methodType = methodType;
@@ -72,7 +72,7 @@ public class EndpointHandler implements HttpHandler {
                 case String stringResult -> {
                     responseString = stringResult;
                 }
-                case Response<?> responseObject -> {
+                case SSDBServer<?> responseObject -> {
                     responseString = objectMapper.writeValueAsString(responseObject.getBody());
                     statusCode = responseObject.getStatusCode();
                 }

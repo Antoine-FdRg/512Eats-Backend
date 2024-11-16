@@ -6,7 +6,7 @@ import team.k.api.annotations.RestController;
 import team.k.api.annotations.Endpoint;
 
 @RestController(path = "/greeter")
-class TestController {
+public class TestController {
     @Endpoint(path = "/hello/{surname}/{name}")
     public String hello(@PathVariable("name") String name,
                         @PathVariable("surname") String surname,

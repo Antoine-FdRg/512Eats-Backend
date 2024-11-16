@@ -1,7 +1,7 @@
 package team.k.api.examples;
 
 import lombok.extern.java.Log;
-import team.k.api.Response;
+import team.k.api.SSDBServer;
 import team.k.api.annotations.RequestBody;
 import team.k.api.annotations.RequestParam;
 import team.k.api.annotations.RestController;
@@ -9,7 +9,7 @@ import team.k.api.annotations.Endpoint;
 
 @RestController(path = "/ciao")
 @Log
-class TestController2 {
+public class TestController2 {
 
     @Endpoint(path = "/goodbye")
     public String goodbye() {
@@ -22,7 +22,7 @@ class TestController2 {
     }
 
     @Endpoint(path = "/data", method = "POST")
-    public Response<MyData> data(@RequestParam("name") String name, @RequestParam("age") double age) {
-        return Response.status(201,new MyData(name, age));
+    public SSDBServer<MyData> data(@RequestParam("name") String name, @RequestParam("age") double age) {
+        return SSDBServer.status(201,new MyData(name, age));
     }
 }

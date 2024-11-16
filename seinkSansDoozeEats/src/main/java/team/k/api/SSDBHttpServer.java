@@ -24,15 +24,9 @@ import java.io.IOException;
 
 
 @Log
-public class AnnotationBasedServer {
+public class SSDBHttpServer {
     private final HttpServer server;
-    private final Map<String, Map<Pattern, EndpointHandler>> routesByController = new HashMap<>();
-
-    public static void main(String[] args) throws Exception {
-        AnnotationBasedServer serv =  new AnnotationBasedServer(8080);
-        serv.registerControllers("team.k.api");
-        serv.start();
-    }
+    private final Map<String, Map<Pattern, SSDBHandler>> routesByController = new HashMap<>();
 
     // Méthode pour démarrer le serveur
     public void start() {
@@ -40,7 +34,7 @@ public class AnnotationBasedServer {
         log.info("Serveur démarré sur le port " + server.getAddress().getPort());
     }
 
-    public AnnotationBasedServer(int port) throws IOException {
+    public SSDBHttpServer(int port) throws IOException {
         server = HttpServer.create(new InetSocketAddress(port), 0);
     }
 
@@ -76,7 +70,7 @@ public class AnnotationBasedServer {
         String path = exchange.getRequestURI().getPath();
         boolean found = false;
 
-        for (Map.Entry<Pattern, EndpointHandler> entry : routesByController.get(basePath).entrySet()) {
+        for (Map.Entry<Pattern, SSDBHandler> entry : routesByController.get(basePath).entrySet()) {
             Pattern pattern = entry.getKey();
             Matcher matcher = pattern.matcher(path);
             if (matcher.matches()) {
@@ -87,11 +81,11 @@ public class AnnotationBasedServer {
             }
         }
 
-        try{
+        try {
             if (!found) {
                 throw new QueryProcessingException(404, "Endpoint not found");
             }
-        }catch (QueryProcessingException e){
+        } catch (QueryProcessingException e) {
             exchange.getResponseHeaders().set("Content-Type", "application/json");
             String errorMessage = new ObjectMapper().writeValueAsString(e);
             exchange.sendResponseHeaders(e.getStatusCode(), errorMessage.length());
@@ -115,21 +109,21 @@ public class AnnotationBasedServer {
     }
 
     private void registerRoute(Object controller, String basePath, Method method) {
-            Endpoint annotation = method.getAnnotation(Endpoint.class);
-            String path = basePath + annotation.path();  // Ajoute le préfixe de classe au chemin
-            String methodType = annotation.method();
+        Endpoint annotation = method.getAnnotation(Endpoint.class);
+        String path = basePath + annotation.path();  // Ajoute le préfixe de classe au chemin
+        String methodType = annotation.method();
 
-            // Création d'un pattern pour gérer les chemins avec paramètres
-            Pattern pattern = Pattern.compile(path.replaceAll("\\{\\w+}", "([^/]+)"));
+        // Création d'un pattern pour gérer les chemins avec paramètres
+        Pattern pattern = Pattern.compile(path.replaceAll("\\{\\w+}", "([^/]+)"));
 
-            // Crée un handler qui appelle la méthode annotée
-            EndpointHandler handler = new EndpointHandler(controller, method, methodType, path);
-            routesByController.get(basePath).put(pattern, handler);
+        // Crée un handler qui appelle la méthode annotée
+        SSDBHandler handler = new SSDBHandler(controller, method, methodType, path);
+        routesByController.get(basePath).put(pattern, handler);
 
-            // Crée un contexte unique pour cette route et associe le handler
-            server.createContext(pattern.pattern(), handler);
+        // Crée un contexte unique pour cette route et associe le handler
+        server.createContext(pattern.pattern(), handler);
 
-            log.info("Route enregistrée : " + methodType + " " + pattern.pattern());
+        log.info("Route enregistrée : " + methodType + " " + pattern.pattern());
     }
 
     // Utilitaire pour obtenir toutes les classes dans un package donné
@@ -141,16 +135,22 @@ public class AnnotationBasedServer {
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
             File directory = new File(resource.getFile());
-            if (directory.exists() && directory.isDirectory()) {
-                for (File file : directory.listFiles()) {
-                    if (file.getName().endsWith(".class")) {
-                        String className = packageName + '.' + file.getName().replace(".class", "");
-                        log.info("adding class "+className+" dans la liste des classes trouvées dans le package");
-                        classes.add(Class.forName(className));
-                    }
-                }
+            if (directory.exists() && directory.isDirectory() && !directory.getName().equals("..")) {
+                findClasses(directory, packageName, classes);
             }
         }
         return classes;
+    }
+
+    private void findClasses(File directory, String packageName, Set<Class<?>> classes) throws ClassNotFoundException {
+        for (File file : directory.listFiles()) {
+            if (file.isDirectory() && !file.getName().equals("..")) {
+                findClasses(file, packageName + "." + file.getName(), classes);
+            } else if (file.getName().endsWith(".class")) {
+                String className = packageName + '.' + file.getName().replace(".class", "");
+                log.info("adding class " + className + " dans la liste des classes trouvées dans le package");
+                classes.add(Class.forName(className));
+            }
+        }
     }
 }
