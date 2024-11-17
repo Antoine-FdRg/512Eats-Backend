@@ -20,19 +20,20 @@ import java.util.Set;
 import java.io.IOException;
 
 /**
- * Classe principale pour le serveur HTTP SeinkSansDoozeBank
+ * Main class to use in the SSDB REST framework.
+ * This class is responsible for starting the HTTP server and registering controllers
  */
 @Log
 public class SSDBHttpServer {
     private final HttpServer server;
     private final Map<String, Map<Pattern, SSDBHandler>> routesByController = new HashMap<>();
 
-    // Méthode pour démarrer le serveur
-    public void start() {
-        server.start();
-        log.info("Serveur démarré sur le port " + server.getAddress().getPort());
-    }
-
+    /**
+     * Constructor for the SSDBHttpServer
+     *
+     * @param port        the port on which the server should run
+     * @param basePackage the base package to scan for controllers. The path should be relative to the project root
+     */
     public SSDBHttpServer(int port, String basePackage) {
         try {
             server = HttpServer.create(new InetSocketAddress(port), 0);
@@ -42,6 +43,19 @@ public class SSDBHttpServer {
         this.registerControllers(basePackage);
     }
 
+    /**
+     * Starts the server
+     */
+    public void start() {
+        server.start();
+        log.info("Serveur démarré sur le port " + server.getAddress().getPort());
+    }
+
+    /**
+     * Registers controllers in the given package
+     *
+     * @param basePackage the base package to scan for controllers
+     */
     private void registerControllers(String basePackage) {
         Reflections reflections = new Reflections(basePackage);
         try {
@@ -57,6 +71,11 @@ public class SSDBHttpServer {
         }
     }
 
+    /**
+     * Registers a controller
+     *
+     * @param clazz the controller class to register
+     */
     private void registerController(Class<?> clazz) {
         RestController restController = clazz.getAnnotation(RestController.class);
         String basePath = restController.path();  // Récupère le préfixe de la classe
@@ -67,12 +86,19 @@ public class SSDBHttpServer {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        registerRoutes(controllerInstance, basePath);
+        registerEndpoints(controllerInstance, basePath);
 
         // Définir le gestionnaire pour traiter toutes les requêtes avec les routes enregistrées
         server.createContext(basePath, exchange -> preProcessQuery(exchange, basePath));
     }
 
+    /**
+     * Pre-processes the query and calls the appropriate handler
+     *
+     * @param exchange the HttpExchange object
+     * @param basePath the base path for the controller
+     * @throws IOException if an I/O error occurs
+     */
     private void preProcessQuery(HttpExchange exchange, String basePath) throws IOException {
         String path = exchange.getRequestURI().getPath();
         boolean found = false;
@@ -103,18 +129,30 @@ public class SSDBHttpServer {
         }
     }
 
-    // Enregistre les méthodes annotées avec @WebRoute dans un contrôleur donné
-    private void registerRoutes(Object controller, String basePath) {
+    /**
+     * Register endpoints for a given controller
+     *
+     * @param controller The controller for which the routes should be registered
+     * @param basePath   The base path for the controller
+     */
+    private void registerEndpoints(Object controller, String basePath) {
         for (Method method : controller.getClass().getDeclaredMethods()) {
             if (method.isAnnotationPresent(Endpoint.class)) {
-                registerRoute(controller, basePath, method);
+                registerEndpoint(controller, basePath, method);
             }
         }
 
 
     }
 
-    private void registerRoute(Object controller, String basePath, Method method) {
+    /**
+     * Register a route for a given controller
+     *
+     * @param controller The controller for which the route should be registered
+     * @param basePath   The base path for the controller
+     * @param method     The method to register, that will be called when the endoint is hit
+     */
+    private void registerEndpoint(Object controller, String basePath, Method method) {
         Endpoint annotation = method.getAnnotation(Endpoint.class);
         String path = basePath + annotation.path();  // Ajoute le préfixe de classe au chemin
         String methodType = annotation.method();

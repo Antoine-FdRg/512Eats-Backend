@@ -34,45 +34,31 @@ public class SSDBHandler implements HttpHandler {
         this.controller = controller;
         this.method = method;
         this.methodType = methodType;
-        this.paramNames = extractParamNames(path);
+        this.paramNames = extractPathvariablesNames(path);
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         try {
             if (!methodType.equalsIgnoreCase(exchange.getRequestMethod())) {
-                throw new SSDBQueryProcessingException(405, SSDBQueryProcessingException.METHOD_NOT_ALLOWED);
+                throw new SSDBQueryProcessingException(SSDBResponse.METHOD_NOT_ALLOWED, SSDBQueryProcessingException.METHOD_NOT_ALLOWED);
             }
 
             log.info("Handling " + exchange.getRequestURI().getPath());
 
             Object[] params;
-            try {
-                params = resolveParameters(exchange);
-            } catch (Exception e) {
-                throw new SSDBQueryProcessingException(400, SSDBQueryProcessingException.MAL_FORMED_PARAMS);
-            }
+            params = resolveParameters(exchange);
 
-            for (Object param : params) {
-                log.info("Param: " + param);
-            }
-
-            Object result = null;
-            try {
-                result = method.invoke(controller, params);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new SSDBQueryProcessingException(500, SSDBQueryProcessingException.INTERNAL_SERVER_ERROR, e.getMessage());
-            } catch (IllegalArgumentException e) {
-                throw new SSDBQueryProcessingException(400, SSDBQueryProcessingException.MAL_FORMED_PARAMS, e.getMessage());
-            }
+            Object result;
+            result = invokeMethod(params);
             String responseString;
-            int statusCode = 200; // Code de statut par défaut
+            int statusCode = SSDBResponse.OK; // Code de statut par défaut
             log.info("Result: " + result);
             switch (result) {
                 case String stringResult -> {
                     responseString = stringResult;
                 }
-                case SSDBServer<?> responseObject -> {
+                case SSDBResponse<?> responseObject -> {
                     responseString = objectMapper.writeValueAsString(responseObject.getBody());
                     statusCode = responseObject.getStatusCode();
                 }
@@ -81,27 +67,70 @@ public class SSDBHandler implements HttpHandler {
                     log.info("Response: " + responseString);
                 }
             }
-
-            // Envoyer la réponse
             exchange.getResponseHeaders().set("Content-Type", "application/json");
             exchange.sendResponseHeaders(statusCode, responseString.getBytes().length);
-
-            try (OutputStream os = exchange.getResponseBody()) {
-                os.write(responseString.getBytes());
-            } catch (IOException e) {
-                throw new SSDBQueryProcessingException(500, SSDBQueryProcessingException.INTERNAL_SERVER_ERROR);
-            }
-        } catch (SSDBQueryProcessingException e) {
-            exchange.getResponseHeaders().set("Content-Type", "application/json");
-            String errorMessage = objectMapper.writeValueAsString(e);
-            exchange.sendResponseHeaders(e.getStatusCode(), errorMessage.length());
-            try (OutputStream os = exchange.getResponseBody()) {
-                os.write(errorMessage.getBytes());
-            }
-            log.severe(e.toString());
+            writeReponse(exchange, responseString);
+        } catch (SSDBQueryProcessingException exception) {
+            sendException(exchange, exception);
         }
     }
 
+    /**
+     * Send an exception to the client with the appropriate status code
+     *
+     * @param exchange  The exchange to send the response to
+     * @param exception The exception to send
+     * @throws IOException If an I/O error occurs
+     */
+    private void sendException(HttpExchange exchange, SSDBQueryProcessingException exception) throws IOException {
+        exchange.getResponseHeaders().set("Content-Type", "application/json");
+        String errorMessage = objectMapper.writeValueAsString(exception);
+        exchange.sendResponseHeaders(exception.getStatusCode(), errorMessage.length());
+        try (OutputStream os = exchange.getResponseBody()) {
+            os.write(errorMessage.getBytes());
+        }
+        log.severe(exception.toString());
+    }
+
+    /**
+     * Write the response in the given exchange
+     *
+     * @param exchange       The exchange to send the response to
+     * @param responseString The response to send
+     * @throws SSDBQueryProcessingException If an error occurs during the response writing
+     */
+    private void writeReponse(HttpExchange exchange, String responseString) throws SSDBQueryProcessingException {
+        try (OutputStream os = exchange.getResponseBody()) {
+            os.write(responseString.getBytes());
+        } catch (IOException e) {
+            throw new SSDBQueryProcessingException(SSDBResponse.INTERNAL_SERVER_ERROR, SSDBQueryProcessingException.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Invoke the method with the given parameters
+     * @param params The parameters to pass to the method
+     * @return The result of the method
+     * @throws SSDBQueryProcessingException If an error occurs during the method invocation
+     */
+    private Object invokeMethod(Object[] params) throws SSDBQueryProcessingException {
+        Object result;
+        try {
+            result = method.invoke(controller, params);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new SSDBQueryProcessingException(SSDBResponse.INTERNAL_SERVER_ERROR, SSDBQueryProcessingException.INTERNAL_SERVER_ERROR, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new SSDBQueryProcessingException(SSDBResponse.BAD_REQUEST, SSDBQueryProcessingException.MAL_FORMED_PARAMS, e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * Resolve the parameters of received request
+     * @param exchange The exchange to get the parameters from
+     * @return The resolved parameters
+     * @throws SSDBQueryProcessingException If the parameters cannot be resolved
+     */
     private Object[] resolveParameters(HttpExchange exchange) throws SSDBQueryProcessingException {
         Parameter[] parameters = method.getParameters();
         Object[] params = new Object[parameters.length];
@@ -114,7 +143,7 @@ public class SSDBHandler implements HttpHandler {
                 Object rawParam = null;
                 if (parameter.isAnnotationPresent(PathVariable.class)) {
                     String paramName = parameter.getAnnotation(PathVariable.class).value();
-                    int paramIndex = getParamIndex(paramName);
+                    int paramIndex = paramNames.indexOf(paramName);
                     rawParam = matcher.group(paramIndex + 1); // +1 car les groupes commencent à 1
                 } else if (parameter.isAnnotationPresent(RequestParam.class)) {
                     String paramName = parameter.getAnnotation(RequestParam.class).value();
@@ -123,9 +152,19 @@ public class SSDBHandler implements HttpHandler {
                 params[i] = convertToExpectedType(rawParam, parameter.getType());
             }
         }
+        for (Object param : params) {
+            log.info("Param: " + param);
+        }
         return params;
     }
 
+    /**
+     * Convert the raw parameter to the expected type
+     * @param rawParam The raw parameter
+     * @param targetType The expected type
+     * @return The converted parameter
+     * @throws SSDBQueryProcessingException If the parameter cannot be converted
+     */
     private Object convertToExpectedType(Object rawParam, Class<?> targetType) throws SSDBQueryProcessingException {
         if (rawParam == null) {
             return null;
@@ -143,19 +182,32 @@ public class SSDBHandler implements HttpHandler {
             try {
                 return objectMapper.readValue(rawParamStr, targetType);
             } catch (IOException e) {
-                throw new SSDBQueryProcessingException(400, SSDBQueryProcessingException.MAL_FORMED_PARAMS);
+                throw new SSDBQueryProcessingException(SSDBResponse.BAD_REQUEST, SSDBQueryProcessingException.MAL_FORMED_PARAMS);
             }
         }
     }
 
+    /**
+     * Parse the request body to the expected type
+     * @param requestBody The request body
+     * @param targetType The expected type
+     * @return The parsed request body
+     * @throws SSDBQueryProcessingException If the request body cannot be parsed
+     */
     private Object parseRequestBody(InputStream requestBody, Class<?> targetType) throws SSDBQueryProcessingException {
         try {
             return objectMapper.readValue(requestBody, targetType);
         } catch (IOException e) {
-            throw new SSDBQueryProcessingException(400, SSDBQueryProcessingException.MAL_FORMED_PARAMS,e.getMessage());
+            throw new SSDBQueryProcessingException(SSDBResponse.BAD_REQUEST, SSDBQueryProcessingException.MAL_FORMED_PARAMS, e.getMessage());
         }
     }
 
+    /**
+     * Get the query parameter from the exchange
+     * @param exchange The exchange to get the parameter from
+     * @param paramName The name of the parameter to get
+     * @return The value of the parameter
+     */
     private String getQueryParam(HttpExchange exchange, String paramName) {
         String query = exchange.getRequestURI().getQuery();
         if (query == null) return null;
@@ -169,7 +221,12 @@ public class SSDBHandler implements HttpHandler {
         return null;
     }
 
-    private List<String> extractParamNames(String path) {
+    /**
+     * Extract the path variables names from the path
+     * @param path The path to extract the names from
+     * @return The list of path variables names
+     */
+    private List<String> extractPathvariablesNames(String path) {
         List<String> paramNamesInternal = new ArrayList<>();
         matcher = Pattern.compile("\\{(\\w+)}").matcher(path);
         while (matcher.find()) {
@@ -178,7 +235,4 @@ public class SSDBHandler implements HttpHandler {
         return paramNamesInternal;
     }
 
-    private int getParamIndex(String paramName) {
-        return paramNames.indexOf(paramName);
-    }
 }

@@ -1,7 +1,7 @@
 package ssdbrestframework.examples;
 
 import lombok.extern.java.Log;
-import ssdbrestframework.SSDBServer;
+import ssdbrestframework.SSDBResponse;
 import ssdbrestframework.annotations.RequestBody;
 import ssdbrestframework.annotations.RequestParam;
 import ssdbrestframework.annotations.RestController;
@@ -22,7 +22,7 @@ public class ExampleController2 {
     }
 
     @Endpoint(path = "/data", method = "POST")
-    public SSDBServer<ExampleData> data(@RequestParam("name") String name, @RequestParam("age") double age) {
-        return SSDBServer.status(201,new ExampleData(name, age));
+    public SSDBResponse<ExampleData> data(@RequestParam("name") String name, @RequestParam("age") double age) {
+        return SSDBResponse.status(201,new ExampleData(name, age));
     }
 }
