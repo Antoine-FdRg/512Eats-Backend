@@ -8,6 +8,8 @@ import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
 import ssdbrestframework.annotations.Endpoint;
 
+import java.util.List;
+
 @RestController(path = "/ciao")
 @Log
 public class ExampleController2 {
@@ -25,7 +27,7 @@ public class ExampleController2 {
 
     @Endpoint(path = "/data", method = HttpMethod.POST)
     @Response(status=201)
-    public ExampleData data(@RequestParam("name") String name, @RequestParam("age") double age) {
-        return new ExampleData(name, age);
+    public List<ExampleData> data(@RequestParam("name") String name, @RequestParam("age") double age) {
+        return List.of(new ExampleData(name, age));
     }
 }

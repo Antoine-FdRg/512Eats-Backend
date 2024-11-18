@@ -79,6 +79,9 @@ public class SSDBHttpServer {
     private void registerController(Class<?> clazz) {
         RestController restController = clazz.getAnnotation(RestController.class);
         String basePath = restController.path();  // Récupère le préfixe de la classe
+        if (routesByController.containsKey(basePath)) {
+            throw new RuntimeException("Un contrôleur avec le chemin de base " + basePath + " est déjà enregistré");
+        }
         routesByController.put(basePath, new HashMap<>());
         Object controllerInstance = null;
         try {
@@ -159,6 +162,8 @@ public class SSDBHttpServer {
 
         // Création d'un pattern pour gérer les chemins avec paramètres
         Pattern pattern = Pattern.compile(path.replaceAll("\\{\\w+}", "([^/]+)"));
+        // ajoute un caracterer de fin de chaine pour éviter les chemins qui ne correspondent pas
+        pattern = Pattern.compile(pattern.pattern() + "$");
 
         // Crée un handler qui appelle la méthode annotée
         SSDBHandler handler = new SSDBHandler(controller, method, methodType, path);
