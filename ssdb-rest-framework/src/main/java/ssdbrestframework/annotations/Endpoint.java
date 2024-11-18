@@ -1,5 +1,7 @@
 package ssdbrestframework.annotations;
 
+import ssdbrestframework.HttpMethod;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -10,13 +12,15 @@ import java.lang.annotation.RetentionPolicy;
 public @interface Endpoint {
     /**
      * The path of the endpoint
+     *
      * @return the path of the endpoint
      */
     String path();
 
     /**
      * The HTTP method of the endpoint
+     *
      * @return the HTTP method of the endpoint
      */
-    String method() default "GET";
+    HttpMethod method();
 }

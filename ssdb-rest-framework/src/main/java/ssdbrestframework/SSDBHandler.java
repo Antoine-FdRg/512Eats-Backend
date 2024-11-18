@@ -25,12 +25,12 @@ import java.util.regex.Pattern;
 public class SSDBHandler implements HttpHandler {
     private final Object controller;
     private final Method method;
-    private final String methodType;
+    private final HttpMethod methodType;
     private final List<String> paramNames;
     private Matcher matcher;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    SSDBHandler(Object controller, Method method, String methodType, String path) {
+    SSDBHandler(Object controller, Method method, HttpMethod methodType, String path) {
         this.controller = controller;
         this.method = method;
         this.methodType = methodType;
@@ -40,7 +40,7 @@ public class SSDBHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         try {
-            if (!methodType.equalsIgnoreCase(exchange.getRequestMethod())) {
+            if (!methodType.name().equalsIgnoreCase(exchange.getRequestMethod())) {
                 throw new SSDBQueryProcessingException(SSDBResponse.METHOD_NOT_ALLOWED, SSDBQueryProcessingException.METHOD_NOT_ALLOWED);
             }
 
@@ -55,9 +55,7 @@ public class SSDBHandler implements HttpHandler {
             int statusCode = SSDBResponse.OK; // Code de statut par défaut
             log.info("Result: " + result);
             switch (result) {
-                case String stringResult -> {
-                    responseString = stringResult;
-                }
+                case String stringResult -> responseString = stringResult;
                 case SSDBResponse<?> responseObject -> {
                     responseString = objectMapper.writeValueAsString(responseObject.getBody());
                     statusCode = responseObject.getStatusCode();
@@ -109,6 +107,7 @@ public class SSDBHandler implements HttpHandler {
 
     /**
      * Invoke the method with the given parameters
+     *
      * @param params The parameters to pass to the method
      * @return The result of the method
      * @throws SSDBQueryProcessingException If an error occurs during the method invocation
@@ -127,6 +126,7 @@ public class SSDBHandler implements HttpHandler {
 
     /**
      * Resolve the parameters of received request
+     *
      * @param exchange The exchange to get the parameters from
      * @return The resolved parameters
      * @throws SSDBQueryProcessingException If the parameters cannot be resolved
@@ -160,7 +160,8 @@ public class SSDBHandler implements HttpHandler {
 
     /**
      * Convert the raw parameter to the expected type
-     * @param rawParam The raw parameter
+     *
+     * @param rawParam   The raw parameter
      * @param targetType The expected type
      * @return The converted parameter
      * @throws SSDBQueryProcessingException If the parameter cannot be converted
@@ -189,8 +190,9 @@ public class SSDBHandler implements HttpHandler {
 
     /**
      * Parse the request body to the expected type
+     *
      * @param requestBody The request body
-     * @param targetType The expected type
+     * @param targetType  The expected type
      * @return The parsed request body
      * @throws SSDBQueryProcessingException If the request body cannot be parsed
      */
@@ -204,7 +206,8 @@ public class SSDBHandler implements HttpHandler {
 
     /**
      * Get the query parameter from the exchange
-     * @param exchange The exchange to get the parameter from
+     *
+     * @param exchange  The exchange to get the parameter from
      * @param paramName The name of the parameter to get
      * @return The value of the parameter
      */
@@ -223,6 +226,7 @@ public class SSDBHandler implements HttpHandler {
 
     /**
      * Extract the path variables names from the path
+     *
      * @param path The path to extract the names from
      * @return The list of path variables names
      */

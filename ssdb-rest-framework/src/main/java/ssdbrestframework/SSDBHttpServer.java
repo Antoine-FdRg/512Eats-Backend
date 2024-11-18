@@ -155,7 +155,7 @@ public class SSDBHttpServer {
     private void registerEndpoint(Object controller, String basePath, Method method) {
         Endpoint annotation = method.getAnnotation(Endpoint.class);
         String path = basePath + annotation.path();  // Ajoute le préfixe de classe au chemin
-        String methodType = annotation.method();
+        HttpMethod methodType = annotation.method();
 
         // Création d'un pattern pour gérer les chemins avec paramètres
         Pattern pattern = Pattern.compile(path.replaceAll("\\{\\w+}", "([^/]+)"));
