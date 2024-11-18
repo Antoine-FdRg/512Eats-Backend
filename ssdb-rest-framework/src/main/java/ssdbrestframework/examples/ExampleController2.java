@@ -2,9 +2,9 @@ package ssdbrestframework.examples;
 
 import lombok.extern.java.Log;
 import ssdbrestframework.HttpMethod;
-import ssdbrestframework.SSDBResponse;
 import ssdbrestframework.annotations.RequestBody;
 import ssdbrestframework.annotations.RequestParam;
+import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
 import ssdbrestframework.annotations.Endpoint;
 
@@ -18,12 +18,14 @@ public class ExampleController2 {
     }
 
     @Endpoint(path = "/post", method = HttpMethod.POST)
-    public ExampleData post(@RequestBody ExampleData data) {
-        return data;
+    @Response(status=201, message="Data created with success")
+    public void post(@RequestBody ExampleData data) {
+        log.info("received : " + data.toString());
     }
 
     @Endpoint(path = "/data", method = HttpMethod.POST)
-    public SSDBResponse<ExampleData> data(@RequestParam("name") String name, @RequestParam("age") double age) {
-        return SSDBResponse.status(201, new ExampleData(name, age));
+    @Response(status=201)
+    public ExampleData data(@RequestParam("name") String name, @RequestParam("age") double age) {
+        return new ExampleData(name, age);
     }
 }

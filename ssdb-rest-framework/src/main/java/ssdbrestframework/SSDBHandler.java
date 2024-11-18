@@ -8,6 +8,7 @@ import lombok.extern.java.Log;
 import ssdbrestframework.annotations.PathVariable;
 import ssdbrestframework.annotations.RequestBody;
 import ssdbrestframework.annotations.RequestParam;
+import ssdbrestframework.annotations.Response;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +18,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,24 +53,32 @@ public class SSDBHandler implements HttpHandler {
 
             Object result;
             result = invokeMethod(params);
-            String responseString;
-            int statusCode = SSDBResponse.OK; // Code de statut par défaut
             log.info("Result: " + result);
-            switch (result) {
-                case String stringResult -> responseString = stringResult;
-                case SSDBResponse<?> responseObject -> {
-                    responseString = objectMapper.writeValueAsString(responseObject.getBody());
-                    statusCode = responseObject.getStatusCode();
-                }
-                default -> {
-                    responseString = objectMapper.writeValueAsString(result);
-                    log.info("Response: " + responseString);
+            int statusCode = SSDBResponse.OK; // Code de statut par défaut
+            String responseString;
+            if (method.isAnnotationPresent(Response.class)) {
+                Response responseAnnotation = method.getAnnotation(Response.class);
+                statusCode = responseAnnotation.status();
+                if (method.getReturnType() == void.class && !"".equals(responseAnnotation.message())) {
+                    result = new SSDBResponse(responseAnnotation.message());
+                } else if (method.getReturnType() != void.class && !"".equals(responseAnnotation.message())) {
+                    log.warning(controller.getClass().getName() + "." + method.getName() + " is annotated with a Response message but is not void, the message is not sent.");
                 }
             }
-            exchange.getResponseHeaders().set("Content-Type", "application/json");
-            exchange.sendResponseHeaders(statusCode, responseString.getBytes().length);
-            writeReponse(exchange, responseString);
-        } catch (SSDBQueryProcessingException exception) {
+            if (!Objects.isNull(result) && result instanceof String stringResult) {
+                responseString = stringResult;
+            } else {
+                responseString = objectMapper.writeValueAsString(result);
+                log.info("Response: " + responseString);
+            }
+            if (responseString != null) {
+                exchange.getResponseHeaders().set("Content-Type", "application/json");
+                exchange.sendResponseHeaders(statusCode, responseString.getBytes().length);
+                writeReponse(exchange, responseString);
+            }
+            exchange.sendResponseHeaders(statusCode, -1);
+        } catch (
+                SSDBQueryProcessingException exception) {
             sendException(exchange, exception);
         }
     }
