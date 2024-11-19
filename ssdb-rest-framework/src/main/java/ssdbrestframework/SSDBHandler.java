@@ -1,5 +1,6 @@
 package ssdbrestframework;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -54,33 +55,57 @@ public class SSDBHandler implements HttpHandler {
             Object result;
             result = invokeMethod(params);
             log.info("Result: " + result);
-            int statusCode = SSDBResponse.OK; // Code de statut par défaut
-            String responseString;
-            if (method.isAnnotationPresent(Response.class)) {
-                Response responseAnnotation = method.getAnnotation(Response.class);
-                statusCode = responseAnnotation.status();
-                if (method.getReturnType() == void.class && !"".equals(responseAnnotation.message())) {
-                    result = new SSDBResponse(responseAnnotation.message());
-                } else if (method.getReturnType() != void.class && !"".equals(responseAnnotation.message())) {
-                    log.warning(controller.getClass().getName() + "." + method.getName() + " is annotated with a Response message but is not void, the message is not sent.");
-                }
-            }
-            if (!Objects.isNull(result) && result instanceof String stringResult) {
-                responseString = stringResult;
-            } else {
-                responseString = objectMapper.writeValueAsString(result);
-                log.info("Response: " + responseString);
-            }
-            if (responseString != null) {
-                exchange.getResponseHeaders().set("Content-Type", "application/json");
-                exchange.sendResponseHeaders(statusCode, responseString.getBytes().length);
-                writeReponse(exchange, responseString);
-            }
-            exchange.sendResponseHeaders(statusCode, -1);
+
+            sendResultToExchange(exchange, result);
         } catch (
                 SSDBQueryProcessingException exception) {
             sendException(exchange, exception);
         }
+    }
+
+    /**
+     * Send the result to the exchange with the appropriate status code
+     * @param exchange The exchange to send the response to
+     * @param result The result to send
+     * @throws IOException If an I/O error occurs
+     * @throws SSDBQueryProcessingException If an error occurs during the response writing
+     */
+    private void sendResultToExchange(HttpExchange exchange, Object result) throws IOException, SSDBQueryProcessingException {
+        int statusCode = SSDBResponse.OK; // Code de statut par défaut
+        String responseString;
+        if (method.isAnnotationPresent(Response.class)) {
+            Response responseAnnotation = method.getAnnotation(Response.class);
+            statusCode = responseAnnotation.status();
+            if (method.getReturnType() == void.class && !"".equals(responseAnnotation.message())) {
+                result = new SSDBResponse(responseAnnotation.message());
+            } else if (method.getReturnType() != void.class && !"".equals(responseAnnotation.message())) {
+                log.warning(controller.getClass().getName() + "." + method.getName() + " is annotated with a Response message but is not void, the message is not sent.");
+            }
+        }
+        responseString = formatResultAsString(result);
+        if (responseString != null) {
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
+            exchange.sendResponseHeaders(statusCode, responseString.getBytes().length);
+            writeReponse(exchange, responseString);
+        }
+        exchange.sendResponseHeaders(statusCode, -1);
+    }
+
+    /**
+     * Format the result as a string by serializing it with Jackson if necessary
+     * @param result The result to format
+     * @return The formatted result as a string
+     * @throws JsonProcessingException If an error occurs during the serialization
+     */
+    private String formatResultAsString(Object result) throws JsonProcessingException {
+        String responseString;
+        if (!Objects.isNull(result) && result instanceof String stringResult) {
+            responseString = stringResult;
+        } else {
+            responseString = objectMapper.writeValueAsString(result);
+            log.info("Response: " + responseString);
+        }
+        return responseString;
     }
 
     /**
