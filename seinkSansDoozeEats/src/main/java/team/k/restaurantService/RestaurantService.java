@@ -4,8 +4,8 @@ import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.Dish;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
-import team.k.repository.RestaurantRepository;
-import team.k.repository.TimeSlotRepository;
+import commonlibrary.repository.RestaurantRepository;
+import commonlibrary.repository.TimeSlotRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;

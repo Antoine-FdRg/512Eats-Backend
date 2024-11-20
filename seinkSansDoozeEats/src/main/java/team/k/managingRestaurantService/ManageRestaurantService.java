@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import commonlibrary.model.Dish;
 
 import commonlibrary.model.restaurant.Restaurant;
-import team.k.repository.RestaurantRepository;
+import commonlibrary.repository.RestaurantRepository;
 
 import java.time.LocalTime;
 

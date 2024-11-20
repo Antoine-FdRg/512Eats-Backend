@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import commonlibrary.model.Dish;
 import commonlibrary.enumerations.FoodType;
-import team.k.repository.RestaurantRepository;
+import commonlibrary.repository.RestaurantRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
 import team.k.restaurantService.RestaurantService;

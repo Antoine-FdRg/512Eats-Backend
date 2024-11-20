@@ -1,4 +1,4 @@
-package team.k.repository;
+package commonlibrary.repository;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package team.k.repository;
+package commonlibrary.repository;
 
 import commonlibrary.model.restaurant.TimeSlot;
 

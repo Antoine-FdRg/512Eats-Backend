@@ -1,5 +1,6 @@
 package commonlibrary.model;
 
+import commonlibrary.dto.LocationDTO;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,8 +32,12 @@ public class Location {
         return "Location [id=" + id + ", number=" + streetNumber + ", address=" + address + ", city=" + city + "]";
     }
 
+    public LocationDTO convertLocationToLocationDto() {
+        return new LocationDTO(id, streetNumber, address, city);
+    }
+
     public static class Builder {
-        private final int id;
+        private int id;
         private String streetNumber;
         private String address;
         private String city;
@@ -58,8 +63,14 @@ public class Location {
             return this;
         }
 
+        public Builder setId(int id) {
+            this.id = id;
+            return this;
+        }
+
         public Location build() {
             return new Location(this);
         }
+
     }
 }

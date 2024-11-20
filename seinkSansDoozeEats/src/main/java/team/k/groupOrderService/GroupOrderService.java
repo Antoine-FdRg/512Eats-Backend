@@ -4,8 +4,8 @@ import commonlibrary.model.Location;
 import commonlibrary.model.order.GroupOrder;
 import commonlibrary.model.restaurant.Restaurant;
 import lombok.RequiredArgsConstructor;
-import team.k.repository.GroupOrderRepository;
-import team.k.repository.LocationRepository;
+import commonlibrary.repository.GroupOrderRepository;
+import commonlibrary.repository.LocationRepository;
 
 
 import java.time.LocalDateTime;

@@ -16,11 +16,11 @@ import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.Location;
 
 import commonlibrary.model.restaurant.TimeSlot;
-import team.k.repository.LocationRepository;
-import team.k.repository.RegisteredUserRepository;
-import team.k.repository.RestaurantRepository;
-import team.k.repository.SubOrderRepository;
-import team.k.repository.GroupOrderRepository;
+import commonlibrary.repository.LocationRepository;
+import commonlibrary.repository.RegisteredUserRepository;
+import commonlibrary.repository.RestaurantRepository;
+import commonlibrary.repository.SubOrderRepository;
+import commonlibrary.repository.GroupOrderRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;

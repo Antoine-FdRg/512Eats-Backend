@@ -17,8 +17,8 @@ import commonlibrary.model.payment.PaymentProcessor;
 import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
 
-import team.k.repository.RegisteredUserRepository;
-import team.k.repository.SubOrderRepository;
+import commonlibrary.repository.RegisteredUserRepository;
+import commonlibrary.repository.SubOrderRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import team.k.orderService.OrderService;
 

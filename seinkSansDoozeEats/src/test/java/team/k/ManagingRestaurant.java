@@ -9,7 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import commonlibrary.model.Dish;
-import team.k.repository.RestaurantRepository;
+import commonlibrary.repository.RestaurantRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import team.k.managingRestaurantService.ManageRestaurantService;
 

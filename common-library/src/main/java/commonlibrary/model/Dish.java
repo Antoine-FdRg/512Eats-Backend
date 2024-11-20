@@ -47,6 +47,10 @@ public class Dish {
         return Integer.hashCode(id);
     }
 
+    public DishDTO convertDishToDishDto() {
+        return new DishDTO(id, name, description, price, preparationTime, picture);
+    }
+
     public static class Builder {
         private int id;
         private String name;
@@ -94,8 +98,6 @@ public class Dish {
             return new Dish(this);
         }
 
-        public DishDTO convertDishToDishDto() {
-            return new DishDTO(id, name, description, price, preparationTime, picture);
-        }
+
     }
 }

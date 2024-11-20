@@ -14,8 +14,8 @@ import commonlibrary.enumerations.Role;
 import commonlibrary.model.order.GroupOrder;
 import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
-import team.k.repository.GroupOrderRepository;
-import team.k.repository.LocationRepository;
+import commonlibrary.repository.GroupOrderRepository;
+import commonlibrary.repository.LocationRepository;
 import team.k.groupOrderService.GroupOrderService;
 
 import java.time.LocalDate;

@@ -1,5 +1,9 @@
 package commonlibrary.model.order;
 
+import commonlibrary.dto.DishDTO;
+import commonlibrary.dto.GroupOrderDTO;
+import commonlibrary.dto.PaymentDTO;
+import commonlibrary.dto.SubOrderDTO;
 import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.model.Dish;
 import commonlibrary.model.RegisteredUser;
@@ -67,5 +71,17 @@ public class SubOrder {
             this.price = this.restaurant.getDiscountStrategy().applyDiscount(this); //Appliquer la discount
         }
         this.setStatus(OrderStatus.PAID);
+    }
+
+    public SubOrderDTO convertSubOrderToSubOrderDto() {
+        List<DishDTO> convertedDishes = dishes.stream()
+                .map(Dish::convertDishToDishDto)
+                .toList();
+
+        PaymentDTO convertedPayment = payment.convertPaymentToPaymentDto();
+        GroupOrderDTO convertedGroupOrder = groupOrder.convertGroupOrderToGroupOrderDto();
+
+        return new SubOrderDTO(id, String.valueOf(price), convertedGroupOrder, restaurant.getId(), user.getId(),
+                convertedDishes, status.toString(), placedDate.toString(), deliveryDate.toString(), convertedPayment);
     }
 }

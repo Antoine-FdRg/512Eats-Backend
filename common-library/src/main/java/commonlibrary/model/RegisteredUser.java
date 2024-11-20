@@ -1,5 +1,6 @@
 package commonlibrary.model;
 
+import commonlibrary.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +30,10 @@ public class RegisteredUser {
 
     public boolean addOrderToHistory(SubOrder order) {
         return orders.add(order);
+    }
+
+    public UserDTO convertUserToUserDto() {
+        return new UserDTO(id, name, role.toString());
     }
 
 

@@ -1,5 +1,7 @@
 package commonlibrary.model.order;
 
+import commonlibrary.dto.GroupOrderDTO;
+import commonlibrary.dto.SubOrderDTO;
 import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.model.Location;
 import lombok.AllArgsConstructor;
@@ -55,11 +57,18 @@ public class GroupOrder {
         }
     }
 
+    public GroupOrderDTO convertGroupOrderToGroupOrderDto() {
+        List<SubOrderDTO> convertedSubOrders = subOrders.stream()
+                .map(SubOrder::convertSubOrderToSubOrderDto)
+                .toList();
+        return new GroupOrderDTO(id, status.toString(), deliveryLocation.convertLocationToLocationDto(), deliveryDateTime.toString(), convertedSubOrders);
+    }
+
     public static class Builder {
         private static int nextId = 0;
-        private final int id;
+        private int id;
         private LocalDateTime deliveryDateTime;
-        private final OrderStatus status;
+        private OrderStatus status;
         private List<SubOrder> subOrders;
         private Location deliveryLocation;
 
@@ -101,9 +110,21 @@ public class GroupOrder {
             return this;
         }
 
+        public Builder withStatus(OrderStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        public Builder withId(int id) {
+            this.id = id;
+            return this;
+        }
+
 
         public GroupOrder build() {
             return new GroupOrder(this);
         }
+
+
     }
 }

@@ -1,5 +1,6 @@
 package commonlibrary.model.restaurant;
 
+import commonlibrary.dto.RestaurantDTO;
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.Dish;
 import lombok.Getter;
@@ -32,6 +33,9 @@ public class Restaurant {
     private List<FoodType> foodTypes;
     private DiscountStrategy discountStrategy;
     private int averageOrderPreparationTime;
+    private double averagePrice;
+    private String description;
+    private List<String> urlPicture;
 
     private Restaurant(Builder builder) {
         this.id = builder.id;
@@ -40,9 +44,12 @@ public class Restaurant {
         this.close = builder.close;
         this.timeSlots = builder.timeSlots;
         this.dishes = builder.dishes;
+        this.description = builder.description;
         this.foodTypes = builder.foodTypes;
         this.averageOrderPreparationTime = builder.averageOrderPreparationTime;
         this.discountStrategy = builder.discountStrategy;
+        this.averagePrice = dishes.stream().mapToDouble(Dish::getPrice).average().orElse(0);
+        this.urlPicture = builder.urlPicture;
     }
 
     /**
@@ -81,6 +88,7 @@ public class Restaurant {
         }
         return null;
     }
+
 
     /**
      * Search for the time slot that precedes the time slot containing the given time.
@@ -133,9 +141,14 @@ public class Restaurant {
         return dishes.stream().filter(dish -> dish.getId() == dishId).findFirst().orElse(null);
     }
 
+    public RestaurantDTO restaurantToRestaurantDTO() {
+        List<String> foodTypes = this.foodTypes.stream().map(Enum::name).toList();
+        return new RestaurantDTO(this.id, this.name, this.open.toString(), this.close.toString(), foodTypes, this.averagePrice, this.description, this.urlPicture);
+    }
+
 
     public static class Builder {
-        private final int id;
+        private int id;
         private String name;
         private LocalTime open;
         private LocalTime close;
@@ -143,6 +156,11 @@ public class Restaurant {
         private final List<TimeSlot> timeSlots;
         private final List<Dish> dishes;
         private final List<FoodType> foodTypes;
+
+        private double averagePrice;
+        private String description;
+
+        private List<String> urlPicture;
         private DiscountStrategy discountStrategy;
         private static int idCounter = 0;
 
@@ -151,6 +169,8 @@ public class Restaurant {
             timeSlots = new ArrayList<>();
             dishes = new ArrayList<>();
             foodTypes = new ArrayList<>();
+            urlPicture = new ArrayList<>();
+
         }
 
         public Builder setName(String name) {
@@ -168,6 +188,21 @@ public class Restaurant {
             return this;
         }
 
+        public Builder setAveragePrice(double averagePrice) {
+            this.averagePrice = averagePrice;
+            return this;
+        }
+
+        public Builder setDescription(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder setUrlPicture(List<String> urlPicture) {
+            this.urlPicture = this.dishes.stream().map(Dish::getPicture).limit(3).toList();
+            return this;
+        }
+
         public Builder setAverageOrderPreparationTime(int averageOrderPreparationTime) {
             this.averageOrderPreparationTime = averageOrderPreparationTime;
             return this;
@@ -180,6 +215,11 @@ public class Restaurant {
 
         public Restaurant build() {
             return new Restaurant(this);
+        }
+
+        public Builder setId(int id) {
+            this.id = id;
+            return this;
         }
     }
 }

@@ -11,8 +11,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import commonlibrary.model.Dish;
 import commonlibrary.enumerations.FoodType;
-import team.k.repository.DishRepository;
-import team.k.repository.RestaurantRepository;
+import commonlibrary.repository.DishRepository;
+import commonlibrary.repository.RestaurantRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import team.k.restaurantService.RestaurantService;
 

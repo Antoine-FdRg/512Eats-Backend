@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderBuilder {
-    final int id;
+    int id;
     OrderStatus status;
     double price;
     GroupOrder groupOrder;
@@ -74,6 +74,16 @@ public class OrderBuilder {
 
     public OrderBuilder setPayment(Payment payment) {
         this.payment = payment;
+        return this;
+    }
+
+    public OrderBuilder setId(int id) {
+        this.id = id;
+        return this;
+    }
+
+    public OrderBuilder setStatus(OrderStatus status) {
+        this.status = status;
         return this;
     }
 
