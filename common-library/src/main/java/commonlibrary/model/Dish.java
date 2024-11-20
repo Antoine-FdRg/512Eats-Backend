@@ -1,5 +1,6 @@
 package commonlibrary.model;
 
+import commonlibrary.dto.DishDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -91,6 +92,10 @@ public class Dish {
 
         public Dish build() {
             return new Dish(this);
+        }
+
+        public DishDTO convertDishToDishDto() {
+            return new DishDTO(id, name, description, price, preparationTime, picture);
         }
     }
 }
