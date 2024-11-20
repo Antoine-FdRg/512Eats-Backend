@@ -12,10 +12,20 @@
     <groupId>org.example</groupId>
     <artifactId>seinkSansDoozeEats</artifactId>
 
+
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>fr.unice.polytech.team.k</groupId>
+            <artifactId>common-library</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
 </project>

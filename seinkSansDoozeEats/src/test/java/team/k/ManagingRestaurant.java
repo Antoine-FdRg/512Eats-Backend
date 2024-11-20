@@ -8,9 +8,9 @@ import io.cucumber.java.en.When;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import team.k.common.model.Dish;
-import team.k.common.repository.RestaurantRepository;
-import team.k.common.model.restaurant.Restaurant;
+import commonlibrary.model.Dish;
+import team.k.repository.RestaurantRepository;
+import commonlibrary.model.restaurant.Restaurant;
 import team.k.managingRestaurantService.ManageRestaurantService;
 
 import java.time.LocalTime;

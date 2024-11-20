@@ -3,18 +3,20 @@ package team.k.unittests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import team.k.common.enumerations.FoodType;
-import team.k.common.enumerations.OrderStatus;
-import team.k.common.model.order.IndividualOrder;
-import team.k.common.model.order.SubOrder;
-import team.k.common.model.restaurant.Restaurant;
-import team.k.common.model.restaurant.TimeSlot;
+import commonlibrary.enumerations.FoodType;
+import commonlibrary.enumerations.OrderStatus;
+import commonlibrary.model.order.IndividualOrder;
+import commonlibrary.model.order.SubOrder;
+import commonlibrary.model.restaurant.Restaurant;
+import commonlibrary.model.restaurant.TimeSlot;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 class TimeSlotTest {

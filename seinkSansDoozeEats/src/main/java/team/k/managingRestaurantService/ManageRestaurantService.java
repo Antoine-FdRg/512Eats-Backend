@@ -2,9 +2,10 @@ package team.k.managingRestaurantService;
 
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import team.k.common.model.Dish;
-import team.k.common.repository.RestaurantRepository;
-import team.k.common.model.restaurant.Restaurant;
+import commonlibrary.model.Dish;
+
+import commonlibrary.model.restaurant.Restaurant;
+import team.k.repository.RestaurantRepository;
 
 import java.time.LocalTime;
 

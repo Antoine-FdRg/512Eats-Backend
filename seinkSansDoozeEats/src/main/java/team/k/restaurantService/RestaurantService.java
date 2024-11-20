@@ -1,12 +1,12 @@
 package team.k.restaurantService;
 
+import commonlibrary.enumerations.FoodType;
+import commonlibrary.model.Dish;
+import commonlibrary.model.restaurant.Restaurant;
+import commonlibrary.model.restaurant.TimeSlot;
+import team.k.repository.RestaurantRepository;
+import team.k.repository.TimeSlotRepository;
 import lombok.RequiredArgsConstructor;
-import team.k.common.model.Dish;
-import team.k.common.enumerations.FoodType;
-import team.k.common.repository.RestaurantRepository;
-import team.k.common.repository.TimeSlotRepository;
-import team.k.common.model.restaurant.Restaurant;
-import team.k.common.model.restaurant.TimeSlot;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

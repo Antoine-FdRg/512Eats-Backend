@@ -1,11 +1,12 @@
 package team.k.groupOrderService;
 
+import commonlibrary.model.Location;
+import commonlibrary.model.order.GroupOrder;
+import commonlibrary.model.restaurant.Restaurant;
 import lombok.RequiredArgsConstructor;
-import team.k.common.model.Location;
-import team.k.common.model.order.GroupOrder;
-import team.k.common.repository.GroupOrderRepository;
-import team.k.common.repository.LocationRepository;
-import team.k.common.model.restaurant.Restaurant;
+import team.k.repository.GroupOrderRepository;
+import team.k.repository.LocationRepository;
+
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;

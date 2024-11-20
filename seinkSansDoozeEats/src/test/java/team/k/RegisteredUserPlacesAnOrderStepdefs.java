@@ -7,19 +7,19 @@ import io.cucumber.java.en.When;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import team.k.common.model.Dish;
-import team.k.common.model.RegisteredUser;
-import team.k.common.enumerations.OrderStatus;
-import team.k.common.enumerations.Role;
+import commonlibrary.model.Dish;
+import commonlibrary.model.RegisteredUser;
+import commonlibrary.enumerations.OrderStatus;
+import commonlibrary.enumerations.Role;
 
-import team.k.common.model.payment.PaymentFailedException;
-import team.k.common.model.payment.PaymentProcessor;
-import team.k.common.model.order.OrderBuilder;
-import team.k.common.model.order.SubOrder;
+import commonlibrary.model.payment.PaymentFailedException;
+import commonlibrary.model.payment.PaymentProcessor;
+import commonlibrary.model.order.OrderBuilder;
+import commonlibrary.model.order.SubOrder;
 
-import team.k.common.repository.RegisteredUserRepository;
-import team.k.common.repository.SubOrderRepository;
-import team.k.common.model.restaurant.Restaurant;
+import team.k.repository.RegisteredUserRepository;
+import team.k.repository.SubOrderRepository;
+import commonlibrary.model.restaurant.Restaurant;
 import team.k.orderService.OrderService;
 
 import java.time.LocalDateTime;

@@ -13,6 +13,7 @@
         <module>api</module>
         <module>database</module>
         <module>ssdb-rest-framework</module>
+        <module>common-library</module>
     </modules>
 
     <properties>
