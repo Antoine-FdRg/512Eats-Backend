@@ -151,7 +151,12 @@ public class SSDBHandler implements HttpHandler {
         Object result;
         try {
             result = method.invoke(controller, params);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
+            if (e.getTargetException() instanceof SSDBQueryProcessingException ssdbQueryProcessingException) {
+                throw ssdbQueryProcessingException;
+            }
+            throw new SSDBQueryProcessingException(SSDBResponse.INTERNAL_SERVER_ERROR, SSDBQueryProcessingException.INTERNAL_SERVER_ERROR, e.getMessage());
+        } catch (IllegalAccessException e) {
             throw new SSDBQueryProcessingException(SSDBResponse.INTERNAL_SERVER_ERROR, SSDBQueryProcessingException.INTERNAL_SERVER_ERROR, e.getMessage());
         } catch (IllegalArgumentException e) {
             throw new SSDBQueryProcessingException(SSDBResponse.BAD_REQUEST, SSDBQueryProcessingException.MAL_FORMED_PARAMS, e.getMessage());

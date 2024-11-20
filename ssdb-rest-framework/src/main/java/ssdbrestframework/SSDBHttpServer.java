@@ -138,7 +138,7 @@ public class SSDBHttpServer {
      * @param basePath   The base path for the controller
      */
     private void registerEndpoints(Object controller, String basePath) {
-        for (Method method : controller.getClass().getDeclaredMethods()) {
+        for (Method method : controller.getClass().getMethods()) {
             if (method.isAnnotationPresent(Endpoint.class)) {
                 registerEndpoint(controller, basePath, method);
             }
