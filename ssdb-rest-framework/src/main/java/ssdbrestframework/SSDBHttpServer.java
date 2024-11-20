@@ -83,7 +83,7 @@ public class SSDBHttpServer {
             throw new RuntimeException("Un contrôleur avec le chemin de base " + basePath + " est déjà enregistré");
         }
         routesByController.put(basePath, new HashMap<>());
-        Object controllerInstance = null;
+        Object controllerInstance;
         try {
             controllerInstance = clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
@@ -116,7 +116,6 @@ public class SSDBHttpServer {
                 break;
             }
         }
-
         try {
             if (!found) {
                 throw new SSDBQueryProcessingException(404, "Endpoint not found");
@@ -139,13 +138,11 @@ public class SSDBHttpServer {
      * @param basePath   The base path for the controller
      */
     private void registerEndpoints(Object controller, String basePath) {
-        for (Method method : controller.getClass().getDeclaredMethods()) {
+        for (Method method : controller.getClass().getMethods()) {
             if (method.isAnnotationPresent(Endpoint.class)) {
                 registerEndpoint(controller, basePath, method);
             }
         }
-
-
     }
 
     /**

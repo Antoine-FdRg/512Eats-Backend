@@ -88,7 +88,9 @@ public class Main {
 Defines a REST controller and specify a route prefix for all endpoints in the class.
 
 ```java
+
 @RestController(path = "/api")
+public class ApiController {...}
 ```
 
 ### `@Endpoint`
@@ -96,7 +98,9 @@ Defines a REST controller and specify a route prefix for all endpoints in the cl
 Maps a route and HTTP method to a specific method in the controller.
 
 ```java
+
 @Endpoint(path = "/example", method = HttpMethod.GET)
+public String example() { ...}
 ```
 
 ### `@PathVariable`
@@ -128,5 +132,64 @@ Binds the body of the query to a method parameter.
 @Endpoint(path = "/echo", method = HttpMethod.POST)
 public MyObject echoBody(@RequestBody MyObject myObject) {
     return myObject;
+}
+```
+
+### `@Response`
+
+Allows to specify the response status code and an optional message.
+If the method is executed successfully, the defined status code will be returned.
+Also, if the method is void, you can specify the message to return.
+The default status code is 200.
+
+**1. No message and not void method :**
+
+The following example returns the created object with a 201 status code in headers when the method is executed
+successfully.
+
+```java
+
+@Endpoint(path = "/create", method = HttpMethod.POST)
+@Response(status = 201)
+public Object createdRandomObject() {...}
+```
+
+**2. No message and void method :**
+
+The following example returns nothing but 201 status code in headers when the method is executed successfully.
+
+```java
+
+@Endpoint(path = "/create", method = HttpMethod.POST)
+@Response(status = 201)
+public void createdRandomObject() {...}
+```
+
+**3. Message and not void method :**
+
+The following example returns the created object with a 201 status code in headers when the method is executed
+successfully.
+
+```java
+
+@Endpoint(path = "/create", method = HttpMethod.POST)
+@Response(status = 201, message = "Object created successfully")
+public Object createdRandomObject() {...}
+```
+
+**4. Message and void method :**
+The following example returns the message and a 201 status code in headers when the method is executed successfully.
+
+```java
+
+@Endpoint(path = "/create", method = HttpMethod.POST)
+@Response(status = 201, message = "Object created successfully")
+public void createdRandomObject() {...}
+```
+
+**Response**
+```json
+{
+    "message": "Object created successfully"
 }
 ```
