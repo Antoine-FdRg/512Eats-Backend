@@ -74,7 +74,7 @@ facilitent la création de tickets pour le suivi des tâches ou des problèmes r
 Contient le code applicatif du projet. Au sein du package [team.k](seinkSansDoozeEats/src/main/java/team/k), nous
 retrouvons:
 
-### [`team.k.common`](seinkSansDoozeEats/src/main/java/team/k/common)
+### [`team.k.commonlibrary`](seinkSansDoozeEats/src/main/java/team/k/common)
 
 Ce package contient les classes communes utilisées dans tout le projet, telles que `Dish` et `Location`.
 

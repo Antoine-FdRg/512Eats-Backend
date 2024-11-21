@@ -7,15 +7,15 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 import org.mockito.MockitoAnnotations;
-import team.k.common.model.Location;
-import team.k.common.model.RegisteredUser;
-import team.k.common.enumerations.OrderStatus;
-import team.k.common.enumerations.Role;
-import team.k.common.model.order.GroupOrder;
-import team.k.common.model.order.OrderBuilder;
-import team.k.common.model.order.SubOrder;
-import team.k.common.repository.GroupOrderRepository;
-import team.k.common.repository.LocationRepository;
+import commonlibrary.model.Location;
+import commonlibrary.model.RegisteredUser;
+import commonlibrary.enumerations.OrderStatus;
+import commonlibrary.enumerations.Role;
+import commonlibrary.model.order.GroupOrder;
+import commonlibrary.model.order.OrderBuilder;
+import commonlibrary.model.order.SubOrder;
+import commonlibrary.repository.GroupOrderRepository;
+import commonlibrary.repository.LocationRepository;
 import team.k.groupOrderService.GroupOrderService;
 
 import java.time.LocalDate;
