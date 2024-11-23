@@ -49,7 +49,7 @@ public class OrderService {
      * @param deliveryTime       the time at which the order will be delivered
      * @param now                the time at which the order is created (should be the current time in REST controller but can be changed as parameter for testing)
      */
-    public void createIndividualOrder(int registeredUserID, int restaurantId, int deliveryLocationId, LocalDateTime deliveryTime, LocalDateTime now) {
+    public int createIndividualOrder(int registeredUserID, int restaurantId, int deliveryLocationId, LocalDateTime deliveryTime, LocalDateTime now) {
         RegisteredUser registeredUser = this.registeredUserValidator(registeredUserID);
         Restaurant restaurant = restaurantRepository.findById(restaurantId);
         if (restaurant == null) {
@@ -77,6 +77,7 @@ public class OrderService {
         registeredUser.setCurrentOrder(order);
         subOrderRepository.add(order);
         restaurant.addOrderToTimeslot(order);
+        return order.getId();
     }
 
     public void addDishToOrder(int orderId, int dishId) {
