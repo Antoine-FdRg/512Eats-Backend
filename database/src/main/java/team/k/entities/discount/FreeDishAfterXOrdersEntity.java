@@ -1,8 +1,7 @@
 package team.k.entities.discount;
 
-import io.ebean.annotation.Identity;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 import lombok.NoArgsConstructor;
 import team.k.entities.order.SubOrderEntity;
 import team.k.entities.restaurant.RestaurantEntity;
@@ -12,8 +11,7 @@ import team.k.entities.restaurant.RestaurantEntity;
  */
 @NoArgsConstructor
 @Entity
-@Table(name = "free_dish_after_x_orders")
-@Identity
+@DiscriminatorValue("free_dish_after_x_orders")
 public class FreeDishAfterXOrdersEntity extends DiscountStrategyEntity {
     /**
      * The number of orders required in the restaurant to get a free dish

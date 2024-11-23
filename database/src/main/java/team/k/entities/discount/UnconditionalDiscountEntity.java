@@ -1,13 +1,13 @@
 package team.k.entities.discount;
 
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 import lombok.NoArgsConstructor;
 import team.k.entities.restaurant.RestaurantEntity;
 
 @NoArgsConstructor
+@DiscriminatorValue("unconditional")
 @Entity
-@Table(name = "unconditional_discount")
 public class UnconditionalDiscountEntity extends DiscountStrategyEntity {
     /**
      * The discount rate, between 0 and 1

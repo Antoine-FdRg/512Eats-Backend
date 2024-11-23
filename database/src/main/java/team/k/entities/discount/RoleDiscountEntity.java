@@ -1,7 +1,7 @@
 package team.k.entities.discount;
 
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 import lombok.NoArgsConstructor;
 import team.k.entities.enumeration.RoleEntity;
 import team.k.entities.restaurant.RestaurantEntity;
@@ -11,7 +11,7 @@ import team.k.entities.restaurant.RestaurantEntity;
  */
 @NoArgsConstructor
 @Entity
-@Table(name = "role_discount")
+@DiscriminatorValue("role")
 public class RoleDiscountEntity extends DiscountStrategyEntity {
     /**
      * The discount rate, between 0 and 1

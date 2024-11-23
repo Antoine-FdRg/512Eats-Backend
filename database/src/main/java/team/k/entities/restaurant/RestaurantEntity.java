@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,6 +43,8 @@ public class RestaurantEntity extends Model {
     @JoinColumn(name = "id")
     public List<DishEntity> dishes;
     private List<FoodTypeEntity> foodTypes;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id")
     private DiscountStrategyEntity discountStrategy;
     private int averageOrderPreparationTime;
     private String description;
@@ -68,9 +71,7 @@ public class RestaurantEntity extends Model {
         private final List<TimeSlotEntity> timeSlots;
         private final List<DishEntity> dishes;
         private final List<FoodTypeEntity> foodTypes;
-
         private String description;
-
         private DiscountStrategyEntity discountStrategy;
         private static int idCounter = 0;
 

@@ -1,10 +1,15 @@
 package team.k.entities.discount;
 
 import io.ebean.Model;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.NoArgsConstructor;
 import team.k.entities.restaurant.RestaurantEntity;
 
@@ -12,8 +17,11 @@ import team.k.entities.restaurant.RestaurantEntity;
  * The abstract class for discount strategy
  */
 @NoArgsConstructor
-@MappedSuperclass
-public abstract class DiscountStrategyEntity extends Model {
+@Entity
+@Table(name = "discount_strategy")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "discount_type", discriminatorType = DiscriminatorType.STRING)
+public class DiscountStrategyEntity extends Model {
 
     @Id
     protected int id;
