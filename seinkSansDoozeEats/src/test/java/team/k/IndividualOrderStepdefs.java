@@ -22,6 +22,7 @@ import commonlibrary.repository.SubOrderRepository;
 import commonlibrary.repository.TimeSlotRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
+import team.k.managingRestaurantService.ManageRestaurantService;
 import team.k.orderService.OrderService;
 import team.k.restaurantService.RestaurantService;
 
@@ -48,6 +49,8 @@ public class IndividualOrderStepdefs {
     RestaurantRepository restaurantRepository;
     @InjectMocks
     RestaurantService restaurantService;
+    @InjectMocks
+    ManageRestaurantService manageRestaurantService;
 
     @Mock
     LocationRepository locationRepository;
@@ -100,7 +103,7 @@ public class IndividualOrderStepdefs {
         LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, startHours, startMinutes);
         TimeSlot timeSlot = new TimeSlot(startTime, restaurant, productionCapacity);
         when(timeSlotRepository.findById(timeSlot.getId())).thenReturn(timeSlot);
-        restaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
+        manageRestaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
     }
 
     @And("a delivery location with the number {string}, the street {string} and the city {string}")
@@ -173,7 +176,7 @@ public class IndividualOrderStepdefs {
         timeSlot.addOrder(orderToFillTimeSlot1);
         timeSlot.addOrder(orderToFillTimeSlot2);
         when(timeSlotRepository.findById(timeSlot.getId())).thenReturn(timeSlot);
-        restaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
+        manageRestaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
     }
 
     @Given("Naga has a productionCapacity of {int} for the all the timeslots of {int}-{int}-{int} starting at")

@@ -18,6 +18,7 @@ import commonlibrary.repository.RestaurantRepository;
 import commonlibrary.repository.TimeSlotRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
+import team.k.managingRestaurantService.ManageRestaurantService;
 import team.k.restaurantService.RestaurantService;
 
 import java.time.LocalDate;
@@ -37,6 +38,8 @@ public class SubOrderStepdefs {
 
     RestaurantService restaurantService;
 
+    ManageRestaurantService manageRestaurantService;
+
     RegisteredUserRepository registeredUserRepository;
     RestaurantRepository restaurantRepository;
     TimeSlotRepository timeSlotRepository;
@@ -48,6 +51,7 @@ public class SubOrderStepdefs {
         restaurantRepository = new RestaurantRepository();
         timeSlotRepository = new TimeSlotRepository();
         locationRepository = new LocationRepository();
+        manageRestaurantService = new ManageRestaurantService(restaurantRepository, timeSlotRepository);
         restaurantService = new RestaurantService(restaurantRepository, timeSlotRepository);
     }
 
@@ -75,7 +79,7 @@ public class SubOrderStepdefs {
         LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, startHours, startMinutes);
         TimeSlot timeSlot = new TimeSlot(startTime, restaurant, productionCapacity);
         timeSlotRepository.add(timeSlot);
-        restaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
+        manageRestaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
     }
 
     @And("the delivery location {string}, {string} in {string}")
