@@ -141,7 +141,7 @@ public class Restaurant {
         return dishes.stream().filter(dish -> dish.getId() == dishId).findFirst().orElse(null);
     }
 
-    public RestaurantDTO restaurantToRestaurantDTO() {
+    public RestaurantDTO convertRestaurantToRestaurantDTO() {
         List<String> foodTypes = this.foodTypes.stream().map(Enum::name).toList();
         return new RestaurantDTO(this.id, this.name, this.open.toString(), this.close.toString(), foodTypes, this.averagePrice, this.description, this.urlPicture);
     }

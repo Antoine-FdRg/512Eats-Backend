@@ -1,9 +1,10 @@
 package team.k.restaurantService;
 
+import commonlibrary.dto.DishDTO;
+import commonlibrary.dto.RestaurantDTO;
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.Dish;
 import commonlibrary.model.restaurant.Restaurant;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import ssdbrestframework.annotations.Endpoint;
 import ssdbrestframework.annotations.PathVariable;
@@ -31,9 +32,10 @@ public class RestaurantController {
      */
     @Endpoint(path = "/{restaurantName}/dishes", method = ssdbrestframework.HttpMethod.GET)
     @Response(status = 201)
-    public List<Dish> getAllDishes(@PathVariable("restaurantName") String restaurantName) {
+    public List<DishDTO> getAllDishes(@PathVariable("restaurantName") String restaurantName) {
         try {
-            return restaurantService.getAllDishesFromRestaurant(restaurantName);
+            List<Dish> dishes = restaurantService.getAllDishesFromRestaurant(restaurantName);
+            return dishes.stream().map(Dish::convertDishToDishDto).toList();
         } catch (NoSuchElementException e) {
             throw new NoSuchElementException("No dishes available");
         }
@@ -72,12 +74,13 @@ public class RestaurantController {
     /**
      * Add a new restaurant
      *
-     * @param restaurant the restaurant to add
+     * @param restaurantDto the restaurant to add
      * @return the restaurant id
      */
     @Endpoint(path = "/", method = ssdbrestframework.HttpMethod.POST)
     @Response(status = 201)
-    public int addRestaurant(@RequestBody Restaurant restaurant) {
+    public int addRestaurant(@RequestBody RestaurantDTO restaurantDto) {
+        Restaurant restaurant = restaurantDto.convertRestaurantDtoToRestaurant();
         restaurantService.addRestaurant(restaurant);
         return restaurant.getId();
     }
@@ -85,12 +88,12 @@ public class RestaurantController {
     /**
      * Delete a restaurant
      *
-     * @param restaurant the restaurant to delete
-     * @return success message
+     * @param restaurantDto the restaurant to delete
      */
     @Endpoint(path = "/", method = ssdbrestframework.HttpMethod.DELETE)
     @Response(status = 201)
-    public void deleteRestaurant(@RequestBody Restaurant restaurant) {
+    public void deleteRestaurant(@RequestBody RestaurantDTO restaurantDto) {
+        Restaurant restaurant = restaurantDto.convertRestaurantDtoToRestaurant();
         restaurantService.deleteRestaurant(restaurant);
     }
 
@@ -102,9 +105,9 @@ public class RestaurantController {
      */
     @Endpoint(path = "/", method = ssdbrestframework.HttpMethod.GET)
     @Response(status = 201)
-    public List<Restaurant> getAllRestaurants() {
-        //TODO: Créer un restaurant dto pour envoyer uniquement le nom du restaurant
-        return restaurantService.getAllRestaurants();
+    public List<RestaurantDTO> getAllRestaurants() {
+        List<Restaurant> restaurants = restaurantService.getAllRestaurants();
+        return restaurants.stream().map(Restaurant::convertRestaurantToRestaurantDTO).toList();
     }
 
     /**
@@ -115,9 +118,10 @@ public class RestaurantController {
      */
     @Endpoint(path = "/{restaurantName}", method = ssdbrestframework.HttpMethod.GET)
     @Response(status = 201)
-    public List<Restaurant> getRestaurantsByName(@RequestParam("restaurantName") String restaurantName) {
+    public List<RestaurantDTO> getRestaurantsByName(@RequestParam("restaurantName") String restaurantName) {
         try {
-            return restaurantService.getRestaurantsByName(restaurantName);
+            List<Restaurant> restaurants = restaurantService.getRestaurantsByName(restaurantName);
+            return restaurants.stream().map(Restaurant::convertRestaurantToRestaurantDTO).toList();
         } catch (NoSuchElementException e) {
             throw new NoSuchElementException("No restaurants found with the name: " + restaurantName);
         }
@@ -131,9 +135,13 @@ public class RestaurantController {
      */
     @Endpoint(path = "/by/food-types", method = ssdbrestframework.HttpMethod.GET)
     @Response(status = 201)
-    public List<Restaurant> getRestaurantsByFoodType(@RequestBody List<FoodType> foodTypes) {
+    public List<RestaurantDTO> getRestaurantsByFoodType(@RequestBody List<FoodType> foodTypes) {
         try {
-            return restaurantService.getRestaurantsByFoodType(foodTypes);
+            List<Restaurant> restaurants = restaurantService.getRestaurantsByFoodType(foodTypes);
+            return restaurants
+                    .stream()
+                    .map(Restaurant::convertRestaurantToRestaurantDTO)
+                    .toList();
         } catch (NoSuchElementException e) {
             throw new NoSuchElementException("No restaurants found with the food types: " + foodTypes);
         }
@@ -147,15 +155,23 @@ public class RestaurantController {
      */
     @Endpoint(path = "/by/availability/{availability}", method = ssdbrestframework.HttpMethod.GET)
     @Response(status = 201)
-    public List<Restaurant> getRestaurantsByAvailability(@PathVariable("availability") Boolean availability) {
+    public List<RestaurantDTO> getRestaurantsByAvailability(@PathVariable("availability") Boolean availability) {
         if (availability) {
             try {
-                return restaurantService.getRestaurantsByAvailability(LocalDateTime.now());
+                List<Restaurant> restaurants = restaurantService.getRestaurantsByAvailability(LocalDateTime.now());
+                return restaurants
+                        .stream()
+                        .map(Restaurant::convertRestaurantToRestaurantDTO)
+                        .toList();
             } catch (NoSuchElementException e) {
                 throw new NoSuchElementException("No restaurants found with availability at: " + LocalDateTime.now());
             }
         } else {
-            return restaurantService.getAllRestaurants();
+            List<Restaurant> restaurants = restaurantService.getAllRestaurants();
+            return restaurants
+                    .stream()
+                    .map(Restaurant::convertRestaurantToRestaurantDTO)
+                    .toList();
         }
 
     }
