@@ -34,6 +34,16 @@ public class RestaurantService {
         return dishes;
     }
 
+
+    /**
+     * Get all food types
+     *
+     * @return the list of food types
+     */
+    public List<FoodType> getFoodTypes() {
+        return List.of(FoodType.values());
+    }
+
     /**
      * Get all available delivery times of a restaurant on a specific day
      *
@@ -64,14 +74,7 @@ public class RestaurantService {
     }
 
     /***** Update *****/
-    public void addTimeSlotToRestaurant(int restaurantId, int timeSlotId) {
-        Restaurant restaurant = getRestaurantOrThrowIfNull(restaurantRepository.findById(restaurantId));
-        TimeSlot ts = timeSlotRepository.findById(timeSlotId);
-        if (ts == null) {
-            throw new NoSuchElementException("Time slot not found");
-        }
-        restaurant.addTimeSlot(ts);
-    }
+
 
     private Restaurant getRestaurantOrThrowIfNull(Restaurant restaurantFound) {
         if (restaurantFound == null) {
