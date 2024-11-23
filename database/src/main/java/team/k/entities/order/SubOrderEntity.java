@@ -28,10 +28,14 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "sub_order")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "order_type", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("sub_order")
+@AllArgsConstructor
 @NoArgsConstructor
 public class SubOrderEntity extends Model {
     @Id
-    private int id;
+    protected int id;
     private double price;
     @ManyToOne
     @JoinColumn(name = "group_order_id")
