@@ -3,6 +3,8 @@ package team.k.restaurantService;
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.Dish;
 import commonlibrary.model.restaurant.Restaurant;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import ssdbrestframework.annotations.Endpoint;
 import ssdbrestframework.annotations.PathVariable;
 import ssdbrestframework.annotations.RequestBody;
@@ -15,14 +17,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@RestController(path = "/greeter")
+@RequiredArgsConstructor
+@RestController(path = "/restaurants")
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
-
-    public RestaurantController(RestaurantService restaurantService) {
-        this.restaurantService = restaurantService;
-    }
 
     /**
      * Get all dishes from a restaurant
