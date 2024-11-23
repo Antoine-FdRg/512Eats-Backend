@@ -1,10 +1,11 @@
-package team.k;
+package team.k.entities.restaurant;
 
 import io.ebean.Model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -14,7 +15,8 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "dish")
-public class Dish extends Model {
+@NoArgsConstructor
+public class DishEntity extends Model {
 
     @Id
     private int id;
@@ -24,7 +26,7 @@ public class Dish extends Model {
     private int preparationTime;
     private String picture;
 
-    private Dish(Builder builder) {
+    private DishEntity(Builder builder) {
         this.id = builder.id;
         this.name = builder.name;
         this.description = builder.description;
@@ -42,7 +44,7 @@ public class Dish extends Model {
         if (obj == this) {
             return true;
         }
-        if (!(obj instanceof Dish dish)) {
+        if (!(obj instanceof DishEntity dish)) {
             return false;
         }
         return id == dish.id;
@@ -96,8 +98,8 @@ public class Dish extends Model {
             return this;
         }
 
-        public Dish build() {
-            return new Dish(this);
+        public DishEntity build() {
+            return new DishEntity(this);
         }
     }
 }

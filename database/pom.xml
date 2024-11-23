@@ -53,7 +53,12 @@
             <artifactId>ebean-ddl-generator</artifactId>
             <version>14.5.0</version> <!-- Remplacez par la version appropriée -->
         </dependency>
-
+        <dependency>
+            <groupId>fr.unice.polytech.team.k</groupId>
+            <artifactId>common-library</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
