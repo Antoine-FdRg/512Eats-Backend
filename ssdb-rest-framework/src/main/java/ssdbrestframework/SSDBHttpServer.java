@@ -76,7 +76,7 @@ public class SSDBHttpServer {
      *
      * @param clazz the controller class to register
      */
-    private void registerController(Class<?> clazz) {
+    public void registerController(Class<?> clazz) {
         RestController restController = clazz.getAnnotation(RestController.class);
         String basePath = restController.path();  // Récupère le préfixe de la classe
         if (routesByController.containsKey(basePath)) {
