@@ -1,12 +1,18 @@
 package team.k.entities.order;
 
 import io.ebean.Model;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,7 +34,7 @@ public class SubOrderEntity extends Model {
     private int id;
     private double price;
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "group_order_id")
     private GroupOrderEntity groupOrder;
     @ManyToOne
     private RestaurantEntity restaurant;
@@ -40,7 +46,7 @@ public class SubOrderEntity extends Model {
     private LocalDateTime placedDate;
     private LocalDateTime deliveryDate;
     @OneToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "payment_id")
     private PaymentEntity payment;
 
 

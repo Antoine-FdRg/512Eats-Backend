@@ -44,7 +44,7 @@ public class RestaurantEntity extends Model {
     public List<DishEntity> dishes;
     private List<FoodTypeEntity> foodTypes;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "discount_strategy_id")
     private DiscountStrategyEntity discountStrategy;
     private int averageOrderPreparationTime;
     private String description;

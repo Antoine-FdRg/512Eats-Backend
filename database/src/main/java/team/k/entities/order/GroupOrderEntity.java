@@ -7,8 +7,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import team.k.entities.LocationEntity;
 import team.k.entities.enumeration.OrderStatusEntity;
@@ -20,7 +20,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "group_order")
-@NoArgsConstructor
+@AllArgsConstructor
 public class GroupOrderEntity extends Model {
     @Id
     private int id;
@@ -32,7 +32,7 @@ public class GroupOrderEntity extends Model {
     private List<SubOrderEntity> subOrders;
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "delivery_location_id")
     private LocationEntity deliveryLocation;
 
 

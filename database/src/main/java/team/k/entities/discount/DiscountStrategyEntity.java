@@ -30,7 +30,7 @@ public class DiscountStrategyEntity extends Model {
      * The restaurant that apply the discount strategy
      */
     @OneToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "restaurant_id")
     protected RestaurantEntity restaurant;
 
     public DiscountStrategyEntity(RestaurantEntity restaurant) {

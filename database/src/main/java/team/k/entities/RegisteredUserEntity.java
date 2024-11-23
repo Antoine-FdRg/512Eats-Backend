@@ -26,7 +26,7 @@ public class RegisteredUserEntity extends Model {
     private String name;
     private RoleEntity role;
     @OneToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "current_order_id")
     private SubOrderEntity currentOrder;
 
     private List<SubOrderEntity> orders;
