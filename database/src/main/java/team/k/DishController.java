@@ -1,10 +1,11 @@
 package team.k;
 
 import ssdbrestframework.annotations.RestController;
+import team.k.entities.restaurant.DishEntity;
 
 @RestController(path = "/dishes")
-public class DishController extends GenericController<Dish> {
+public class DishController extends GenericController<DishEntity> {
     public DishController() {
-        super(Dish.class);
+        super(DishEntity.class);
     }
 }

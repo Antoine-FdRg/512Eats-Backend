@@ -19,11 +19,10 @@ public abstract class GenericController<T> {
         this.modelClass = modelClass;
     }
 
-    @Endpoint(path = "/", method = HttpMethod.GET)
+    @Endpoint(path = "", method = HttpMethod.GET)
     public List<T> findAll() {
         log.info("Finding all " + modelClass + "s");
-        List<T> entities = database.find(modelClass).findList();
-        return entities;
+        return database.find(modelClass).findList();
     }
 
     @Endpoint(path = "/{id}", method = HttpMethod.GET)
