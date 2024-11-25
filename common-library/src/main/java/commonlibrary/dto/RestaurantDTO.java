@@ -18,9 +18,7 @@ public record RestaurantDTO(int id, String name, String openTime, String closeTi
                 .setOpen(LocalTime.parse(openTime))
                 .setClose(LocalTime.parse(closeTime))
                 .setFoodTypes(foodtypes)
-                .setAveragePrice(averagePrice)
                 .setDescription(description)
-                .setUrlPicture(dishPictureURLListSample)
                 .build();
     }
 }
