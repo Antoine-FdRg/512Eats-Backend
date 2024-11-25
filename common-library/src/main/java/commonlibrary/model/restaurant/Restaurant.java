@@ -33,9 +33,7 @@ public class Restaurant {
     private List<FoodType> foodTypes;
     private DiscountStrategy discountStrategy;
     private int averageOrderPreparationTime;
-    private double averagePrice;
     private String description;
-    private List<String> urlPicture;
 
     private Restaurant(Builder builder) {
         this.id = builder.id;
@@ -48,8 +46,6 @@ public class Restaurant {
         this.foodTypes = builder.foodTypes;
         this.averageOrderPreparationTime = builder.averageOrderPreparationTime;
         this.discountStrategy = builder.discountStrategy;
-        this.averagePrice = dishes.stream().mapToDouble(Dish::getPrice).average().orElse(0);
-        this.urlPicture = builder.urlPicture;
     }
 
     /**
@@ -143,9 +139,16 @@ public class Restaurant {
 
     public RestaurantDTO restaurantToRestaurantDTO() {
         List<String> foodTypes = this.foodTypes.stream().map(Enum::name).toList();
-        return new RestaurantDTO(this.id, this.name, this.open.toString(), this.close.toString(), foodTypes, this.averagePrice, this.description, this.urlPicture);
+        return new RestaurantDTO(this.id, this.name, this.open.toString(), this.close.toString(), foodTypes, this.getAveragePrice(), this.description, this.getFirstDishPictureURLList());
     }
 
+    private double getAveragePrice() {
+        return dishes.stream().mapToDouble(Dish::getPrice).average().orElse(0);
+    }
+
+    private List<String> getFirstDishPictureURLList() {
+        return dishes.stream().map(Dish::getPicture).limit(3).toList();
+    }
 
     public static class Builder {
         private int id;
@@ -156,11 +159,7 @@ public class Restaurant {
         private final List<TimeSlot> timeSlots;
         private final List<Dish> dishes;
         private final List<FoodType> foodTypes;
-
-        private double averagePrice;
         private String description;
-
-        private List<String> urlPicture;
         private DiscountStrategy discountStrategy;
         private static int idCounter = 0;
 
@@ -169,8 +168,6 @@ public class Restaurant {
             timeSlots = new ArrayList<>();
             dishes = new ArrayList<>();
             foodTypes = new ArrayList<>();
-            urlPicture = new ArrayList<>();
-
         }
 
         public Builder setName(String name) {
@@ -188,18 +185,8 @@ public class Restaurant {
             return this;
         }
 
-        public Builder setAveragePrice(double averagePrice) {
-            this.averagePrice = averagePrice;
-            return this;
-        }
-
         public Builder setDescription(String description) {
             this.description = description;
-            return this;
-        }
-
-        public Builder setUrlPicture(List<String> urlPicture) {
-            this.urlPicture = this.dishes.stream().map(Dish::getPicture).limit(3).toList();
             return this;
         }
 
