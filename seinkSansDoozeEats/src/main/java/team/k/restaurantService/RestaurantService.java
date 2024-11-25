@@ -122,4 +122,20 @@ public class RestaurantService {
         }
         return restaurants;
     }
+
+
+    /**
+     * Calcul de la moyenne des prix des plats d'un restaurant
+     *
+     * @param restaurantId
+     * @return 1 si les prix sont entre 0 et 10, 2 si les prix sont entre 10 et 20, 3 si les prix sont entre 20 et 30
+     */
+    public int getAverageValueOfRestaurantPrices(int restaurantId) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId);
+        double averageValue = restaurant.getDishes().stream()
+                .mapToDouble(Dish::getPrice)
+                .average()
+                .orElse(0.0);
+        return (averageValue <= 10 ? 1 : averageValue <= 20 ? 2 : 3);
+    }
 }
