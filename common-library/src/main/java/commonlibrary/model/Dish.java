@@ -18,7 +18,7 @@ public class Dish {
     private int preparationTime;
     private String picture;
 
-    private Dish(Builder builder) {
+    public Dish(Builder builder) {
         this.id = builder.id;
         this.name = builder.name;
         this.description = builder.description;
