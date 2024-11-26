@@ -70,4 +70,4 @@ public class IndividualOrderRepository {
     }
 
 
-}
+}//TODO : checker toutes les méthodes voir si elles fonctionnent
