@@ -1,5 +1,7 @@
 package commonlibrary.model.order;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import commonlibrary.dto.DishDTO;
 import commonlibrary.dto.GroupOrderDTO;
 import commonlibrary.dto.PaymentDTO;
@@ -18,6 +20,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class SubOrder {
     private int id;
     private double price;

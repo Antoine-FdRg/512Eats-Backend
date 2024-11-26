@@ -1,5 +1,8 @@
 package commonlibrary.model.restaurant;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import commonlibrary.enumerations.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +21,11 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class TimeSlot {
     private int id;
     public static final int DURATION = 30;
