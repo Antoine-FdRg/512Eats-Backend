@@ -13,12 +13,10 @@ import java.util.List;
 
 
 public class DishRepository {
-    private final List<Dish> dishes = new ArrayList<>();
     private static final String BASE_URL = "http://localhost:8082/dishes";
     private static final HttpClient client = HttpClient.newHttpClient();
 
     public Dish findById(int dishId) throws IOException, InterruptedException {
-        try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(BASE_URL + "/get/" + dishId))
                     .GET()
@@ -29,9 +27,6 @@ public class DishRepository {
             }
             Dish dish = new ObjectMapper().readValue(response.body(), Dish.class);
             return dish;
-        } catch (IOException e) {
-            throw new IOException("Error: " + e.getMessage());
-        }
     }
 
     public void add(Dish dish) throws IOException, InterruptedException {
