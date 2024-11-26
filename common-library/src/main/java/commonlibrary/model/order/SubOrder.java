@@ -11,6 +11,7 @@ import commonlibrary.model.Dish;
 import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.restaurant.Restaurant;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import commonlibrary.model.payment.Payment;
 
@@ -21,6 +22,7 @@ import java.util.List;
 @Getter
 @Setter
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@NoArgsConstructor
 public class SubOrder {
     private int id;
     private double price;

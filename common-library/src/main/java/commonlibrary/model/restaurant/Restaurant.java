@@ -6,6 +6,7 @@ import commonlibrary.dto.RestaurantDTO;
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.Dish;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import commonlibrary.model.order.SubOrder;
 import commonlibrary.model.restaurant.discount.DiscountStrategy;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Restaurant {
 

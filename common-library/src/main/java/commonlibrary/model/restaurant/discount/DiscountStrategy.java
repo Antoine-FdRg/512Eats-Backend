@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
  * The abstract class for discount strategy
  */
 @AllArgsConstructor
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@NoArgsConstructor
 public abstract class DiscountStrategy {
 
     private static int idCounter = 0;

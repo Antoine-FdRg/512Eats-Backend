@@ -8,6 +8,7 @@ import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.model.Location;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@NoArgsConstructor
 public class GroupOrder {
     public static final int GROUP_ORDER_CODE_LENGTH = 6;
     private final int id;

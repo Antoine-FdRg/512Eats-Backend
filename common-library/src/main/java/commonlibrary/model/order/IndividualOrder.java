@@ -7,6 +7,7 @@ import commonlibrary.dto.IndividualOrderDTO;
 import commonlibrary.model.Dish;
 import commonlibrary.model.Location;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@NoArgsConstructor
 public class IndividualOrder extends SubOrder {
     private Location deliveryLocation;
 
