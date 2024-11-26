@@ -1,17 +1,26 @@
 package team.k;
 
 import commonlibrary.enumerations.FoodType;
+import commonlibrary.enumerations.Role;
 import commonlibrary.model.Dish;
+import commonlibrary.model.RegisteredUser;
+import commonlibrary.model.order.IndividualOrder;
+import commonlibrary.model.order.OrderBuilder;
+import commonlibrary.model.order.SubOrder;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
 import ssdbrestframework.SSDBHttpServer;
 import team.k.repository.DishRepository;
+import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
+import team.k.repository.SubOrderRepository;
 import team.k.repository.TimeSlotRepository;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+
+import static java.time.LocalDateTime.now;
 
 public class DatabaseServer {
     public static void main(String[] args) {
@@ -43,5 +52,20 @@ public class DatabaseServer {
         TimeSlotRepository.getInstance().add(ts);
         r.addTimeSlot(ts);
         RestaurantRepository.getInstance().add(r);
+        RegisteredUser user = new RegisteredUser("John", Role.STUDENT);
+
+        RegisteredUserRepository.getInstance().add(user);
+
+        SubOrder subOrder = new OrderBuilder()
+                .setRestaurant(r)
+                .setDishes(List.of(pizza))
+                .setId(1)
+                .setUser(user)
+                .setDeliveryTime(now())
+                .build();
+        SubOrderRepository.getInstance().add(subOrder);
+
+        user.addOrderToHistory(subOrder);
+        RegisteredUserRepository.getInstance().update(user);
     }
 }

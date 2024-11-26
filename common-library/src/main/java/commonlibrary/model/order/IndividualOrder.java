@@ -18,7 +18,7 @@ import java.util.List;
 public class IndividualOrder extends SubOrder {
     private Location deliveryLocation;
 
-    IndividualOrder(OrderBuilder orderBuilder) {
+    public IndividualOrder(OrderBuilder orderBuilder) {
         super(orderBuilder);
     }
 
