@@ -25,14 +25,15 @@ public abstract class GenericRepository <T> {
         items.add(t);
     }
 
-    public void update(T t){
+    public boolean update(T t){
         int index = items.indexOf(t);
         if(index != -1){
             items.set(index, t);
         }
+        return index != -1;
     }
 
-    public void remove(int id){
-        items.remove(findById(id));
+    public boolean remove(int id){
+        return items.remove(findById(id));
     }
 }
