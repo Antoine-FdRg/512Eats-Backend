@@ -2,6 +2,7 @@ package team.k.controllers;
 
 import commonlibrary.model.Dish;
 import ssdbrestframework.HttpMethod;
+import ssdbrestframework.SSDBQueryProcessingException;
 import ssdbrestframework.annotations.Endpoint;
 import ssdbrestframework.annotations.PathVariable;
 import ssdbrestframework.annotations.RequestBody;
@@ -20,22 +21,27 @@ public class DishController {
     }
 
     @Endpoint(path = "/{id}", method = HttpMethod.GET)
-    public Dish findById(@PathVariable("id") int id) {
-        return DishRepository.getInstance().findById(id);
+    public Dish findById(@PathVariable("id") int id) throws SSDBQueryProcessingException {
+        Dish dish = DishRepository.getInstance().findById(id);
+        if(dish==null){
+            throw new SSDBQueryProcessingException(404, "Dish with ID " + id + " not found.");
+        }
+        return dish;
     }
 
-    @Endpoint(path = "", method = HttpMethod.POST)
+    @Endpoint(path = "/create", method = HttpMethod.POST)
     @Response(status = 201)
     public void add(@RequestBody Dish dish) {
         DishRepository.getInstance().add(dish);
     }
 
-    @Endpoint(path = "/{id}", method = HttpMethod.PUT)
+    @Endpoint(path = "/update", method = HttpMethod.PUT)
     public void update(@RequestBody Dish dish) {
         DishRepository.getInstance().update(dish);
     }
 
-    @Endpoint(path = "/{id}", method = HttpMethod.DELETE)
+    @Endpoint(path = "/delete/{id}", method = HttpMethod.DELETE)
+    @Response(status = 200, message = "Dish deleted successfully")
     public void remove(@PathVariable("id") int id) {
         DishRepository.getInstance().remove(id);
     }
