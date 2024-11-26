@@ -1,10 +1,8 @@
 package commonlibrary.model.restaurant.discount;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import commonlibrary.model.order.SubOrder;
-import commonlibrary.model.restaurant.Restaurant;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /**
  * The abstract class for discount strategy
@@ -18,10 +16,10 @@ public abstract class DiscountStrategy {
     /**
      * The restaurant that apply the discount strategy
      */
-    protected Restaurant restaurant;
+    protected int restaurantID;
 
-    public DiscountStrategy(Restaurant restaurant) {
-        this.restaurant = restaurant;
+    public DiscountStrategy(int restaurantID) {
+        this.restaurantID = restaurantID;
         this.id = idCounter++;
     }
 

@@ -88,7 +88,7 @@ public class RegisteredUserUsesDiscountStepDefs {
 
     @And("the restaurant have freeDishAfterXOrders discount")
     public void theRestaurantHaveAUnconditionalDiscount() {
-        freeDiscount = new FreeDishAfterXOrders(restaurant, 10);
+        freeDiscount = new FreeDishAfterXOrders(restaurant.getId(), 10);
         when(restaurant.getDiscountStrategy()).thenReturn(freeDiscount);
     }
 
@@ -107,7 +107,7 @@ public class RegisteredUserUsesDiscountStepDefs {
 
     @And("the restaurant have unconditional discount")
     public void theRestaurantHaveUnconditionalDiscount() {
-        unconditionalDiscount = new UnconditionalDiscount(restaurant, 0.25);
+        unconditionalDiscount = new UnconditionalDiscount(restaurant.getId(), 0.25);
         when(restaurant.getDiscountStrategy()).thenReturn(unconditionalDiscount);
     }
 
@@ -119,7 +119,7 @@ public class RegisteredUserUsesDiscountStepDefs {
 
     @And("the restaurant have Role discount")
     public void theRestaurantHaveRoleDiscount() {
-        roleDiscount = new RoleDiscount(restaurant, 0.2, Role.STUDENT);
+        roleDiscount = new RoleDiscount(restaurant.getId(), 0.2, Role.STUDENT);
         when(restaurant.getDiscountStrategy()).thenReturn(roleDiscount);
     }
 

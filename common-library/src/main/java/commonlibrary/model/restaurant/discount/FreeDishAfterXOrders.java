@@ -1,7 +1,6 @@
 package commonlibrary.model.restaurant.discount;
 
 import commonlibrary.model.order.SubOrder;
-import commonlibrary.model.restaurant.Restaurant;
 
 /**
  * Represents a discount strategy where a free dish is given after a certain number of orders in the restaurant.
@@ -12,8 +11,8 @@ public class FreeDishAfterXOrders extends DiscountStrategy {
      */
     private final int nbOrdersRequired;
 
-    public FreeDishAfterXOrders(Restaurant restaurant, int nbOrdersRequired) {
-        super(restaurant);
+    public FreeDishAfterXOrders(int restaurantID, int nbOrdersRequired) {
+        super(restaurantID);
         this.nbOrdersRequired = nbOrdersRequired;
     }
 
@@ -33,6 +32,6 @@ public class FreeDishAfterXOrders extends DiscountStrategy {
      * @return the number of orders of the user in the restaurant
      */
     public int getNbOrderInRestaurant(SubOrder order) {
-        return (int) order.getUser().getOrders().stream().filter(o -> o.getRestaurant().equals(restaurant)).count();
+        return (int) order.getUser().getOrders().stream().filter(o -> o.getRestaurant().getId() == restaurantID).count();
     }
 }

@@ -2,7 +2,6 @@ package commonlibrary.model.restaurant.discount;
 
 import commonlibrary.enumerations.Role;
 import commonlibrary.model.order.SubOrder;
-import commonlibrary.model.restaurant.Restaurant;
 
 /**
  * The discount strategy for a specific role
@@ -17,8 +16,8 @@ public class RoleDiscount extends DiscountStrategy {
      */
     private final Role role;
 
-    public RoleDiscount(Restaurant restaurant, double discountRate, Role role) {
-        super(restaurant);
+    public RoleDiscount(int restaurantID, double discountRate, Role role) {
+        super(restaurantID);
         this.discountRate = discountRate;
         this.role = role;
     }
