@@ -40,10 +40,6 @@ public class DishRepository {
         return dishes;
     }
 
-    public void clear() {
-        dishes.clear();
-    }
-
     public static void main(String[] args) throws IOException, InterruptedException {
         DishRepository dishRepository = new DishRepository();
         System.out.println(dishRepository.findAll());
