@@ -44,10 +44,11 @@ public class GroupOrderController {
     @Endpoint(path = "/update", method = HttpMethod.PUT)
     @Response(status = 200, message = "Group order updated successfully")
     public void update(@RequestBody GroupOrder groupOrder) throws SSDBQueryProcessingException {
-        boolean success = GroupOrderRepository.getInstance().update(groupOrder);
-        if (!success) {
-            throw new SSDBQueryProcessingException(404, "Group order with ID " + groupOrder.getId() + " not found.");
+        GroupOrder existingGroupOrder = GroupOrderRepository.getInstance().findById(groupOrder.getId());
+        if (existingGroupOrder == null) {
+            throw new SSDBQueryProcessingException(404, "Group order with ID " + groupOrder.getId() + " not found, try creating it instead.");
         }
+        GroupOrderRepository.getInstance().update(groupOrder, existingGroupOrder);
     }
 
     @Endpoint(path = "/delete/{id}", method = HttpMethod.DELETE)

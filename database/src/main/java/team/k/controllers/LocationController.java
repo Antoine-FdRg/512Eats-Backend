@@ -40,10 +40,11 @@ public class LocationController {
     @Endpoint(path = "/update", method = HttpMethod.PUT)
     @Response(status = 200, message = "Location updated successfully")
     public void update(@RequestBody Location location) throws SSDBQueryProcessingException {
-        boolean success = LocationRepository.getInstance().update(location);
-        if (!success) {
-            throw new SSDBQueryProcessingException(404, "Location with ID " + location.getId() + " not found.");
+        Location existingLocation = LocationRepository.getInstance().findById(location.getId());
+        if (existingLocation == null) {
+            throw new SSDBQueryProcessingException(404, "Location with ID " + location.getId() + " not found, try creating it instead.");
         }
+        LocationRepository.getInstance().update(location, existingLocation);
     }
 
     @Endpoint(path = "/delete/{id}", method = HttpMethod.DELETE)
