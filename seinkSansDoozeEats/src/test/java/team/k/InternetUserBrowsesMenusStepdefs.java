@@ -16,6 +16,7 @@ import commonlibrary.repository.RestaurantRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import team.k.restaurantService.RestaurantService;
 
+import java.io.IOException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,7 @@ public class InternetUserBrowsesMenusStepdefs {
     }
 
     @Given("A restaurant {string} with a dish {string} and a dish {string}")
-    public void aRestaurantExistInTheListOfRestaurantsWithADishAndADish(String restaurantName, String dishNameA, String dishNameB) {
+    public void aRestaurantExistInTheListOfRestaurantsWithADishAndADish(String restaurantName, String dishNameA, String dishNameB) throws IOException, InterruptedException {
         dishes = new ArrayList<>();
         Dish dishA = new Dish.Builder().setName(dishNameA).setDescription("Description").setPrice(5).setPreparationTime(3).build();
         when(dishRepository.findById(dishA.getId())).thenReturn(dishA);

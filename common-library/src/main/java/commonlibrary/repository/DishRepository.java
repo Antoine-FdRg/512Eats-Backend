@@ -14,34 +14,62 @@ import java.util.List;
 
 public class DishRepository {
     private final List<Dish> dishes = new ArrayList<>();
-    private static final String BASE_URL = "http://localhost:8082/";
+    private static final String BASE_URL = "http://localhost:8082/dishes";
     private static final HttpClient client = HttpClient.newHttpClient();
 
-    public Dish findById(int dishId) {
-        return dishes.stream().filter(restaurant -> restaurant.getId() == dishId).findFirst().orElse(null);
+    public Dish findById(int dishId) throws IOException, InterruptedException {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(BASE_URL + "/get/" + dishId))
+                    .GET()
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() >= 300) {
+                throw new IOException("Error: " + response.statusCode() + " - " + response.body());
+            }
+            Dish dish = new ObjectMapper().readValue(response.body(), Dish.class);
+            return dish;
+        } catch (IOException e) {
+            throw new IOException("Error: " + e.getMessage());
+        }
     }
 
-    public void add(Dish dish) {
-        dishes.add(dish);
+    public void add(Dish dish) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/create"))
+                .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(dish)))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() >= 300) {
+            throw new IOException("Error: " + response.statusCode() + " - " + response.body());
+        }
     }
 
-    public void remove(Dish dish) {
-        dishes.remove(dish);
+    public void remove(int id) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/delete/" + id))
+                .DELETE().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() >= 300) {
+            throw new IOException("Error: " + response.statusCode() + " - " + response.body());
+        }
     }
 
     public List<Dish> findAll() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "dishes"))
+                .uri(URI.create(BASE_URL))
                 .GET()
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println(response.body());
+        if (response.statusCode() >= 300) {
+            throw new IOException("Error: " + response.statusCode() + " - " + response.body());
+
+        }
         List<Dish> dishes = List.of(new ObjectMapper().readValue(response.body(), Dish[].class)); // throws exception if response is not a valid JSON array
         return dishes;
+
     }
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-        DishRepository dishRepository = new DishRepository();
-        System.out.println(dishRepository.findAll());
-    }
+
 }

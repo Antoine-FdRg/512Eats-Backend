@@ -20,7 +20,7 @@ public class DishController {
         return DishRepository.getInstance().findAll();
     }
 
-    @Endpoint(path = "/{id}", method = HttpMethod.GET)
+    @Endpoint(path = "/get/{id}", method = HttpMethod.GET)
     public Dish findById(@PathVariable("id") int id) throws SSDBQueryProcessingException {
         Dish dish = DishRepository.getInstance().findById(id);
         if(dish==null){
