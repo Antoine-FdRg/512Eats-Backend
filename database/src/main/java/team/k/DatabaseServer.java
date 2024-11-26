@@ -3,7 +3,9 @@ package team.k;
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.enumerations.Role;
 import commonlibrary.model.Dish;
+import commonlibrary.model.Location;
 import commonlibrary.model.RegisteredUser;
+import commonlibrary.model.order.GroupOrder;
 import commonlibrary.model.order.IndividualOrder;
 import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
@@ -11,6 +13,8 @@ import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
 import ssdbrestframework.SSDBHttpServer;
 import team.k.repository.DishRepository;
+import team.k.repository.GroupOrderRepository;
+import team.k.repository.LocationRepository;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
 import team.k.repository.SubOrderRepository;
@@ -55,7 +59,12 @@ public class DatabaseServer {
         RegisteredUser user = new RegisteredUser("John", Role.STUDENT);
 
         RegisteredUserRepository.getInstance().add(user);
-
+        Location location = new Location.Builder().setId(1).setAddress("Via Roma 1").setCity("Trento").build();
+        LocationRepository.getInstance().add(location);
+        GroupOrder groupOrder = new GroupOrder.Builder()
+                .withDeliveryLocation(location)
+                .build();
+        GroupOrderRepository.getInstance().add(groupOrder);
         SubOrder subOrder = new OrderBuilder()
                 .setRestaurant(r)
                 .setDishes(List.of(pizza))
