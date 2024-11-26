@@ -22,11 +22,11 @@ import java.util.List;
 @NoArgsConstructor
 public class GroupOrder {
     public static final int GROUP_ORDER_CODE_LENGTH = 6;
-    private final int id;
+    private int id;
     private LocalDateTime deliveryDateTime;
     private OrderStatus status;
     private List<SubOrder> subOrders;
-    private final Location deliveryLocation;
+    private Location deliveryLocation;
 
     private GroupOrder(Builder builder) {
         this.id = builder.id;
