@@ -58,7 +58,7 @@ public class Restaurant {
      */
     public boolean isAvailable(LocalDateTime deliveryTimeWanted) {
         // Check if the order is created after opening time + 50 minutes (30min for the timeslot and 20min for the delivery ) and before closing time - 20 minutes (for the delivery)
-        if (!deliveryTimeWanted.toLocalTime().isAfter(open.plusMinutes(ORDER_PROCESSING_TIME_MINUTES))
+        if (deliveryTimeWanted.toLocalTime().isBefore(open.plusMinutes(ORDER_PROCESSING_TIME_MINUTES))
                 || !deliveryTimeWanted.toLocalTime().isBefore(close.plusMinutes(DELIVERY_DURATION))) {
             return false;
         }
