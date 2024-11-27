@@ -1,8 +1,6 @@
 package commonlibrary.model.restaurant;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import commonlibrary.enumerations.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,7 +30,6 @@ public class TimeSlot {
     public static final int DURATION = 30;
     private List<SubOrder> orders;
     private LocalDateTime start;
-    private Restaurant restaurant;
     private int productionCapacity; //number of cooks
     private int maxNumberOfOrders;
 
@@ -40,7 +37,6 @@ public class TimeSlot {
 
     public TimeSlot(LocalDateTime start, Restaurant restaurant, int productionCapacity) {
         this.start = start;
-        this.restaurant = restaurant;
         this.productionCapacity = productionCapacity;
         this.maxNumberOfOrders = getTotalMaxPreparationTime() / restaurant.getAverageOrderPreparationTime();
         this.orders = new ArrayList<>();
@@ -61,10 +57,6 @@ public class TimeSlot {
 
     private int getTotalPreparationTime() {
         return orders.stream().filter(order -> order.getStatus().equals(OrderStatus.PLACED)).mapToInt(SubOrder::getPreparationTime).sum();
-    }
-
-    private int getNumberOfPlacedOrders() {
-        return orders.stream().filter(subOrder -> OrderStatus.PLACED.equals(subOrder.getStatus())).toArray().length;
     }
 
     public int getNumberOfCreatedOrders() {
