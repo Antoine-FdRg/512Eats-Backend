@@ -22,11 +22,11 @@ public class RestaurantService {
     /**
      * Get all dishes from a restaurant
      *
-     * @param restaurantName the name of the restaurant
+     * @param restaurantId the name of the restaurant
      * @return the list of dishes if the restaurant is found, null otherwise
      */
-    public List<Dish> getAllDishesFromRestaurant(String restaurantName) throws NoSuchElementException {
-        Restaurant restaurant = getRestaurantOrThrowIfNull(this.getRestaurantByName(restaurantName));
+    public List<Dish> getAllDishesFromRestaurant(int restaurantId) throws NoSuchElementException {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId);
         List<Dish> dishes = restaurant.getDishes();
         if (dishes.isEmpty()) {
             throw new NoSuchElementException("No dishes available");

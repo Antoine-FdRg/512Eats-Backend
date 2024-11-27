@@ -1,5 +1,6 @@
 package team.k;
 
+import commonlibrary.repository.TimeSlotRepository;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
@@ -27,12 +28,11 @@ import static org.mockito.Mockito.when;
 public class InternetUserBrowsesMenusStepdefs {
 
 
-    @Mock
+
     RestaurantRepository restaurantRepository;
-    @Mock
     DishRepository dishRepository;
 
-    @InjectMocks
+    TimeSlotRepository timeSlotRepository;
     private RestaurantService restaurantService;
     private Restaurant restaurant;
     Restaurant restaurantB;
@@ -44,6 +44,11 @@ public class InternetUserBrowsesMenusStepdefs {
 
     @Before
     public void setUp() {
+        timeSlotRepository = new TimeSlotRepository();
+        restaurantRepository = new RestaurantRepository();
+        dishRepository = new DishRepository();
+        restaurantService = new RestaurantService(restaurantRepository, timeSlotRepository);
+        restaurant = new Restaurant.Builder().setName("restaurant").setId(1).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).build();
         MockitoAnnotations.openMocks(this);
     }
 
@@ -59,25 +64,23 @@ public class InternetUserBrowsesMenusStepdefs {
     public void aRestaurantExistInTheListOfRestaurantsWithADishAndADish(String restaurantName, String dishNameA, String dishNameB) {
         dishes = new ArrayList<>();
         Dish dishA = new Dish.Builder().setName(dishNameA).setDescription("Description").setPrice(5).setPreparationTime(3).build();
-        when(dishRepository.findById(dishA.getId())).thenReturn(dishA);
         dishes.add(dishA);
         Dish dishB = new Dish.Builder().setName(dishNameB).setDescription("Description").setPrice(5).setPreparationTime(3).build();
-        when(dishRepository.findById(dishB.getId())).thenReturn(dishB);
         dishes.add(dishB);
-        when(dishRepository.findAll()).thenReturn(dishes);
         Restaurant restaurantA = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).build();
         restaurantA.addDish(dishA);
         restaurantA.addDish(dishB);
-        when(restaurantRepository.findByName(restaurantName)).thenReturn(restaurantA);
-        when(restaurantRepository.findById(restaurantA.getId())).thenReturn(restaurantA);
-        restaurantService.addRestaurant(restaurantA);
+        restaurantRepository.add(restaurantA);
+        dishRepository.add(dishA);
+        dishRepository.add(dishB);
+        restaurant.setDishes(dishes);
     }
 
     @When("The user wants to have dishes non registered of the restaurant {string}")
     public void theUserWantsToHaveDishesNonRegisteredOfTheRestaurant(String restaurantName) {
-        when(restaurantRepository.findByName(restaurantName)).thenReturn(restaurantB);
+        restaurantRepository.add(restaurant);
         try {
-            restaurantDishes = restaurantService.getAllDishesFromRestaurant(restaurantName);
+            restaurantDishes = restaurantService.getAllDishesFromRestaurant(restaurant.getId());
         } catch (NoSuchElementException e) {
             this.errorMessage = e;
         }
