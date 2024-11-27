@@ -58,10 +58,11 @@ public class DatabaseServer {
                 .setRestaurantID(restaurant.getId())
                 .setDishes(List.of(pizza))
                 .setId(1)
-                .setUser(user)
+                .setUserID(user.getId())
                 .setDeliveryTime(LocalDateTime.of(2025, 1, 1, 10, 50))
                 .setDeliveryLocation(location)
                 .build();
+        user.setCurrentOrder(subOrder);
         SubOrderRepository.getInstance().add(subOrder);
         restaurant.addOrderToTimeslot(subOrder);
         RestaurantRepository.getInstance().add(restaurant);

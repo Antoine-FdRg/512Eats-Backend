@@ -1,5 +1,6 @@
 package commonlibrary.model.restaurant.discount;
 
+import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.order.SubOrder;
 
 public class UnconditionalDiscount extends DiscountStrategy {
@@ -14,7 +15,7 @@ public class UnconditionalDiscount extends DiscountStrategy {
     }
 
     @Override
-    public double applyDiscount(SubOrder order) {
+    public double applyDiscount(SubOrder order, RegisteredUser orderOwner) {
         return order.getPrice() * (1 - discountRate);
     }
 }

@@ -30,6 +30,6 @@ public class SubOrderRepository {
     }
 
     public SubOrder findByUserId(int id) {
-        return subOrders.stream().filter(subOrder -> subOrder.getUser().getId() == id).findFirst().orElse(null);
+        return subOrders.stream().filter(subOrder -> subOrder.getUserID() == id).findFirst().orElse(null);
     }
 }

@@ -1,6 +1,7 @@
 package commonlibrary.model.restaurant.discount;
 
 import commonlibrary.enumerations.Role;
+import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.order.SubOrder;
 
 /**
@@ -23,8 +24,8 @@ public class RoleDiscount extends DiscountStrategy {
     }
 
     @Override
-    public double applyDiscount(SubOrder order) {
-        if (order.getUser().getRole() == role) {
+    public double applyDiscount(SubOrder order, RegisteredUser user) {
+        if (user.getRole() == role) {
             return order.getPrice() * (1 - discountRate);
         }
         return order.getPrice();

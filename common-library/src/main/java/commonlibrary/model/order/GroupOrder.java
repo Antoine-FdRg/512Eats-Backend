@@ -6,6 +6,7 @@ import commonlibrary.dto.GroupOrderDTO;
 import commonlibrary.dto.SubOrderDTO;
 import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.model.Location;
+import commonlibrary.model.RegisteredUser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,11 +46,15 @@ public class GroupOrder {
         this.subOrders.forEach(SubOrder::cancel);
     }
 
-    public void place(LocalDateTime now) {
+    public void place(LocalDateTime now, List<RegisteredUser> members) {
         boolean atLeastOneSuborderisPaid = false;
         for (SubOrder subOrder : this.getSubOrders()) {
+            RegisteredUser orderOwner = members.stream()
+                    .filter(member -> member.getId() == subOrder.getUserID())
+                    .findFirst()
+                    .orElseThrow();
             if (subOrder.getStatus() == OrderStatus.PAID) {
-                subOrder.place(now);
+                subOrder.place(now, orderOwner);
                 atLeastOneSuborderisPaid = true;
             } else {
                 subOrder.cancel();

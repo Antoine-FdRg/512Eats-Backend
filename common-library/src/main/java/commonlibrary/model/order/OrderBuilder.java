@@ -3,7 +3,6 @@ package commonlibrary.model.order;
 import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.model.Dish;
 import commonlibrary.model.Location;
-import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.payment.Payment;
 
 import java.time.LocalDateTime;
@@ -16,7 +15,7 @@ public class OrderBuilder {
     double price;
     GroupOrder groupOrder;
     int restaurantID;
-    RegisteredUser user;
+    int userID;
     final List<Dish> dishes;
     LocalDateTime deliveryTime;
     Location deliveryLocation;
@@ -46,8 +45,8 @@ public class OrderBuilder {
         return this;
     }
 
-    public OrderBuilder setUser(RegisteredUser user) {
-        this.user = user;
+    public OrderBuilder setUserID(int userID) {
+        this.userID = userID;
         return this;
     }
 

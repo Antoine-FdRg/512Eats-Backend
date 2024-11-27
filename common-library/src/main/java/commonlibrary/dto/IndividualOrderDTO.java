@@ -34,7 +34,7 @@ public record IndividualOrderDTO(int id, String price, int restaurantId, int use
                 .setId(id)
                 .setPrice(Double.parseDouble(price))
                 .setRestaurantID(restaurantId)
-                .setUser(user)
+                .setUserID(user.getId())
                 .setDishes(convertedDishes)
                 .setStatus(OrderStatus.valueOf(status))
                 .setPlacedDate(LocalDateTime.parse(placedDate))

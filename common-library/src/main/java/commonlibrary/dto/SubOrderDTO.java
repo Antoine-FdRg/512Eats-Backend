@@ -30,7 +30,7 @@ public record SubOrderDTO(int id, String price, GroupOrderDTO groupOrder, int re
                 .setPrice(Double.parseDouble(price))
                 .setGroupOrder(convertedGroupOrder)
                 .setRestaurantID(restaurantId)
-                .setUser(user)
+                .setUserID(user.getId())
                 .setDishes(convertedDishes)
                 .setStatus(OrderStatus.valueOf(status))
                 .setPlacedDate(LocalDateTime.parse(placedDate))

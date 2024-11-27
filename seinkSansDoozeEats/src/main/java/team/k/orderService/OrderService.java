@@ -69,7 +69,7 @@ public class OrderService {
             throw new IllegalArgumentException("Restaurant is not available at the chosen time");
         }
         SubOrder order = new OrderBuilder()
-                .setUser(registeredUser)
+                .setUserID(registeredUser.getId())
                 .setRestaurantID(restaurantId)
                 .setDeliveryLocation(deliveryLocation)
                 .setDeliveryTime(deliveryTime)
@@ -105,7 +105,7 @@ public class OrderService {
         if (subOrder == null) {
             throw new NoSuchElementException("SubOrder not found");
         }
-        subOrder.place(now);
+        subOrder.place(now, registeredUserRepository.findById(subOrder.getUserID()));
 
     }
 
@@ -133,7 +133,7 @@ public class OrderService {
         }
         if (paymentProcessor.processPayment(currentOrder.getPrice())) {
             SubOrder subOrder = subOrderRepository.findById(orderId);
-            subOrder.pay(currentDateTime, restaurant);
+            subOrder.pay(currentDateTime, restaurant, registeredUser);
             subOrder.setPayment(new Payment(subOrder.getPrice(), currentDateTime));
         } else {
             throw new PaymentFailedException("Payment failed");
@@ -181,7 +181,7 @@ public class OrderService {
             throw new NoSuchElementException("GroupOrder does not exist");
         }
         SubOrder suborder = new OrderBuilder()
-                .setUser(registeredUser)
+                .setUserID(registeredUser.getId())
                 .setRestaurantID(restaurantId)
                 .setGroupOrder(groupOrder)
                 .build();

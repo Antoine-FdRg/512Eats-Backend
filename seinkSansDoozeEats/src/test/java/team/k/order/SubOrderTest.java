@@ -41,7 +41,7 @@ class SubOrderTest {
         subOrder = new OrderBuilder().setPrice(dishes.stream().
                         mapToDouble(Dish::getPrice).sum()).
                 setRestaurantID(restaurant.getId()).
-                setUser(user).
+                setUserID(user.getId()).
                 setDishes(dishes).
                 setDeliveryTime(LocalDateTime.now().plusHours(1)).
                 setPlacedDate(LocalDateTime.now()).
@@ -81,13 +81,13 @@ class SubOrderTest {
 
     @Test
     void placeOrderTest() {
-        subOrder.place(paymentDate);
+        subOrder.place(paymentDate, user);
         assertEquals(OrderStatus.PLACED, subOrder.getStatus());
     }
 
     @Test
     void payOrderTest() {
-        subOrder.pay(paymentDate, restaurant);
+        subOrder.pay(paymentDate, restaurant, user);
         assertEquals(OrderStatus.PAID, subOrder.getStatus());
     }
 

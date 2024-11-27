@@ -33,7 +33,7 @@ public class SubOrder {
     private double price;
     private GroupOrder groupOrder;
     private int restaurantID;
-    private RegisteredUser user;
+    private int userID;
     private List<Dish> dishes;
     private OrderStatus status;
     private LocalDateTime placedDate;
@@ -45,7 +45,7 @@ public class SubOrder {
         this.price = orderBuilder.price;
         this.groupOrder = orderBuilder.groupOrder;
         this.restaurantID = orderBuilder.restaurantID;
-        this.user = orderBuilder.user;
+        this.userID = orderBuilder.userID;
         this.dishes = orderBuilder.dishes;
         this.status = orderBuilder.status;
         this.placedDate = orderBuilder.placedDate;
@@ -70,15 +70,15 @@ public class SubOrder {
         status = OrderStatus.CANCELED;
     }
 
-    public void place(LocalDateTime now) {
+    public void place(LocalDateTime now, RegisteredUser orderOwner) {
         this.setStatus(OrderStatus.PLACED);
         this.setPlacedDate(now);
-        this.user.addOrderToHistory(this);
+        orderOwner.addOrderToHistory(this);
     }
 
-    public void pay(LocalDateTime now, Restaurant restaurant) {
+    public void pay(LocalDateTime now, Restaurant restaurant, RegisteredUser user) {
         if (restaurant.getDiscountStrategy() != null) {
-            this.price = restaurant.getDiscountStrategy().applyDiscount(this); //Appliquer la discount
+            this.price = restaurant.getDiscountStrategy().applyDiscount(this,user); //Appliquer la discount
         }
         this.setStatus(OrderStatus.PAID);
     }
@@ -91,7 +91,7 @@ public class SubOrder {
         PaymentDTO convertedPayment = payment.convertPaymentToPaymentDto();
         GroupOrderDTO convertedGroupOrder = groupOrder.convertGroupOrderToGroupOrderDto();
 
-        return new SubOrderDTO(id, String.valueOf(price), convertedGroupOrder, restaurantID, user.getId(),
+        return new SubOrderDTO(id, String.valueOf(price), convertedGroupOrder, restaurantID, userID,
                 convertedDishes, status.toString(), placedDate.toString(), deliveryDate.toString(), convertedPayment);
     }
 }

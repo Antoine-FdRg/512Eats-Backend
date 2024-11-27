@@ -75,7 +75,7 @@ public class RegisteredUserConsultDishesAvailable {
         registeredUser = new RegisteredUser(userName, Role.STUDENT);
         order = new OrderBuilder()
                 .setRestaurantID(nagaRestaurant.getId())
-                .setUser(registeredUser)
+                .setUserID(registeredUser.getId())
                 .setDeliveryTime(LocalDateTime.of(year, month, day, hour, min))
                 .build();
         registeredUser.setCurrentOrder(order);

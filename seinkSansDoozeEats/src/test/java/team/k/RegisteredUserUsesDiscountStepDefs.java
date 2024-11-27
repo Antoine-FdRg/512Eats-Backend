@@ -77,7 +77,7 @@ public class RegisteredUserUsesDiscountStepDefs {
             registeredUser.addOrderToHistory(previousOrder);
         }
         when(restaurant.isAvailable(any())).thenReturn(true);
-        order = new OrderBuilder().setUser(registeredUser).setRestaurantID(restaurant.getId()).build();
+        order = new OrderBuilder().setUserID(registeredUser.getId()).setRestaurantID(restaurant.getId()).build();
         registeredUser.setCurrentOrder(order);
         subOrderRepository.add(order);
         when(dish.getPrice()).thenReturn(10.0);

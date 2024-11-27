@@ -1,5 +1,6 @@
 package commonlibrary.model.restaurant.discount;
 
+import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.order.SubOrder;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -29,5 +30,5 @@ public abstract class DiscountStrategy {
      * @param order the order to apply discount to
      * @return the discounted price
      */
-    public abstract double applyDiscount(SubOrder order);
+    public abstract double applyDiscount(SubOrder order, RegisteredUser orderOwner);
 }

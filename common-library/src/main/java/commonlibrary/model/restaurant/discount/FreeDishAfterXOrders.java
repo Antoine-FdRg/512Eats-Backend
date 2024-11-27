@@ -1,5 +1,6 @@
 package commonlibrary.model.restaurant.discount;
 
+import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.order.SubOrder;
 
 /**
@@ -17,8 +18,8 @@ public class FreeDishAfterXOrders extends DiscountStrategy {
     }
 
     @Override
-    public double applyDiscount(SubOrder order) {
-        if (getNbOrderInRestaurant(order) % nbOrdersRequired == 0) {
+    public double applyDiscount(SubOrder order, RegisteredUser orderOwner) {
+        if (getNbOrderInRestaurant(orderOwner) % nbOrdersRequired == 0) {
             return order.getPrice() - order.getCheaperDish().getPrice();
         }
         return order.getPrice();
@@ -28,10 +29,10 @@ public class FreeDishAfterXOrders extends DiscountStrategy {
     /**
      * Get the number of orders of the user in the restaurant
      *
-     * @param order the order to check
+     * @param orderOwner the user who owns the order
      * @return the number of orders of the user in the restaurant
      */
-    public int getNbOrderInRestaurant(SubOrder order) {
-        return (int) order.getUser().getOrders().stream().filter(o -> o.getRestaurantID() == restaurantID).count();
+    public int getNbOrderInRestaurant(RegisteredUser orderOwner) {
+        return (int) orderOwner.getOrders().stream().filter(o -> o.getRestaurantID() == restaurantID).count();
     }
 }

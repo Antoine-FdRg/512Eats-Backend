@@ -79,7 +79,7 @@ public class RegisteredUserPlacesAnOrderStepdefs {
         registeredUserRepository.add(registeredUser);
         when(restaurant.isAvailable(any())).thenReturn(true);
         restaurantRepository.add(restaurant);
-        order = new OrderBuilder().setUser(registeredUser).setRestaurantID(restaurant.getId()).build();
+        order = new OrderBuilder().setUserID(registeredUser.getId()).setRestaurantID(restaurant.getId()).build();
         registeredUser.setCurrentOrder(order);
         order.addDish(dish);
         subOrderRepository.add(order);

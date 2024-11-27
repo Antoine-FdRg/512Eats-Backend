@@ -105,7 +105,7 @@ public class SubOrderStepdefs {
         subOrder = new OrderBuilder()
                 .setGroupOrder(groupOrder)
                 .setRestaurantID(restaurant.getId())
-                .setUser(registeredUser)
+                .setUserID(registeredUser.getId())
                 .setDeliveryTime(groupOrder.getDeliveryDateTime())
                 .build();
         registeredUser.setCurrentOrder(subOrder);
@@ -117,7 +117,7 @@ public class SubOrderStepdefs {
         LocalDateTime paymentTime = LocalDateTime.of(
                 LocalDate.parse(day),
                 LocalTime.parse(hour));
-        registeredUser.getCurrentOrder().pay(paymentTime, restaurant);
+        registeredUser.getCurrentOrder().pay(paymentTime, restaurant, registeredUser);
     }
 
     @Then("the subOrder has {status} status in the groupOrder")
