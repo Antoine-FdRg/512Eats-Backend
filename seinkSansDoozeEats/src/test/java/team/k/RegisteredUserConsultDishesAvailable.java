@@ -72,7 +72,7 @@ public class RegisteredUserConsultDishesAvailable {
     }
 
     @And("User {string} has a currentOrder for the restaurant Naga in the timeslot beginning at {int}:{int} on {int}-{int}-{int}")
-    public void userHasACurrentOrderForTheRestaurantNagaInTheTimeslotBeginningAtOn(String userName, int min, int hour, int day, int month, int year) {
+    public void userHasACurrentOrderForTheRestaurantNagaInTheTimeslotBeginningAtOn(String userName, int min, int hour, int day, int month, int year) throws IOException, InterruptedException {
         registeredUser = new RegisteredUser(userName, Role.STUDENT);
         order = new OrderBuilder()
                 .setRestaurant(nagaRestaurant)

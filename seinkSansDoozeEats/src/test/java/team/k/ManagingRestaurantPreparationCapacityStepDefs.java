@@ -20,6 +20,7 @@ import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
 import team.k.orderService.OrderService;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -61,7 +62,7 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
     }
 
     @Given("an order with the status {string} in the restaurant {string} with a chosen dish {string} with a production capacity of {int} and an average preparation time of {int} min with a delivery time at {int}:{int}")
-    public void anOrderWithTheStatusInTheRestaurantWithAChosenDish(String statusCreated, String restaurantName, String dishName, int productionCapacity, int averagePreparationTime, int hours, int minutes) {
+    public void anOrderWithTheStatusInTheRestaurantWithAChosenDish(String statusCreated, String restaurantName, String dishName, int productionCapacity, int averagePreparationTime, int hours, int minutes) throws IOException, InterruptedException {
         restaurant = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(12, 0, 0)).setClose(LocalTime.of(15, 0, 0)).setFoodTypes(List.of(FoodType.BURGER)).setAverageOrderPreparationTime(averagePreparationTime).build();
         dish = new Dish.Builder().setName(dishName).setDescription("Cheeseburger").setPrice(5).setPreparationTime(productionCapacity).build();
         restaurant.addDish(dish);
@@ -79,7 +80,7 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
 
 
     @When("a registered user places the command")
-    public void aRegisteredUserPlacesTheCommand() {
+    public void aRegisteredUserPlacesTheCommand() throws IOException, InterruptedException {
         timeSlot.addOrder(order);
         orderService.addDishToOrder(order.getId(), dish.getId());
         order.setStatus(OrderStatus.PLACED);

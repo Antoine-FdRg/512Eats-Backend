@@ -80,7 +80,7 @@ public class OrderService {
         restaurant.addOrderToTimeslot(order);
     }
 
-    public void addDishToOrder(int orderId, int dishId) {
+    public void addDishToOrder(int orderId, int dishId) throws IOException, InterruptedException {
         //Il faut que le total des ingrédients du plat soit inférieur à DURATION
         SubOrder subOrder = subOrderRepository.findById(orderId);
         if (subOrder == null) {
@@ -97,7 +97,7 @@ public class OrderService {
         subOrder.addDish(dish);
     }
 
-    public void placeSubOrder(int orderId, LocalDateTime now) throws NoSuchElementException {
+    public void placeSubOrder(int orderId, LocalDateTime now) throws NoSuchElementException, IOException, InterruptedException {
         SubOrder subOrder = subOrderRepository.findById(orderId);
         if (subOrder == null) {
             throw new NoSuchElementException("SubOrder not found");

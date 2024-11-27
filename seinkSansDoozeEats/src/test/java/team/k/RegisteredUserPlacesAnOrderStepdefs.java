@@ -78,7 +78,7 @@ public class RegisteredUserPlacesAnOrderStepdefs {
     }
 
     @When("The user places the order at {int}:{int} on {int}-{int}-{int}")
-    public void placeTheOrder(int hour, int minute, int day, int month, int year) {
+    public void placeTheOrder(int hour, int minute, int day, int month, int year) throws IOException, InterruptedException {
         LocalDateTime placedTime = LocalDateTime.of(year, month, day, hour, minute);
         orderService.placeSubOrder(order.getId(), placedTime);
     }

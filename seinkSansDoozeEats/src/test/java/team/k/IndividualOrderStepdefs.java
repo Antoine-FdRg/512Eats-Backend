@@ -144,7 +144,7 @@ public class IndividualOrderStepdefs {
     }
 
     @And("the order should have been added to the suborder repository")
-    public void theOrderShouldHaveBeenAddedToTheSuborderRepository() {
+    public void theOrderShouldHaveBeenAddedToTheSuborderRepository() throws IOException, InterruptedException {
         verify(subOrderRepository).add(registeredUser.getCurrentOrder());
     }
 
