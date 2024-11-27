@@ -17,7 +17,6 @@ import team.k.repository.LocationRepository;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
 import team.k.repository.SubOrderRepository;
-import team.k.repository.TimeSlotRepository;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -50,7 +49,6 @@ public class DatabaseServer {
                 pizza
         ));
         TimeSlot ts = new TimeSlot(LocalDateTime.of(2025, 1, 1, 10, 0), restaurant, 2);
-        TimeSlotRepository.getInstance().add(ts);
         restaurant.addTimeSlot(ts);
         Location location = new Location.Builder().setId(1).setAddress("Via Roma 1").setCity("Trento").build();
         RegisteredUser user = new RegisteredUser("John", Role.STUDENT);
