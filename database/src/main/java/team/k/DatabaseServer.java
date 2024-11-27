@@ -23,8 +23,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import static java.time.LocalDateTime.now;
-
 public class DatabaseServer {
     public static void main(String[] args) {
         initDataSet();
@@ -41,39 +39,38 @@ public class DatabaseServer {
                 .setPicture("pizza.jpg")
                 .build();
         DishRepository.getInstance().add(pizza);
-        Restaurant r = new Restaurant.Builder()
+        Restaurant restaurant = new Restaurant.Builder()
                 .setName("Pizzeria")
                 .setAverageOrderPreparationTime(15)
                 .setOpen(LocalTime.of(10, 0))
                 .setClose(LocalTime.of(22, 0))
                 .setFoodTypes(List.of(FoodType.PIZZA, FoodType.FAST_FOOD))
                 .build();
-        r.setDishes(List.of(
+        restaurant.setDishes(List.of(
                 pizza
         ));
-        TimeSlot ts = new TimeSlot(LocalDateTime.of(2025, 1, 1, 10, 0), r, 2);
+        TimeSlot ts = new TimeSlot(LocalDateTime.of(2025, 1, 1, 10, 0), restaurant, 2);
         TimeSlotRepository.getInstance().add(ts);
-        r.addTimeSlot(ts);
-        RestaurantRepository.getInstance().add(r);
-        RegisteredUser user = new RegisteredUser("John", Role.STUDENT);
-
-        RegisteredUserRepository.getInstance().add(user);
+        restaurant.addTimeSlot(ts);
         Location location = new Location.Builder().setId(1).setAddress("Via Roma 1").setCity("Trento").build();
+        RegisteredUser user = new RegisteredUser("John", Role.STUDENT);
+        SubOrder subOrder = new OrderBuilder()
+                .setRestaurantID(restaurant.getId())
+                .setDishes(List.of(pizza))
+                .setId(1)
+                .setUser(user)
+                .setDeliveryTime(LocalDateTime.of(2025, 1, 1, 10, 50))
+                .setDeliveryLocation(location)
+                .build();
+        SubOrderRepository.getInstance().add(subOrder);
+        restaurant.addOrderToTimeslot(subOrder);
+        RestaurantRepository.getInstance().add(restaurant);
+        RegisteredUserRepository.getInstance().add(user);
         LocationRepository.getInstance().add(location);
         GroupOrder groupOrder = new GroupOrder.Builder()
                 .withDeliveryLocation(location)
                 .build();
         GroupOrderRepository.getInstance().add(groupOrder);
-        SubOrder subOrder = new OrderBuilder()
-                .setRestaurantID(r.getId())
-                .setDishes(List.of(pizza))
-                .setId(1)
-                .setUser(user)
-                .setDeliveryTime(now())
-                .build();
-        SubOrderRepository.getInstance().add(subOrder);
-
         user.addOrderToHistory(subOrder);
-//        RegisteredUserRepository.getInstance().update(user);
     }
 }

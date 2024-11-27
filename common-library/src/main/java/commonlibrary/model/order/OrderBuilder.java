@@ -19,7 +19,7 @@ public class OrderBuilder {
     RegisteredUser user;
     final List<Dish> dishes;
     LocalDateTime deliveryTime;
-    private Location deliveryLocation;
+    Location deliveryLocation;
     LocalDateTime placedDate;
     Payment payment;
 

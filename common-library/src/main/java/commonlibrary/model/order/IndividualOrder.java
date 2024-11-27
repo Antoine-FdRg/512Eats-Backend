@@ -23,6 +23,7 @@ public class IndividualOrder extends SubOrder {
 
     public IndividualOrder(OrderBuilder orderBuilder) {
         super(orderBuilder);
+        this.deliveryLocation = orderBuilder.deliveryLocation;
     }
 
     public IndividualOrderDTO convertIndividualOrderToIndividualOrderDto() {
