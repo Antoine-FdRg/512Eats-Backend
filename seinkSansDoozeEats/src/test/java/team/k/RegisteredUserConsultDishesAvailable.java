@@ -74,7 +74,7 @@ public class RegisteredUserConsultDishesAvailable {
     public void userHasACurrentOrderForTheRestaurantNagaInTheTimeslotBeginningAtOn(String userName, int min, int hour, int day, int month, int year) {
         registeredUser = new RegisteredUser(userName, Role.STUDENT);
         order = new OrderBuilder()
-                .setRestaurant(nagaRestaurant)
+                .setRestaurantID(nagaRestaurant.getId())
                 .setUser(registeredUser)
                 .setDeliveryTime(LocalDateTime.of(year, month, day, hour, min))
                 .build();

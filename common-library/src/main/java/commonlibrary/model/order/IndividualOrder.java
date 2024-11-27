@@ -6,6 +6,7 @@ import commonlibrary.dto.DishDTO;
 import commonlibrary.dto.IndividualOrderDTO;
 import commonlibrary.model.Dish;
 import commonlibrary.model.Location;
+import commonlibrary.model.restaurant.Restaurant;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,12 +29,12 @@ public class IndividualOrder extends SubOrder {
         List<DishDTO> convertedDishes = getDishes().stream()
                 .map(Dish::convertDishToDishDto)
                 .toList();
-        return new IndividualOrderDTO(getId(), String.valueOf(getPrice()), getRestaurant().getId(), getUser().getId(), convertedDishes, getStatus().toString(), getPlacedDate().toString(), getDeliveryDate().toString(), getPayment().convertPaymentToPaymentDto(), deliveryLocation.convertLocationToLocationDto());
+        return new IndividualOrderDTO(getId(), String.valueOf(getPrice()), getRestaurantID(), getUser().getId(), convertedDishes, getStatus().toString(), getPlacedDate().toString(), getDeliveryDate().toString(), getPayment().convertPaymentToPaymentDto(), deliveryLocation.convertLocationToLocationDto());
     }
 
     @Override
-    public void pay(LocalDateTime now) {
-        super.pay(now);
+    public void pay(LocalDateTime now, Restaurant restaurant) {
+        super.pay(now, restaurant);
         super.place(now);
     }
 }

@@ -1,10 +1,12 @@
 package team.k;
 
+import commonlibrary.repository.GroupOrderRepository;
+import commonlibrary.repository.LocationRepository;
+import commonlibrary.repository.RestaurantRepository;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import commonlibrary.model.Dish;
@@ -39,41 +41,48 @@ public class RegisteredUserPlacesAnOrderStepdefs {
     RegisteredUser registeredUser;
     SubOrder order;
 
-    @Mock
     SubOrderRepository subOrderRepository;
-
     @Mock
     Dish dish;
-
-    @Mock
     RegisteredUserRepository registeredUserRepository;
-
     @Mock
     Restaurant restaurant;
-
     @Mock
     PaymentProcessor paymentProcessor;
+    GroupOrderRepository groupOrderRepository;
+    LocationRepository locationRepository;
+    RestaurantRepository restaurantRepository;
 
     Exception exception;
-
-    @InjectMocks
     OrderService orderService;
 
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        registeredUserRepository = new RegisteredUserRepository();
+        subOrderRepository = new SubOrderRepository();
+        groupOrderRepository = new GroupOrderRepository();
+        locationRepository = new LocationRepository();
+        restaurantRepository = new RestaurantRepository();
+        orderService = new OrderService(groupOrderRepository,
+                locationRepository,
+                subOrderRepository,
+                restaurantRepository,
+                registeredUserRepository,
+                paymentProcessor);
     }
 
 
     @Given("an order is created by a registered user whose name is {string} and his role is {role}")
     public void anOrderIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(String name, Role role) {
         registeredUser = spy(new RegisteredUser(name, role));
-        when(registeredUserRepository.findById(registeredUser.getId())).thenReturn(registeredUser);
+        registeredUserRepository.add(registeredUser);
         when(restaurant.isAvailable(any())).thenReturn(true);
-        order = new OrderBuilder().setUser(registeredUser).setRestaurant(restaurant).build();
+        restaurantRepository.add(restaurant);
+        order = new OrderBuilder().setUser(registeredUser).setRestaurantID(restaurant.getId()).build();
         registeredUser.setCurrentOrder(order);
         order.addDish(dish);
-        when(subOrderRepository.findById(order.getId())).thenReturn(order);
+        subOrderRepository.add(order);
     }
 
     @When("The user places the order at {int}:{int} on {int}-{int}-{int}")

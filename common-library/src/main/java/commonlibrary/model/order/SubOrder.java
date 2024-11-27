@@ -27,7 +27,7 @@ public class SubOrder {
     private int id;
     private double price;
     private GroupOrder groupOrder;
-    private Restaurant restaurant;
+    private int restaurantID;
     private RegisteredUser user;
     private List<Dish> dishes;
     private OrderStatus status;
@@ -39,7 +39,7 @@ public class SubOrder {
         this.id = orderBuilder.id;
         this.price = orderBuilder.price;
         this.groupOrder = orderBuilder.groupOrder;
-        this.restaurant = orderBuilder.restaurant;
+        this.restaurantID = orderBuilder.restaurantID;
         this.user = orderBuilder.user;
         this.dishes = orderBuilder.dishes;
         this.status = orderBuilder.status;
@@ -71,9 +71,9 @@ public class SubOrder {
         this.user.addOrderToHistory(this);
     }
 
-    public void pay(LocalDateTime now) {
+    public void pay(LocalDateTime now, Restaurant restaurant) {
         if (restaurant.getDiscountStrategy() != null) {
-            this.price = this.restaurant.getDiscountStrategy().applyDiscount(this); //Appliquer la discount
+            this.price = restaurant.getDiscountStrategy().applyDiscount(this); //Appliquer la discount
         }
         this.setStatus(OrderStatus.PAID);
     }
@@ -86,7 +86,7 @@ public class SubOrder {
         PaymentDTO convertedPayment = payment.convertPaymentToPaymentDto();
         GroupOrderDTO convertedGroupOrder = groupOrder.convertGroupOrderToGroupOrderDto();
 
-        return new SubOrderDTO(id, String.valueOf(price), convertedGroupOrder, restaurant.getId(), user.getId(),
+        return new SubOrderDTO(id, String.valueOf(price), convertedGroupOrder, restaurantID, user.getId(),
                 convertedDishes, status.toString(), placedDate.toString(), deliveryDate.toString(), convertedPayment);
     }
 }

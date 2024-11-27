@@ -1,11 +1,11 @@
 package team.k;
 
+import commonlibrary.repository.RestaurantRepository;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import commonlibrary.model.Dish;
@@ -32,14 +32,12 @@ import static org.mockito.Mockito.when;
 
 public class RegisteredUserUsesDiscountStepDefs {
 
+    private static final int restaurantId = 1;
     RegisteredUser registeredUser;
     SubOrder order;
     FreeDishAfterXOrders freeDiscount;
     UnconditionalDiscount unconditionalDiscount;
     RoleDiscount roleDiscount;
-    @Mock
-    SubOrderRepository subOrderRepository;
-
     @Mock
     Dish dish;
     @Mock
@@ -50,40 +48,45 @@ public class RegisteredUserUsesDiscountStepDefs {
 
     @Mock
     PaymentProcessor paymentProcessor;
-
-    @Mock
+    SubOrderRepository subOrderRepository;
     RegisteredUserRepository registeredUserRepository;
+    RestaurantRepository restaurantRepository;
 
     @Mock
     Restaurant restaurant;
 
-    @InjectMocks
     OrderService orderService;
 
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        registeredUserRepository = new RegisteredUserRepository();
+        subOrderRepository = new SubOrderRepository();
+        restaurantRepository = new RestaurantRepository();
+        orderService = new OrderService(null, null, subOrderRepository, restaurantRepository, registeredUserRepository, paymentProcessor);
     }
 
 
     @Given("an order containing {int} dishes is created by a registered user whose name is {string} and his role is {role}")
     public void anOrderContainingDishesIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(int number, String name, Role role) {
         registeredUser = spy(new RegisteredUser(name, role));
-        when(registeredUserRepository.findById(registeredUser.getId())).thenReturn(registeredUser);
-        when(previousOrder.getRestaurant()).thenReturn(restaurant);
+        registeredUserRepository.add(registeredUser);
+        when(restaurant.getId()).thenReturn(restaurantId);
+        when(previousOrder.getRestaurantID()).thenReturn(restaurantId);
         for (int i = 0; i < 10; i++) {
             registeredUser.addOrderToHistory(previousOrder);
         }
         when(restaurant.isAvailable(any())).thenReturn(true);
-        order = new OrderBuilder().setUser(registeredUser).setRestaurant(restaurant).build();
+        order = new OrderBuilder().setUser(registeredUser).setRestaurantID(restaurant.getId()).build();
         registeredUser.setCurrentOrder(order);
-        when(subOrderRepository.findById(order.getId())).thenReturn(order);
+        subOrderRepository.add(order);
         when(dish.getPrice()).thenReturn(10.0);
         when(dishCheapest.getPrice()).thenReturn(5.0);
         for (int i = 0; i < number - 1; i++) {
             order.addDish(dish);
         }
         order.addDish(dishCheapest);
+        restaurantRepository.add(restaurant);
     }
 
     @And("the restaurant have freeDishAfterXOrders discount")

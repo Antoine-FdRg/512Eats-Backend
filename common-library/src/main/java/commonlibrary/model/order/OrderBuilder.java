@@ -4,7 +4,6 @@ import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.model.Dish;
 import commonlibrary.model.Location;
 import commonlibrary.model.RegisteredUser;
-import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.payment.Payment;
 
 import java.time.LocalDateTime;
@@ -16,7 +15,7 @@ public class OrderBuilder {
     OrderStatus status;
     double price;
     GroupOrder groupOrder;
-    Restaurant restaurant;
+    int restaurantID;
     RegisteredUser user;
     final List<Dish> dishes;
     LocalDateTime deliveryTime;
@@ -42,8 +41,8 @@ public class OrderBuilder {
         return this;
     }
 
-    public OrderBuilder setRestaurant(Restaurant restaurant) {
-        this.restaurant = restaurant;
+    public OrderBuilder setRestaurantID(int restaurantID) {
+        this.restaurantID = restaurantID;
         return this;
     }
 

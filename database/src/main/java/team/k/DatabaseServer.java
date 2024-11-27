@@ -6,7 +6,6 @@ import commonlibrary.model.Dish;
 import commonlibrary.model.Location;
 import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.order.GroupOrder;
-import commonlibrary.model.order.IndividualOrder;
 import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
 import commonlibrary.model.restaurant.Restaurant;
@@ -66,7 +65,7 @@ public class DatabaseServer {
                 .build();
         GroupOrderRepository.getInstance().add(groupOrder);
         SubOrder subOrder = new OrderBuilder()
-                .setRestaurant(r)
+                .setRestaurantID(r.getId())
                 .setDishes(List.of(pizza))
                 .setId(1)
                 .setUser(user)
@@ -75,6 +74,6 @@ public class DatabaseServer {
         SubOrderRepository.getInstance().add(subOrder);
 
         user.addOrderToHistory(subOrder);
-        RegisteredUserRepository.getInstance().update(user);
+//        RegisteredUserRepository.getInstance().update(user);
     }
 }

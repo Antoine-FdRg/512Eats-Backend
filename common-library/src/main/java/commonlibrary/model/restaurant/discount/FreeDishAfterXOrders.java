@@ -32,6 +32,6 @@ public class FreeDishAfterXOrders extends DiscountStrategy {
      * @return the number of orders of the user in the restaurant
      */
     public int getNbOrderInRestaurant(SubOrder order) {
-        return (int) order.getUser().getOrders().stream().filter(o -> o.getRestaurant().getId() == restaurantID).count();
+        return (int) order.getUser().getOrders().stream().filter(o -> o.getRestaurantID() == restaurantID).count();
     }
 }

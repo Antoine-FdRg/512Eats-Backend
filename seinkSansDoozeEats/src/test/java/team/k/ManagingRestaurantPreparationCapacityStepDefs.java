@@ -40,7 +40,6 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
     SubOrder order;
     Dish dish;
 
-    @Mock
     RestaurantRepository restaurantRepository;
     @Mock
     LocationRepository locationRepository;
@@ -52,6 +51,7 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
     @Before
     public void setUp() {
         subOrderRepository = new SubOrderRepository();
+        restaurantRepository = new RestaurantRepository();
         orderService = new OrderService(
                 groupOrderRepository,
                 locationRepository,
@@ -65,9 +65,10 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
         restaurant = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(12, 0, 0)).setClose(LocalTime.of(15, 0, 0)).setFoodTypes(List.of(FoodType.BURGER)).setAverageOrderPreparationTime(averagePreparationTime).build();
         dish = new Dish.Builder().setName(dishName).setDescription("Cheeseburger").setPrice(5).setPreparationTime(productionCapacity).build();
         restaurant.addDish(dish);
-        order = new OrderBuilder().setRestaurant(restaurant).setDeliveryTime(LocalDateTime.of(2024, 10, 12, hours, minutes, 0)).build();
+        order = new OrderBuilder().setRestaurantID(restaurant.getId()).setDeliveryTime(LocalDateTime.of(2024, 10, 12, hours, minutes, 0)).build();
         subOrderRepository.add(order);
         order.setStatus(OrderStatus.valueOf(statusCreated));
+        restaurantRepository.add(restaurant);
     }
 
     @And("the restaurant {string} has a time slot available at {int}:{int} with a capacity of {int}")
