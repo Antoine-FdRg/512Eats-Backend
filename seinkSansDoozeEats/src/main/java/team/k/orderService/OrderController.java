@@ -66,13 +66,12 @@ public class OrderController {
         }
     }
 
-    @Endpoint(path = "{restaurantId}/available-dishes", method = HttpMethod.GET)
+    @Endpoint(path = "{orderId}/available-dishes", method = HttpMethod.GET)
     public List<DishDTO> getAvailableDishes(
-            @PathVariable("restaurantId") int restaurantId,
-            @RequestParam("orderId") int orderId
+            @PathVariable("orderId") int orderId
     ) {
         try {
-            List<Dish> availableDishes = orderService.getAvailableDishes(restaurantId, orderId);
+            List<Dish> availableDishes = orderService.getAvailableDishes(orderId);
             return availableDishes.stream().map(Dish::convertDishToDishDto).toList();
         } catch (Exception e) {
             throw new IllegalArgumentException(e.getMessage());

@@ -86,7 +86,7 @@ public class RegisteredUserConsultDishesAvailable {
 
     @When("Jack consults the available dishes of the restaurant Naga")
     public void jackConsultsTheAvailableDishesOfTheRestaurantNagaForTheTimeslotBeginningAtOn() {
-        availableDishes = orderService.getAvailableDishes(1, 1);
+        availableDishes = orderService.getAvailableDishes(1);
     }
 
     @Then("he can see only the following dishes")
