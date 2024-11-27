@@ -84,6 +84,8 @@ classDiagram
             ~ SubOrder(int, double, GroupOrder, Restaurant, RegisteredUser, List~Dish~, OrderStatus, DateTime, DateTime)
             - DateTime deliveryDate
             - int id
+            - int userID
+            - int restaurantID
             - DateTime placedDate
             - double price
             + getId() int
@@ -434,30 +436,30 @@ classDiagram
         class DiscountStrategy {
             <<Abstract>>
             + DiscountStrategy(Restaurant)
-            # Restaurant restaurant
-            + applyDiscount(SubOrder)* double
+            # int restaurantID
+            + applyDiscount(SubOrder, RegisteredUser)* double
         }
         class UnconditionalDiscount {
             + UnconditionalDiscount(Restaurant, double)
             - double discountRate
-            + applyDiscount(SubOrder) double
+            + applyDiscount(SubOrder, RegisteredUser) double
         }
         class RoleDiscount {
             + RoleDiscount(Restaurant, double, Role)
             - double discountRate
             - Role role
-            + applyDiscount(SubOrder) double
+            + applyDiscount(SubOrder, RegisteredUser) double
         }
 
         class FreeDishAfterXOrders {
             + FreeDishAfterXOrders(Restaurant, int)
             - int nbOrdersRequired
             + applyDiscount(SubOrder) double
-            - getNbOrderInRestaurant(SubOrder) int
+            - getNbOrderInRestaurant(RegisteredUser) int
         }
     }
 
-    DiscountStrategy "discountStrategy 1" -- "restaurant 1" Restaurant
+    DiscountStrategy "discountStrategy 1" <-- "1" Restaurant
     DishRepository "1" --> "* dishes" Dish
     FreeDishAfterXOrders --|> DiscountStrategy
     GroupOrder "1" --> "deliveryLocation 1" Location
@@ -502,10 +504,7 @@ classDiagram
     SubOrder "1" --> "groupOrder 1" GroupOrder
     SubOrder "1" --> "status 1" OrderStatus
     SubOrder "1" --> "payment 1" Payment
-    SubOrder "1" --> "user 1" RegisteredUser
-    SubOrder "1" --> "restaurant 1" Restaurant
     SubOrderRepository "1" --> "subOrders *" SubOrder
-    TimeSlot "1" --> "restaurant 1" Restaurant
     TimeSlot "1" --> "orders *" SubOrder
     TimeSlotRepository "1" --> "timeSlots *" TimeSlot
     UnconditionalDiscount --|> DiscountStrategy 
