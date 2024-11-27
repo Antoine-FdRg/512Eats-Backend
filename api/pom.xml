@@ -23,6 +23,12 @@
             <artifactId>ssdb-rest-framework</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>fr.unice.polytech.team.k</groupId>
+            <artifactId>common-library</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>

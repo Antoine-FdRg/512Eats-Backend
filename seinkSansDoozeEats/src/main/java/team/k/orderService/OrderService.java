@@ -133,8 +133,8 @@ public class OrderService {
     }
 
     public List<Dish> getAvailableDishes(int restaurantId, int orderId) {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId);
         SubOrder order = subOrderRepository.findById(orderId);
+        Restaurant restaurant = order.getRestaurant();
         if (restaurant == null) {
             throw new NoSuchElementException(RESTAURANT_NOT_FOUND);
         }
