@@ -1,13 +1,11 @@
 package team.k;
 
-import commonlibrary.model.restaurant.Restaurant;
 import ssdbrestframework.HttpMethod;
 import ssdbrestframework.annotations.Endpoint;
 import ssdbrestframework.annotations.RequestParam;
 import ssdbrestframework.annotations.RestController;
 
 import java.net.http.HttpClient;
-import java.util.List;
 
 import java.net.URI;
 import java.net.http.HttpRequest;
@@ -81,7 +79,7 @@ public class RestaurantController {
     }
 
     @Endpoint(path = "/dishes", method = HttpMethod.GET)
-    public String getDishes(@RequestParam("restaurant-id") int restaurantId) throws Exception {
+    public String getDishes(@RequestParam("restaurant-id") int restaurantId) throws Exception { //TODO: voir si cet enpoint est utile puisqu'on a déjà  un GET available-dishes
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI(RESTAURANT_SERVICE_URL + "/dishes?restaurant-id=" + restaurantId))
