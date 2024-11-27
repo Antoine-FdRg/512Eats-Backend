@@ -1,6 +1,5 @@
 package team.k.controllers;
 
-import commonlibrary.model.Dish;
 import commonlibrary.model.order.SubOrder;
 import ssdbrestframework.HttpMethod;
 import ssdbrestframework.SSDBQueryProcessingException;
@@ -10,7 +9,6 @@ import ssdbrestframework.annotations.RequestBody;
 import ssdbrestframework.annotations.RequestParam;
 import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
-import team.k.repository.DishRepository;
 import team.k.repository.SubOrderRepository;
 
 import java.util.List;
@@ -46,10 +44,11 @@ public class SubOrderController {
     @Endpoint(path = "/update", method = HttpMethod.PUT)
     @Response(status = 200, message = "Suborder updated successfully")
     public void update(@RequestBody SubOrder suborder) throws SSDBQueryProcessingException {
-        boolean success = SubOrderRepository.getInstance().update(suborder);
-        if (!success) {
+        SubOrder existingSuborder = SubOrderRepository.getInstance().findById(suborder.getId());
+        if (existingSuborder == null) {
             throw new SSDBQueryProcessingException(404, "Suborder with ID " + suborder.getId() + " not found.");
         }
+        SubOrderRepository.getInstance().update(suborder,existingSuborder);
     }
 
     @Endpoint(path = "/delete/{id}", method = HttpMethod.DELETE)
