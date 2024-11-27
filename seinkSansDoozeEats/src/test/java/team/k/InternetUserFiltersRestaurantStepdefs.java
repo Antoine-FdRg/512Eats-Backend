@@ -14,6 +14,7 @@ import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
 import team.k.restaurantService.RestaurantService;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -48,7 +49,7 @@ public class InternetUserFiltersRestaurantStepdefs {
     }
 
     @Given("a list of restaurants {string} a {string} restaurant which is open from {int} to {int} and {string} a {string} restaurant opened from {int} to {int} with registered dishes")
-    public void aListOfRestaurantsARestaurantWhichIsOpenFromToAndARestaurantOpenedFromToWithRegisteredDishes(String restaurantNameA, String restaurantTypeA, int openningA, int closingA, String restaurantNameB, String restaurantTypeB, int openningB, int closingB) {
+    public void aListOfRestaurantsARestaurantWhichIsOpenFromToAndARestaurantOpenedFromToWithRegisteredDishes(String restaurantNameA, String restaurantTypeA, int openningA, int closingA, String restaurantNameB, String restaurantTypeB, int openningB, int closingB) throws IOException, InterruptedException {
         restaurantA = new Restaurant.Builder().setName(restaurantNameA).setOpen(LocalTime.of(openningA, 0, 0)).setClose(LocalTime.of(closingA, 0, 0)).setFoodTypes(List.of(FoodType.valueOf(restaurantTypeA))).setAverageOrderPreparationTime(15).build();
         restaurantB = new Restaurant.Builder().setName(restaurantNameB).setOpen(LocalTime.of(openningB, 0, 0)).setClose(LocalTime.of(closingB, 0, 0)).setFoodTypes(List.of(FoodType.valueOf(restaurantTypeB))).setAverageOrderPreparationTime(15).build();
         Dish dishA = new Dish.Builder().setName("sushi").setDescription("Description").setPrice(5).setPreparationTime(0).build();
@@ -69,8 +70,8 @@ public class InternetUserFiltersRestaurantStepdefs {
     public void internetUserSearchesForARestaurantWithNameButDoesnTExist(String restaurantName) {
         try {
             restaurantsByName = this.restaurantService.getRestaurantsByName(restaurantName);
-        } catch (NoSuchElementException e) {
-            this.exception = e;
+        } catch (NoSuchElementException | IOException | InterruptedException e) {
+            this.exception = (NoSuchElementException) e;
         }
     }
 
@@ -87,6 +88,10 @@ public class InternetUserFiltersRestaurantStepdefs {
             restaurantsByFoodType = this.restaurantService.getRestaurantsByFoodType(List.of(FoodType.valueOf(type)));
         } catch (NoSuchElementException e) {
             this.exception = e;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -103,6 +108,10 @@ public class InternetUserFiltersRestaurantStepdefs {
             restaurantsAvailable = this.restaurantService.getRestaurantsByAvailability(LocalDateTime.of(year, month, day, hours, minutes, 0));
         } catch (NoSuchElementException e) {
             this.exception = e;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 

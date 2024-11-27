@@ -1,25 +1,20 @@
 package commonlibrary.repository;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.restaurant.Restaurant;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class RestaurantRepository {
-    private final List<Restaurant> restaurants = new ArrayList<>();
-
-    /**
-     * Find a restaurant by its name.
-     *
-     * @param name the name of the restaurant
-     * @return the restaurant if found, null otherwise
-     */
-    public Restaurant findByName(String name) {
-        return restaurants.stream().filter(restaurant -> restaurant.getName().equals(name)).findFirst().orElse(null);
-    }
+    private static final String BASE_URL = "http://localhost:8082/restaurants";
+    private static final HttpClient client = HttpClient.newHttpClient();
 
     /**
      * Find a restaurant by its id.
@@ -27,8 +22,17 @@ public class RestaurantRepository {
      * @param id the id of the restaurant
      * @return the restaurant if found, null otherwise
      */
-    public Restaurant findById(int id) {
-        return restaurants.stream().filter(restaurant -> restaurant.getId() == id).findFirst().orElse(null);
+    public Restaurant findById(int id) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/get/" + id))
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() >= 300) {
+            throw new IOException("Error: " + response.statusCode() + " - " + response.body());
+        }
+        Restaurant restaurant = new ObjectMapper().readValue(response.body(), Restaurant.class);
+        return restaurant;
     }
 
     /**
@@ -36,7 +40,16 @@ public class RestaurantRepository {
      *
      * @return the list of all restaurants
      */
-    public List<Restaurant> findAll() {
+    public List<Restaurant> findAll() throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL))
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() >= 300) {
+            throw new IOException("Error: " + response.statusCode() + " - " + response.body());
+        }
+        List<Restaurant> restaurants = List.of(new ObjectMapper().readValue(response.body(), Restaurant[].class)); // throws exception if response is not a valid JSON array
         return restaurants;
     }
 
@@ -45,31 +58,72 @@ public class RestaurantRepository {
      *
      * @param restaurant the restaurant to add
      */
-    public void add(Restaurant restaurant) {
-        restaurants.add(restaurant);
+    public void add(Restaurant restaurant) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/create"))
+                .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(restaurant)))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() >= 300) {
+            throw new IOException("Error: " + response.statusCode() + " - " + response.body());
+        }
     }
 
     /**
      * Delete a restaurant from the repository.
      *
-     * @param restaurant the restaurant to delete
+     * @param restaurantId the restaurant to delete
      */
-    public void delete(Restaurant restaurant) {
-        restaurants.remove(restaurant);
+    public void delete(int restaurantId) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/delete/" + restaurantId))
+                .DELETE().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() >= 300) {
+            throw new IOException("Error: " + response.statusCode() + " - " + response.body());
+        }
     }
 
-    public List<Restaurant> findRestaurantByFoodType(List<FoodType> foodTypes) {
-        return this.restaurants.stream()
-                .filter(restaurant -> restaurant.getFoodTypes().stream().anyMatch(foodTypes::contains))
-                .toList();
+    public List<Restaurant> findRestaurantByFoodType(List<FoodType> foodTypes) throws IOException, InterruptedException {
+        List<String> foodTypesString = foodTypes.stream().map(Enum::name).toList();
+        String foodTypesStringJoined = String.join(",", foodTypesString);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/get/foodtypes?food-types=" + foodTypesStringJoined))
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() >= 300) {
+            throw new IOException("Error: " + response.statusCode() + " - " + response.body());
+        }
+        List<Restaurant> restaurants = List.of(new ObjectMapper().readValue(response.body(), Restaurant[].class));
+        return restaurants;
     }
 
-    public List<Restaurant> findRestaurantsByAvailability(LocalDateTime timeChosen) {
-        return this.findAll().stream().filter(restaurant -> restaurant.isAvailable(timeChosen)).toList();
+    public List<Restaurant> findRestaurantsByAvailability(LocalDateTime timeChosen) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/by/availability?date=" + timeChosen))
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() >= 300) {
+            throw new IOException("Error: " + response.statusCode() + " - " + response.body());
+        }
+        List<Restaurant> restaurants = List.of(new ObjectMapper().readValue(response.body(), Restaurant[].class));
+        return restaurants;
+
     }
 
-    public List<Restaurant> findRestaurantByName(String name) {
-        return this.findAll().stream().filter(restaurant -> Objects.equals(restaurant.getName(), name)).toList();
+    public List<Restaurant> findRestaurantByName(String name) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "name?name=" + name))
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() >= 300) {
+            throw new IOException("Error: " + response.statusCode() + " - " + response.body());
+        }
+        List<Restaurant> restaurants = List.of(new ObjectMapper().readValue(response.body(), Restaurant[].class)); // throws exception if response is not a valid JSON array
+        return restaurants;
     }
 
 

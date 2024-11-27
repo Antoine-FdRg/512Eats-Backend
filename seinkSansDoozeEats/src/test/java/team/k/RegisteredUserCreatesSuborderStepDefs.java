@@ -19,6 +19,7 @@ import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
 import team.k.orderService.OrderService;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -39,7 +40,7 @@ public class RegisteredUserCreatesSuborderStepDefs {
     OrderService orderService;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException, InterruptedException {
         registeredUser = new RegisteredUser("John Doe", Role.STUDENT);
         registeredUserRepository = new RegisteredUserRepository();
         registeredUserRepository.add(registeredUser);
@@ -56,13 +57,13 @@ public class RegisteredUserCreatesSuborderStepDefs {
     }
 
     @Given("a groupOrder without any suborder")
-    public void aGroupOrderWithTheId5AndWithoutAnySuborderARegisteredUserJoinTheGroupOrder() {
+    public void aGroupOrderWithTheId5AndWithoutAnySuborderARegisteredUserJoinTheGroupOrder() throws IOException, InterruptedException {
         groupOrder = new GroupOrder.Builder().build();
         groupOrderRepository.add(groupOrder);
     }
 
     @Given("a restaurant {string}  with a dish {string} an opening time {string} and closing time {string}")
-    public void aRestaurantWithADish(String restaurantName, String dishName, String open, String closed) {
+    public void aRestaurantWithADish(String restaurantName, String dishName, String open, String closed) throws IOException, InterruptedException {
         restaurant = new Restaurant.Builder()
                 .setName(restaurantName)
                 .setAverageOrderPreparationTime(10)
@@ -75,7 +76,7 @@ public class RegisteredUserCreatesSuborderStepDefs {
     }
 
     @When("the user order a {string} in the restaurant {string}")
-    public void theUserOrderAInTheRestaurant(String dishName, String restaurantName) {
+    public void theUserOrderAInTheRestaurant(String dishName, String restaurantName) throws IOException, InterruptedException {
         int idrestaurant = restaurantRepository.findRestaurantByName(restaurantName).getFirst().getId();
         int registerId = registeredUser.getId();
         orderService.createSuborder(registerId, idrestaurant, groupOrder.getId());
@@ -94,7 +95,7 @@ public class RegisteredUserCreatesSuborderStepDefs {
     }
 
     @When("the user orders a {string} in the restaurant {string} for the location : {string}")
-    public void theUserOrdersAInTheRestaurantForTheLocation(String dishName, String restaurantName, String location) {
+    public void theUserOrdersAInTheRestaurantForTheLocation(String dishName, String restaurantName, String location) throws IOException, InterruptedException {
         int idrestaurant = restaurantRepository.findRestaurantByName(restaurantName).getFirst().getId();
         int registerId = registeredUser.getId();
         Location loc = new Location.Builder().setAddress(location).build();

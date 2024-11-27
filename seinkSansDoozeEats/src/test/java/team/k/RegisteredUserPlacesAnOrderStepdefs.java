@@ -22,6 +22,7 @@ import commonlibrary.repository.SubOrderRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import team.k.orderService.OrderService;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
@@ -66,7 +67,7 @@ public class RegisteredUserPlacesAnOrderStepdefs {
 
 
     @Given("an order is created by a registered user whose name is {string} and his role is {role}")
-    public void anOrderIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(String name, Role role) {
+    public void anOrderIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(String name, Role role) throws IOException, InterruptedException {
         registeredUser = spy(new RegisteredUser(name, role));
         when(registeredUserRepository.findById(registeredUser.getId())).thenReturn(registeredUser);
         when(restaurant.isAvailable(any())).thenReturn(true);
@@ -89,7 +90,7 @@ public class RegisteredUserPlacesAnOrderStepdefs {
 
 
     @When("The user pays the order at {int}:{int} on {int}-{int}-{int}")
-    public void theUserPaysTheOrder(int hour, int minute, int day, int month, int year) {
+    public void theUserPaysTheOrder(int hour, int minute, int day, int month, int year) throws IOException, InterruptedException {
         LocalDateTime paymentTime = LocalDateTime.of(year, month, day, hour, minute);
         when(paymentProcessor.processPayment(anyDouble())).thenReturn(true);
         orderService.paySubOrder(registeredUser.getId(), order.getId(), paymentTime);
@@ -106,7 +107,7 @@ public class RegisteredUserPlacesAnOrderStepdefs {
         when(paymentProcessor.processPayment(anyDouble())).thenReturn(false);
         try {
             orderService.paySubOrder(registeredUser.getId(), order.getId(), LocalDateTime.of(year, month, day, hour, minute));
-        } catch (PaymentFailedException e) {
+        } catch (PaymentFailedException | IOException | InterruptedException e) {
             exception = e;
         }
     }

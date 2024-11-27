@@ -20,6 +20,7 @@ import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
 import team.k.restaurantService.RestaurantService;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -52,13 +53,13 @@ public class SubOrderStepdefs {
     }
 
     @Given("a registeredUser called {string} with the role {role}")
-    public void aRegisteredUserNamedWithTheRole(String name, Role role) {
+    public void aRegisteredUserNamedWithTheRole(String name, Role role) throws IOException, InterruptedException {
         registeredUser = new RegisteredUser(name, role);
         registeredUserRepository.add(registeredUser);
     }
 
     @And("a restaurant called {string} open from {int}:{int} to {int}:{int} with an average order preparation time of {int} minutes")
-    public void aRestaurantNamedOpenFromTo(String name, int openHours, int openMinutes, int closeHours, int closeMinutes, int averageOrderPreparationTime) {
+    public void aRestaurantNamedOpenFromTo(String name, int openHours, int openMinutes, int closeHours, int closeMinutes, int averageOrderPreparationTime) throws IOException, InterruptedException {
         LocalTime openTime = LocalTime.of(openHours, openMinutes);
         LocalTime closeTime = LocalTime.of(closeHours, closeMinutes);
         restaurant = new Restaurant.Builder()
@@ -71,7 +72,7 @@ public class SubOrderStepdefs {
     }
 
     @And("with a productionCapacity of {int} on the timeslot beginning at {int}:{int} on {int}-{int}-{int}")
-    public void withAProductionCapacityOfForTheTimeslotAtOn(int productionCapacity, int startHours, int startMinutes, int startDay, int startMonth, int startYear) {
+    public void withAProductionCapacityOfForTheTimeslotAtOn(int productionCapacity, int startHours, int startMinutes, int startDay, int startMonth, int startYear) throws IOException, InterruptedException {
         LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, startHours, startMinutes);
         TimeSlot timeSlot = new TimeSlot(startTime, restaurant, productionCapacity);
         timeSlotRepository.add(timeSlot);
@@ -79,7 +80,7 @@ public class SubOrderStepdefs {
     }
 
     @And("the delivery location {string}, {string} in {string}")
-    public void aDeliveryLocationWithTheNumberTheStreetAndTheCity(String streetNumber, String street, String city) {
+    public void aDeliveryLocationWithTheNumberTheStreetAndTheCity(String streetNumber, String street, String city) throws IOException, InterruptedException {
         deliveryLocation = new Location.Builder()
                 .setNumber(String.valueOf(streetNumber))
                 .setAddress(street)
@@ -100,7 +101,7 @@ public class SubOrderStepdefs {
     }
 
     @And("a suborder created in the group order for the restaurant {string}")
-    public void aSuborderCreatedInTheGroupOrderForTheRestaurantNaga(String restaurantName) {
+    public void aSuborderCreatedInTheGroupOrderForTheRestaurantNaga(String restaurantName) throws IOException, InterruptedException {
         restaurantService.getRestaurantByName(restaurantName);
         subOrder = new OrderBuilder()
                 .setGroupOrder(groupOrder)

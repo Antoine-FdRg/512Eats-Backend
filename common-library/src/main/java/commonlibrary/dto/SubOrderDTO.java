@@ -11,6 +11,7 @@ import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.repository.RegisteredUserRepository;
 import commonlibrary.repository.RestaurantRepository;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public record SubOrderDTO(int id, String price, GroupOrderDTO groupOrder, int re
                           List<DishDTO> dishes, String status, String placedDate, String deliveryDateTime,
                           PaymentDTO payment) {
 
-    public SubOrder convertSubOrderDtoToSubOrder() {
+    public SubOrder convertSubOrderDtoToSubOrder() throws IOException, InterruptedException {
         List<Dish> convertedDishes = dishes.stream()
                 .map(DishDTO::convertDishDtoToDish)
                 .toList();

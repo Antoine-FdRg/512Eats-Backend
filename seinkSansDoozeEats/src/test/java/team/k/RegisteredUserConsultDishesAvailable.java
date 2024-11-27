@@ -20,6 +20,7 @@ import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
 import team.k.orderService.OrderService;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,7 @@ public class RegisteredUserConsultDishesAvailable {
     }
 
     @Given("the restaurant {string} has the following dishes with preparation time")
-    public void theRestaurantNagaHasTheFollowingDishesWithPreparationTime(String restaurantName, List<Dish> dishes) {
+    public void theRestaurantNagaHasTheFollowingDishesWithPreparationTime(String restaurantName, List<Dish> dishes) throws IOException, InterruptedException {
 
         nagaRestaurant = new Restaurant.Builder()
                 .setName(restaurantName)
@@ -85,7 +86,7 @@ public class RegisteredUserConsultDishesAvailable {
     }
 
     @When("Jack consults the available dishes of the restaurant Naga")
-    public void jackConsultsTheAvailableDishesOfTheRestaurantNagaForTheTimeslotBeginningAtOn() {
+    public void jackConsultsTheAvailableDishesOfTheRestaurantNagaForTheTimeslotBeginningAtOn() throws IOException, InterruptedException {
         availableDishes = orderService.getAvailableDishes(1, 1);
     }
 

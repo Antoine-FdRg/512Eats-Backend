@@ -8,6 +8,7 @@ import commonlibrary.repository.RestaurantRepository;
 import commonlibrary.repository.TimeSlotRepository;
 import lombok.RequiredArgsConstructor;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,11 +23,11 @@ public class RestaurantService {
     /**
      * Get all dishes from a restaurant
      *
-     * @param restaurantName the name of the restaurant
+     * @param restaurantId the name of the restaurant
      * @return the list of dishes if the restaurant is found, null otherwise
      */
-    public List<Dish> getAllDishesFromRestaurant(String restaurantName) throws NoSuchElementException {
-        Restaurant restaurant = getRestaurantOrThrowIfNull(this.getRestaurantByName(restaurantName));
+    public List<Dish> getAllDishesFromRestaurant(int restaurantId) throws NoSuchElementException, IOException, InterruptedException {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId);
         List<Dish> dishes = restaurant.getDishes();
         if (dishes.isEmpty()) {
             throw new NoSuchElementException("No dishes available");
@@ -41,7 +42,7 @@ public class RestaurantService {
      * @param day          the day to check
      * @return the list of available delivery times
      */
-    public List<LocalDateTime> getAllAvailableDeliveryTimesOfRestaurantOnDay(int restaurantId, LocalDate day) throws NoSuchElementException {
+    public List<LocalDateTime> getAllAvailableDeliveryTimesOfRestaurantOnDay(int restaurantId, LocalDate day) throws NoSuchElementException, IOException, InterruptedException {
         Restaurant restaurant = getRestaurantOrThrowIfNull(restaurantRepository.findById(restaurantId));
         List<LocalDateTime> availableTimes = restaurant.getAvailableDeliveryTimesOnDay(day);
         if (availableTimes.isEmpty()) {
@@ -55,16 +56,16 @@ public class RestaurantService {
      *
      * @param restaurant the restaurant to add
      */
-    public void addRestaurant(Restaurant restaurant) {
+    public void addRestaurant(Restaurant restaurant) throws IOException, InterruptedException {
         this.restaurantRepository.add(restaurant);
     }
 
-    public void deleteRestaurant(Restaurant restaurant) {
-        this.restaurantRepository.delete(restaurant);
+    public void deleteRestaurant(Restaurant restaurant) throws IOException, InterruptedException {
+        this.restaurantRepository.delete(restaurant.getId());
     }
 
     /***** Update *****/
-    public void addTimeSlotToRestaurant(int restaurantId, int timeSlotId) {
+    public void addTimeSlotToRestaurant(int restaurantId, int timeSlotId) throws IOException, InterruptedException {
         Restaurant restaurant = getRestaurantOrThrowIfNull(restaurantRepository.findById(restaurantId));
         TimeSlot ts = timeSlotRepository.findById(timeSlotId);
         if (ts == null) {
@@ -85,7 +86,7 @@ public class RestaurantService {
     }
 
     /***** Searching methods *****/
-    public List<Restaurant> getAllRestaurants() {
+    public List<Restaurant> getAllRestaurants() throws IOException, InterruptedException {
         return this.restaurantRepository.findAll();
     }
 
@@ -95,11 +96,11 @@ public class RestaurantService {
      * @param restaurantName the name of the restaurant
      * @return the restaurant if found, null otherwise
      */
-    public Restaurant getRestaurantByName(String restaurantName) {
-        return this.restaurantRepository.findByName(restaurantName);
+    public List<Restaurant> getRestaurantByName(String restaurantName) throws IOException, InterruptedException {
+        return this.restaurantRepository.findRestaurantByName(restaurantName);
     }
 
-    public List<Restaurant> getRestaurantsByFoodType(List<FoodType> foodTypes) throws NoSuchElementException {
+    public List<Restaurant> getRestaurantsByFoodType(List<FoodType> foodTypes) throws NoSuchElementException, IOException, InterruptedException {
         List<Restaurant> restaurants = this.restaurantRepository.findRestaurantByFoodType(foodTypes);
         if (restaurants.isEmpty()) {
             throw new NoSuchElementException("No restaurants found with the food types: " + foodTypes);
@@ -107,7 +108,7 @@ public class RestaurantService {
         return restaurants;
     }
 
-    public List<Restaurant> getRestaurantsByAvailability(LocalDateTime timeChosen) throws NoSuchElementException {
+    public List<Restaurant> getRestaurantsByAvailability(LocalDateTime timeChosen) throws NoSuchElementException, IOException, InterruptedException {
         List<Restaurant> restaurants = this.restaurantRepository.findRestaurantsByAvailability(timeChosen);
         if (restaurants.isEmpty()) {
             throw new NoSuchElementException("No restaurants found with availability at: " + timeChosen);
@@ -115,7 +116,7 @@ public class RestaurantService {
         return restaurants;
     }
 
-    public List<Restaurant> getRestaurantsByName(String name) throws NoSuchElementException {
+    public List<Restaurant> getRestaurantsByName(String name) throws NoSuchElementException, IOException, InterruptedException {
         List<Restaurant> restaurants = this.restaurantRepository.findRestaurantByName(name);
         if (restaurants.isEmpty()) {
             throw new NoSuchElementException("No restaurants found with the name: " + name);

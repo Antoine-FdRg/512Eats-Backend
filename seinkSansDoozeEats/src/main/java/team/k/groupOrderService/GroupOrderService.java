@@ -8,6 +8,7 @@ import commonlibrary.repository.GroupOrderRepository;
 import commonlibrary.repository.LocationRepository;
 
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -24,7 +25,7 @@ public class GroupOrderService {
      * @param now the current time
      * @return the id of the created group order to share with friends
      */
-    public int createGroupOrder(int deliveryLocationId, LocalDateTime deliveryDateTime, LocalDateTime now){
+    public int createGroupOrder(int deliveryLocationId, LocalDateTime deliveryDateTime, LocalDateTime now) throws IOException, InterruptedException {
         Location location = locationRepository.findLocationById(deliveryLocationId);
         if (location == null) {
             throw new NoSuchElementException("Location not found");
@@ -43,7 +44,7 @@ public class GroupOrderService {
         return groupOrder.getId();
     }
 
-    public GroupOrder findGroupOrderById(int id) {
+    public GroupOrder findGroupOrderById(int id) throws IOException, InterruptedException {
         return groupOrderRepository.findGroupOrderById(id);
     }
 
@@ -53,7 +54,7 @@ public class GroupOrderService {
      * @param deliveryDateTime the delivery datetime for the group order
      * @param now the current time (to ensure that the chosen deliveryDateTime is not too early
      */
-    public void modifyGroupOrderDeliveryDateTime(int groupOrderId, LocalDateTime deliveryDateTime, LocalDateTime now){
+    public void modifyGroupOrderDeliveryDateTime(int groupOrderId, LocalDateTime deliveryDateTime, LocalDateTime now) throws IOException, InterruptedException {
 
         if (Objects.isNull(deliveryDateTime)) {
             throw new IllegalArgumentException("Delivery datetime cannot be null");
@@ -74,7 +75,7 @@ public class GroupOrderService {
         groupOrder.setDeliveryDateTime(deliveryDateTime);
     }
 
-    public void place(int groupOrderId, LocalDateTime now) {
+    public void place(int groupOrderId, LocalDateTime now) throws IOException, InterruptedException {
         GroupOrder groupOrder = groupOrderRepository.findGroupOrderById(groupOrderId);
         if (Objects.isNull(groupOrder)) {
             throw new NoSuchElementException("Group order not found");

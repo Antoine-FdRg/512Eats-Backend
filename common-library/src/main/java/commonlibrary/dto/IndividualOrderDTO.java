@@ -14,6 +14,7 @@ import commonlibrary.repository.RegisteredUserRepository;
 import commonlibrary.repository.RestaurantRepository;
 
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public record IndividualOrderDTO(int id, String price, int restaurantId, int use
     /*
      * Converts an IndividualOrderDTO object to an IndividualOrder object
      */
-    public IndividualOrder convertIndividualOrderDtoToIndividualOrder() {
+    public IndividualOrder convertIndividualOrderDtoToIndividualOrder() throws IOException, InterruptedException {
         List<Dish> convertedDishes = dishes.stream()
                 .map(DishDTO::convertDishDtoToDish)
                 .toList();

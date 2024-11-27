@@ -25,6 +25,7 @@ import commonlibrary.model.restaurant.TimeSlot;
 import team.k.orderService.OrderService;
 import team.k.restaurantService.RestaurantService;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -77,13 +78,13 @@ public class IndividualOrderStepdefs {
     }
 
     @Given("a registeredUser named {string} with the role {role}")
-    public void aRegisteredUserNamedWithTheRole(String name, Role role) {
+    public void aRegisteredUserNamedWithTheRole(String name, Role role) throws IOException, InterruptedException {
         registeredUser = new RegisteredUser(name, role);
         when(registeredUserRepository.findById(registeredUser.getId())).thenReturn(registeredUser);
     }
 
     @And("a restaurant named {string} open from {int}:{int} to {int}:{int} with an average order preparation time of {int} minutes")
-    public void aRestaurantNamedOpenFromTo(String name, int openHours, int openMinutes, int closeHours, int closeMinutes, int averageOrderPreparationTime) {
+    public void aRestaurantNamedOpenFromTo(String name, int openHours, int openMinutes, int closeHours, int closeMinutes, int averageOrderPreparationTime) throws IOException, InterruptedException {
         LocalTime openTime = LocalTime.of(openHours, openMinutes);
         LocalTime closeTime = LocalTime.of(closeHours, closeMinutes);
         restaurant = new Restaurant.Builder()
@@ -96,7 +97,7 @@ public class IndividualOrderStepdefs {
     }
 
     @And("with a productionCapacity of {int} for the timeslot beginning at {int}:{int} on {int}-{int}-{int}")
-    public void withAProduvtionCapacityOfForTheTimeslotAtOn(int productionCapacity, int startHours, int startMinutes, int startDay, int startMonth, int startYear) {
+    public void withAProduvtionCapacityOfForTheTimeslotAtOn(int productionCapacity, int startHours, int startMinutes, int startDay, int startMonth, int startYear) throws IOException, InterruptedException {
         LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, startHours, startMinutes);
         TimeSlot timeSlot = new TimeSlot(startTime, restaurant, productionCapacity);
         when(timeSlotRepository.findById(timeSlot.getId())).thenReturn(timeSlot);
@@ -104,7 +105,7 @@ public class IndividualOrderStepdefs {
     }
 
     @And("a delivery location with the number {string}, the street {string} and the city {string}")
-    public void aDeliveryLocationWithTheNumberTheStreetAndTheCity(String streetNumber, String street, String city) {
+    public void aDeliveryLocationWithTheNumberTheStreetAndTheCity(String streetNumber, String street, String city) throws IOException, InterruptedException {
         deliveryLocation = new Location.Builder()
                 .setNumber(String.valueOf(streetNumber))
                 .setAddress(street)
@@ -119,8 +120,8 @@ public class IndividualOrderStepdefs {
         LocalDateTime now = LocalDateTime.of(currentYear, currentMonth, currentDay, currentHours, currentMinutes);
         try {
             orderService.createIndividualOrder(registeredUser.getId(), restaurant.getId(), deliveryLocation.getId(), deliveryTime, now);
-        } catch (IllegalArgumentException e) {
-            orderNotCreatedException = e;
+        } catch (IllegalArgumentException | IOException | InterruptedException e) {
+            orderNotCreatedException = (IllegalArgumentException) e;
         }
     }
 
@@ -152,8 +153,8 @@ public class IndividualOrderStepdefs {
         LocalDateTime now = LocalDateTime.of(currentYear, currentMonth, currentDay, currentHours, currentMinutes);
         try {
             orderService.createIndividualOrder(registeredUser.getId(), restaurant.getId(), deliveryLocation.getId(), null, now);
-        } catch (IllegalArgumentException e) {
-            orderNotCreatedException = e;
+        } catch (IllegalArgumentException | IOException | InterruptedException e) {
+            orderNotCreatedException = (IllegalArgumentException) e;
         }
     }
 
@@ -165,7 +166,7 @@ public class IndividualOrderStepdefs {
 
 
     @Given("another timeslot at Naga beginning at {int}h{int} on {int}-{int}-{int} but to many order already created on this timeslot")
-    public void anotherTimeslotAtNagaBeginningAtHOnButToManyOrderAlreadyCreatedOnThisTimeslot(int startHours, int startMinutes, int startDay, int startMonth, int startYear) {
+    public void anotherTimeslotAtNagaBeginningAtHOnButToManyOrderAlreadyCreatedOnThisTimeslot(int startHours, int startMinutes, int startDay, int startMonth, int startYear) throws IOException, InterruptedException {
         LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, startHours, startMinutes);
         TimeSlot timeSlot = new TimeSlot(startTime, restaurant, 0);
         SubOrder orderToFillTimeSlot1 = Mockito.mock(SubOrder.class);
@@ -207,7 +208,7 @@ public class IndividualOrderStepdefs {
     }
 
     @When("Jack consults the possible delivery times for the restaurant Naga for the {int}-{int}-{int}")
-    public void jackConsultsThePossibleDeliveryTimesForTheRestaurantNaga(int day, int month, int year) {
+    public void jackConsultsThePossibleDeliveryTimesForTheRestaurantNaga(int day, int month, int year) throws IOException, InterruptedException {
         effectivePossibleDeliveryTimes = restaurantService.getAllAvailableDeliveryTimesOfRestaurantOnDay(restaurant.getId(), LocalDate.of(year, month, day));
     }
 

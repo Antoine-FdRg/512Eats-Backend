@@ -27,8 +27,8 @@ public class RestaurantRepository extends GenericRepository<Restaurant> {
      * @param name the name of the restaurant
      * @return the restaurant if found, null otherwise
      */
-    public Restaurant findByName(String name) {
-        return findAll().stream().filter(restaurant -> restaurant.getName().equals(name)).findFirst().orElse(null);
+    public List<Restaurant> findByName(String name) {
+        return findAll().stream().filter(restaurant -> restaurant.getName().contains(name)).toList();
     }
 
     /**

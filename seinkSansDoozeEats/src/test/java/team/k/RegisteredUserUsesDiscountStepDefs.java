@@ -22,6 +22,7 @@ import commonlibrary.model.restaurant.discount.RoleDiscount;
 import commonlibrary.model.restaurant.discount.UnconditionalDiscount;
 import team.k.orderService.OrderService;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
@@ -67,7 +68,7 @@ public class RegisteredUserUsesDiscountStepDefs {
 
 
     @Given("an order containing {int} dishes is created by a registered user whose name is {string} and his role is {role}")
-    public void anOrderContainingDishesIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(int number, String name, Role role) {
+    public void anOrderContainingDishesIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(int number, String name, Role role) throws IOException, InterruptedException {
         registeredUser = spy(new RegisteredUser(name, role));
         when(registeredUserRepository.findById(registeredUser.getId())).thenReturn(registeredUser);
         when(previousOrder.getRestaurant()).thenReturn(restaurant);
@@ -93,7 +94,7 @@ public class RegisteredUserUsesDiscountStepDefs {
     }
 
     @When("The user pays the order with the discount")
-    public void theUserPaysTheOrderWithTheDiscount() {
+    public void theUserPaysTheOrderWithTheDiscount() throws IOException, InterruptedException {
         when(paymentProcessor.processPayment(anyDouble())).thenReturn(true);
         orderService.paySubOrder(registeredUser.getId(), order.getId(), LocalDateTime.now());
     }

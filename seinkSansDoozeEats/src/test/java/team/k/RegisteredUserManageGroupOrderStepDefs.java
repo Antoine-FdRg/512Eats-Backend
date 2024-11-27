@@ -18,6 +18,7 @@ import commonlibrary.repository.GroupOrderRepository;
 import commonlibrary.repository.LocationRepository;
 import team.k.groupOrderService.GroupOrderService;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -56,7 +57,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
     }
 
     @Given("a delivery location")
-    public void aDeliveryLocation() {
+    public void aDeliveryLocation() throws IOException, InterruptedException {
         location = new Location.Builder()
                 .setNumber("123")
                 .setAddress("123 Main St")
@@ -66,7 +67,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
     }
 
     @When("the user creates a group order with the delivery location for the {string} at {string} on {string} at {string}")
-    public void theUserCreatesAGroupOrderWithTheDeliveryLocationForTheAtOnAt(String orderDate, String orderTime, String currentDate, String currentTime) {
+    public void theUserCreatesAGroupOrderWithTheDeliveryLocationForTheAtOnAt(String orderDate, String orderTime, String currentDate, String currentTime) throws IOException, InterruptedException {
         LocalDateTime deliveryDateTime = LocalDateTime.of(
                 LocalDate.parse(orderDate),
                 LocalTime.parse(orderTime)
@@ -82,7 +83,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
 
 
     @Then("the group order is created and the delivery location is initialized and the delivery date time is the {string} at {string}")
-    public void theGroupOrderIsCreatedAndTheDeliveryLocationIsInitializedAndTheDeliveryDateTimeIsTheAt(String orderDate, String orderTime) {
+    public void theGroupOrderIsCreatedAndTheDeliveryLocationIsInitializedAndTheDeliveryDateTimeIsTheAt(String orderDate, String orderTime) throws IOException, InterruptedException {
         LocalDateTime deliveryDateTime = LocalDateTime.of(
                 LocalDate.parse(orderDate),
                 LocalTime.parse(orderTime)
@@ -94,7 +95,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
         assertEquals(deliveryDateTime, groupOrder.getDeliveryDateTime());
     }
     @Then("the group order is created and the delivery location and delivery date time are initialized")
-    public void theGroupOrderIsCreatedAndTheDeliveryLocationAndDeliveryDateTimeAreInitialized() {
+    public void theGroupOrderIsCreatedAndTheDeliveryLocationAndDeliveryDateTimeAreInitialized() throws IOException, InterruptedException {
         GroupOrder groupOrder = groupOrderService.findGroupOrderById(codeToShare);
         assertEquals(location.getId(), groupOrder.getDeliveryLocation().getId());
         assertEquals(location, groupOrder.getDeliveryLocation());
@@ -118,7 +119,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
     }
 
     @Then("the group order is not created")
-    public void theGroupOrderIsNotCreated() {
+    public void theGroupOrderIsNotCreated() throws IOException, InterruptedException {
         assertNull(groupOrderService.findGroupOrderById(codeToShare));
         assertNotNull(exception);
         assertEquals(NoSuchElementException.class, exception.getClass());
@@ -138,7 +139,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
     }
 
     @Then("the group order is created and the delivery location is initialized but the delivery date time is not")
-    public void theGroupOrderIsCreatedAndTheDeliveryLocationIsInitializedButTheDeliveryDateTimeIsNot() {
+    public void theGroupOrderIsCreatedAndTheDeliveryLocationIsInitializedButTheDeliveryDateTimeIsNot() throws IOException, InterruptedException {
         GroupOrder groupOrder = groupOrderService.findGroupOrderById(codeToShare);
         assertEquals(location.getId(), groupOrder.getDeliveryLocation().getId());
         assertEquals(location, groupOrder.getDeliveryLocation());
@@ -146,7 +147,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
     }
 
     @Given("a group order created without a delivery datetime")
-    public void aGroupOrderCreatedWithoutADeliveryDatetime() {
+    public void aGroupOrderCreatedWithoutADeliveryDatetime() throws IOException, InterruptedException {
         GroupOrder groupOrder = new GroupOrder.Builder()
                 .withDeliveryLocation(location)
                 .build();
@@ -172,7 +173,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
     }
 
     @Then("the group order delivery datetime is {string} at {string}")
-    public void theGroupOrderIsModifiedAndTheDeliveryDateTimeIsAt(String orderDate, String orderTime) {
+    public void theGroupOrderIsModifiedAndTheDeliveryDateTimeIsAt(String orderDate, String orderTime) throws IOException, InterruptedException {
         LocalDateTime deliveryDateTime = LocalDateTime.of(
                 LocalDate.parse(orderDate),
                 LocalTime.parse(orderTime)
@@ -182,13 +183,13 @@ public class RegisteredUserManageGroupOrderStepDefs {
     }
 
     @Then("the group order is not modified and the delivery datetime is still null")
-    public void theGroupOrderIsNotModifiedAndTheDeliveryDatetimeIsStillNull() {
+    public void theGroupOrderIsNotModifiedAndTheDeliveryDatetimeIsStillNull() throws IOException, InterruptedException {
         GroupOrder groupOrder = groupOrderRepository.findGroupOrderById(codeToShare);
         assertNull(groupOrder.getDeliveryDateTime());
     }
 
     @Given("a group order created with {string} at {string} as delivery datetime")
-    public void aGroupOrderCreatedWithAtAsDeliveryDatetime(String orderDate, String orderTime) {
+    public void aGroupOrderCreatedWithAtAsDeliveryDatetime(String orderDate, String orderTime) throws IOException, InterruptedException {
         LocalDateTime deliveryDateTime = LocalDateTime.of(
                 LocalDate.parse(orderDate),
                 LocalTime.parse(orderTime)
@@ -220,7 +221,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
     }
 
     @When("a group is placed at {string} at {string}")
-    public void aGroupIsPlacedAtAt(String orderDate, String orderTime) {
+    public void aGroupIsPlacedAtAt(String orderDate, String orderTime) throws IOException, InterruptedException {
         LocalDateTime placedDateTime = LocalDateTime.of(
                 LocalDate.parse(orderDate),
                 LocalTime.parse(orderTime)

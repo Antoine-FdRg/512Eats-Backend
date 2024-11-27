@@ -22,6 +22,7 @@ import commonlibrary.repository.RestaurantRepository;
 import commonlibrary.repository.SubOrderRepository;
 import commonlibrary.repository.GroupOrderRepository;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -49,7 +50,7 @@ public class OrderService {
      * @param deliveryTime       the time at which the order will be delivered
      * @param now                the time at which the order is created (should be the current time in REST controller but can be changed as parameter for testing)
      */
-    public void createIndividualOrder(int registeredUserID, int restaurantId, int deliveryLocationId, LocalDateTime deliveryTime, LocalDateTime now) {
+    public void createIndividualOrder(int registeredUserID, int restaurantId, int deliveryLocationId, LocalDateTime deliveryTime, LocalDateTime now) throws IOException, InterruptedException {
         RegisteredUser registeredUser = this.registeredUserValidator(registeredUserID);
         Restaurant restaurant = restaurantRepository.findById(restaurantId);
         if (restaurant == null) {
@@ -105,7 +106,7 @@ public class OrderService {
 
     }
 
-    public void paySubOrder(int registeredUserID, int orderId, LocalDateTime currentDateTime) throws PaymentFailedException {
+    public void paySubOrder(int registeredUserID, int orderId, LocalDateTime currentDateTime) throws PaymentFailedException, IOException, InterruptedException {
         RegisteredUser registeredUser = this.registeredUserValidator(registeredUserID);
         SubOrder currentOrder = registeredUser.getCurrentOrder();
         if (currentOrder == null) {
@@ -132,7 +133,7 @@ public class OrderService {
         }
     }
 
-    public List<Dish> getAvailableDishes(int restaurantId, int orderId) {
+    public List<Dish> getAvailableDishes(int restaurantId, int orderId) throws IOException, InterruptedException {
         Restaurant restaurant = restaurantRepository.findById(restaurantId);
         SubOrder order = subOrderRepository.findById(orderId);
         if (restaurant == null) {
@@ -144,7 +145,7 @@ public class OrderService {
         return restaurant.getDishesReadyInLessThan(TimeSlot.DURATION - order.getPreparationTime());
     }
 
-    private RegisteredUser registeredUserValidator(int registeredUserID) {
+    private RegisteredUser registeredUserValidator(int registeredUserID) throws IOException, InterruptedException {
         RegisteredUser registeredUser = registeredUserRepository.findById(registeredUserID);
         if (registeredUser == null) {
             throw new NoSuchElementException("User not found");
@@ -162,7 +163,7 @@ public class OrderService {
      * @param restaurantId
      * @param groupOrderId
      */
-    public void createSuborder(int registeredUserID, int restaurantId, int groupOrderId) {
+    public void createSuborder(int registeredUserID, int restaurantId, int groupOrderId) throws IOException, InterruptedException {
         RegisteredUser registeredUser = this.registeredUserValidator(registeredUserID);
         Restaurant restaurant = restaurantRepository.findById(restaurantId);
         GroupOrder groupOrder = groupOrderRepository.findGroupOrderById(groupOrderId);

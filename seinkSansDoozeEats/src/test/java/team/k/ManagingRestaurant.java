@@ -13,6 +13,7 @@ import commonlibrary.repository.RestaurantRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import team.k.managingRestaurantService.ManageRestaurantService;
 
+import java.io.IOException;
 import java.time.LocalTime;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class ManagingRestaurant {
     }
 
     @Given("the restaurant {string} has the following information")
-    public void theRestaurantHasTheFollowingInformation(String restaurantName, Map<String, String> restaurantInfo) {
+    public void theRestaurantHasTheFollowingInformation(String restaurantName, Map<String, String> restaurantInfo) throws IOException, InterruptedException {
         nagaRestaurant = new Restaurant.Builder()
                 .setName(restaurantName)
                 .setAverageOrderPreparationTime(10)
@@ -52,12 +53,12 @@ public class ManagingRestaurant {
     }
 
     @When("the restaurant manager updates the open time to {string}")
-    public void theRestaurantManagerUpdatesTheOpenTimeTo(String open) {
+    public void theRestaurantManagerUpdatesTheOpenTimeTo(String open) throws IOException, InterruptedException {
         manageRestaurantService.updateRestaurantInfos(1, open, null);
     }
 
     @When("the restaurant manager updates the closed time to {string}")
-    public void theRestaurantManagerUpdatesTheClosedTimeTo(String closed) {
+    public void theRestaurantManagerUpdatesTheClosedTimeTo(String closed) throws IOException, InterruptedException {
         manageRestaurantService.updateRestaurantInfos(1, null, closed);
     }
 
@@ -68,7 +69,7 @@ public class ManagingRestaurant {
     }
 
     @When("the restaurant manager adds a new dish {string} with price {double}")
-    public void theRestaurantManagerAddsANewDishWithPrice(String dishName, double dishPrice) {
+    public void theRestaurantManagerAddsANewDishWithPrice(String dishName, double dishPrice) throws IOException, InterruptedException {
         manageRestaurantService.addDish(1, dishName, "Description", dishPrice, 0);
         this.dishAdded = nagaRestaurant.getDishes().stream().filter(d -> d.getName().equals(dishName)).findFirst().orElse(null).getId();
     }
@@ -80,7 +81,7 @@ public class ManagingRestaurant {
     }
 
     @And("the restaurant manager removes the dish recently added")
-    public void theRestaurantManagerRemovesTheDish() {
+    public void theRestaurantManagerRemovesTheDish() throws IOException, InterruptedException {
         manageRestaurantService.removeDish(1, this.dishAdded);
     }
 
@@ -90,12 +91,12 @@ public class ManagingRestaurant {
     }
 
     @And("the restaurant manager updates the dish {int} price to {double}")
-    public void theRestaurantManagerUpdatesTheDishPriceTo(int dishId, double newPrice) {
+    public void theRestaurantManagerUpdatesTheDishPriceTo(int dishId, double newPrice) throws IOException, InterruptedException {
         manageRestaurantService.updateDish(1, dishId, newPrice, 0);
     }
 
     @And("the restaurant manager updates a dish with price to {double} with preparation time {int}")
-    public void theRestaurantManagerUpdatesTheDishPriceToWithPreparationTime(double price, int preparationTime) {
+    public void theRestaurantManagerUpdatesTheDishPriceToWithPreparationTime(double price, int preparationTime) throws IOException, InterruptedException {
         Dish dish = nagaRestaurant.getDishes().stream().findFirst().orElse(null);
         assertNotNull(dish);
         this.dishUpdated = dish.getId();
