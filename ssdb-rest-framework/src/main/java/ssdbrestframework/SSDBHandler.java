@@ -2,6 +2,7 @@ package ssdbrestframework;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -32,7 +33,9 @@ public class SSDBHandler implements HttpHandler {
     private final HttpMethod methodType;
     private final List<String> paramNames;
     private Matcher matcher;
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
     SSDBHandler(Object controller, Method method, HttpMethod methodType, String path) {
         this.controller = controller;
