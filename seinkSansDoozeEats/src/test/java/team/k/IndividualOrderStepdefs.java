@@ -19,7 +19,6 @@ import commonlibrary.repository.LocationRepository;
 import commonlibrary.repository.RegisteredUserRepository;
 import commonlibrary.repository.RestaurantRepository;
 import commonlibrary.repository.SubOrderRepository;
-import commonlibrary.repository.TimeSlotRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
 import team.k.orderService.OrderService;
@@ -42,8 +41,6 @@ public class IndividualOrderStepdefs {
     RegisteredUser registeredUser;
     Restaurant restaurant;
     Location deliveryLocation;
-    @Mock
-    TimeSlotRepository timeSlotRepository;
     @Mock
     RestaurantRepository restaurantRepository;
     @InjectMocks
@@ -98,9 +95,7 @@ public class IndividualOrderStepdefs {
     @And("with a productionCapacity of {int} for the timeslot beginning at {int}:{int} on {int}-{int}-{int}")
     public void withAProduvtionCapacityOfForTheTimeslotAtOn(int productionCapacity, int startHours, int startMinutes, int startDay, int startMonth, int startYear) {
         LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, startHours, startMinutes);
-        TimeSlot timeSlot = new TimeSlot(startTime, restaurant, productionCapacity);
-        when(timeSlotRepository.findById(timeSlot.getId())).thenReturn(timeSlot);
-        restaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
+        restaurantService.addTimeSlotToRestaurant(restaurant.getId(), startTime,productionCapacity);
     }
 
     @And("a delivery location with the number {string}, the street {string} and the city {string}")
@@ -172,8 +167,7 @@ public class IndividualOrderStepdefs {
         SubOrder orderToFillTimeSlot2 = Mockito.mock(SubOrder.class);
         timeSlot.addOrder(orderToFillTimeSlot1);
         timeSlot.addOrder(orderToFillTimeSlot2);
-        when(timeSlotRepository.findById(timeSlot.getId())).thenReturn(timeSlot);
-        restaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
+        restaurantService.addTimeSlotToRestaurant(restaurant.getId(), startTime,0);
     }
 
     @Given("Naga has a productionCapacity of {int} for the all the timeslots of {int}-{int}-{int} starting at")
@@ -184,7 +178,6 @@ public class IndividualOrderStepdefs {
             int minutes = Integer.parseInt(parts[1]);
             LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, hours, minutes);
             TimeSlot timeSlot = new TimeSlot(startTime, restaurant, productionCapacity);
-            when(timeSlotRepository.findById(timeSlot.getId())).thenReturn(timeSlot);
             restaurant.addTimeSlot(timeSlot);
         }
     }

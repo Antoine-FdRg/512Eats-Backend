@@ -15,9 +15,7 @@ import commonlibrary.model.order.SubOrder;
 import commonlibrary.repository.LocationRepository;
 import commonlibrary.repository.RegisteredUserRepository;
 import commonlibrary.repository.RestaurantRepository;
-import commonlibrary.repository.TimeSlotRepository;
 import commonlibrary.model.restaurant.Restaurant;
-import commonlibrary.model.restaurant.TimeSlot;
 import team.k.restaurantService.RestaurantService;
 
 import java.time.LocalDate;
@@ -39,16 +37,14 @@ public class SubOrderStepdefs {
 
     RegisteredUserRepository registeredUserRepository;
     RestaurantRepository restaurantRepository;
-    TimeSlotRepository timeSlotRepository;
     LocationRepository locationRepository;
 
     @Before
     public void setUp() {
         registeredUserRepository = new RegisteredUserRepository();
         restaurantRepository = new RestaurantRepository();
-        timeSlotRepository = new TimeSlotRepository();
         locationRepository = new LocationRepository();
-        restaurantService = new RestaurantService(restaurantRepository, timeSlotRepository);
+        restaurantService = new RestaurantService(restaurantRepository);
     }
 
     @Given("a registeredUser called {string} with the role {role}")
@@ -73,9 +69,7 @@ public class SubOrderStepdefs {
     @And("with a productionCapacity of {int} on the timeslot beginning at {int}:{int} on {int}-{int}-{int}")
     public void withAProductionCapacityOfForTheTimeslotAtOn(int productionCapacity, int startHours, int startMinutes, int startDay, int startMonth, int startYear) {
         LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, startHours, startMinutes);
-        TimeSlot timeSlot = new TimeSlot(startTime, restaurant, productionCapacity);
-        timeSlotRepository.add(timeSlot);
-        restaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
+        restaurantService.addTimeSlotToRestaurant(restaurant.getId(), startTime, productionCapacity);
     }
 
     @And("the delivery location {string}, {string} in {string}")
