@@ -183,7 +183,7 @@ public class OrderService {
         SubOrder suborder = new OrderBuilder()
                 .setUserID(registeredUser.getId())
                 .setRestaurantID(restaurantId)
-                .setGroupOrder(groupOrder)
+                .setDeliveryTime(groupOrder.getDeliveryDateTime())
                 .build();
         registeredUser.setCurrentOrder(suborder);
         groupOrder.addSubOrder(suborder);

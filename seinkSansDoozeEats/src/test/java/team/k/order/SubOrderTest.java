@@ -45,7 +45,7 @@ class SubOrderTest {
                 setDishes(dishes).
                 setDeliveryTime(LocalDateTime.now().plusHours(1)).
                 setPlacedDate(LocalDateTime.now()).
-                setGroupOrder(groupOrder).build();
+                build();
 
         groupOrder.addSubOrder(subOrder);
     }

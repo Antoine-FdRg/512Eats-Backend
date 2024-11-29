@@ -97,7 +97,6 @@ public class SubOrderStepdefs {
     public void aSuborderCreatedInTheGroupOrderForTheRestaurantNaga(String restaurantName) {
         restaurantService.getRestaurantByName(restaurantName);
         subOrder = new OrderBuilder()
-                .setGroupOrder(groupOrder)
                 .setRestaurantID(restaurant.getId())
                 .setUserID(registeredUser.getId())
                 .setDeliveryTime(groupOrder.getDeliveryDateTime())

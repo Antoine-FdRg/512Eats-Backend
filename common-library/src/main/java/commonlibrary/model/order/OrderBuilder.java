@@ -13,7 +13,6 @@ public class OrderBuilder {
     int id;
     OrderStatus status;
     double price;
-    GroupOrder groupOrder;
     int restaurantID;
     int userID;
     final List<Dish> dishes;
@@ -32,11 +31,6 @@ public class OrderBuilder {
 
     public OrderBuilder setPrice(double price) {
         this.price = price;
-        return this;
-    }
-
-    public OrderBuilder setGroupOrder(GroupOrder groupOrder) {
-        this.groupOrder = groupOrder;
         return this;
     }
 
@@ -86,11 +80,7 @@ public class OrderBuilder {
     }
 
     public SubOrder build() {
-        if (groupOrder != null && deliveryLocation != null) {
-            throw new IllegalArgumentException("The builder has both a group order and a delivery location, it should have only one of them.\n" +
-                    "It needs a groupOrder to create a SubOrder or a deliveryLocation to create an IndividualOrder");
-        }
-        if (this.groupOrder == null) {
+        if (deliveryLocation != null) {
             return new IndividualOrder(this);
         }
         return new SubOrder(this);
