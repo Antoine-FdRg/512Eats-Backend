@@ -75,8 +75,8 @@ public class RegisteredUserConsultDishesAvailable {
     public void userHasACurrentOrderForTheRestaurantNagaInTheTimeslotBeginningAtOn(String userName, int min, int hour, int day, int month, int year) throws IOException, InterruptedException {
         registeredUser = new RegisteredUser(userName, Role.STUDENT);
         order = new OrderBuilder()
-                .setRestaurant(nagaRestaurant)
-                .setUser(registeredUser)
+                .setRestaurantID(nagaRestaurant.getId())
+                .setUserID(registeredUser.getId())
                 .setDeliveryTime(LocalDateTime.of(year, month, day, hour, min))
                 .build();
         registeredUser.setCurrentOrder(order);

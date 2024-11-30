@@ -41,10 +41,11 @@ public class DishController {
     @Endpoint(path = "/update", method = HttpMethod.PUT)
     @Response(status = 200, message = "Dish updated successfully")
     public void update(@RequestBody Dish dish) throws SSDBQueryProcessingException {
-        boolean success = DishRepository.getInstance().update(dish);
-        if(!success){
-            throw new SSDBQueryProcessingException(404, "Dish with ID " + dish.getId() + " not found.");
+        Dish existingDish = DishRepository.getInstance().findById(dish.getId());
+        if (existingDish == null) {
+            throw new SSDBQueryProcessingException(404, "Dish with ID " + dish.getId() + " not found, try creating it instead.");
         }
+        DishRepository.getInstance().update(dish, existingDish);
     }
 
     @Endpoint(path = "/delete/{id}", method = HttpMethod.DELETE)

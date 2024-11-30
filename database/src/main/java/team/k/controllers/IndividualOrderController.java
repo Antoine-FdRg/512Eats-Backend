@@ -40,10 +40,11 @@ public class IndividualOrderController {
     @Endpoint(path = "/update", method = HttpMethod.PUT)
     @Response(status = 200, message = "Individual order updated successfully")
     public void update(@RequestBody IndividualOrder individualOrder) throws SSDBQueryProcessingException {
-        boolean success = IndividualOrderRepository.getInstance().update(individualOrder);
-        if (!success) {
-            throw new SSDBQueryProcessingException(404, "Individual order with ID " + individualOrder.getId() + " not found.");
+        IndividualOrder existingIndividualOrder = IndividualOrderRepository.getInstance().findById(individualOrder.getId());
+        if (existingIndividualOrder == null) {
+            throw new SSDBQueryProcessingException(404, "Individual order with ID " + individualOrder.getId() + " not found, try creating it instead.");
         }
+        IndividualOrderRepository.getInstance().update(individualOrder, existingIndividualOrder);
     }
 
     @Endpoint(path = "/delete/{id}", method = HttpMethod.DELETE)

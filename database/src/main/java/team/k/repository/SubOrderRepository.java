@@ -21,6 +21,6 @@ public class SubOrderRepository extends GenericRepository<SubOrder> {
     }
 
     public SubOrder findByUserId(int id) {
-        return findAll().stream().filter(subOrder -> subOrder.getUser().getId() == id).findFirst().orElse(null);
+        return findAll().stream().filter(subOrder -> subOrder.getUserID() == id).findFirst().orElse(null);
     }
 }

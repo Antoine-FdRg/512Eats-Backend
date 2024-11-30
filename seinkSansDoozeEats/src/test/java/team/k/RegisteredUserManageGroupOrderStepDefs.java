@@ -1,5 +1,6 @@
 package team.k;
 
+import commonlibrary.repository.RegisteredUserRepository;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -32,6 +33,7 @@ import static org.junit.Assert.assertNull;
 public class RegisteredUserManageGroupOrderStepDefs {
     LocationRepository locationRepository;
     GroupOrderRepository groupOrderRepository;
+    RegisteredUserRepository registeredUserRepository;
     GroupOrderService groupOrderService;
     int codeToShare;
     Location location;
@@ -51,9 +53,11 @@ public class RegisteredUserManageGroupOrderStepDefs {
         MockitoAnnotations.openMocks(this);
         locationRepository = new LocationRepository();
         groupOrderRepository = new GroupOrderRepository();
+        registeredUserRepository = new RegisteredUserRepository();
         groupOrderService = new GroupOrderService(
                 groupOrderRepository,
-                locationRepository);
+                locationRepository,
+                registeredUserRepository);
     }
 
     @Given("a delivery location")
@@ -204,17 +208,19 @@ public class RegisteredUserManageGroupOrderStepDefs {
 
 
     @And("a suborder of the user {string} with the status {status} added in the group order")
-    public void aSuborderWithTheStatusAddedInTheGroupOrder(String name, OrderStatus status) {
+    public void aSuborderWithTheStatusAddedInTheGroupOrder(String name, OrderStatus status) throws IOException, InterruptedException {
         user1 = new RegisteredUser(name, Role.STUDENT);
-        PaidSuborder = new OrderBuilder().setUser(user1).build();
+        registeredUserRepository.add(user1);
+        PaidSuborder = new OrderBuilder().setUserID(user1.getId()).build();
         PaidSuborder.setStatus(status);
         groupOrder.addSubOrder(PaidSuborder);
     }
 
     @And("a suborder of the user {string} not already placed with the status {status} added in the group order")
-    public void aSuborderNotAlreadyPlacedWithTheStatusCREATEDAddedInTheGroupOrder(String name, OrderStatus status) {
+    public void aSuborderNotAlreadyPlacedWithTheStatusCREATEDAddedInTheGroupOrder(String name, OrderStatus status) throws IOException, InterruptedException {
         user2 = new RegisteredUser(name, Role.STUDENT);
-        UnpaidSuborder = new OrderBuilder().setUser(user2).build();
+        registeredUserRepository.add(user2);
+        UnpaidSuborder = new OrderBuilder().setUserID(user2.getId()).build();
         UnpaidSuborder.setStatus(status);
         groupOrder.addSubOrder(UnpaidSuborder);
 

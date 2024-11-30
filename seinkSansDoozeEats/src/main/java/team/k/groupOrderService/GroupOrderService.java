@@ -1,8 +1,10 @@
 package team.k.groupOrderService;
 
 import commonlibrary.model.Location;
+import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.order.GroupOrder;
 import commonlibrary.model.restaurant.Restaurant;
+import commonlibrary.repository.RegisteredUserRepository;
 import lombok.RequiredArgsConstructor;
 import commonlibrary.repository.GroupOrderRepository;
 import commonlibrary.repository.LocationRepository;
@@ -10,6 +12,7 @@ import commonlibrary.repository.LocationRepository;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -17,6 +20,7 @@ import java.util.Objects;
 public class GroupOrderService {
     private final GroupOrderRepository groupOrderRepository;
     private final LocationRepository locationRepository;
+    private final RegisteredUserRepository registeredUserRepository;
 
     /**
      * Create a group order
@@ -80,7 +84,21 @@ public class GroupOrderService {
         if (Objects.isNull(groupOrder)) {
             throw new NoSuchElementException("Group order not found");
         }
-        groupOrder.place(now);
+        List<RegisteredUser> members = groupOrder.getSubOrders().stream().map(subOrder -> {
+            RegisteredUser orderOwner = null;
+            try {
+                orderOwner = registeredUserRepository.findById(subOrder.getUserID());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            if (Objects.isNull(orderOwner)) {
+                throw new NoSuchElementException("Order owner not found");
+            }
+            return orderOwner;
+        }).toList();
+        groupOrder.place(now, members);
     }
 
 }

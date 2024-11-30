@@ -42,7 +42,7 @@ public class RestaurantController {
         return RestaurantRepository.getInstance().findRestaurantsByAvailability(dateTime);
     }
 
-    @Endpoint(path = "/{id}", method = HttpMethod.GET)
+    @Endpoint(path = "/get/{id}", method = HttpMethod.GET)
     public Restaurant findById(@PathVariable("id") int id) throws SSDBQueryProcessingException {
         Restaurant restaurant = RestaurantRepository.getInstance().findById(id);
         if (restaurant == null) {
@@ -63,10 +63,11 @@ public class RestaurantController {
     @Endpoint(path = "/update", method = HttpMethod.PUT)
     @Response(status = 200, message = "Restaurant updated successfully")
     public void update(@RequestBody Restaurant restaurant) throws SSDBQueryProcessingException {
-        boolean success = RestaurantRepository.getInstance().update(restaurant);
-        if (!success) {
-            throw new SSDBQueryProcessingException(404, "Restaurant with ID " + restaurant.getId() + " not found.");
+        Restaurant existingRestaurant = RestaurantRepository.getInstance().findById(restaurant.getId());
+        if (existingRestaurant == null) {
+            throw new SSDBQueryProcessingException(404, "Restaurant with ID " + restaurant.getId() + " not found, try creating it instead.");
         }
+        RestaurantRepository.getInstance().update(restaurant, existingRestaurant);
     }
 
     @Endpoint(path = "/delete/{id}", method = HttpMethod.DELETE)

@@ -1,7 +1,7 @@
 package commonlibrary.model.restaurant.discount;
 
+import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.order.SubOrder;
-import commonlibrary.model.restaurant.Restaurant;
 
 /**
  * Represents a discount strategy where a free dish is given after a certain number of orders in the restaurant.
@@ -12,14 +12,14 @@ public class FreeDishAfterXOrders extends DiscountStrategy {
      */
     private final int nbOrdersRequired;
 
-    public FreeDishAfterXOrders(Restaurant restaurant, int nbOrdersRequired) {
-        super(restaurant);
+    public FreeDishAfterXOrders(int restaurantID, int nbOrdersRequired) {
+        super(restaurantID);
         this.nbOrdersRequired = nbOrdersRequired;
     }
 
     @Override
-    public double applyDiscount(SubOrder order) {
-        if (getNbOrderInRestaurant(order) % nbOrdersRequired == 0) {
+    public double applyDiscount(SubOrder order, RegisteredUser orderOwner) {
+        if (getNbOrderInRestaurant(orderOwner) % nbOrdersRequired == 0) {
             return order.getPrice() - order.getCheaperDish().getPrice();
         }
         return order.getPrice();
@@ -29,10 +29,10 @@ public class FreeDishAfterXOrders extends DiscountStrategy {
     /**
      * Get the number of orders of the user in the restaurant
      *
-     * @param order the order to check
+     * @param orderOwner the user who owns the order
      * @return the number of orders of the user in the restaurant
      */
-    public int getNbOrderInRestaurant(SubOrder order) {
-        return (int) order.getUser().getOrders().stream().filter(o -> o.getRestaurant().equals(restaurant)).count();
+    public int getNbOrderInRestaurant(RegisteredUser orderOwner) {
+        return (int) orderOwner.getOrders().stream().filter(o -> o.getRestaurantID() == restaurantID).count();
     }
 }

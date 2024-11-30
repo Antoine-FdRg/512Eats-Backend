@@ -20,7 +20,7 @@ public class SubOrderController {
     @Endpoint(path = "", method = HttpMethod.GET)
     public List<SubOrder> findAll(@RequestParam("userId") Integer userId) {
         if (userId != null && userId != 0) {
-            return SubOrderRepository.getInstance().findAll().stream().filter(subOrder -> subOrder.getUser().getId() == userId).toList();
+            return SubOrderRepository.getInstance().findAll().stream().filter(subOrder -> subOrder.getUserID() == userId).toList();
         }
         return SubOrderRepository.getInstance().findAll();
     }
@@ -46,10 +46,11 @@ public class SubOrderController {
     @Endpoint(path = "/update", method = HttpMethod.PUT)
     @Response(status = 200, message = "Suborder updated successfully")
     public void update(@RequestBody SubOrder suborder) throws SSDBQueryProcessingException {
-        boolean success = SubOrderRepository.getInstance().update(suborder);
-        if (!success) {
+        SubOrder existingSuborder = SubOrderRepository.getInstance().findById(suborder.getId());
+        if (existingSuborder == null) {
             throw new SSDBQueryProcessingException(404, "Suborder with ID " + suborder.getId() + " not found.");
         }
+        SubOrderRepository.getInstance().update(suborder, existingSuborder);
     }
 
     @Endpoint(path = "/delete/{id}", method = HttpMethod.DELETE)

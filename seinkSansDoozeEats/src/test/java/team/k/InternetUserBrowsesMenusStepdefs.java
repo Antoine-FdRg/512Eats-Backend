@@ -23,17 +23,14 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static junit.framework.TestCase.assertEquals;
-import static org.mockito.Mockito.when;
 
 public class InternetUserBrowsesMenusStepdefs {
 
 
-    @Mock
     RestaurantRepository restaurantRepository;
-    @Mock
+
     DishRepository dishRepository;
 
-    @InjectMocks
     private RestaurantService restaurantService;
     private Restaurant restaurant;
     Restaurant restaurantB;
@@ -45,6 +42,9 @@ public class InternetUserBrowsesMenusStepdefs {
 
     @Before
     public void setUp() {
+        restaurantRepository = new RestaurantRepository();
+        restaurantService = new RestaurantService(restaurantRepository);
+        dishRepository = new DishRepository();
         MockitoAnnotations.openMocks(this);
     }
 
@@ -59,24 +59,24 @@ public class InternetUserBrowsesMenusStepdefs {
     @Given("A restaurant {string} with a dish {string} and a dish {string}")
     public void aRestaurantExistInTheListOfRestaurantsWithADishAndADish(String restaurantName, String dishNameA, String dishNameB) throws IOException, InterruptedException {
         dishes = new ArrayList<>();
-        Dish dishA = new Dish.Builder().setName(dishNameA).setDescription("Description").setPrice(5).setPreparationTime(3).build();
-        when(dishRepository.findById(dishA.getId())).thenReturn(dishA);
+        Dish dishA = new Dish.Builder().setName(dishNameA).setId(1).setPrice(5).setPreparationTime(3).build();
         dishes.add(dishA);
-        Dish dishB = new Dish.Builder().setName(dishNameB).setDescription("Description").setPrice(5).setPreparationTime(3).build();
-        when(dishRepository.findById(dishB.getId())).thenReturn(dishB);
+        Dish dishB = new Dish.Builder().setName(dishNameB).setId(2).setPrice(5).setPreparationTime(3).build();
         dishes.add(dishB);
-        when(dishRepository.findAll()).thenReturn(dishes);
+        dishRepository.add(dishA);
+        dishRepository.add(dishB);
         Restaurant restaurantA = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).build();
         restaurantA.addDish(dishA);
         restaurantA.addDish(dishB);
-        when(restaurantRepository.findRestaurantByName(restaurantName)).thenReturn(List.of(restaurantA));
-        when(restaurantRepository.findById(restaurantA.getId())).thenReturn(restaurantA);
+        restaurantRepository.add(restaurantA);
         restaurantService.addRestaurant(restaurantA);
     }
 
     @When("The user wants to have dishes non registered of the restaurant {string}")
     public void theUserWantsToHaveDishesNonRegisteredOfTheRestaurant(String restaurantName) throws IOException, InterruptedException {
-        when(restaurantRepository.findRestaurantByName(restaurantName)).thenReturn(List.of(restaurantB));
+        restaurantB = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).build();
+        restaurantService.addRestaurant(restaurantB);
+        restaurantRepository.add(restaurantB);
         try {
             restaurantDishes = restaurantService.getAllDishesFromRestaurant(restaurantB.getId());
         } catch (NoSuchElementException e) {

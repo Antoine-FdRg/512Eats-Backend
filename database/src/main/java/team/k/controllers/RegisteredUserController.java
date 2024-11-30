@@ -42,10 +42,11 @@ public class RegisteredUserController {
     @Endpoint(path = "/update", method = HttpMethod.PUT)
     @Response(status = 200, message = "Registered user updated successfully")
     public void update(@RequestBody RegisteredUser registeredUser) throws SSDBQueryProcessingException {
-        boolean success = RegisteredUserRepository.getInstance().update(registeredUser);
-        if (!success) {
-            throw new SSDBQueryProcessingException(404, "Registered user with ID " + registeredUser.getId() + " not found.");
+        RegisteredUser existingRegisteredUser = RegisteredUserRepository.getInstance().findById(registeredUser.getId());
+        if (existingRegisteredUser == null) {
+            throw new SSDBQueryProcessingException(404, "Registered user with ID " + registeredUser.getId() + " not found, try creating it instead.");
         }
+        RegisteredUserRepository.getInstance().update(registeredUser, existingRegisteredUser);
     }
 
     @Endpoint(path = "/delete/{id}", method = HttpMethod.DELETE)

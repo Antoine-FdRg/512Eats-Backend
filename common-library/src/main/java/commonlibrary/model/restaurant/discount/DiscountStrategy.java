@@ -1,16 +1,15 @@
 package commonlibrary.model.restaurant.discount;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.order.SubOrder;
-import commonlibrary.model.restaurant.Restaurant;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /**
  * The abstract class for discount strategy
  */
 @AllArgsConstructor
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@NoArgsConstructor
 public abstract class DiscountStrategy {
 
     private static int idCounter = 0;
@@ -18,10 +17,10 @@ public abstract class DiscountStrategy {
     /**
      * The restaurant that apply the discount strategy
      */
-    protected Restaurant restaurant;
+    protected int restaurantID;
 
-    public DiscountStrategy(Restaurant restaurant) {
-        this.restaurant = restaurant;
+    public DiscountStrategy(int restaurantID) {
+        this.restaurantID = restaurantID;
         this.id = idCounter++;
     }
 
@@ -31,5 +30,5 @@ public abstract class DiscountStrategy {
      * @param order the order to apply discount to
      * @return the discounted price
      */
-    public abstract double applyDiscount(SubOrder order);
+    public abstract double applyDiscount(SubOrder order, RegisteredUser orderOwner);
 }

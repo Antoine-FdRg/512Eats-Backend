@@ -15,7 +15,6 @@ import commonlibrary.model.order.SubOrder;
 import commonlibrary.repository.LocationRepository;
 import commonlibrary.repository.RegisteredUserRepository;
 import commonlibrary.repository.RestaurantRepository;
-import commonlibrary.repository.TimeSlotRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
 import team.k.restaurantService.RestaurantService;
@@ -40,16 +39,14 @@ public class SubOrderStepdefs {
 
     RegisteredUserRepository registeredUserRepository;
     RestaurantRepository restaurantRepository;
-    TimeSlotRepository timeSlotRepository;
     LocationRepository locationRepository;
 
     @Before
     public void setUp() {
         registeredUserRepository = new RegisteredUserRepository();
         restaurantRepository = new RestaurantRepository();
-        timeSlotRepository = new TimeSlotRepository();
         locationRepository = new LocationRepository();
-        restaurantService = new RestaurantService(restaurantRepository, timeSlotRepository);
+        restaurantService = new RestaurantService(restaurantRepository);
     }
 
     @Given("a registeredUser called {string} with the role {role}")
@@ -75,8 +72,7 @@ public class SubOrderStepdefs {
     public void withAProductionCapacityOfForTheTimeslotAtOn(int productionCapacity, int startHours, int startMinutes, int startDay, int startMonth, int startYear) throws IOException, InterruptedException {
         LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, startHours, startMinutes);
         TimeSlot timeSlot = new TimeSlot(startTime, restaurant, productionCapacity);
-        timeSlotRepository.add(timeSlot);
-        restaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
+        restaurantService.addTimeSlotToRestaurant(restaurant.getId(), startTime, productionCapacity);
     }
 
     @And("the delivery location {string}, {string} in {string}")
@@ -105,8 +101,8 @@ public class SubOrderStepdefs {
         restaurantService.getRestaurantByName(restaurantName);
         subOrder = new OrderBuilder()
                 .setGroupOrder(groupOrder)
-                .setRestaurant(restaurant)
-                .setUser(registeredUser)
+                .setRestaurantID(restaurant.getId())
+                .setUserID(registeredUser.getId())
                 .setDeliveryTime(groupOrder.getDeliveryDateTime())
                 .build();
         registeredUser.setCurrentOrder(subOrder);
@@ -118,7 +114,7 @@ public class SubOrderStepdefs {
         LocalDateTime paymentTime = LocalDateTime.of(
                 LocalDate.parse(day),
                 LocalTime.parse(hour));
-        registeredUser.getCurrentOrder().pay(paymentTime);
+        registeredUser.getCurrentOrder().pay(paymentTime, restaurant, registeredUser);
     }
 
     @Then("the subOrder has {status} status in the groupOrder")

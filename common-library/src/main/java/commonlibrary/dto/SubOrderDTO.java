@@ -7,9 +7,7 @@ import commonlibrary.model.order.GroupOrder;
 import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
 import commonlibrary.model.payment.Payment;
-import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.repository.RegisteredUserRepository;
-import commonlibrary.repository.RestaurantRepository;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -26,16 +24,14 @@ public record SubOrderDTO(int id, String price, GroupOrderDTO groupOrder, int re
 
         Payment convertedPayment = payment.convertPaymentDtoToPayment();
         GroupOrder convertedGroupOrder = groupOrder.convertGroupOrderDtoToGroupOrder();
-        RestaurantRepository restaurantRepository = new RestaurantRepository();
-        Restaurant restaurant = restaurantRepository.findById(restaurantId);
         RegisteredUserRepository registeredUserRepository = new RegisteredUserRepository();
         RegisteredUser user = registeredUserRepository.findById(userId);
         return new OrderBuilder()
                 .setId(id)
                 .setPrice(Double.parseDouble(price))
                 .setGroupOrder(convertedGroupOrder)
-                .setRestaurant(restaurant)
-                .setUser(user)
+                .setRestaurantID(restaurantId)
+                .setUserID(user.getId())
                 .setDishes(convertedDishes)
                 .setStatus(OrderStatus.valueOf(status))
                 .setPlacedDate(LocalDateTime.parse(placedDate))

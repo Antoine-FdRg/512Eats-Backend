@@ -6,6 +6,7 @@ import commonlibrary.dto.RestaurantDTO;
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.Dish;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import commonlibrary.model.order.SubOrder;
 import commonlibrary.model.restaurant.discount.DiscountStrategy;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Restaurant {
 
@@ -58,7 +60,7 @@ public class Restaurant {
      */
     public boolean isAvailable(LocalDateTime deliveryTimeWanted) {
         // Check if the order is created after opening time + 50 minutes (30min for the timeslot and 20min for the delivery ) and before closing time - 20 minutes (for the delivery)
-        if (!deliveryTimeWanted.toLocalTime().isAfter(open.plusMinutes(ORDER_PROCESSING_TIME_MINUTES))
+        if (deliveryTimeWanted.toLocalTime().isBefore(open.plusMinutes(ORDER_PROCESSING_TIME_MINUTES))
                 || !deliveryTimeWanted.toLocalTime().isBefore(close.plusMinutes(DELIVERY_DURATION))) {
             return false;
         }

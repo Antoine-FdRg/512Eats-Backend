@@ -1,5 +1,6 @@
 package commonlibrary.model.order;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import commonlibrary.dto.DishDTO;
@@ -11,6 +12,7 @@ import commonlibrary.model.Dish;
 import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.restaurant.Restaurant;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import commonlibrary.model.payment.Payment;
 
@@ -21,12 +23,17 @@ import java.util.List;
 @Getter
 @Setter
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@NoArgsConstructor
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE)
 public class SubOrder {
     private int id;
     private double price;
     private GroupOrder groupOrder;
-    private Restaurant restaurant;
-    private RegisteredUser user;
+    private int restaurantID;
+    private int userID;
     private List<Dish> dishes;
     private OrderStatus status;
     private LocalDateTime placedDate;
@@ -37,8 +44,8 @@ public class SubOrder {
         this.id = orderBuilder.id;
         this.price = orderBuilder.price;
         this.groupOrder = orderBuilder.groupOrder;
-        this.restaurant = orderBuilder.restaurant;
-        this.user = orderBuilder.user;
+        this.restaurantID = orderBuilder.restaurantID;
+        this.userID = orderBuilder.userID;
         this.dishes = orderBuilder.dishes;
         this.status = orderBuilder.status;
         this.placedDate = orderBuilder.placedDate;
@@ -63,15 +70,15 @@ public class SubOrder {
         status = OrderStatus.CANCELED;
     }
 
-    public void place(LocalDateTime now) {
+    public void place(LocalDateTime now, RegisteredUser orderOwner) {
         this.setStatus(OrderStatus.PLACED);
         this.setPlacedDate(now);
-        this.user.addOrderToHistory(this);
+        orderOwner.addOrderToHistory(this);
     }
 
-    public void pay(LocalDateTime now) {
+    public void pay(LocalDateTime now, Restaurant restaurant, RegisteredUser user) {
         if (restaurant.getDiscountStrategy() != null) {
-            this.price = this.restaurant.getDiscountStrategy().applyDiscount(this); //Appliquer la discount
+            this.price = restaurant.getDiscountStrategy().applyDiscount(this, user); //Appliquer la discount
         }
         this.setStatus(OrderStatus.PAID);
     }
@@ -84,7 +91,7 @@ public class SubOrder {
         PaymentDTO convertedPayment = payment.convertPaymentToPaymentDto();
         GroupOrderDTO convertedGroupOrder = groupOrder.convertGroupOrderToGroupOrderDto();
 
-        return new SubOrderDTO(id, String.valueOf(price), convertedGroupOrder, restaurant.getId(), user.getId(),
+        return new SubOrderDTO(id, String.valueOf(price), convertedGroupOrder, restaurantID, userID,
                 convertedDishes, status.toString(), placedDate.toString(), deliveryDate.toString(), convertedPayment);
     }
 }

@@ -5,7 +5,6 @@ import commonlibrary.model.Dish;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
 import commonlibrary.repository.RestaurantRepository;
-import commonlibrary.repository.TimeSlotRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
@@ -18,7 +17,6 @@ import java.util.NoSuchElementException;
 public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
-    private final TimeSlotRepository timeSlotRepository;
 
     /**
      * Get all dishes from a restaurant
@@ -65,12 +63,9 @@ public class RestaurantService {
     }
 
     /***** Update *****/
-    public void addTimeSlotToRestaurant(int restaurantId, int timeSlotId) throws IOException, InterruptedException {
+    public void addTimeSlotToRestaurant(int restaurantId, LocalDateTime start, int productionCapacity) throws IOException, InterruptedException {
         Restaurant restaurant = getRestaurantOrThrowIfNull(restaurantRepository.findById(restaurantId));
-        TimeSlot ts = timeSlotRepository.findById(timeSlotId);
-        if (ts == null) {
-            throw new NoSuchElementException("Time slot not found");
-        }
+        TimeSlot ts = new TimeSlot(start, restaurant, productionCapacity);
         restaurant.addTimeSlot(ts);
     }
 
