@@ -28,9 +28,10 @@ public class LocationController {
 
     @Endpoint(path = "/create", method = HttpMethod.POST)
     @Response(status = 201, message = "Location created successfully")
-    public void add(@RequestBody LocationCreatorDTO locationCreatorDTO) {
+    public Location add(@RequestBody LocationCreatorDTO locationCreatorDTO) {
         Location location = locationCreatorDTO.toLocation();
         LocationRepository.getInstance().add(location);
+        return location;
     }
 
     @Endpoint(path = "/update", method = HttpMethod.PUT)

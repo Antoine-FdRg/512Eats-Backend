@@ -29,9 +29,10 @@ public class DishController {
 
     @Endpoint(path = "/create", method = HttpMethod.POST)
     @Response(status = 201, message = "Dish created successfully")
-    public void add(@RequestBody DishCreatorDTO dishCreatorDTO) {
+    public Dish add(@RequestBody DishCreatorDTO dishCreatorDTO) {
         Dish createdDish = dishCreatorDTO.toDish();
         DishRepository.getInstance().add(createdDish);
+        return createdDish;
     }
 
     @Endpoint(path = "/update", method = HttpMethod.PUT)
