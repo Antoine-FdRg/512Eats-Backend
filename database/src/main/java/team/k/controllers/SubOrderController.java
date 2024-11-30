@@ -21,7 +21,7 @@ public class SubOrderController {
     @Endpoint(path = "", method = HttpMethod.GET)
     public List<SubOrder> findAll(@RequestParam("userId") Integer userId) {
         if (userId != null && userId != 0) {
-            return SubOrderRepository.getInstance().findAll().stream().filter(subOrder -> subOrder.getUserID() == userId).toList();
+            return SubOrderRepository.getInstance().findByUserId(userId);
         }
         return SubOrderRepository.getInstance().findAll();
     }
