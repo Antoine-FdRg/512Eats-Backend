@@ -1,14 +1,13 @@
 package commonlibrary.dto;
 
 import commonlibrary.enumerations.OrderStatus;
-import commonlibrary.model.Location;
 import commonlibrary.model.order.GroupOrder;
 import commonlibrary.model.order.SubOrder;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record GroupOrderDTO(int id, String status, LocationDTO deliveryLocation,
+public record GroupOrderDTO(int id, String status, int deliveryLocationID,
                             String deliveryDateTime, List<SubOrderDTO> suborders) {
 
     /*
@@ -16,8 +15,6 @@ public record GroupOrderDTO(int id, String status, LocationDTO deliveryLocation,
      */
     public GroupOrder convertGroupOrderDtoToGroupOrder() {
         OrderStatus orderStatus = OrderStatus.valueOf(status);
-
-        Location convertedLocation = deliveryLocation.convertLocationDtoToLocation();
 
         LocalDateTime deliveryDateTimeParsed = LocalDateTime.parse(deliveryDateTime);
         List<SubOrder> convertedSubOrders = suborders.stream()
@@ -28,7 +25,7 @@ public record GroupOrderDTO(int id, String status, LocationDTO deliveryLocation,
                 .withId(id)
                 .withStatus(orderStatus)
                 .withDate(deliveryDateTimeParsed)
-                .withDeliveryLocation(convertedLocation)
+                .withDeliveryLocationID(deliveryLocationID)
                 .withSubOrders(convertedSubOrders)
                 .build();
     }

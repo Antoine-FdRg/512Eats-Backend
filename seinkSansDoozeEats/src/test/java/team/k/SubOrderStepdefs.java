@@ -82,13 +82,18 @@ public class SubOrderStepdefs {
         locationRepository.add(deliveryLocation);
     }
 
-    @And("a group order created for {string} the {string}")
-    public void aGroupOrderCreatedForThe(String orderTime, String orderDate) {
+    @And("a group order created for {string} the {string} to be delivered to {string}, {string} in {string}")
+    public void aGroupOrderCreatedForThe(String orderTime, String orderDate, String streetNumber, String street, String city) {
         LocalDateTime deliveryDateTime = LocalDateTime.of(
                 LocalDate.parse(orderDate),
                 LocalTime.parse(orderTime));
+        deliveryLocation = new Location.Builder()
+                .setNumber(streetNumber)
+                .setAddress(street)
+                .setCity(city)
+                .build();
         groupOrder = new GroupOrder.Builder()
-                .withDeliveryLocation(deliveryLocation)
+                .withDeliveryLocationID(deliveryLocation.getId())
                 .withDate(deliveryDateTime)
                 .build();
     }

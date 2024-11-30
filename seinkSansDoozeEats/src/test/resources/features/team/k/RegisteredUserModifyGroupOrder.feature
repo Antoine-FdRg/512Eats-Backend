@@ -15,6 +15,6 @@ Feature: A registered user creates a group order
     Then the group order is not modified and the delivery datetime is still null
 
   Scenario: A registered user modifies a group order that has a delivery datetime
-    Given a group order created with "2025-01-23" at "13:20" as delivery datetime
+    Given a group order created with "2025-01-23" at "13:20" as delivery datetime to be delivered to "930", "Rte des Colles" in "Biot"
     When the user modifies the delivery datetime to set "2025-01-23" at "12:50" on "2025-01-23" at "10:00"
     Then the group order delivery datetime is "2025-01-23" at "13:20"

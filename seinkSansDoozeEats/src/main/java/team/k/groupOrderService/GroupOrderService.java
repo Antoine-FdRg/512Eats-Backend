@@ -40,7 +40,7 @@ public class GroupOrderService {
             throw new IllegalArgumentException("Delivery time cannot be this early");
         }
         GroupOrder groupOrder = new GroupOrder.Builder()
-                .withDeliveryLocation(location)
+                .withDeliveryLocationID(location.getId())
                 .withDate(deliveryDateTime)
                 .build();
         groupOrderRepository.add(groupOrder);

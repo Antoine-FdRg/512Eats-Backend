@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import commonlibrary.dto.GroupOrderDTO;
 import commonlibrary.dto.SubOrderDTO;
 import commonlibrary.enumerations.OrderStatus;
-import commonlibrary.model.Location;
 import commonlibrary.model.RegisteredUser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,14 +26,14 @@ public class GroupOrder {
     private LocalDateTime deliveryDateTime;
     private OrderStatus status;
     private List<SubOrder> subOrders;
-    private Location deliveryLocation;
+    private int deliveryLocationID;
 
     private GroupOrder(Builder builder) {
         this.id = builder.id;
         this.deliveryDateTime = builder.deliveryDateTime;
         this.status = builder.status;
         this.subOrders = builder.subOrders;
-        this.deliveryLocation = builder.deliveryLocation;
+        this.deliveryLocationID = builder.deliveryLocationID;
     }
 
     public boolean addSubOrder(SubOrder subOrder) {
@@ -71,7 +70,7 @@ public class GroupOrder {
         List<SubOrderDTO> convertedSubOrders = subOrders.stream()
                 .map(SubOrder::convertSubOrderToSubOrderDto)
                 .toList();
-        return new GroupOrderDTO(id, status.toString(), deliveryLocation.convertLocationToLocationDto(), deliveryDateTime.toString(), convertedSubOrders);
+        return new GroupOrderDTO(id, status.toString(), deliveryLocationID, deliveryDateTime.toString(), convertedSubOrders);
     }
 
     public static class Builder {
@@ -80,7 +79,7 @@ public class GroupOrder {
         private LocalDateTime deliveryDateTime;
         private OrderStatus status;
         private List<SubOrder> subOrders;
-        private Location deliveryLocation;
+        private int deliveryLocationID;
 
         public Builder() {
             this.id = generateId(nextId++);
@@ -115,8 +114,8 @@ public class GroupOrder {
             return this;
         }
 
-        public Builder withDeliveryLocation(Location deliveryLocation) {
-            this.deliveryLocation = deliveryLocation;
+        public Builder withDeliveryLocationID(int deliveryLocationID) {
+            this.deliveryLocationID = deliveryLocationID;
             return this;
         }
 

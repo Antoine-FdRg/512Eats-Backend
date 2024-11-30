@@ -3,7 +3,7 @@
 Feature: A registered user validates a group order
 
   Background:
-    Given a group order created with "2024-12-10" at "12:00" as delivery datetime
+    Given a group order created with "2024-12-10" at "12:00" as delivery datetime to be delivered to "930", "Rte des Colles" in "Biot"
 
   Scenario:
     Given a suborder of the user "Tom" with the status PAID added in the group order
