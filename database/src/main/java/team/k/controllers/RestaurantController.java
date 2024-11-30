@@ -10,6 +10,7 @@ import ssdbrestframework.annotations.RequestBody;
 import ssdbrestframework.annotations.RequestParam;
 import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
+import team.k.repository.DishRepository;
 import team.k.repository.RestaurantRepository;
 
 import java.time.LocalDateTime;
@@ -44,11 +45,8 @@ public class RestaurantController {
 
     @Endpoint(path = "/get/{id}", method = HttpMethod.GET)
     public Restaurant findById(@PathVariable("id") int id) throws SSDBQueryProcessingException {
-        Restaurant restaurant = RestaurantRepository.getInstance().findById(id);
-        if (restaurant == null) {
-            throw new SSDBQueryProcessingException(404, "Restaurant with ID " + id + " not found.");
-        }
-        return restaurant;
+        RestaurantRepository.throwIfRestaurantIdDoesNotExist(id);
+        return RestaurantRepository.getInstance().findById(id);
     }
 
     @Endpoint(path = "/create", method = HttpMethod.POST)
@@ -57,25 +55,23 @@ public class RestaurantController {
         if (RestaurantRepository.getInstance().findById(restaurant.getId()) != null) {
             throw new SSDBQueryProcessingException(409, "Restaurant with ID " + restaurant.getId() + " already exists, try updating it instead.");
         }
+        DishRepository.throwIfDishesDoNotExist(restaurant.getDishes());
         RestaurantRepository.getInstance().add(restaurant);
     }
 
     @Endpoint(path = "/update", method = HttpMethod.PUT)
     @Response(status = 200, message = "Restaurant updated successfully")
     public void update(@RequestBody Restaurant restaurant) throws SSDBQueryProcessingException {
+        RestaurantRepository.throwIfRestaurantIdDoesNotExist(restaurant.getId());
+        DishRepository.throwIfDishesDoNotExist(restaurant.getDishes());
         Restaurant existingRestaurant = RestaurantRepository.getInstance().findById(restaurant.getId());
-        if (existingRestaurant == null) {
-            throw new SSDBQueryProcessingException(404, "Restaurant with ID " + restaurant.getId() + " not found, try creating it instead.");
-        }
         RestaurantRepository.getInstance().update(restaurant,existingRestaurant);
     }
 
     @Endpoint(path = "/delete/{id}", method = HttpMethod.DELETE)
     @Response(status = 200, message = "Restaurant deleted successfully")
     public void remove(@PathVariable("id") int id) throws SSDBQueryProcessingException {
-        boolean success = RestaurantRepository.getInstance().remove(id);
-        if (!success) {
-            throw new SSDBQueryProcessingException(404, "Restaurant with ID " + id + " not found.");
-        }
+        RestaurantRepository.throwIfRestaurantIdDoesNotExist(id);
+        RestaurantRepository.getInstance().remove(id);
     }
 }

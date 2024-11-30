@@ -9,6 +9,7 @@ import ssdbrestframework.annotations.RequestBody;
 import ssdbrestframework.annotations.RequestParam;
 import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
+import team.k.repository.DishRepository;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
 import team.k.repository.SubOrderRepository;
@@ -39,6 +40,7 @@ public class SubOrderController {
         }
         RestaurantRepository.throwIfRestaurantIdDoesNotExist(subOrder.getRestaurantID());
         RegisteredUserRepository.throwIfRegisteredIdDoesNotExist(subOrder.getUserID());
+        DishRepository.throwIfDishesDoNotExist(subOrder.getDishes());
         SubOrderRepository.getInstance().add(subOrder);
     }
 
@@ -48,6 +50,7 @@ public class SubOrderController {
         SubOrderRepository.throwIfSubOrderIdDoesNotExist(subOrder.getId());
         RestaurantRepository.throwIfRestaurantIdDoesNotExist(subOrder.getRestaurantID());
         RegisteredUserRepository.throwIfRegisteredIdDoesNotExist(subOrder.getUserID());
+        DishRepository.throwIfDishesDoNotExist(subOrder.getDishes());
         SubOrder existingSuborder = SubOrderRepository.getInstance().findById(subOrder.getId());
         SubOrderRepository.getInstance().update(subOrder,existingSuborder);
     }

@@ -9,6 +9,7 @@ import ssdbrestframework.annotations.RequestBody;
 import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
 import team.k.repository.RegisteredUserRepository;
+import team.k.repository.SubOrderRepository;
 
 import java.util.List;
 
@@ -33,6 +34,8 @@ public class RegisteredUserController {
         if (RegisteredUserRepository.getInstance().findById(registeredUser.getId()) != null) {
             throw new SSDBQueryProcessingException(409, "Registered user with ID " + registeredUser.getId() + " already exists, try updating it instead.");
         }
+        SubOrderRepository.throwIfSubOrdersDoNotExist(registeredUser.getOrders());
+        SubOrderRepository.throwIfSubOrderIdDoesNotExist(registeredUser.getCurrentOrder().getId());
         RegisteredUserRepository.getInstance().add(registeredUser);
     }
 
@@ -40,6 +43,8 @@ public class RegisteredUserController {
     @Response(status = 200, message = "Registered user updated successfully")
     public void update(@RequestBody RegisteredUser registeredUser) throws SSDBQueryProcessingException {
         RegisteredUserRepository.throwIfRegisteredIdDoesNotExist(registeredUser.getId());
+        SubOrderRepository.throwIfSubOrdersDoNotExist(registeredUser.getOrders());
+        SubOrderRepository.throwIfSubOrderIdDoesNotExist(registeredUser.getCurrentOrder().getId());
         RegisteredUser existingRegisteredUser = RegisteredUserRepository.getInstance().findById(registeredUser.getId());
         RegisteredUserRepository.getInstance().update(registeredUser, existingRegisteredUser);
     }

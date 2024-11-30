@@ -3,6 +3,7 @@ package team.k.repository;
 import commonlibrary.model.order.SubOrder;
 import ssdbrestframework.SSDBQueryProcessingException;
 
+import java.util.List;
 import java.util.Objects;
 
 public class SubOrderRepository extends GenericRepository<SubOrder> {
@@ -31,6 +32,12 @@ public class SubOrderRepository extends GenericRepository<SubOrder> {
     public static void throwIfSubOrderIdDoesNotExist(int subOrderID) throws SSDBQueryProcessingException {
         if (Objects.isNull(SubOrderRepository.getInstance().findById(subOrderID))) {
             throw new SSDBQueryProcessingException(404, "Suborder with ID " + subOrderID + " not found.");
+        }
+    }
+
+    public static void throwIfSubOrdersDoNotExist(List<SubOrder> subOrders) throws SSDBQueryProcessingException {
+        for(SubOrder subOrder : subOrders) {
+            throwIfSubOrderIdDoesNotExist(subOrder.getId());
         }
     }
 }

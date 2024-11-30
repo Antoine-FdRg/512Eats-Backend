@@ -8,6 +8,7 @@ import ssdbrestframework.annotations.PathVariable;
 import ssdbrestframework.annotations.RequestBody;
 import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
+import team.k.repository.DishRepository;
 import team.k.repository.IndividualOrderRepository;
 import team.k.repository.LocationRepository;
 import team.k.repository.RegisteredUserRepository;
@@ -37,6 +38,7 @@ public class IndividualOrderController {
         LocationRepository.throwIfLocationIdDoesNotExist(individualOrder.getDeliveryLocationID());
         RestaurantRepository.throwIfRestaurantIdDoesNotExist(individualOrder.getRestaurantID());
         RegisteredUserRepository.throwIfRegisteredIdDoesNotExist(individualOrder.getUserID());
+        DishRepository.throwIfDishesDoNotExist(individualOrder.getDishes());
         IndividualOrderRepository.getInstance().add(individualOrder);
     }
 
@@ -47,6 +49,7 @@ public class IndividualOrderController {
         LocationRepository.throwIfLocationIdDoesNotExist(individualOrder.getDeliveryLocationID());
         RestaurantRepository.throwIfRestaurantIdDoesNotExist(individualOrder.getRestaurantID());
         RegisteredUserRepository.throwIfRegisteredIdDoesNotExist(individualOrder.getUserID());
+        DishRepository.throwIfDishesDoNotExist(individualOrder.getDishes());
         IndividualOrder existingIndividualOrder = IndividualOrderRepository.getInstance().findById(individualOrder.getId());
         IndividualOrderRepository.getInstance().update(individualOrder, existingIndividualOrder);
     }
