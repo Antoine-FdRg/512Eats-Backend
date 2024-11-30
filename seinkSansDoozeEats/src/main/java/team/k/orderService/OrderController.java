@@ -32,8 +32,8 @@ public class OrderController {
         }
     }
 
-    @Endpoint(path = "{orderId}/dishes/{dishId}", method = HttpMethod.POST)
-    public void addDishToOrder(@PathVariable("orderId") int orderId, @PathVariable("dishId") int dishId) {
+    @Endpoint(path = "add-dish", method = HttpMethod.POST)
+    public void addDishToOrder(@RequestBody int orderId, @RequestBody int dishId) {
         try {
             orderService.addDishToOrder(orderId, dishId);
         } catch (Exception e) {
@@ -52,10 +52,10 @@ public class OrderController {
     }
 
     //TODO: vérifier si ce n'est pas une requête patch qu'il faudrait faire car on update la commande ici
-    @Endpoint(path = "{orderId}/pay", method = HttpMethod.POST)
+    @Endpoint(path = "pay", method = HttpMethod.POST)
     public void paySubOrder(
             @RequestParam("registeredUserId") int registeredUserID,
-            @PathVariable("orderId") int orderId
+            @RequestParam("group-order-id") int orderId
     ) throws Exception {
         try {
             orderService.paySubOrder(registeredUserID, orderId, LocalDateTime.now());
@@ -66,9 +66,9 @@ public class OrderController {
         }
     }
 
-    @Endpoint(path = "{orderId}/available-dishes", method = HttpMethod.GET)
+    @Endpoint(path = "available-dishes", method = HttpMethod.GET)
     public List<DishDTO> getAvailableDishes(
-            @PathVariable("orderId") int orderId
+            @RequestParam("order-id") int orderId
     ) {
         try {
             List<Dish> availableDishes = orderService.getAvailableDishes(orderId);
@@ -79,11 +79,11 @@ public class OrderController {
     }
 
     //TODO: vérifier si cette fonction a un intérêt d'être là + renvoyer l'id de la suborder si elle est créée avec succès
-    @Endpoint(path = "/Suborder", method = HttpMethod.POST)
+    @Endpoint(path = "/sub-order", method = HttpMethod.POST)
     public void createSuborder(
             @RequestBody int registeredUserID,
-            @RequestParam("restaurantId") int restaurantId,
-            @RequestParam("groupOrderId") int groupOrderId
+            @RequestBody int restaurantId,
+            @RequestBody int groupOrderId
     ) {
         try {
             orderService.createSuborder(registeredUserID, restaurantId, groupOrderId);
