@@ -23,11 +23,8 @@ public class RegisteredUserController {
 
     @Endpoint(path = "/get/{id}", method = HttpMethod.GET)
     public RegisteredUser findById(@PathVariable("id") int id) throws SSDBQueryProcessingException {
-        RegisteredUser registeredUser = RegisteredUserRepository.getInstance().findById(id);
-        if (registeredUser == null) {
-            throw new SSDBQueryProcessingException(404, "Registered user with ID " + id + " not found.");
-        }
-        return registeredUser;
+        RegisteredUserRepository.throwIfRegisteredIdDoesNotExist(id);
+        return RegisteredUserRepository.getInstance().findById(id);
     }
 
     @Endpoint(path = "/create", method = HttpMethod.POST)
@@ -42,19 +39,15 @@ public class RegisteredUserController {
     @Endpoint(path = "/update", method = HttpMethod.PUT)
     @Response(status = 200, message = "Registered user updated successfully")
     public void update(@RequestBody RegisteredUser registeredUser) throws SSDBQueryProcessingException {
+        RegisteredUserRepository.throwIfRegisteredIdDoesNotExist(registeredUser.getId());
         RegisteredUser existingRegisteredUser = RegisteredUserRepository.getInstance().findById(registeredUser.getId());
-        if (existingRegisteredUser == null) {
-            throw new SSDBQueryProcessingException(404, "Registered user with ID " + registeredUser.getId() + " not found, try creating it instead.");
-        }
         RegisteredUserRepository.getInstance().update(registeredUser, existingRegisteredUser);
     }
 
     @Endpoint(path = "/delete/{id}", method = HttpMethod.DELETE)
     @Response(status = 200, message = "Registered user deleted successfully")
     public void remove(@PathVariable("id") int id) throws SSDBQueryProcessingException {
-        boolean success = RegisteredUserRepository.getInstance().remove(id);
-        if (!success) {
-            throw new SSDBQueryProcessingException(404, "Registered user with ID " + id + " not found.");
-        }
+        RegisteredUserRepository.throwIfRegisteredIdDoesNotExist(id);
+        RegisteredUserRepository.getInstance().remove(id);
     }
 }

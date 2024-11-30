@@ -6,6 +6,7 @@ import commonlibrary.model.Dish;
 import commonlibrary.model.Location;
 import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.order.GroupOrder;
+import commonlibrary.model.order.IndividualOrder;
 import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
 import commonlibrary.model.restaurant.Restaurant;
@@ -13,10 +14,10 @@ import commonlibrary.model.restaurant.TimeSlot;
 import ssdbrestframework.SSDBHttpServer;
 import team.k.repository.DishRepository;
 import team.k.repository.GroupOrderRepository;
+import team.k.repository.IndividualOrderRepository;
 import team.k.repository.LocationRepository;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
-import team.k.repository.SubOrderRepository;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -58,15 +59,16 @@ public class DatabaseServer {
                 .setId(1)
                 .setUserID(user.getId())
                 .setDeliveryTime(LocalDateTime.of(2025, 1, 1, 10, 50))
+                .setDeliveryLocationID(location.getId())
                 .build();
         user.setCurrentOrder(subOrder);
-        SubOrderRepository.getInstance().add(subOrder);
+        IndividualOrderRepository.getInstance().add((IndividualOrder) subOrder);
         restaurant.addOrderToTimeslot(subOrder);
         RestaurantRepository.getInstance().add(restaurant);
         RegisteredUserRepository.getInstance().add(user);
         LocationRepository.getInstance().add(location);
         GroupOrder groupOrder = new GroupOrder.Builder()
-                .withDeliveryLocation(location)
+                .withDeliveryLocationID(location.getId())
                 .build();
         GroupOrderRepository.getInstance().add(groupOrder);
         user.addOrderToHistory(subOrder);

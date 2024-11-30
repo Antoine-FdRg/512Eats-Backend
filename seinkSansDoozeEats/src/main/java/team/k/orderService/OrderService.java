@@ -71,7 +71,7 @@ public class OrderService {
         SubOrder order = new OrderBuilder()
                 .setUserID(registeredUser.getId())
                 .setRestaurantID(restaurantId)
-                .setDeliveryLocation(deliveryLocation)
+                .setDeliveryLocationID(deliveryLocation.getId())
                 .setDeliveryTime(deliveryTime)
                 .build();
         registeredUser.setCurrentOrder(order);

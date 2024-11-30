@@ -30,7 +30,6 @@ import java.time.LocalDateTime;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -75,16 +74,17 @@ public class RegisteredUserPlacesAnOrderStepdefs {
     }
 
 
-    @Given("an individual order is created by a registered user whose name is {string} and his role is {role}")
-    public void anOrderIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(String name, Role role) {
+    @Given("an individual order is created by a registered user whose name is {string} and his role is {role} to be delivered to {string}, {string} in {string}")
+    public void anOrderIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(String name, Role role, String number, String address, String city) {
         registeredUser = spy(new RegisteredUser(name, role));
         registeredUserRepository.add(registeredUser);
         when(restaurant.isAvailable(any())).thenReturn(true);
         restaurantRepository.add(restaurant);
-        Location mockLocation = mock(Location.class);
+        Location location = new Location.Builder().setNumber(number).setAddress(address).setCity(city).build();
+        locationRepository.add(location);
         order = new OrderBuilder().setUserID(registeredUser.getId())
                 .setRestaurantID(restaurant.getId())
-                .setDeliveryLocation(mockLocation) //ajout de la location pour créer une IndividualOrder
+                .setDeliveryLocationID(location.getId()) //ajout de la location pour créer une IndividualOrder
                 .build();
         registeredUser.setCurrentOrder(order);
         order.addDish(dish);
