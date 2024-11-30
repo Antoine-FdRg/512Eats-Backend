@@ -1,5 +1,6 @@
 package team.k.controllers;
 
+import commonlibrary.dto.databasecreation.RegisteredUserCreatorDTO;
 import commonlibrary.model.RegisteredUser;
 import ssdbrestframework.HttpMethod;
 import ssdbrestframework.SSDBQueryProcessingException;
@@ -30,12 +31,8 @@ public class RegisteredUserController {
 
     @Endpoint(path = "/create", method = HttpMethod.POST)
     @Response(status = 201, message = "Registered user created successfully")
-    public void add(@RequestBody RegisteredUser registeredUser) throws SSDBQueryProcessingException {
-        if (RegisteredUserRepository.getInstance().findById(registeredUser.getId()) != null) {
-            throw new SSDBQueryProcessingException(409, "Registered user with ID " + registeredUser.getId() + " already exists, try updating it instead.");
-        }
-        SubOrderRepository.throwIfSubOrdersDoNotExist(registeredUser.getOrders());
-        SubOrderRepository.throwIfSubOrderIdDoesNotExist(registeredUser.getCurrentOrder().getId());
+    public void add(@RequestBody RegisteredUserCreatorDTO registeredUserCreatorDTO) {
+        RegisteredUser registeredUser = registeredUserCreatorDTO.toRegisteredUser();
         RegisteredUserRepository.getInstance().add(registeredUser);
     }
 
