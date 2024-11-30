@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import commonlibrary.dto.DishDTO;
-import commonlibrary.dto.GroupOrderDTO;
 import commonlibrary.dto.PaymentDTO;
 import commonlibrary.dto.SubOrderDTO;
 import commonlibrary.enumerations.OrderStatus;
@@ -31,7 +30,6 @@ import java.util.List;
 public class SubOrder {
     private int id;
     private double price;
-    private GroupOrder groupOrder;
     private int restaurantID;
     private int userID;
     private List<Dish> dishes;
@@ -43,7 +41,6 @@ public class SubOrder {
     SubOrder(OrderBuilder orderBuilder) {
         this.id = orderBuilder.id;
         this.price = orderBuilder.price;
-        this.groupOrder = orderBuilder.groupOrder;
         this.restaurantID = orderBuilder.restaurantID;
         this.userID = orderBuilder.userID;
         this.dishes = orderBuilder.dishes;
@@ -89,9 +86,8 @@ public class SubOrder {
                 .toList();
 
         PaymentDTO convertedPayment = payment.convertPaymentToPaymentDto();
-        GroupOrderDTO convertedGroupOrder = groupOrder.convertGroupOrderToGroupOrderDto();
 
-        return new SubOrderDTO(id, String.valueOf(price), convertedGroupOrder, restaurantID, userID,
+        return new SubOrderDTO(id, String.valueOf(price), restaurantID, userID,
                 convertedDishes, status.toString(), placedDate.toString(), deliveryDate.toString(), convertedPayment);
     }
 }

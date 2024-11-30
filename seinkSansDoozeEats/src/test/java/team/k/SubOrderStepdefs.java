@@ -16,7 +16,6 @@ import commonlibrary.repository.LocationRepository;
 import commonlibrary.repository.RegisteredUserRepository;
 import commonlibrary.repository.RestaurantRepository;
 import commonlibrary.model.restaurant.Restaurant;
-import commonlibrary.model.restaurant.TimeSlot;
 import team.k.restaurantService.RestaurantService;
 
 import java.io.IOException;
@@ -69,9 +68,8 @@ public class SubOrderStepdefs {
     }
 
     @And("with a productionCapacity of {int} on the timeslot beginning at {int}:{int} on {int}-{int}-{int}")
-    public void withAProductionCapacityOfForTheTimeslotAtOn(int productionCapacity, int startHours, int startMinutes, int startDay, int startMonth, int startYear) throws IOException, InterruptedException {
+    public void withAProductionCapacityOfForTheTimeslotAtOn(int productionCapacity, int startHours, int startMinutes, int startDay, int startMonth, int startYear) throws IOException, InterruptedException, IOException {
         LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, startHours, startMinutes);
-        TimeSlot timeSlot = new TimeSlot(startTime, restaurant, productionCapacity);
         restaurantService.addTimeSlotToRestaurant(restaurant.getId(), startTime, productionCapacity);
     }
 
@@ -100,7 +98,6 @@ public class SubOrderStepdefs {
     public void aSuborderCreatedInTheGroupOrderForTheRestaurantNaga(String restaurantName) throws IOException, InterruptedException {
         restaurantService.getRestaurantByName(restaurantName);
         subOrder = new OrderBuilder()
-                .setGroupOrder(groupOrder)
                 .setRestaurantID(restaurant.getId())
                 .setUserID(registeredUser.getId())
                 .setDeliveryTime(groupOrder.getDeliveryDateTime())

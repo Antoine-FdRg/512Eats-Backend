@@ -50,7 +50,7 @@ public class DatabaseServer {
         ));
         TimeSlot ts = new TimeSlot(LocalDateTime.of(2025, 1, 1, 10, 0), restaurant, 2);
         restaurant.addTimeSlot(ts);
-        Location location = new Location.Builder().setId(1).setAddress("Via Roma 1").setCity("Trento").build();
+        Location location = new Location.Builder().setId(1).setNumber("13").setAddress("Via Roma 1").setCity("Trento").build();
         RegisteredUser user = new RegisteredUser("John", Role.STUDENT);
         SubOrder subOrder = new OrderBuilder()
                 .setRestaurantID(restaurant.getId())
@@ -58,7 +58,6 @@ public class DatabaseServer {
                 .setId(1)
                 .setUserID(user.getId())
                 .setDeliveryTime(LocalDateTime.of(2025, 1, 1, 10, 50))
-                .setDeliveryLocation(location)
                 .build();
         user.setCurrentOrder(subOrder);
         SubOrderRepository.getInstance().add(subOrder);

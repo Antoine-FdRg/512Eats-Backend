@@ -1,5 +1,6 @@
 package team.k;
 
+import commonlibrary.model.Location;
 import commonlibrary.repository.GroupOrderRepository;
 import commonlibrary.repository.LocationRepository;
 import commonlibrary.repository.RestaurantRepository;
@@ -30,6 +31,7 @@ import java.time.LocalDateTime;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -80,7 +82,11 @@ public class RegisteredUserPlacesAnOrderStepdefs {
         registeredUserRepository.add(registeredUser);
         when(restaurant.isAvailable(any())).thenReturn(true);
         restaurantRepository.add(restaurant);
-        order = new OrderBuilder().setUserID(registeredUser.getId()).setRestaurantID(restaurant.getId()).build();
+        Location mockLocation = mock(Location.class);
+        order = new OrderBuilder().setUserID(registeredUser.getId())
+                .setRestaurantID(restaurant.getId())
+                .setDeliveryLocation(mockLocation) //ajout de la location pour créer une IndividualOrder
+                .build();
         registeredUser.setCurrentOrder(order);
         order.addDish(dish);
         subOrderRepository.add(order);

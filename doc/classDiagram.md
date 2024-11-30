@@ -81,7 +81,7 @@ classDiagram
     }
     namespace package Order {
         class SubOrder {
-            ~ SubOrder(int, double, GroupOrder, Restaurant, RegisteredUser, List~Dish~, OrderStatus, DateTime, DateTime)
+            ~ SubOrder(int, double, Restaurant, RegisteredUser, List~Dish~, OrderStatus, DateTime, DateTime)
             - DateTime deliveryDate
             - int id
             - int userID
@@ -464,7 +464,7 @@ classDiagram
     FreeDishAfterXOrders --|> DiscountStrategy
     GroupOrder "1" --> "deliveryLocation 1" Location
     GroupOrder "1" --> "status 1" OrderStatus
-    GroupOrder "1" --> "subOrders *" SubOrder
+    GroupOrder "1" --> "subOrders 1..*" SubOrder
     GroupOrderBuilder "1" --> "deliveryLocation 1" Location
     GroupOrderBuilder "1" --> "status 1" OrderStatus
     GroupOrderBuilder "1" --> "subOrders *" SubOrder
@@ -501,7 +501,6 @@ classDiagram
     RoleDiscount --|> DiscountStrategy
     RoleDiscount "1" --> "role 1" Role
     SubOrder "1" --> "dishes *" Dish
-    SubOrder "1" --> "groupOrder 1" GroupOrder
     SubOrder "1" --> "status 1" OrderStatus
     SubOrder "1" --> "payment 1" Payment
     SubOrderRepository "1" --> "subOrders *" SubOrder
