@@ -40,4 +40,9 @@ public class SubOrderRepository extends GenericRepository<SubOrder> {
             throwIfSubOrderIdDoesNotExist(subOrder.getId());
         }
     }
+    public static void throwIfSubOrderIdsDoNotExist(List<Integer> subOrderIDs) throws SSDBQueryProcessingException {
+        for(Integer subOrderID : subOrderIDs) {
+            throwIfSubOrderIdDoesNotExist(subOrderID);
+        }
+    }
 }

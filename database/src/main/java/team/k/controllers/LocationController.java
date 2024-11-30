@@ -1,5 +1,6 @@
 package team.k.controllers;
 
+import commonlibrary.dto.databasecreation.LocationCreatorDTO;
 import commonlibrary.model.Location;
 import ssdbrestframework.HttpMethod;
 import ssdbrestframework.SSDBQueryProcessingException;
@@ -27,10 +28,8 @@ public class LocationController {
 
     @Endpoint(path = "/create", method = HttpMethod.POST)
     @Response(status = 201, message = "Location created successfully")
-    public void add(@RequestBody Location location) throws SSDBQueryProcessingException {
-        if (LocationRepository.getInstance().findById(location.getId()) != null) {
-            throw new SSDBQueryProcessingException(409, "Location with ID " + location.getId() + " already exists, try updating it instead.");
-        }
+    public void add(@RequestBody LocationCreatorDTO locationCreatorDTO) {
+        Location location = locationCreatorDTO.toLocation();
         LocationRepository.getInstance().add(location);
     }
 
