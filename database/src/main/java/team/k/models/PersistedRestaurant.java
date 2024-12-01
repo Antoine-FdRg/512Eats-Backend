@@ -4,7 +4,6 @@ import commonlibrary.dto.databaseupdator.RestauranUpdatorDTO;
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.Dish;
 import commonlibrary.model.restaurant.Restaurant;
-import commonlibrary.model.restaurant.TimeSlot;
 import commonlibrary.model.restaurant.discount.DiscountStrategy;
 import lombok.Getter;
 
@@ -18,7 +17,7 @@ public class PersistedRestaurant {
     private String description;
     private LocalTime openTime;
     private LocalTime closeTime;
-    private List<TimeSlot> timeSlots;
+    private List<PersistedTimeSlot> timeSlots;
     private List<Integer> dishes;
     private List<FoodType> foodTypes;
     private DiscountStrategy discountStrategy;
@@ -30,7 +29,7 @@ public class PersistedRestaurant {
         this.description = restaurant.getDescription();
         this.openTime = restaurant.getOpen();
         this.closeTime = restaurant.getClose();
-        this.timeSlots = restaurant.getTimeSlots();
+        this.timeSlots = restaurant.getTimeSlots().stream().map(PersistedTimeSlot::new).toList();
         this.dishes = restaurant.getDishes().stream().map(Dish::getId).toList();
         this.foodTypes = restaurant.getFoodTypes();
         this.discountStrategy = restaurant.getDiscountStrategy();
@@ -41,11 +40,11 @@ public class PersistedRestaurant {
         this.id = restaurantUpdatorDTO.id();
         this.name = restaurantUpdatorDTO.name();
         this.description = restaurantUpdatorDTO.description();
-        this.openTime = restaurantUpdatorDTO.openTime();
-        this.closeTime = restaurantUpdatorDTO.closeTime();
-        this.timeSlots = restaurantUpdatorDTO.timeSlots();
-        this.dishes = restaurantUpdatorDTO.disheIDs();
-        this.foodTypes = restaurantUpdatorDTO.foodTypeList().stream().map(String::toUpperCase).map(FoodType::valueOf).toList();
+        this.openTime = restaurantUpdatorDTO.open();
+        this.closeTime = restaurantUpdatorDTO.close();
+        this.timeSlots = restaurantUpdatorDTO.timeSlots().stream().map(PersistedTimeSlot::new).toList();
+        this.dishes = restaurantUpdatorDTO.dishIDs();
+        this.foodTypes = restaurantUpdatorDTO.foodTypes().stream().map(String::toUpperCase).map(FoodType::valueOf).toList();
         this.discountStrategy = restaurantUpdatorDTO.discountStrategy();
         this.averageOrderPreparationTime = restaurantUpdatorDTO.averageOrderPreparationTime();
     }

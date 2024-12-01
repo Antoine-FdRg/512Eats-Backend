@@ -6,6 +6,7 @@ import commonlibrary.model.Dish;
 import commonlibrary.model.Location;
 import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.order.GroupOrder;
+import commonlibrary.model.order.IndividualOrder;
 import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
 import commonlibrary.model.restaurant.Restaurant;
@@ -15,10 +16,10 @@ import team.k.models.PersistedGroupOrder;
 import team.k.models.PersistedRestaurant;
 import team.k.repository.DishRepository;
 import team.k.repository.GroupOrderRepository;
+import team.k.repository.IndividualOrderRepository;
 import team.k.repository.LocationRepository;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
-import team.k.repository.SubOrderRepository;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -51,7 +52,9 @@ public class DatabaseServer {
                 pizza
         ));
         TimeSlot ts = new TimeSlot(LocalDateTime.of(2025, 1, 1, 10, 0), restaurant, 2);
+        TimeSlot ts2 = new TimeSlot(LocalDateTime.of(2025, 1, 1, 10, 30), restaurant, 3);
         restaurant.addTimeSlot(ts);
+        restaurant.addTimeSlot(ts2);
         Location location = new Location.Builder().setId(1).setNumber("13").setAddress("Via Roma 1").setCity("Trento").build();
         RegisteredUser user = new RegisteredUser("John", Role.STUDENT);
         GroupOrder groupOrder = new GroupOrder.Builder()
@@ -64,10 +67,12 @@ public class DatabaseServer {
                 .setId(1)
                 .setUserID(user.getId())
                 .setDeliveryTime(groupOrder.getDeliveryDateTime())
+                .setDeliveryLocationID(location.getId())
                 .build();
-        groupOrder.addSubOrder(subOrder);
+//        groupOrder.addSubOrder(subOrder);
         user.setCurrentOrder(subOrder);
-        SubOrderRepository.getInstance().add(subOrder);
+//        SubOrderRepository.getInstance().add(subOrder);
+        IndividualOrderRepository.getInstance().add((IndividualOrder) subOrder);
         restaurant.addOrderToTimeslot(subOrder);
         RestaurantRepository.getInstance().add(new PersistedRestaurant(restaurant));
         RegisteredUserRepository.getInstance().add(user);

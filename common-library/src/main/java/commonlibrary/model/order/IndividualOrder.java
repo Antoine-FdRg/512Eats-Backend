@@ -1,7 +1,5 @@
 package commonlibrary.model.order;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import commonlibrary.dto.DishDTO;
 import commonlibrary.dto.IndividualOrderDTO;
 import commonlibrary.model.Dish;
@@ -16,7 +14,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @NoArgsConstructor
 public class IndividualOrder extends SubOrder {
     private int deliveryLocationID;
