@@ -66,11 +66,11 @@ public class OrderController {
      *
      * @param orderId the ID of the sub-order to place
      */
-    @Endpoint(path = "{orderId}/place", method = HttpMethod.POST)
+    @Endpoint(path = "place", method = HttpMethod.POST)
     @Response(status = 204) // No Content
-    public void placeSubOrder(@PathVariable("orderId") int orderId) {
+    public void placeSubOrder(@RequestParam("group-order-id") int groupOrderId) {
         try {
-            orderService.placeSubOrder(orderId, LocalDateTime.now());
+            orderService.placeSubOrder(groupOrderId, LocalDateTime.now());
         } catch (Exception e) {
             throw new IllegalArgumentException(e.getMessage());
         }
@@ -85,8 +85,8 @@ public class OrderController {
     @Endpoint(path = "pay", method = HttpMethod.POST)
     @Response(status = 204) // No Content
     public void paySubOrder(
-            @RequestParam("registeredUserId") int registeredUserID,
-            @RequestParam("group-order-id") int orderId
+            @RequestBody int registeredUserID,
+            @RequestBody int orderId
     ) throws Exception {
         try {
             orderService.paySubOrder(registeredUserID, orderId, LocalDateTime.now());
