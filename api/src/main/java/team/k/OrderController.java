@@ -1,6 +1,8 @@
 package team.k;
 
+import commonlibrary.model.Dish;
 import ssdbrestframework.HttpMethod;
+import ssdbrestframework.annotations.ApiResponseExample;
 import ssdbrestframework.annotations.Endpoint;
 import ssdbrestframework.annotations.RequestBody;
 import ssdbrestframework.annotations.RequestParam;
@@ -34,6 +36,7 @@ public class OrderController {
     }
 
     @Endpoint(path = "/dishes", method = HttpMethod.GET)
+    @ApiResponseExample(value= Dish.class, isArray = true)
     public String getDishes(@RequestParam("order-id") String orderId) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -51,6 +54,7 @@ public class OrderController {
     }
 
     @Endpoint(path = "/available-dishes", method = HttpMethod.GET)
+    @ApiResponseExample(value= Dish.class, isArray = true)
     public String getAvailableDishes(@RequestParam("order-id") String orderId) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()

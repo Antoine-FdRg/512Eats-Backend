@@ -1,6 +1,10 @@
 package team.k;
 
+import commonlibrary.dto.RestaurantDTO;
+import commonlibrary.enumerations.FoodType;
+import commonlibrary.model.Dish;
 import ssdbrestframework.HttpMethod;
+import ssdbrestframework.annotations.ApiResponseExample;
 import ssdbrestframework.annotations.Endpoint;
 import ssdbrestframework.annotations.RequestParam;
 import ssdbrestframework.annotations.RestController;
@@ -16,6 +20,7 @@ public class RestaurantController {
     private static final String RESTAURANT_SERVICE_URL = "http://localhost:8083/restaurants";
 
     @Endpoint(path = "/food-types", method = HttpMethod.GET)
+    @ApiResponseExample(value = FoodType.class, isArray = true)
     public String getFoodTypes() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -32,6 +37,7 @@ public class RestaurantController {
     }
 
     @Endpoint(path = "", method = HttpMethod.GET)
+    @ApiResponseExample(value = RestaurantDTO.class, isArray = true)
     public String getRestaurants() throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -49,6 +55,7 @@ public class RestaurantController {
     }
 
     @Endpoint(path = "/by", method = HttpMethod.GET)
+    @ApiResponseExample(value = RestaurantDTO.class, isArray = true)
     public String getRestaurantBy(
             @RequestParam("availability") String availability,
             @RequestParam("food-types") String foodTypes,
@@ -79,6 +86,7 @@ public class RestaurantController {
     }
 
     @Endpoint(path = "/dishes", method = HttpMethod.GET)
+    @ApiResponseExample(value = Dish.class, isArray = true)
     public String getDishes(@RequestParam("restaurant-id") int restaurantId) throws Exception { //TODO: voir si cet enpoint est utile puisqu'on a déjà  un GET available-dishes
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
