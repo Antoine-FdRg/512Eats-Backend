@@ -10,6 +10,7 @@ import ssdbrestframework.annotations.Endpoint;
 import ssdbrestframework.annotations.PathVariable;
 import ssdbrestframework.annotations.RequestBody;
 import ssdbrestframework.annotations.RequestParam;
+import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
 
 import java.time.LocalDateTime;
@@ -21,18 +22,37 @@ public class OrderController {
 
     private final OrderService orderService;
 
-
+    /**
+     * Create an individual order
+     *
+     * @param individualOrderDTO the details of the individual order
+     * @return the ID of the created order
+     */
     @Endpoint(path = "IndividualOrder", method = HttpMethod.POST)
+    @Response(status = 201) // Created
     public int createIndividualOrder(IndividualOrderDTO individualOrderDTO) {
         try {
             LocalDateTime deliveryDateTime = LocalDateTime.parse(individualOrderDTO.deliveryDateTime());
-            return orderService.createIndividualOrder(individualOrderDTO.userId(), individualOrderDTO.restaurantId(), individualOrderDTO.deliveryLocation().id(), deliveryDateTime, LocalDateTime.now());
+            return orderService.createIndividualOrder(
+                    individualOrderDTO.userId(),
+                    individualOrderDTO.restaurantId(),
+                    individualOrderDTO.deliveryLocation().id(),
+                    deliveryDateTime,
+                    LocalDateTime.now()
+            );
         } catch (Exception e) {
             throw new IllegalArgumentException(e.getMessage());
         }
     }
 
+    /**
+     * Add a dish to an order
+     *
+     * @param orderId the ID of the order
+     * @param dishId  the ID of the dish to add
+     */
     @Endpoint(path = "add-dish", method = HttpMethod.POST)
+    @Response(status = 204) // No Content
     public void addDishToOrder(@RequestBody int orderId, @RequestBody int dishId) {
         try {
             orderService.addDishToOrder(orderId, dishId);
@@ -41,8 +61,13 @@ public class OrderController {
         }
     }
 
-    //TODO: vérifier si ce n'est pas une requête patch qu'il faudrait faire car on update la commande ici
+    /**
+     * Place a sub-order
+     *
+     * @param orderId the ID of the sub-order to place
+     */
     @Endpoint(path = "{orderId}/place", method = HttpMethod.POST)
+    @Response(status = 204) // No Content
     public void placeSubOrder(@PathVariable("orderId") int orderId) {
         try {
             orderService.placeSubOrder(orderId, LocalDateTime.now());
@@ -51,8 +76,14 @@ public class OrderController {
         }
     }
 
-    //TODO: vérifier si ce n'est pas une requête patch qu'il faudrait faire car on update la commande ici
+    /**
+     * Pay for a sub-order
+     *
+     * @param registeredUserID the ID of the registered user
+     * @param orderId          the ID of the sub-order to pay
+     */
     @Endpoint(path = "pay", method = HttpMethod.POST)
+    @Response(status = 204) // No Content
     public void paySubOrder(
             @RequestParam("registeredUserId") int registeredUserID,
             @RequestParam("group-order-id") int orderId
@@ -66,7 +97,14 @@ public class OrderController {
         }
     }
 
+    /**
+     * Get available dishes for an order
+     *
+     * @param orderId the ID of the order
+     * @return a list of available dishes
+     */
     @Endpoint(path = "available-dishes", method = HttpMethod.GET)
+    @Response(status = 200) // OK
     public List<DishDTO> getAvailableDishes(
             @RequestParam("order-id") int orderId
     ) {
@@ -78,8 +116,15 @@ public class OrderController {
         }
     }
 
-    //TODO: vérifier si cette fonction a un intérêt d'être là + renvoyer l'id de la suborder si elle est créée avec succès
+    /**
+     * Create a sub-order
+     *
+     * @param registeredUserID the ID of the registered user
+     * @param restaurantId     the ID of the restaurant
+     * @param groupOrderId     the ID of the group order
+     */
     @Endpoint(path = "/sub-order", method = HttpMethod.POST)
+    @Response(status = 201) // Created
     public void createSuborder(
             @RequestBody int registeredUserID,
             @RequestBody int restaurantId,
@@ -91,6 +136,4 @@ public class OrderController {
             throw new IllegalArgumentException(e.getMessage());
         }
     }
-
-
 }
