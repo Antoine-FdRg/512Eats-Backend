@@ -2,7 +2,6 @@ package commonlibrary.model.order;
 
 import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.model.Dish;
-import commonlibrary.model.Location;
 import commonlibrary.model.payment.Payment;
 
 import java.time.LocalDateTime;
@@ -17,7 +16,7 @@ public class OrderBuilder {
     int userID;
     final List<Dish> dishes;
     LocalDateTime deliveryTime;
-    Location deliveryLocation;
+    Integer deliveryLocationID;
     LocalDateTime placedDate;
     Payment payment;
 
@@ -44,8 +43,8 @@ public class OrderBuilder {
         return this;
     }
 
-    public OrderBuilder setDeliveryLocation(Location deliveryLocation) {
-        this.deliveryLocation = deliveryLocation;
+    public OrderBuilder setDeliveryLocationID(int deliveryLocationID) {
+        this.deliveryLocationID = deliveryLocationID;
         return this;
     }
 
@@ -80,7 +79,7 @@ public class OrderBuilder {
     }
 
     public SubOrder build() {
-        if (deliveryLocation != null) {
+        if (deliveryLocationID != null) {
             return new IndividualOrder(this);
         }
         return new SubOrder(this);

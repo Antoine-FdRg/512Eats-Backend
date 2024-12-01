@@ -1,5 +1,6 @@
 package team.k.controllers;
 
+import commonlibrary.dto.databasecreation.DishCreatorDTO;
 import commonlibrary.model.Dish;
 import ssdbrestframework.HttpMethod;
 import ssdbrestframework.SSDBQueryProcessingException;
@@ -22,38 +23,30 @@ public class DishController {
 
     @Endpoint(path = "/get/{id}", method = HttpMethod.GET)
     public Dish findById(@PathVariable("id") int id) throws SSDBQueryProcessingException {
-        Dish dish = DishRepository.getInstance().findById(id);
-        if(dish==null){
-            throw new SSDBQueryProcessingException(404, "Dish with ID " + id + " not found.");
-        }
-        return dish;
+        DishRepository.throwIfDishIdDoesNotExist(id);
+        return DishRepository.getInstance().findById(id);
     }
 
     @Endpoint(path = "/create", method = HttpMethod.POST)
     @Response(status = 201, message = "Dish created successfully")
-    public void add(@RequestBody Dish dish) throws SSDBQueryProcessingException {
-        if(DishRepository.getInstance().findById(dish.getId()) != null){
-            throw new SSDBQueryProcessingException(409, "Dish with ID " + dish.getId() + " already exists, try updating it instead.");
-        }
-        DishRepository.getInstance().add(dish);
+    public Dish add(@RequestBody DishCreatorDTO dishCreatorDTO) {
+        Dish createdDish = dishCreatorDTO.toDish();
+        DishRepository.getInstance().add(createdDish);
+        return createdDish;
     }
 
     @Endpoint(path = "/update", method = HttpMethod.PUT)
     @Response(status = 200, message = "Dish updated successfully")
     public void update(@RequestBody Dish dish) throws SSDBQueryProcessingException {
+        DishRepository.throwIfDishIdDoesNotExist(dish.getId());
         Dish existingDish = DishRepository.getInstance().findById(dish.getId());
-        if (existingDish == null) {
-            throw new SSDBQueryProcessingException(404, "Dish with ID " + dish.getId() + " not found, try creating it instead.");
-        }
         DishRepository.getInstance().update(dish, existingDish);
     }
 
     @Endpoint(path = "/delete/{id}", method = HttpMethod.DELETE)
     @Response(status = 200, message = "Dish deleted successfully")
     public void remove(@PathVariable("id") int id) throws SSDBQueryProcessingException {
-        boolean success = DishRepository.getInstance().remove(id);
-        if(!success){
-            throw new SSDBQueryProcessingException(404, "Dish with ID " + id + " not found.");
-        }
+        DishRepository.throwIfDishIdDoesNotExist(id);
+        DishRepository.getInstance().remove(id);
     }
 }

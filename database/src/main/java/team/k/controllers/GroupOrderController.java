@@ -1,7 +1,8 @@
 package team.k.controllers;
 
 
-import commonlibrary.model.Dish;
+import commonlibrary.dto.databasecreation.GroupOrderCreatorDTO;
+import commonlibrary.dto.databaseupdator.GroupOrderUpdatorDTO;
 import commonlibrary.model.order.GroupOrder;
 import ssdbrestframework.HttpMethod;
 import ssdbrestframework.SSDBQueryProcessingException;
@@ -10,8 +11,10 @@ import ssdbrestframework.annotations.PathVariable;
 import ssdbrestframework.annotations.RequestBody;
 import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
-import team.k.repository.DishRepository;
+import team.k.models.PersistedGroupOrder;
 import team.k.repository.GroupOrderRepository;
+import team.k.repository.LocationRepository;
+import team.k.repository.SubOrderRepository;
 
 import java.util.List;
 
@@ -20,43 +23,59 @@ public class GroupOrderController {
 
     @Endpoint(path = "", method = HttpMethod.GET)
     public List<GroupOrder> findAll() {
-        return GroupOrderRepository.getInstance().findAll();
+        return GroupOrderRepository.getInstance().findAll().stream().map(GroupOrderController::mapPersistedGroupOrderToGroupOrder).toList();
     }
 
     @Endpoint(path = "/get/{id}", method = HttpMethod.GET)
     public GroupOrder findById(@PathVariable("id") int id) throws SSDBQueryProcessingException {
-        GroupOrder groupOrder = GroupOrderRepository.getInstance().findById(id);
-        if (groupOrder == null) {
-            throw new SSDBQueryProcessingException(404, "Group Order with ID " + id + " not found.");
-        }
-        return groupOrder;
+        GroupOrderRepository.throwIfGroupOrderIdDoesNotExist(id);
+        return mapPersistedGroupOrderToGroupOrder(GroupOrderRepository.getInstance().findById(id));
     }
 
     @Endpoint(path = "/create", method = HttpMethod.POST)
     @Response(status = 201, message = "GroupOrder created successfully")
-    public void add(@RequestBody GroupOrder groupOrder) throws SSDBQueryProcessingException {
-        if (GroupOrderRepository.getInstance().findById(groupOrder.getId()) != null) {
-            throw new SSDBQueryProcessingException(409, "Group order with ID " + groupOrder.getId() + " already exists, try updating it instead.");
-        }
-        GroupOrderRepository.getInstance().add(groupOrder);
+    public GroupOrder add(@RequestBody GroupOrderCreatorDTO groupOrderCreatorDTO) throws SSDBQueryProcessingException {
+        SubOrderRepository.throwIfSubOrderIdsDoNotExist(groupOrderCreatorDTO.subOrderIDs());
+        LocationRepository.throwIfLocationIdDoesNotExist(groupOrderCreatorDTO.deliveryLocationID());
+        GroupOrder groupOrder = new GroupOrder.Builder()
+                .withDate(groupOrderCreatorDTO.deliveryDateTime())
+                .withStatus(groupOrderCreatorDTO.status())
+                .withDeliveryLocationID(groupOrderCreatorDTO.deliveryLocationID())
+                .withSubOrders(groupOrderCreatorDTO.subOrderIDs().stream()
+                        .map(SubOrderRepository.getInstance()::findById)
+                        .toList())
+                .build();
+        GroupOrderRepository.getInstance().add(new PersistedGroupOrder(groupOrder));
+        return groupOrder;
     }
 
     @Endpoint(path = "/update", method = HttpMethod.PUT)
     @Response(status = 200, message = "Group order updated successfully")
-    public void update(@RequestBody GroupOrder groupOrder) throws SSDBQueryProcessingException {
-        GroupOrder existingGroupOrder = GroupOrderRepository.getInstance().findById(groupOrder.getId());
-        if (existingGroupOrder == null) {
-            throw new SSDBQueryProcessingException(404, "Group order with ID " + groupOrder.getId() + " not found, try creating it instead.");
-        }
-        GroupOrderRepository.getInstance().update(groupOrder, existingGroupOrder);
+    public GroupOrder update(@RequestBody GroupOrderUpdatorDTO groupOrderUpdatorDTO) throws SSDBQueryProcessingException {
+        GroupOrderRepository.throwIfGroupOrderIdDoesNotExist(groupOrderUpdatorDTO.id());
+        SubOrderRepository.throwIfSubOrderIdsDoNotExist(groupOrderUpdatorDTO.subOrderIDs());
+        LocationRepository.throwIfLocationIdDoesNotExist(groupOrderUpdatorDTO.deliveryLocationID());
+        PersistedGroupOrder existingGroupOrder = GroupOrderRepository.getInstance().findById(groupOrderUpdatorDTO.id());
+        GroupOrderRepository.getInstance().update(new PersistedGroupOrder(groupOrderUpdatorDTO), existingGroupOrder);
+        return mapPersistedGroupOrderToGroupOrder(GroupOrderRepository.getInstance().findById(groupOrderUpdatorDTO.id()));
     }
 
     @Endpoint(path = "/delete/{id}", method = HttpMethod.DELETE)
     @Response(status = 200, message = "Group order deleted successfully")
     public void remove(@PathVariable("id") int id) throws SSDBQueryProcessingException {
-        boolean success = GroupOrderRepository.getInstance().remove(id);
-        if (!success) {
-            throw new SSDBQueryProcessingException(404, "Group order with ID " + id + " not found.");
-        }
+        GroupOrderRepository.throwIfGroupOrderIdDoesNotExist(id);
+        GroupOrderRepository.getInstance().remove(id);
+    }
+
+    private static GroupOrder mapPersistedGroupOrderToGroupOrder(PersistedGroupOrder persistedGroupOrder) {
+        return new GroupOrder.Builder()
+                .withId(persistedGroupOrder.getId())
+                .withDate(persistedGroupOrder.getDeliveryDateTime())
+                .withStatus(persistedGroupOrder.getStatus())
+                .withSubOrders(persistedGroupOrder.getSuborderIDs().stream()
+                        .map(SubOrderRepository.getInstance()::findById)
+                        .toList())
+                .withDeliveryLocationID(persistedGroupOrder.getDeliveryLocationID())
+                .build();
     }
 }

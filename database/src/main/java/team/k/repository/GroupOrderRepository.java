@@ -1,8 +1,9 @@
 package team.k.repository;
 
-import commonlibrary.model.order.GroupOrder;
+import ssdbrestframework.SSDBQueryProcessingException;
+import team.k.models.PersistedGroupOrder;
 
-public class GroupOrderRepository extends GenericRepository<GroupOrder> {
+public class GroupOrderRepository extends GenericRepository<PersistedGroupOrder> {
 
     private static GroupOrderRepository instance;
 
@@ -17,7 +18,13 @@ public class GroupOrderRepository extends GenericRepository<GroupOrder> {
         return instance;
     }
 
-    public GroupOrder findById(int id) {
+    public PersistedGroupOrder findById(int id) {
         return findAll().stream().filter(groupOrder -> groupOrder.getId() == id).findFirst().orElse(null);
+    }
+
+    public static void throwIfGroupOrderIdDoesNotExist(int id) throws SSDBQueryProcessingException {
+        if (getInstance().findById(id) == null) {
+            throw new SSDBQueryProcessingException(404, "Group Order with ID " + id + " not found.");
+        }
     }
 }

@@ -72,7 +72,7 @@ public class OrderService {
         SubOrder order = new OrderBuilder()
                 .setUserID(registeredUser.getId())
                 .setRestaurantID(restaurantId)
-                .setDeliveryLocation(deliveryLocation)
+                .setDeliveryLocationID(deliveryLocation.getId())
                 .setDeliveryTime(deliveryTime)
                 .build();
         registeredUser.setCurrentOrder(order);
@@ -167,9 +167,9 @@ public class OrderService {
     /**
      * Create a suborder in a group order and set the current order of the user
      *
-     * @param registeredUserID
-     * @param restaurantId
-     * @param groupOrderId
+     * @param registeredUserID the id of the user that owns the order
+     * @param restaurantId    the id of the restaurant where the order is created
+     * @param groupOrderId   the id of the group order in which the suborder is
      */
     public void createSuborder(int registeredUserID, int restaurantId, int groupOrderId) throws IOException, InterruptedException {
         RegisteredUser registeredUser = this.registeredUserValidator(registeredUserID);

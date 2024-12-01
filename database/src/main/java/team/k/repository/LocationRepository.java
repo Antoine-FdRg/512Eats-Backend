@@ -1,6 +1,9 @@
 package team.k.repository;
 
 import commonlibrary.model.Location;
+import ssdbrestframework.SSDBQueryProcessingException;
+
+import java.util.Objects;
 
 
 public class LocationRepository extends GenericRepository<Location> {
@@ -19,5 +22,11 @@ public class LocationRepository extends GenericRepository<Location> {
 
     public Location findById(int id) {
         return findAll().stream().filter(location -> location.getId() == id).findFirst().orElse(null);
+    }
+
+    public static void throwIfLocationIdDoesNotExist(int locationID) throws SSDBQueryProcessingException {
+        if (Objects.isNull(LocationRepository.getInstance().findById(locationID))) {
+            throw new SSDBQueryProcessingException(404, "Location with ID " + locationID + " not found.");
+        }
     }
 }

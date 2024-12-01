@@ -2,6 +2,7 @@ package team.k.repository;
 
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.restaurant.Restaurant;
+import ssdbrestframework.SSDBQueryProcessingException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,5 +52,11 @@ public class RestaurantRepository extends GenericRepository<Restaurant> {
 
     public List<Restaurant> findRestaurantByName(String name) {
         return findAll().stream().filter(restaurant -> Objects.equals(restaurant.getName(), name)).toList();
+    }
+
+    public static void throwIfRestaurantIdDoesNotExist(int restaurantID) throws SSDBQueryProcessingException {
+        if (Objects.isNull(RestaurantRepository.getInstance().findById(restaurantID))) {
+            throw new SSDBQueryProcessingException(404, "Restaurant with ID " + restaurantID + " not found.");
+        }
     }
 }

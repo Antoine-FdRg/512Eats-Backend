@@ -1,5 +1,6 @@
 package team.k.controllers;
 
+import commonlibrary.dto.databasecreation.LocationCreatorDTO;
 import commonlibrary.model.Location;
 import ssdbrestframework.HttpMethod;
 import ssdbrestframework.SSDBQueryProcessingException;
@@ -21,39 +22,31 @@ public class LocationController {
 
     @Endpoint(path = "/get/{id}", method = HttpMethod.GET)
     public Location findById(@PathVariable("id") int id) throws SSDBQueryProcessingException {
-        Location location = LocationRepository.getInstance().findById(id);
-        if (location == null) {
-            throw new SSDBQueryProcessingException(404, "Location with ID " + id + " not found.");
-        }
-        return location;
+        LocationRepository.throwIfLocationIdDoesNotExist(id);
+        return LocationRepository.getInstance().findById(id);
     }
 
     @Endpoint(path = "/create", method = HttpMethod.POST)
     @Response(status = 201, message = "Location created successfully")
-    public void add(@RequestBody Location location) throws SSDBQueryProcessingException {
-        if (LocationRepository.getInstance().findById(location.getId()) != null) {
-            throw new SSDBQueryProcessingException(409, "Location with ID " + location.getId() + " already exists, try updating it instead.");
-        }
+    public Location add(@RequestBody LocationCreatorDTO locationCreatorDTO) {
+        Location location = locationCreatorDTO.toLocation();
         LocationRepository.getInstance().add(location);
+        return location;
     }
 
     @Endpoint(path = "/update", method = HttpMethod.PUT)
     @Response(status = 200, message = "Location updated successfully")
     public void update(@RequestBody Location location) throws SSDBQueryProcessingException {
+        LocationRepository.throwIfLocationIdDoesNotExist(location.getId());
         Location existingLocation = LocationRepository.getInstance().findById(location.getId());
-        if (existingLocation == null) {
-            throw new SSDBQueryProcessingException(404, "Location with ID " + location.getId() + " not found, try creating it instead.");
-        }
         LocationRepository.getInstance().update(location, existingLocation);
     }
 
     @Endpoint(path = "/delete/{id}", method = HttpMethod.DELETE)
     @Response(status = 200, message = "Location deleted successfully")
     public void remove(@PathVariable("id") int id) throws SSDBQueryProcessingException {
-        boolean success = LocationRepository.getInstance().remove(id);
-        if (!success) {
-            throw new SSDBQueryProcessingException(404, "Location with ID " + id + " not found.");
-        }
+        LocationRepository.throwIfLocationIdDoesNotExist(id);
+        LocationRepository.getInstance().remove(id);
     }
 
 }
