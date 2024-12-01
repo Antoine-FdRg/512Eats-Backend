@@ -14,12 +14,14 @@ import commonlibrary.model.restaurant.TimeSlot;
 import ssdbrestframework.SSDBHttpServer;
 import team.k.models.PersistedGroupOrder;
 import team.k.models.PersistedRestaurant;
+import team.k.models.PersistedSubOrder;
 import team.k.repository.DishRepository;
 import team.k.repository.GroupOrderRepository;
 import team.k.repository.IndividualOrderRepository;
 import team.k.repository.LocationRepository;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
+import team.k.repository.SubOrderRepository;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -67,11 +69,11 @@ public class DatabaseServer {
                 .setId(1)
                 .setUserID(user.getId())
                 .setDeliveryTime(groupOrder.getDeliveryDateTime())
-                .setDeliveryLocationID(location.getId())
+                .setDeliveryLocationID(location.getId()) //inclure pour avoir une individual order, exclure pour avoir une suborder
                 .build();
-//        groupOrder.addSubOrder(subOrder);
+        groupOrder.addSubOrder(subOrder);
         user.setCurrentOrder(subOrder);
-//        SubOrderRepository.getInstance().add(subOrder);
+        SubOrderRepository.getInstance().add(new PersistedSubOrder(subOrder));
         IndividualOrderRepository.getInstance().add((IndividualOrder) subOrder);
         restaurant.addOrderToTimeslot(subOrder);
         RestaurantRepository.getInstance().add(new PersistedRestaurant(restaurant));

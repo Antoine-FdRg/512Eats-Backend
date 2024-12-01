@@ -95,6 +95,7 @@ public class RestaurantController {
             List<SubOrder> orders = new ArrayList<>(timeSlotCreatorDTO.orderIDs().stream()
                     .map(SubOrderRepository.getInstance()::findById)
                     .filter(Objects::nonNull)
+                    .map(SubOrderController::mapPersistedSubOrderToSubOrder)
                     .toList());
             orders.addAll(timeSlotCreatorDTO.orderIDs().stream()
                     .map(IndividualOrderRepository.getInstance()::findById)
@@ -152,6 +153,7 @@ public class RestaurantController {
         List<SubOrder> orders = new ArrayList<>(pts.getOrderIDs().stream()
                 .map(SubOrderRepository.getInstance()::findById)
                 .filter(Objects::nonNull)
+                .map(SubOrderController::mapPersistedSubOrderToSubOrder)
                 .toList());
         // Récupération des commandes individuelles
         orders.addAll(pts.getOrderIDs().stream()

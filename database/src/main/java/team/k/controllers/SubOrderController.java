@@ -1,5 +1,9 @@
 package team.k.controllers;
 
+import commonlibrary.dto.databasecreation.SubOrderCreatorDTO;
+import commonlibrary.dto.databaseupdator.SubOrderUpdatorDTO;
+import commonlibrary.enumerations.OrderStatus;
+import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
 import ssdbrestframework.HttpMethod;
 import ssdbrestframework.SSDBQueryProcessingException;
@@ -9,6 +13,7 @@ import ssdbrestframework.annotations.RequestBody;
 import ssdbrestframework.annotations.RequestParam;
 import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
+import team.k.models.PersistedSubOrder;
 import team.k.repository.DishRepository;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
@@ -21,38 +26,53 @@ public class SubOrderController {
     @Endpoint(path = "", method = HttpMethod.GET)
     public List<SubOrder> findAll(@RequestParam("userId") Integer userId) {
         if (userId != null && userId != 0) {
-            return SubOrderRepository.getInstance().findByUserId(userId);
+            return SubOrderRepository.getInstance().findByUserId(userId).stream()
+                    .map(SubOrderController::mapPersistedSubOrderToSubOrder)
+                    .toList();
         }
-        return SubOrderRepository.getInstance().findAll();
+        return SubOrderRepository.getInstance().findAll().stream()
+                .map(SubOrderController::mapPersistedSubOrderToSubOrder)
+                .toList();
     }
 
     @Endpoint(path = "/get/{id}", method = HttpMethod.GET)
     public SubOrder findById(@PathVariable("id") int id) throws SSDBQueryProcessingException {
         SubOrderRepository.throwIfSubOrderIdDoesNotExist(id);
-        return SubOrderRepository.getInstance().findById(id);
+        return mapPersistedSubOrderToSubOrder(SubOrderRepository.getInstance().findById(id));
     }
 
     @Endpoint(path = "/create", method = HttpMethod.POST)
     @Response(status = 201, message = "Suborder created successfully")
-    public void add(@RequestBody SubOrder subOrder) throws SSDBQueryProcessingException {
-        if (SubOrderRepository.getInstance().findById(subOrder.getId()) != null) {
-            throw new SSDBQueryProcessingException(409, "Suborder with ID " + subOrder.getId() + " already exists, try updating it instead.");
-        }
-        RestaurantRepository.throwIfRestaurantIdDoesNotExist(subOrder.getRestaurantID());
-        RegisteredUserRepository.throwIfRegisteredIdDoesNotExist(subOrder.getUserID());
-        DishRepository.throwIfDishesDoNotExist(subOrder.getDishes());
-        SubOrderRepository.getInstance().add(subOrder);
+    public SubOrder add(@RequestBody SubOrderCreatorDTO subOrderCreatorDTO) throws SSDBQueryProcessingException {
+        RestaurantRepository.throwIfRestaurantIdDoesNotExist(subOrderCreatorDTO.restaurantId());
+        RegisteredUserRepository.throwIfRegisteredIdDoesNotExist(subOrderCreatorDTO.userId());
+        DishRepository.throwIfDishIdsDoNotExist(subOrderCreatorDTO.dishIDs());
+        SubOrder subOrder = new OrderBuilder()
+                .setRestaurantID(subOrderCreatorDTO.restaurantId())
+                .setUserID(subOrderCreatorDTO.userId())
+                .setDishes(subOrderCreatorDTO.dishIDs().stream()
+                        .map(DishRepository.getInstance()::findById)
+                        .toList())
+                .setStatus(OrderStatus.valueOf(subOrderCreatorDTO.status()))
+                .setPlacedDate(subOrderCreatorDTO.placedDate())
+                .setDeliveryTime(subOrderCreatorDTO.deliveryDateTime())
+                .setPayment(subOrderCreatorDTO.payment().convertPaymentDtoToPayment())
+                .build();
+        SubOrderRepository.getInstance().add(new PersistedSubOrder(subOrder));
+        return subOrder;
     }
 
     @Endpoint(path = "/update", method = HttpMethod.PUT)
     @Response(status = 200, message = "Suborder updated successfully")
-    public void update(@RequestBody SubOrder subOrder) throws SSDBQueryProcessingException {
-        SubOrderRepository.throwIfSubOrderIdDoesNotExist(subOrder.getId());
-        RestaurantRepository.throwIfRestaurantIdDoesNotExist(subOrder.getRestaurantID());
-        RegisteredUserRepository.throwIfRegisteredIdDoesNotExist(subOrder.getUserID());
-        DishRepository.throwIfDishesDoNotExist(subOrder.getDishes());
-        SubOrder existingSuborder = SubOrderRepository.getInstance().findById(subOrder.getId());
-        SubOrderRepository.getInstance().update(subOrder,existingSuborder);
+    public SubOrder update(@RequestBody SubOrderUpdatorDTO subOrderUpdatorDTO) throws SSDBQueryProcessingException {
+        SubOrderRepository.throwIfSubOrderIdDoesNotExist(subOrderUpdatorDTO.id());
+        RestaurantRepository.throwIfRestaurantIdDoesNotExist(subOrderUpdatorDTO.restaurantID());
+        RegisteredUserRepository.throwIfRegisteredIdDoesNotExist(subOrderUpdatorDTO.userID());
+        DishRepository.throwIfDishIdsDoNotExist(subOrderUpdatorDTO.dishIDs());
+        PersistedSubOrder existingSuborder = SubOrderRepository.getInstance().findById(subOrderUpdatorDTO.id());
+        PersistedSubOrder newSubOrder = new PersistedSubOrder(subOrderUpdatorDTO);
+        SubOrderRepository.getInstance().update(newSubOrder,existingSuborder);
+        return mapPersistedSubOrderToSubOrder(newSubOrder);
     }
 
     @Endpoint(path = "/delete/{id}", method = HttpMethod.DELETE)
@@ -60,5 +80,20 @@ public class SubOrderController {
     public void remove(@PathVariable("id") int id) throws SSDBQueryProcessingException {
         SubOrderRepository.throwIfSubOrderIdDoesNotExist(id);
         SubOrderRepository.getInstance().remove(id);
+    }
+
+    public static SubOrder mapPersistedSubOrderToSubOrder(PersistedSubOrder persistedSubOrder) {
+        return new OrderBuilder()
+                .setId(persistedSubOrder.getId())
+                .setRestaurantID(persistedSubOrder.getRestaurantID())
+                .setUserID(persistedSubOrder.getUserID())
+                .setDishes(persistedSubOrder.getDishes().stream()
+                        .map(DishRepository.getInstance()::findById)
+                        .toList())
+                .setStatus(persistedSubOrder.getStatus())
+                .setPlacedDate(persistedSubOrder.getPlacedDate())
+                .setDeliveryTime(persistedSubOrder.getDeliveryDate())
+                .setPayment(persistedSubOrder.getPayment())
+                .build();
     }
 }

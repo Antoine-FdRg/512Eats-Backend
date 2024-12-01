@@ -43,6 +43,7 @@ public class GroupOrderController {
                 .withDeliveryLocationID(groupOrderCreatorDTO.deliveryLocationID())
                 .withSubOrders(groupOrderCreatorDTO.subOrderIDs().stream()
                         .map(SubOrderRepository.getInstance()::findById)
+                        .map(SubOrderController::mapPersistedSubOrderToSubOrder)
                         .toList())
                 .build();
         GroupOrderRepository.getInstance().add(new PersistedGroupOrder(groupOrder));
@@ -74,6 +75,7 @@ public class GroupOrderController {
                 .withStatus(persistedGroupOrder.getStatus())
                 .withSubOrders(persistedGroupOrder.getSuborderIDs().stream()
                         .map(SubOrderRepository.getInstance()::findById)
+                        .map(SubOrderController::mapPersistedSubOrderToSubOrder)
                         .toList())
                 .withDeliveryLocationID(persistedGroupOrder.getDeliveryLocationID())
                 .build();
