@@ -69,8 +69,8 @@ public class RestaurantService {
         this.restaurantRepository.add(restaurant);
     }
 
-    public void deleteRestaurant(Restaurant restaurant) {
-        this.restaurantRepository.delete(restaurant);
+    public void deleteRestaurant(int restaurantId) {
+        this.restaurantRepository.delete(restaurantId);
     }
 
     /***** Update *****/

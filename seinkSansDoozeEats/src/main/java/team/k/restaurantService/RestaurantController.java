@@ -27,11 +27,11 @@ public class RestaurantController {
     /**
      * Get all dishes from a restaurant
      *
-     * @param restaurantId the name of the restaurant
+     * @param restaurantId the id of the restaurant
      * @return the list of dishes
      */
     @Endpoint(path = "/dishes", method = ssdbrestframework.HttpMethod.GET)
-    @Response(status = 201)
+    @Response(status = 200) // OK
     public List<DishDTO> getAllDishes(@RequestParam("restaurant-id") int restaurantId) {
         try {
             List<Dish> dishes = restaurantService.getAllDishesFromRestaurant(restaurantId);
@@ -47,20 +47,20 @@ public class RestaurantController {
      * @return the list of food types
      */
     @Endpoint(path = "/food-types", method = ssdbrestframework.HttpMethod.GET)
-    @Response(status = 201)
+    @Response(status = 200) // OK
     public List<FoodType> getFoodTypes() {
         return restaurantService.getFoodTypes();
     }
-
 
     /**
      * Get all available delivery times of a restaurant on a specific day
      *
      * @param restaurantId the id of the restaurant
+     * @param day the specific day
      * @return the list of available delivery times
      */
     @Endpoint(path = "/{restaurantId}/delivery-times/{day}", method = ssdbrestframework.HttpMethod.GET)
-    @Response(status = 201)
+    @Response(status = 200) // OK
     public List<LocalDateTime> getAvailableDeliveryTimes(
             @PathVariable("restaurantId") int restaurantId, @PathVariable("day") LocalDate day
     ) {
@@ -78,7 +78,7 @@ public class RestaurantController {
      * @return the restaurant id
      */
     @Endpoint(path = "/", method = ssdbrestframework.HttpMethod.POST)
-    @Response(status = 201)
+    @Response(status = 201) // Created
     public int addRestaurant(@RequestBody RestaurantDTO restaurantDto) {
         Restaurant restaurant = restaurantDto.convertRestaurantDtoToRestaurant();
         restaurantService.addRestaurant(restaurant);
@@ -88,15 +88,13 @@ public class RestaurantController {
     /**
      * Delete a restaurant
      *
-     * @param restaurantDto the restaurant to delete
+     * @param restaurantId the restaurant to delete
      */
     @Endpoint(path = "/", method = ssdbrestframework.HttpMethod.DELETE)
-    @Response(status = 201)
-    public void deleteRestaurant(@RequestBody RestaurantDTO restaurantDto) {
-        Restaurant restaurant = restaurantDto.convertRestaurantDtoToRestaurant();
-        restaurantService.deleteRestaurant(restaurant);
+    @Response(status = 204) // No Content
+    public void deleteRestaurant(@RequestBody int restaurantId) {
+        restaurantService.deleteRestaurant(restaurantId);
     }
-
 
     /**
      * Get all restaurants
@@ -104,7 +102,7 @@ public class RestaurantController {
      * @return list of restaurants
      */
     @Endpoint(path = "", method = ssdbrestframework.HttpMethod.GET)
-    @Response(status = 201)
+    @Response(status = 200) // OK
     public List<RestaurantDTO> getAllRestaurants() {
         List<Restaurant> restaurants = restaurantService.getAllRestaurants();
         return restaurants.stream().map(Restaurant::convertRestaurantToRestaurantDTO).toList();
@@ -117,7 +115,7 @@ public class RestaurantController {
      * @return list of matching restaurants
      */
     @Endpoint(path = "/{restaurantName}", method = ssdbrestframework.HttpMethod.GET)
-    @Response(status = 201)
+    @Response(status = 200) // OK
     public List<RestaurantDTO> getRestaurantsByName(@RequestParam("restaurantName") String restaurantName) {
         try {
             List<Restaurant> restaurants = restaurantService.getRestaurantsByName(restaurantName);
@@ -134,7 +132,7 @@ public class RestaurantController {
      * @return list of matching restaurants
      */
     @Endpoint(path = "/by/food-types", method = ssdbrestframework.HttpMethod.GET)
-    @Response(status = 201)
+    @Response(status = 200) // OK
     public List<RestaurantDTO> getRestaurantsByFoodType(@RequestParam("food-types") List<FoodType> foodTypes) {
         try {
             List<Restaurant> restaurants = restaurantService.getRestaurantsByFoodType(foodTypes);
@@ -153,16 +151,16 @@ public class RestaurantController {
      * @return list of matching restaurants
      */
     @Endpoint(path = "/by/availability", method = ssdbrestframework.HttpMethod.GET)
-    @Response(status = 201)
+    @Response(status = 200) // OK
     public List<RestaurantDTO> getRestaurantsByAvailability() {
-            try {
-                List<Restaurant> restaurants = restaurantService.getRestaurantsByAvailability(LocalDateTime.now());
-                return restaurants
-                        .stream()
-                        .map(Restaurant::convertRestaurantToRestaurantDTO)
-                        .toList();
-            } catch (NoSuchElementException e) {
-                throw new NoSuchElementException("No restaurants found with availability at: " + LocalDateTime.now());
-            }
+        try {
+            List<Restaurant> restaurants = restaurantService.getRestaurantsByAvailability(LocalDateTime.now());
+            return restaurants
+                    .stream()
+                    .map(Restaurant::convertRestaurantToRestaurantDTO)
+                    .toList();
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("No restaurants found with availability at: " + LocalDateTime.now());
+        }
     }
 }

@@ -48,7 +48,8 @@ public class InternetUserBrowsesMenusStepdefs {
         restaurantRepository = new RestaurantRepository();
         dishRepository = new DishRepository();
         restaurantService = new RestaurantService(restaurantRepository, timeSlotRepository);
-        restaurant = new Restaurant.Builder().setName("restaurant").setId(1).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).build();
+        restaurant = new Restaurant.Builder().setName("restaurant").setId(0).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).build();
+        restaurantRepository.add(restaurant);
         MockitoAnnotations.openMocks(this);
     }
 
@@ -56,7 +57,7 @@ public class InternetUserBrowsesMenusStepdefs {
     @After
     public void tearDown() {
         if (restaurant != null) {
-            restaurantService.deleteRestaurant(restaurant);
+            restaurantService.deleteRestaurant(restaurant.getId());
         }
     }
 
@@ -67,7 +68,7 @@ public class InternetUserBrowsesMenusStepdefs {
         dishes.add(dishA);
         Dish dishB = new Dish.Builder().setName(dishNameB).setDescription("Description").setPrice(5).setPreparationTime(3).build();
         dishes.add(dishB);
-        Restaurant restaurantA = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).build();
+        Restaurant restaurantA = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).setId(1).build();
         restaurantA.addDish(dishA);
         restaurantA.addDish(dishB);
         restaurantRepository.add(restaurantA);

@@ -2,11 +2,13 @@ package commonlibrary.repository;
 
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.restaurant.Restaurant;
+import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 
 public class RestaurantRepository {
     private final List<Restaurant> restaurants = new ArrayList<>();
@@ -52,10 +54,10 @@ public class RestaurantRepository {
     /**
      * Delete a restaurant from the repository.
      *
-     * @param restaurant the restaurant to delete
+     * @param restaurantId the restaurant to delete
      */
-    public void delete(Restaurant restaurant) {
-        restaurants.remove(restaurant);
+    public void delete(int restaurantId) {
+        restaurants.remove(restaurantId);
     }
 
     public List<Restaurant> findRestaurantByFoodType(List<FoodType> foodTypes) {
