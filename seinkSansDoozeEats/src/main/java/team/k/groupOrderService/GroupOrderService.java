@@ -81,5 +81,4 @@ public class GroupOrderService {
         }
         groupOrder.place(now);
     }
-
 }

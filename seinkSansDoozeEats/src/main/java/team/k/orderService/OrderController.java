@@ -12,6 +12,7 @@ import ssdbrestframework.annotations.RequestBody;
 import ssdbrestframework.annotations.RequestParam;
 import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
+import team.k.groupOrderService.GroupOrderService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final GroupOrderService groupOrderService;
 
     /**
      * Create an individual order
@@ -56,21 +58,6 @@ public class OrderController {
     public void addDishToOrder(@RequestBody int orderId, @RequestBody int dishId) {
         try {
             orderService.addDishToOrder(orderId, dishId);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
-    }
-
-    /**
-     * Place a sub-order
-     *
-     * @param orderId the ID of the sub-order to place
-     */
-    @Endpoint(path = "place", method = HttpMethod.POST)
-    @Response(status = 204) // No Content
-    public void placeSubOrder(@RequestParam("group-order-id") int groupOrderId) {
-        try {
-            orderService.placeSubOrder(groupOrderId, LocalDateTime.now());
         } catch (Exception e) {
             throw new IllegalArgumentException(e.getMessage());
         }
