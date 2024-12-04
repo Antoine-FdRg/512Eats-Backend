@@ -5,6 +5,7 @@ import commonlibrary.dto.databaseupdator.SubOrderUpdatorDTO;
 import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
+import commonlibrary.model.payment.Payment;
 import ssdbrestframework.HttpMethod;
 import ssdbrestframework.SSDBQueryProcessingException;
 import ssdbrestframework.annotations.Endpoint;
@@ -47,6 +48,7 @@ public class SubOrderController {
         RestaurantRepository.throwIfRestaurantIdDoesNotExist(subOrderCreatorDTO.restaurantId());
         RegisteredUserRepository.throwIfRegisteredIdDoesNotExist(subOrderCreatorDTO.userId());
         DishRepository.throwIfDishIdsDoNotExist(subOrderCreatorDTO.dishIDs());
+        Payment payment = subOrderCreatorDTO.payment()!=null?subOrderCreatorDTO.payment().convertPaymentDtoToPayment():null;
         SubOrder subOrder = new OrderBuilder()
                 .setRestaurantID(subOrderCreatorDTO.restaurantId())
                 .setUserID(subOrderCreatorDTO.userId())
@@ -56,7 +58,7 @@ public class SubOrderController {
                 .setStatus(OrderStatus.valueOf(subOrderCreatorDTO.status()))
                 .setPlacedDate(subOrderCreatorDTO.placedDate())
                 .setDeliveryTime(subOrderCreatorDTO.deliveryDateTime())
-                .setPayment(subOrderCreatorDTO.payment().convertPaymentDtoToPayment())
+                .setPayment(payment)
                 .build();
         SubOrderRepository.getInstance().add(new PersistedSubOrder(subOrder));
         return subOrder;
