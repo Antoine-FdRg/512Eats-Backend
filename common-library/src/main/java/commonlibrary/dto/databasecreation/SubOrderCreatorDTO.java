@@ -12,7 +12,8 @@ public record SubOrderCreatorDTO(int restaurantId, int userId,
                                  PaymentDTO payment) {
     public SubOrderCreatorDTO(SubOrder subOrder) {
         this(subOrder.getRestaurantID(), subOrder.getUserID(), subOrder.getDishes().stream().map(dish -> dish.getId()).toList(), subOrder.getStatus().name(),
-                subOrder.getPlacedDate(), subOrder.getDeliveryDate(), subOrder.getPayment().convertPaymentToPaymentDto());
+                subOrder.getPlacedDate(), subOrder.getDeliveryDate(), subOrder.getPayment() != null ? subOrder.getPayment().convertPaymentToPaymentDto() : null);
+
     }
 
 }

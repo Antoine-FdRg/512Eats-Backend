@@ -41,7 +41,7 @@ public class LocationRepository {
         return location;
     }
 
-    public void add(Location location) throws IOException, InterruptedException {
+    public Location add(Location location) throws IOException, InterruptedException {
         LocationCreatorDTO locationCreatorDTO = new LocationCreatorDTO(location);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/create"))
@@ -51,6 +51,7 @@ public class LocationRepository {
         if (response.statusCode() >= 300) {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
         }
+        return new ObjectMapper().readValue(response.body(), Location.class);
     }
 
     //TODO : checker toutes les méthodes voir si elles fonctionnent

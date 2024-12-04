@@ -58,8 +58,10 @@ public class RegisteredUserCreatesSuborderStepDefs {
 
     @Given("a groupOrder without any suborder")
     public void aGroupOrderWithTheId5AndWithoutAnySuborderARegisteredUserJoinTheGroupOrder() throws IOException, InterruptedException {
-        groupOrder = new GroupOrder.Builder().build();
-        groupOrderRepository.add(groupOrder);
+        Location location = new Location.Builder().setAddress("Rue de la Loi 1").build();
+        location = locationRepository.add(location);
+        groupOrder = new GroupOrder.Builder().withDeliveryLocationID(location.getId()).build();
+        groupOrder = groupOrderRepository.add(groupOrder);
     }
 
     @Given("a restaurant {string}  with a dish {string} an opening time {string} and closing time {string}")

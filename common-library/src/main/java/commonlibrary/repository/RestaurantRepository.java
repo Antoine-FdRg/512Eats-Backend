@@ -126,7 +126,7 @@ public class RestaurantRepository {
 
     public List<Restaurant> findRestaurantByName(String name) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "name?name=" + name))
+                .uri(URI.create(BASE_URL + "?name=" + name))
                 .GET()
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());

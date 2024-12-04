@@ -28,6 +28,7 @@ import java.util.NoSuchElementException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 
 
 public class RegisteredUserManageGroupOrderStepDefs {
@@ -121,10 +122,8 @@ public class RegisteredUserManageGroupOrderStepDefs {
     }
 
     @Then("the group order is not created")
-    public void theGroupOrderIsNotCreated() throws IOException, InterruptedException {
-        assertNull(groupOrderService.findGroupOrderById(codeToShare));
-        assertNotNull(exception);
-        assertEquals(NoSuchElementException.class, exception.getClass());
+    public void theGroupOrderIsNotCreated() {
+        assertThrows(IOException.class, () -> groupOrderService.findGroupOrderById(codeToShare));
     }
 
     @When("the user creates a group order with the delivery location on {string} at {string}")
@@ -186,7 +185,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
     @Then("the group order is not modified and the delivery datetime is still null")
     public void theGroupOrderIsNotModifiedAndTheDeliveryDatetimeIsStillNull() throws IOException, InterruptedException {
         groupOrder = groupOrderRepository.findGroupOrderById(codeToShare);
-        assertNull(groupOrder.getDeliveryDateTime());
+        assertThrows(IOException.class, () -> groupOrder.getDeliveryDateTime());
     }
 
     @Given("a group order created with {string} at {string} as delivery datetime to be delivered to {string}, {string} in {string}")

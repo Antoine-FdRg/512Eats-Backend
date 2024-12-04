@@ -3,6 +3,8 @@ package commonlibrary.repository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import commonlibrary.dto.databasecreation.GroupOrderCreatorDTO;
+import commonlibrary.dto.databaseupdator.GroupOrderUpdatorDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import commonlibrary.model.order.GroupOrder;
@@ -37,15 +39,28 @@ public class GroupOrderRepository {
 
     }
 
-    public void add(GroupOrder groupOrder) throws IOException, InterruptedException {
+    public GroupOrder add(GroupOrder groupOrder) throws IOException, InterruptedException {
+        GroupOrderCreatorDTO groupOrderCreatorDTO = new GroupOrderCreatorDTO(groupOrder);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/create"))
-                .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(groupOrder)))
+                .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(groupOrderCreatorDTO)))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() >= 300) {
+            throw new IOException("Error: " + response.statusCode() + " - " + response.body());
+        }
+        return objectMapper.readValue(response.body(), GroupOrder.class);
+    }
+
+    public void update(GroupOrder groupOrder) throws IOException, InterruptedException {
+        GroupOrderUpdatorDTO groupOrderUpdatorDTO = new GroupOrderUpdatorDTO(groupOrder);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/update"))
+                .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(groupOrderUpdatorDTO)))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() >= 300) {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
         }
     }
-    //TODO : checker toutes les méthodes voir si elles fonctionnent
 }

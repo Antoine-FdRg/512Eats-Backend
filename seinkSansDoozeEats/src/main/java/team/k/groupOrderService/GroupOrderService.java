@@ -44,8 +44,8 @@ public class GroupOrderService {
                 .withDeliveryLocationID(location.getId())
                 .withDate(deliveryDateTime)
                 .build();
-        groupOrderRepository.add(groupOrder);
-        return groupOrder.getId();
+
+        return groupOrderRepository.add(groupOrder).getId();
     }
 
     public GroupOrder findGroupOrderById(int id) throws IOException, InterruptedException {

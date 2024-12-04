@@ -25,8 +25,7 @@ public class SubOrderRepository {
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
 
-
-    public void add(SubOrder subOrder) throws IOException, InterruptedException {
+    public SubOrder add(SubOrder subOrder) throws IOException, InterruptedException {
         SubOrderCreatorDTO subOrderCreatorDTO = new SubOrderCreatorDTO(subOrder);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/create"))
@@ -36,6 +35,7 @@ public class SubOrderRepository {
         if (response.statusCode() >= 300) {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
         }
+        return objectMapper.readValue(response.body(), SubOrder.class);
     }
 
     public SubOrder findById(int id) throws IOException, InterruptedException {
