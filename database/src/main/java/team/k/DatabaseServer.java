@@ -13,6 +13,7 @@ import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
 import ssdbrestframework.SSDBHttpServer;
 import team.k.models.PersistedGroupOrder;
+import team.k.models.PersistedRegisteredUser;
 import team.k.models.PersistedRestaurant;
 import team.k.models.PersistedSubOrder;
 import team.k.repository.DishRepository;
@@ -77,7 +78,7 @@ public class DatabaseServer {
         IndividualOrderRepository.getInstance().add((IndividualOrder) subOrder);
         restaurant.addOrderToTimeslot(subOrder);
         RestaurantRepository.getInstance().add(new PersistedRestaurant(restaurant));
-        RegisteredUserRepository.getInstance().add(user);
+        RegisteredUserRepository.getInstance().add(new PersistedRegisteredUser(user));
         LocationRepository.getInstance().add(location);
         GroupOrderRepository.getInstance().add(new PersistedGroupOrder(groupOrder));
         user.addOrderToHistory(subOrder);
