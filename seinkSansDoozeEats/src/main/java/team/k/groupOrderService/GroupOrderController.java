@@ -29,8 +29,8 @@ public class GroupOrderController {
     @Endpoint(path = "/", method = ssdbrestframework.HttpMethod.POST)
     @Response(status = 201)
     public int createGroupOrder(
-            @RequestParam("deliveryLocationId") int deliveryLocationId,
-            @RequestParam("deliveryDateTime") LocalDateTime deliveryDateTime
+            @RequestParam("delivery-location-id") int deliveryLocationId,
+            @RequestParam("delivery-date-time") LocalDateTime deliveryDateTime
     ) {
         try {
             return groupOrderService.createGroupOrder(deliveryLocationId, deliveryDateTime, LocalDateTime.now());
@@ -67,7 +67,7 @@ public class GroupOrderController {
     @Response(status = 204)
     public void modifyGroupOrderDeliveryDateTime(
             @PathVariable("groupOrderId") int groupOrderId,
-            @RequestParam("deliveryDateTime") LocalDateTime deliveryDateTime
+            @RequestParam("delivery-date-time") LocalDateTime deliveryDateTime
     ) {
         try {
             groupOrderService.modifyGroupOrderDeliveryDateTime(groupOrderId, deliveryDateTime, LocalDateTime.now());
