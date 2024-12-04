@@ -1,6 +1,7 @@
 package commonlibrary.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import commonlibrary.dto.databasecreation.RegisteredUserCreatorDTO;
 import commonlibrary.model.Dish;
 import commonlibrary.model.RegisteredUser;
 
@@ -18,9 +19,10 @@ public class RegisteredUserRepository {
     private static final HttpClient client = HttpClient.newHttpClient();
 
     public void add(RegisteredUser registeredUser) throws IOException, InterruptedException {
+        RegisteredUserCreatorDTO registeredUserCreatorDTO = new RegisteredUserCreatorDTO(registeredUser.getName(), registeredUser.getRole().getName());
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/create"))
-                .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(registeredUser)))
+                .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(registeredUserCreatorDTO)))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() >= 300) {
@@ -65,5 +67,15 @@ public class RegisteredUserRepository {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
         }
     }
-    //TODO : checker toutes les méthodes voir si elles fonctionnent
+
+    public void update(RegisteredUser registeredUser) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/update"))
+                .PUT(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(registeredUser)))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() >= 300) {
+            throw new IOException("Error: " + response.statusCode() + " - " + response.body());
+        }
+    }
 }

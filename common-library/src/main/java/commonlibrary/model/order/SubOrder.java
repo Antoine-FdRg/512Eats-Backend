@@ -21,7 +21,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @NoArgsConstructor
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY,
         getterVisibility = JsonAutoDetect.Visibility.NONE,
@@ -48,6 +47,9 @@ public class SubOrder {
         this.placedDate = orderBuilder.placedDate;
         this.deliveryDate = orderBuilder.deliveryTime;
         this.payment = orderBuilder.payment;
+        if (this.price == 0 && !dishes.isEmpty()) {
+            this.price = dishes.stream().mapToDouble(Dish::getPrice).sum();
+        }
     }
 
     public Dish getCheaperDish() {

@@ -2,11 +2,12 @@ package team.k.repository;
 
 import commonlibrary.model.order.SubOrder;
 import ssdbrestframework.SSDBQueryProcessingException;
+import team.k.models.PersistedSubOrder;
 
 import java.util.List;
 import java.util.Objects;
 
-public class SubOrderRepository extends GenericRepository<SubOrder> {
+public class SubOrderRepository extends GenericRepository<PersistedSubOrder> {
     private static SubOrderRepository instance;
 
     private SubOrderRepository() {
@@ -20,11 +21,11 @@ public class SubOrderRepository extends GenericRepository<SubOrder> {
         return instance;
     }
 
-    public SubOrder findById(int id) {
+    public PersistedSubOrder findById(int id) {
         return findAll().stream().filter(subOrder -> subOrder.getId() == id).findFirst().orElse(null);
     }
 
-    public List<SubOrder> findByUserId(int id) {
+    public List<PersistedSubOrder> findByUserId(int id) {
         return findAll().stream().filter(subOrder -> subOrder.getUserID() == id).toList();
     }
 

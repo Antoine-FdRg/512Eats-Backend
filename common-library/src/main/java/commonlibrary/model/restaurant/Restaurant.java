@@ -43,11 +43,11 @@ public class Restaurant {
     private Restaurant(Builder builder) {
         this.id = builder.id;
         this.name = builder.name;
+        this.description = builder.description;
         this.open = builder.open;
         this.close = builder.close;
         this.timeSlots = builder.timeSlots;
         this.dishes = builder.dishes;
-        this.description = builder.description;
         this.foodTypes = builder.foodTypes;
         this.averageOrderPreparationTime = builder.averageOrderPreparationTime;
         this.discountStrategy = builder.discountStrategy;
@@ -202,6 +202,21 @@ public class Restaurant {
 
         public Builder setFoodTypes(List<FoodType> foodTypes) {
             this.foodTypes.addAll(foodTypes);
+            return this;
+        }
+
+        public Builder setDishes(List<Dish> dishes) {
+            this.dishes.addAll(dishes);
+            return this;
+        }
+
+        public Builder setDiscountStrategy(DiscountStrategy discountStrategy) {
+            this.discountStrategy = discountStrategy;
+            return this;
+        }
+
+        public Builder setTimeSlots(List<TimeSlot> timeSlots) {
+            this.timeSlots.addAll(timeSlots);
             return this;
         }
 

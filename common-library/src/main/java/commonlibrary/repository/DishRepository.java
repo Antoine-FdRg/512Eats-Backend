@@ -1,6 +1,7 @@
 package commonlibrary.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import commonlibrary.dto.databasecreation.DishCreatorDTO;
 import commonlibrary.model.Dish;
 
 import java.io.IOException;
@@ -30,9 +31,10 @@ public class DishRepository {
     }
 
     public void add(Dish dish) throws IOException, InterruptedException {
+        DishCreatorDTO dishCreatorDTO = new DishCreatorDTO(dish.getName(), dish.getDescription(), dish.getPrice(), dish.getPreparationTime(), dish.getPicture());
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/create"))
-                .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(dish)))
+                .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(dishCreatorDTO)))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() >= 300) {

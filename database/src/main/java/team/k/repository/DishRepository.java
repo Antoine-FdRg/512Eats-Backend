@@ -36,4 +36,10 @@ public class DishRepository extends GenericRepository<Dish> {
             throwIfDishIdDoesNotExist(dish.getId());
         }
     }
+
+    public static void throwIfDishIdsDoNotExist(List<Integer> dishesIds) throws SSDBQueryProcessingException {
+        for (Integer dishID : dishesIds) {
+            throwIfDishIdDoesNotExist(dishID);
+        }
+    }
 }
