@@ -58,7 +58,7 @@ public class ManageRestaurantService {
     }
 
     private Restaurant restaurantValidator(int restaurantId) throws IOException, InterruptedException {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId);
+        Restaurant restaurant = RestaurantRepository.findById(restaurantId);
         if (restaurant == null) {
             throw new IllegalArgumentException(RESTAURANT_NOT_FOUND);
         }

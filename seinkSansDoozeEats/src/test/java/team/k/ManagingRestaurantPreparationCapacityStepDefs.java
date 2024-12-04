@@ -6,15 +6,11 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.mockito.Mock;
 import commonlibrary.model.Dish;
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
-import commonlibrary.repository.GroupOrderRepository;
-import commonlibrary.repository.LocationRepository;
-import commonlibrary.repository.RegisteredUserRepository;
 import commonlibrary.repository.RestaurantRepository;
 import commonlibrary.repository.SubOrderRepository;
 import commonlibrary.model.restaurant.Restaurant;
@@ -32,8 +28,6 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
 
 
     OrderService orderService;
-    SubOrderRepository subOrderRepository;
-    DishRepository dishRepository;
 
     Restaurant restaurant;
 
@@ -43,47 +37,31 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
     SubOrder order;
     Dish dish;
 
-    RestaurantRepository restaurantRepository;
-    @Mock
-    LocationRepository locationRepository;
-    @Mock
-    GroupOrderRepository groupOrderRepository;
-    @Mock
-    RegisteredUserRepository registeredUserRepository;
-
     @Before
     public void setUp() {
-        subOrderRepository = new SubOrderRepository();
-        restaurantRepository = new RestaurantRepository();
-        orderService = new OrderService(
-                groupOrderRepository,
-                locationRepository,
-                subOrderRepository,
-                restaurantRepository,
-                registeredUserRepository);
-        dishRepository = new DishRepository();
+        orderService = new OrderService();
     }
 
     @Given("an order with the status {string} in the restaurant {string} with a chosen dish {string} with a production capacity of {int} and an average preparation time of {int} min with a delivery time at {int}:{int}")
     public void anOrderWithTheStatusInTheRestaurantWithAChosenDish(String statusCreated, String restaurantName, String dishName, int productionCapacity, int averagePreparationTime, int hours, int minutes) throws IOException, InterruptedException {
         restaurant = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(12, 0, 0)).setClose(LocalTime.of(15, 0, 0)).setFoodTypes(List.of(FoodType.BURGER)).setAverageOrderPreparationTime(averagePreparationTime).build();
-        restaurant = restaurantRepository.add(restaurant);
+        restaurant = RestaurantRepository.add(restaurant);
         dish = new Dish.Builder().setName(dishName).setDescription("Cheeseburger").setPrice(5).setPreparationTime(productionCapacity).build();
-        dish = dishRepository.add(dish);
+        dish = DishRepository.add(dish);
         restaurant.addDish(dish);
-        restaurant = restaurantRepository.update(restaurant);
+        restaurant = RestaurantRepository.update(restaurant);
         order = new OrderBuilder().setRestaurantID(restaurant.getId()).setDeliveryTime(LocalDateTime.of(2024, 10, 12, hours, minutes, 0)).build();
-        order = subOrderRepository.add(order);
+        order = SubOrderRepository.add(order);
         order.setStatus(OrderStatus.valueOf(statusCreated));
-        restaurantRepository.add(restaurant);
-        restaurant = restaurantRepository.update(restaurant);
+        RestaurantRepository.add(restaurant);
+        restaurant = RestaurantRepository.update(restaurant);
     }
 
     @And("the restaurant {string} has a time slot available at {int}:{int} with a capacity of {int}")
     public void theRestaurantHasATimeSlotAvailableAtWithACapacityOf(String restaurantName, int hours, int min, int preparationCapacity) throws IOException, InterruptedException {
         timeSlot = new TimeSlot(LocalDateTime.of(2024, 10, 12, hours, min, 0), restaurant, preparationCapacity);
         restaurant.addTimeSlot(timeSlot);
-        restaurant = restaurantRepository.update(restaurant);
+        restaurant = RestaurantRepository.update(restaurant);
 
         freeProductionCapacity = restaurant.getTimeSlots().get(0).getFreeProductionCapacity();
     }
@@ -92,13 +70,13 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
     @When("a registered user places the command")
     public void aRegisteredUserPlacesTheCommand() throws IOException, InterruptedException {
         restaurant.getTimeSlots().get(0).addOrder(order);
-        restaurant = restaurantRepository.update(restaurant);
-        order = subOrderRepository.update(order);
+        restaurant = RestaurantRepository.update(restaurant);
+        order = SubOrderRepository.update(order);
         orderService.addDishToOrder(order.getId(), dish.getId());
-        order = subOrderRepository.findById(order.getId());
+        order = SubOrderRepository.findById(order.getId());
         order.setStatus(OrderStatus.PLACED);
-        order = subOrderRepository.update(order);
-        restaurant = restaurantRepository.findById(restaurant.getId());
+        order = SubOrderRepository.update(order);
+        restaurant = RestaurantRepository.findById(restaurant.getId());
     }
 
 

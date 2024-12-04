@@ -23,18 +23,13 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 
 
 public class RegisteredUserManageGroupOrderStepDefs {
-    LocationRepository locationRepository;
-    GroupOrderRepository groupOrderRepository;
-    RegisteredUserRepository registeredUserRepository;
     GroupOrderService groupOrderService;
     int codeToShare;
     Location location;
@@ -52,13 +47,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        locationRepository = new LocationRepository();
-        groupOrderRepository = new GroupOrderRepository();
-        registeredUserRepository = new RegisteredUserRepository();
-        groupOrderService = new GroupOrderService(
-                groupOrderRepository,
-                locationRepository,
-                registeredUserRepository);
+        groupOrderService = new GroupOrderService();
     }
 
     @Given("a delivery location")
@@ -68,7 +57,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 .setAddress("123 Main St")
                 .setCity("Springfield")
                 .build();
-        locationRepository.add(location);
+        LocationRepository.add(location);
     }
 
     @When("the user creates a group order with the delivery location for the {string} at {string} on {string} at {string}")
@@ -152,7 +141,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 .withDeliveryLocationID(location.getId())
                 .build();
         codeToShare = groupOrder.getId();
-        groupOrderRepository.add(groupOrder);
+        GroupOrderRepository.add(groupOrder);
     }
 
     @When("the user modifies the delivery datetime to set {string} at {string} on {string} at {string}")
@@ -167,7 +156,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
         );
         try {
             groupOrderService.modifyGroupOrderDeliveryDateTime(codeToShare, deliveryDateTime, currentDateTime);
-            groupOrder = groupOrderRepository.update(groupOrder);
+            groupOrder = GroupOrderRepository.update(groupOrder);
         } catch (Exception e) {
             exception = e;
         }
@@ -179,13 +168,13 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 LocalDate.parse(orderDate),
                 LocalTime.parse(orderTime)
         );
-        groupOrder = groupOrderRepository.findGroupOrderById(codeToShare);
+        groupOrder = GroupOrderRepository.findGroupOrderById(codeToShare);
         assertEquals(deliveryDateTime,groupOrder.getDeliveryDateTime());
     }
 
     @Then("the group order is not modified and the delivery datetime is still null")
     public void theGroupOrderIsNotModifiedAndTheDeliveryDatetimeIsStillNull() throws IOException, InterruptedException {
-        groupOrder = groupOrderRepository.findGroupOrderById(codeToShare);
+        groupOrder = GroupOrderRepository.findGroupOrderById(codeToShare);
         assertThrows(IOException.class, () -> groupOrder.getDeliveryDateTime());
     }
 
@@ -205,14 +194,14 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 .withDate(deliveryDateTime)
                 .build();
         codeToShare = groupOrder.getId();
-        groupOrderRepository.add(groupOrder);
+        GroupOrderRepository.add(groupOrder);
     }
 
 
     @And("a suborder of the user {string} with the status {status} added in the group order")
     public void aSuborderWithTheStatusAddedInTheGroupOrder(String name, OrderStatus status) throws IOException, InterruptedException {
         user1 = new RegisteredUser(name, Role.STUDENT);
-        registeredUserRepository.add(user1);
+        RegisteredUserRepository.add(user1);
         paidSuborder = new OrderBuilder().setUserID(user1.getId()).build();
         paidSuborder.setStatus(status);
         groupOrder.addSubOrder(paidSuborder);
@@ -221,7 +210,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
     @And("a suborder of the user {string} not already placed with the status {status} added in the group order")
     public void aSuborderNotAlreadyPlacedWithTheStatusCREATEDAddedInTheGroupOrder(String name, OrderStatus status) throws IOException, InterruptedException {
         user2 = new RegisteredUser(name, Role.STUDENT);
-        registeredUserRepository.add(user2);
+        RegisteredUserRepository.add(user2);
         unpaidSuborder = new OrderBuilder().setUserID(user2.getId()).build();
         unpaidSuborder.setStatus(status);
         groupOrder.addSubOrder(unpaidSuborder);

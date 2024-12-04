@@ -8,8 +8,7 @@ import java.io.IOException;
 public record UserDTO(int id, String name, String role) {
 
     public RegisteredUser convertUserDtoToUser() throws IOException, InterruptedException {
-        RegisteredUserRepository registeredUserRepository = new RegisteredUserRepository();
-        return registeredUserRepository.findById(id);
+        return RegisteredUserRepository.findById(id);
 
     }
 }

@@ -58,11 +58,11 @@ public class InternetUserFiltersRestaurantStepdefs {
         restaurantB.addTimeSlot(new TimeSlot(LocalDateTime.of(2024, 10, 12, openningB, 0, 0), restaurantB, 5));
         restaurantA.addDish(dishA);
         restaurantB.addDish(dishB);
-        when(restaurantRepository.findRestaurantByFoodType(List.of(FoodType.SUSHI))).thenReturn(List.of(restaurantA, restaurantB));
-        when(restaurantRepository.findRestaurantByFoodType(List.of(FoodType.BURGER))).thenReturn(List.of());
-        when(restaurantRepository.findRestaurantsByAvailability(LocalDateTime.of(2025, 1, 1, 12, 10, 0))).thenReturn(List.of(restaurantA)).thenReturn(List.of());
-        when(restaurantRepository.findRestaurantByName(restaurantNameB)).thenReturn(List.of(restaurantB));
-        when(restaurantRepository.findRestaurantByName("512PizzaRestaurant")).thenReturn(List.of());
+        when(RestaurantRepository.findRestaurantByFoodType(List.of(FoodType.SUSHI))).thenReturn(List.of(restaurantA, restaurantB));
+        when(RestaurantRepository.findRestaurantByFoodType(List.of(FoodType.BURGER))).thenReturn(List.of());
+        when(RestaurantRepository.findRestaurantsByAvailability(LocalDateTime.of(2025, 1, 1, 12, 10, 0))).thenReturn(List.of(restaurantA)).thenReturn(List.of());
+        when(RestaurantRepository.findRestaurantByName(restaurantNameB)).thenReturn(List.of(restaurantB));
+        when(RestaurantRepository.findRestaurantByName("512PizzaRestaurant")).thenReturn(List.of());
     }
 
     //By Name//

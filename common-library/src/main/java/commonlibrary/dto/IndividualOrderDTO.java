@@ -26,8 +26,7 @@ public record IndividualOrderDTO(int id, String price, int restaurantId, int use
                 .toList();
 
         Payment convertedPayment = payment.convertPaymentDtoToPayment();
-        RegisteredUserRepository registeredUserRepository = new RegisteredUserRepository();
-        RegisteredUser user = registeredUserRepository.findById(userId);
+        RegisteredUser user = RegisteredUserRepository.findById(userId);
 
         return (IndividualOrder) new OrderBuilder()
                 .setId(id)

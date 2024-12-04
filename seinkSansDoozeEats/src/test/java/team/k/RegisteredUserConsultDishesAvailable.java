@@ -68,7 +68,7 @@ public class RegisteredUserConsultDishesAvailable {
         for (Dish dish : dishes) {
             nagaRestaurant.addDish(dish);
         }
-        when(restaurantRepository.findById(1)).thenReturn(nagaRestaurant);
+        when(RestaurantRepository.findById(1)).thenReturn(nagaRestaurant);
     }
 
     @And("User {string} has a currentOrder for the restaurant Naga in the timeslot beginning at {int}:{int} on {int}-{int}-{int}")
@@ -82,7 +82,7 @@ public class RegisteredUserConsultDishesAvailable {
         registeredUser.setCurrentOrder(order);
         TimeSlot timeSlot = new TimeSlot(LocalDateTime.of(year, month, day, hour, min), nagaRestaurant, nagaRestaurant.getAverageOrderPreparationTime());
         nagaRestaurant.addTimeSlot(timeSlot);
-        when(subOrderRepository.findById(1)).thenReturn(order);
+        when(SubOrderRepository.findById(1)).thenReturn(order);
     }
 
     @When("Jack consults the available dishes of the restaurant Naga")

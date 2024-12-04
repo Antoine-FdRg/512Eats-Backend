@@ -18,9 +18,6 @@ import java.util.Objects;
 
 @RequiredArgsConstructor
 public class GroupOrderService {
-    private final GroupOrderRepository groupOrderRepository;
-    private final LocationRepository locationRepository;
-    private final RegisteredUserRepository registeredUserRepository;
 
     /**
      * Create a group order
@@ -30,7 +27,7 @@ public class GroupOrderService {
      * @return the id of the created group order to share with friends
      */
     public int createGroupOrder(int deliveryLocationId, LocalDateTime deliveryDateTime, LocalDateTime now) throws IOException, InterruptedException {
-        Location location = locationRepository.findLocationById(deliveryLocationId);
+        Location location = LocationRepository.findLocationById(deliveryLocationId);
         if (location == null) {
             throw new NoSuchElementException("Location not found");
         }
@@ -45,11 +42,11 @@ public class GroupOrderService {
                 .withDate(deliveryDateTime)
                 .build();
 
-        return groupOrderRepository.add(groupOrder).getId();
+        return GroupOrderRepository.add(groupOrder).getId();
     }
 
     public GroupOrder findGroupOrderById(int id) throws IOException, InterruptedException {
-        return groupOrderRepository.findGroupOrderById(id);
+        return GroupOrderRepository.findGroupOrderById(id);
     }
 
     /**
@@ -69,7 +66,7 @@ public class GroupOrderService {
         if (deliveryDateTime.isBefore(now.plusMinutes(Restaurant.ORDER_PROCESSING_TIME_MINUTES))) {
             throw new IllegalArgumentException("Delivery time cannot be this early");
         }
-        GroupOrder groupOrder = groupOrderRepository.findGroupOrderById(groupOrderId);
+        GroupOrder groupOrder = GroupOrderRepository.findGroupOrderById(groupOrderId);
         if (Objects.isNull(groupOrder)) {
             throw new NoSuchElementException("Group order not found");
         }
@@ -80,14 +77,14 @@ public class GroupOrderService {
     }
 
     public void place(int groupOrderId, LocalDateTime now) throws IOException, InterruptedException {
-        GroupOrder groupOrder = groupOrderRepository.findGroupOrderById(groupOrderId);
+        GroupOrder groupOrder = GroupOrderRepository.findGroupOrderById(groupOrderId);
         if (Objects.isNull(groupOrder)) {
             throw new NoSuchElementException("Group order not found");
         }
         List<RegisteredUser> members = groupOrder.getSubOrders().stream().map(subOrder -> {
             RegisteredUser orderOwner = null;
             try {
-                orderOwner = registeredUserRepository.findById(subOrder.getUserID());
+                orderOwner = RegisteredUserRepository.findById(subOrder.getUserID());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } catch (InterruptedException e) {

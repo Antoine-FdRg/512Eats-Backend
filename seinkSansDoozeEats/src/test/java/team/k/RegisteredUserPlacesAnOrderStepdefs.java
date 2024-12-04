@@ -1,7 +1,6 @@
 package team.k;
 
 import commonlibrary.model.Location;
-import commonlibrary.repository.GroupOrderRepository;
 import commonlibrary.repository.LocationRepository;
 import commonlibrary.repository.RestaurantRepository;
 import io.cucumber.java.Before;
@@ -43,17 +42,12 @@ public class RegisteredUserPlacesAnOrderStepdefs {
     RegisteredUser registeredUser;
     SubOrder order;
 
-    SubOrderRepository subOrderRepository;
     @Mock
     Dish dish;
-    RegisteredUserRepository registeredUserRepository;
     @Mock
     Restaurant restaurant;
     @Mock
     PaymentProcessor paymentProcessor;
-    GroupOrderRepository groupOrderRepository;
-    LocationRepository locationRepository;
-    RestaurantRepository restaurantRepository;
 
     Exception exception;
     OrderService orderService;
@@ -61,35 +55,25 @@ public class RegisteredUserPlacesAnOrderStepdefs {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        registeredUserRepository = new RegisteredUserRepository();
-        subOrderRepository = new SubOrderRepository();
-        groupOrderRepository = new GroupOrderRepository();
-        locationRepository = new LocationRepository();
-        restaurantRepository = new RestaurantRepository();
-        orderService = new OrderService(groupOrderRepository,
-                locationRepository,
-                subOrderRepository,
-                restaurantRepository,
-                registeredUserRepository,
-                paymentProcessor);
+        orderService = new OrderService(paymentProcessor);
     }
 
 
     @Given("an individual order is created by a registered user whose name is {string} and his role is {role} to be delivered to {string}, {string} in {string}")
     public void anOrderIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(String name, Role role, String number, String address, String city) throws IOException, InterruptedException {
         registeredUser = spy(new RegisteredUser(name, role));
-        registeredUserRepository.add(registeredUser);
+        RegisteredUserRepository.add(registeredUser);
         when(restaurant.isAvailable(any())).thenReturn(true);
-        restaurantRepository.add(restaurant);
+        RestaurantRepository.add(restaurant);
         Location location = new Location.Builder().setNumber(number).setAddress(address).setCity(city).build();
-        locationRepository.add(location);
+        LocationRepository.add(location);
         order = new OrderBuilder().setUserID(registeredUser.getId())
                 .setRestaurantID(restaurant.getId())
                 .setDeliveryLocationID(location.getId()) //ajout de la location pour créer une IndividualOrder
                 .build();
         registeredUser.setCurrentOrder(order);
         order.addDish(dish);
-        subOrderRepository.add(order);
+        SubOrderRepository.add(order);
     }
 
     @When("The user places the order at {int}:{int} on {int}-{int}-{int}")

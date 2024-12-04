@@ -22,8 +22,7 @@ public record SubOrderDTO(int id, String price, int restaurantId, int userId,
                 .toList();
 
         Payment convertedPayment = payment.convertPaymentDtoToPayment();
-        RegisteredUserRepository registeredUserRepository = new RegisteredUserRepository();
-        RegisteredUser user = registeredUserRepository.findById(userId);
+        RegisteredUser user = RegisteredUserRepository.findById(userId);
         return new OrderBuilder()
                 .setId(id)
                 .setPrice(Double.parseDouble(price))

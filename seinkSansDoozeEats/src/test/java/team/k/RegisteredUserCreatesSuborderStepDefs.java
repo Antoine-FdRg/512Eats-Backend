@@ -14,7 +14,6 @@ import commonlibrary.repository.GroupOrderRepository;
 import commonlibrary.repository.LocationRepository;
 import commonlibrary.repository.RegisteredUserRepository;
 import commonlibrary.repository.RestaurantRepository;
-import commonlibrary.repository.SubOrderRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
 import team.k.orderService.OrderService;
@@ -32,36 +31,21 @@ public class RegisteredUserCreatesSuborderStepDefs {
 
     Restaurant restaurant;
     Dish dish;
-    RestaurantRepository restaurantRepository;
-    RegisteredUserRepository registeredUserRepository;
-    GroupOrderRepository groupOrderRepository;
-    LocationRepository locationRepository;
-    SubOrderRepository subOrderRepository;
     OrderService orderService;
 
     @Before
     public void setUp() throws IOException, InterruptedException {
         registeredUser = new RegisteredUser("John Doe", Role.STUDENT);
-        registeredUserRepository = new RegisteredUserRepository();
-        registeredUserRepository.add(registeredUser);
-        restaurantRepository = new RestaurantRepository();
-        groupOrderRepository = new GroupOrderRepository();
-        locationRepository = new LocationRepository();
-        subOrderRepository = new SubOrderRepository();
-        orderService = new OrderService(
-                groupOrderRepository,
-                locationRepository,
-                subOrderRepository,
-                restaurantRepository,
-                registeredUserRepository);
+        RegisteredUserRepository.add(registeredUser);
+        orderService = new OrderService();
     }
 
     @Given("a groupOrder without any suborder")
     public void aGroupOrderWithTheId5AndWithoutAnySuborderARegisteredUserJoinTheGroupOrder() throws IOException, InterruptedException {
         Location location = new Location.Builder().setAddress("Rue de la Loi 1").build();
-        location = locationRepository.add(location);
+        location = LocationRepository.add(location);
         groupOrder = new GroupOrder.Builder().withDeliveryLocationID(location.getId()).build();
-        groupOrder = groupOrderRepository.add(groupOrder);
+        groupOrder = GroupOrderRepository.add(groupOrder);
     }
 
     @Given("a restaurant {string}  with a dish {string} an opening time {string} and closing time {string}")
@@ -72,14 +56,14 @@ public class RegisteredUserCreatesSuborderStepDefs {
                 .setOpen(LocalTime.parse(open))
                 .setClose(LocalTime.parse(closed))
                 .build();
-        restaurantRepository.add(restaurant);
+        RestaurantRepository.add(restaurant);
         dish = new Dish.Builder().setName(dishName).setDescription("buger").setPrice(5).setPreparationTime(3).build();
         restaurant.addDish(dish);
     }
 
     @When("the user order a {string} in the restaurant {string}")
     public void theUserOrderAInTheRestaurant(String dishName, String restaurantName) throws IOException, InterruptedException {
-        int idrestaurant = restaurantRepository.findRestaurantByName(restaurantName).getFirst().getId();
+        int idrestaurant = RestaurantRepository.findRestaurantByName(restaurantName).getFirst().getId();
         int registerId = registeredUser.getId();
         orderService.createSuborder(registerId, idrestaurant, groupOrder.getId());
         registeredUser.getCurrentOrder().addDish(dish);
@@ -98,10 +82,10 @@ public class RegisteredUserCreatesSuborderStepDefs {
 
     @When("the user orders a {string} in the restaurant {string} for the location : {string}")
     public void theUserOrdersAInTheRestaurantForTheLocation(String dishName, String restaurantName, String location) throws IOException, InterruptedException {
-        int idrestaurant = restaurantRepository.findRestaurantByName(restaurantName).getFirst().getId();
+        int idrestaurant = RestaurantRepository.findRestaurantByName(restaurantName).getFirst().getId();
         int registerId = registeredUser.getId();
         Location loc = new Location.Builder().setAddress(location).build();
-        locationRepository.add(loc);
+        LocationRepository.add(loc);
         restaurant.addTimeSlot(new TimeSlot(LocalDateTime.parse("2024-10-12T11:20:00"), restaurant, 20));
         orderService.createIndividualOrder(registerId, idrestaurant, loc.getId(), LocalDateTime.parse("2024-10-12T12:13:20"), LocalDateTime.parse("2024-10-12T12:11:18"));
         registeredUser.getCurrentOrder().addDish(dish);

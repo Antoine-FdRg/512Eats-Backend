@@ -48,7 +48,7 @@ public class ManagingRestaurant {
         Dish dishB = new Dish.Builder().setName("burger").setDescription("Description").setPrice(5).setPreparationTime(0).build();
         nagaRestaurant.addDish(dishA);
         nagaRestaurant.addDish(dishB);
-        when(restaurantRepository.findById(1)).thenReturn(nagaRestaurant);
+        when(RestaurantRepository.findById(1)).thenReturn(nagaRestaurant);
 
     }
 

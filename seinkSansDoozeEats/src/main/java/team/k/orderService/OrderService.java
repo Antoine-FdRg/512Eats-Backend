@@ -33,11 +33,6 @@ import java.util.Objects;
 public class OrderService {
 
     @Getter
-    private final GroupOrderRepository groupOrderRepository;
-    private final LocationRepository locationRepository;
-    private final SubOrderRepository subOrderRepository;
-    private final RestaurantRepository restaurantRepository;
-    private final RegisteredUserRepository registeredUserRepository;
     private PaymentProcessor paymentProcessor;
     private static final String RESTAURANT_NOT_FOUND = "Restaurant not found";
 
@@ -52,11 +47,11 @@ public class OrderService {
      */
     public void createIndividualOrder(int registeredUserID, int restaurantId, int deliveryLocationId, LocalDateTime deliveryTime, LocalDateTime now) throws IOException, InterruptedException {
         RegisteredUser registeredUser = this.registeredUserValidator(registeredUserID);
-        Restaurant restaurant = restaurantRepository.findById(restaurantId);
+        Restaurant restaurant = RestaurantRepository.findById(restaurantId);
         if (restaurant == null) {
             throw new NoSuchElementException(RESTAURANT_NOT_FOUND);
         }
-        Location deliveryLocation = locationRepository.findLocationById(deliveryLocationId);
+        Location deliveryLocation = LocationRepository.findLocationById(deliveryLocationId);
         if (deliveryLocation == null) {
             throw new NoSuchElementException("Location not found");
         }
@@ -76,19 +71,19 @@ public class OrderService {
                 .setDeliveryTime(deliveryTime)
                 .build();
         registeredUser.setCurrentOrder(order);
-        subOrderRepository.add(order);
-        registeredUserRepository.update(registeredUser);
+        SubOrderRepository.add(order);
+        RegisteredUserRepository.update(registeredUser);
         restaurant.addOrderToTimeslot(order);
-        restaurantRepository.update(restaurant);
+        RestaurantRepository.update(restaurant);
     }
 
     public void addDishToOrder(int orderId, int dishId) throws IOException, InterruptedException {
         //Il faut que le total des ingrédients du plat soit inférieur à DURATION
-        SubOrder subOrder = subOrderRepository.findById(orderId);
+        SubOrder subOrder = SubOrderRepository.findById(orderId);
         if (subOrder == null) {
             throw new NoSuchElementException("SubOrder not found");
         }
-        Restaurant restaurant = restaurantRepository.findById(subOrder.getRestaurantID());
+        Restaurant restaurant = RestaurantRepository.findById(subOrder.getRestaurantID());
         if (restaurant == null) {
             throw new NoSuchElementException(RESTAURANT_NOT_FOUND);
         }
@@ -101,15 +96,15 @@ public class OrderService {
             throw new IllegalArgumentException("The total preparation time of the dishes is greater than 30 minutes");
         }
         subOrder.addDish(dish);
-        subOrderRepository.update(subOrder);
+        SubOrderRepository.update(subOrder);
     }
 
     public void placeSubOrder(int orderId, LocalDateTime now) throws NoSuchElementException, IOException, InterruptedException {
-        SubOrder subOrder = subOrderRepository.findById(orderId);
+        SubOrder subOrder = SubOrderRepository.findById(orderId);
         if (subOrder == null) {
             throw new NoSuchElementException("SubOrder not found");
         }
-        subOrder.place(now, registeredUserRepository.findById(subOrder.getUserID()));
+        subOrder.place(now, RegisteredUserRepository.findById(subOrder.getUserID()));
 
     }
 
@@ -125,7 +120,7 @@ public class OrderService {
         if (currentDateTime == null) {
             throw new IllegalArgumentException("Current datetime cant be null");
         }
-        Restaurant restaurant = restaurantRepository.findById(currentOrder.getRestaurantID());
+        Restaurant restaurant = RestaurantRepository.findById(currentOrder.getRestaurantID());
         if (restaurant == null) {
             throw new NoSuchElementException(RESTAURANT_NOT_FOUND);
         }
@@ -136,7 +131,7 @@ public class OrderService {
             throw new IllegalArgumentException("Basket is empty");
         }
         if (paymentProcessor.processPayment(currentOrder.getPrice())) {
-            SubOrder subOrder = subOrderRepository.findById(orderId);
+            SubOrder subOrder = SubOrderRepository.findById(orderId);
             subOrder.pay(currentDateTime, restaurant, registeredUser);
             subOrder.setPayment(new Payment(subOrder.getPrice(), currentDateTime));
         } else {
@@ -145,8 +140,8 @@ public class OrderService {
     }
 
     public List<Dish> getAvailableDishes(int restaurantId, int orderId) throws IOException, InterruptedException {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId);
-        SubOrder order = subOrderRepository.findById(orderId);
+        Restaurant restaurant = RestaurantRepository.findById(restaurantId);
+        SubOrder order = SubOrderRepository.findById(orderId);
         if (restaurant == null) {
             throw new NoSuchElementException(RESTAURANT_NOT_FOUND);
         }
@@ -157,7 +152,7 @@ public class OrderService {
     }
 
     private RegisteredUser registeredUserValidator(int registeredUserID) throws IOException, InterruptedException {
-        RegisteredUser registeredUser = registeredUserRepository.findById(registeredUserID);
+        RegisteredUser registeredUser = RegisteredUserRepository.findById(registeredUserID);
         if (registeredUser == null) {
             throw new NoSuchElementException("User not found");
         }
@@ -176,8 +171,8 @@ public class OrderService {
      */
     public void createSuborder(int registeredUserID, int restaurantId, int groupOrderId) throws IOException, InterruptedException {
         RegisteredUser registeredUser = this.registeredUserValidator(registeredUserID);
-        Restaurant restaurant = restaurantRepository.findById(restaurantId);
-        GroupOrder groupOrder = groupOrderRepository.findGroupOrderById(groupOrderId);
+        Restaurant restaurant = RestaurantRepository.findById(restaurantId);
+        GroupOrder groupOrder = GroupOrderRepository.findGroupOrderById(groupOrderId);
         if (restaurant == null) {
             throw new NoSuchElementException(RESTAURANT_NOT_FOUND);
         }

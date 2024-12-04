@@ -77,7 +77,7 @@ public class IndividualOrderStepdefs {
     @Given("a registeredUser named {string} with the role {role}")
     public void aRegisteredUserNamedWithTheRole(String name, Role role) throws IOException, InterruptedException {
         registeredUser = new RegisteredUser(name, role);
-        when(registeredUserRepository.findById(registeredUser.getId())).thenReturn(registeredUser);
+        when(RegisteredUserRepository.findById(registeredUser.getId())).thenReturn(registeredUser);
     }
 
     @And("a restaurant named {string} open from {int}:{int} to {int}:{int} with an average order preparation time of {int} minutes")
@@ -90,7 +90,7 @@ public class IndividualOrderStepdefs {
                 .setClose(closeTime)
                 .setAverageOrderPreparationTime(averageOrderPreparationTime)
                 .build();
-        when(restaurantRepository.findById(restaurant.getId())).thenReturn(restaurant);
+        when(RestaurantRepository.findById(restaurant.getId())).thenReturn(restaurant);
     }
 
     @And("with a productionCapacity of {int} for the timeslot beginning at {int}:{int} on {int}-{int}-{int}")

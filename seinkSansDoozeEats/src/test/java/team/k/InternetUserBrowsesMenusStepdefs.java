@@ -6,8 +6,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import commonlibrary.model.Dish;
 import commonlibrary.enumerations.FoodType;
@@ -43,9 +41,7 @@ public class InternetUserBrowsesMenusStepdefs {
 
     @Before
     public void setUp() {
-        restaurantRepository = new RestaurantRepository();
-        restaurantService = new RestaurantService(restaurantRepository);
-        dishRepository = new DishRepository();
+        restaurantService = new RestaurantService();
         MockitoAnnotations.openMocks(this);
     }
 
@@ -69,7 +65,7 @@ public class InternetUserBrowsesMenusStepdefs {
         restaurantA = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).build();
         restaurantA.addDish(dishA);
         restaurantA.addDish(dishB);
-        restaurantA = restaurantRepository.add(restaurantA);
+        restaurantA = RestaurantRepository.add(restaurantA);
         restaurantService.addRestaurant(restaurantA);
         restaurantB = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).setDishes(dishes).build();
         restaurantB = restaurantService.addRestaurant(restaurantB);
@@ -88,7 +84,7 @@ public class InternetUserBrowsesMenusStepdefs {
     }
 
     @When("The user wants to have dishes of the restaurant {string}")
-    public void theUserWantsToHaveDishesOfTheRestaurant(String restaurantName) throws IOException, InterruptedException {
+    public void theUserWantsToHaveDishesOfTheRestaurant(String restaurantName) {
         restaurant = restaurantB;
 
         try {
