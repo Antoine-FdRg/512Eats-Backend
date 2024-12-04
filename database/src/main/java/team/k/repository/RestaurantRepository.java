@@ -28,7 +28,7 @@ public class RestaurantRepository extends GenericRepository<PersistedRestaurant>
      * @return the restaurant if found, null otherwise
      */
     public List<PersistedRestaurant> findByName(String name) {
-        return findAll().stream().filter(restaurant -> restaurant.getName().contains(name)).toList();
+        return findAll().stream().filter(restaurant -> restaurant.getName().toLowerCase().contains(name.toLowerCase())).toList();
     }
 
     /**
