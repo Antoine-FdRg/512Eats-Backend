@@ -167,6 +167,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
         );
         try {
             groupOrderService.modifyGroupOrderDeliveryDateTime(codeToShare, deliveryDateTime, currentDateTime);
+            groupOrder = groupOrderRepository.update(groupOrder);
         } catch (Exception e) {
             exception = e;
         }

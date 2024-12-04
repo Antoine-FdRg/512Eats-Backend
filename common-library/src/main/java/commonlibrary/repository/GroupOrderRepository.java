@@ -52,7 +52,7 @@ public class GroupOrderRepository {
         return objectMapper.readValue(response.body(), GroupOrder.class);
     }
 
-    public void update(GroupOrder groupOrder) throws IOException, InterruptedException {
+    public GroupOrder update(GroupOrder groupOrder) throws IOException, InterruptedException {
         GroupOrderUpdatorDTO groupOrderUpdatorDTO = new GroupOrderUpdatorDTO(groupOrder);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/update"))
@@ -62,5 +62,6 @@ public class GroupOrderRepository {
         if (response.statusCode() >= 300) {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
         }
+        return objectMapper.readValue(response.body(), GroupOrder.class);
     }
 }

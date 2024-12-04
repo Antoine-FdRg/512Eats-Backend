@@ -77,7 +77,9 @@ public class OrderService {
                 .build();
         registeredUser.setCurrentOrder(order);
         subOrderRepository.add(order);
+        registeredUserRepository.update(registeredUser);
         restaurant.addOrderToTimeslot(order);
+        restaurantRepository.update(restaurant);
     }
 
     public void addDishToOrder(int orderId, int dishId) throws IOException, InterruptedException {
@@ -99,6 +101,7 @@ public class OrderService {
             throw new IllegalArgumentException("The total preparation time of the dishes is greater than 30 minutes");
         }
         subOrder.addDish(dish);
+        subOrderRepository.update(subOrder);
     }
 
     public void placeSubOrder(int orderId, LocalDateTime now) throws NoSuchElementException, IOException, InterruptedException {

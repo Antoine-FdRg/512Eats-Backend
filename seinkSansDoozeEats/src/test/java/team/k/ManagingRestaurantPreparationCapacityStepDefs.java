@@ -76,29 +76,36 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
         order = subOrderRepository.add(order);
         order.setStatus(OrderStatus.valueOf(statusCreated));
         restaurantRepository.add(restaurant);
+        restaurant = restaurantRepository.update(restaurant);
     }
 
     @And("the restaurant {string} has a time slot available at {int}:{int} with a capacity of {int}")
-    public void theRestaurantHasATimeSlotAvailableAtWithACapacityOf(String restaurantName, int hours, int min, int preparationCapacity) {
+    public void theRestaurantHasATimeSlotAvailableAtWithACapacityOf(String restaurantName, int hours, int min, int preparationCapacity) throws IOException, InterruptedException {
         timeSlot = new TimeSlot(LocalDateTime.of(2024, 10, 12, hours, min, 0), restaurant, preparationCapacity);
         restaurant.addTimeSlot(timeSlot);
-        freeProductionCapacity = timeSlot.getFreeProductionCapacity();
+        restaurant = restaurantRepository.update(restaurant);
+
+        freeProductionCapacity = restaurant.getTimeSlots().get(0).getFreeProductionCapacity();
     }
 
 
     @When("a registered user places the command")
     public void aRegisteredUserPlacesTheCommand() throws IOException, InterruptedException {
-        timeSlot.addOrder(order);
+        restaurant.getTimeSlots().get(0).addOrder(order);
+        restaurant = restaurantRepository.update(restaurant);
+        order = subOrderRepository.update(order);
         orderService.addDishToOrder(order.getId(), dish.getId());
+        order = subOrderRepository.findById(order.getId());
         order.setStatus(OrderStatus.PLACED);
         order = subOrderRepository.update(order);
+        restaurant = restaurantRepository.findById(restaurant.getId());
     }
 
 
     @Then("the preparation capacity of the timeslot is not at {int}")
     public void thePreparationCapacityOfTheOrderHasIncreased(int capcaity) {
-        assertNotEquals(freeProductionCapacity, timeSlot.getFreeProductionCapacity());
-        assertNotEquals(timeSlot.getFreeProductionCapacity(), capcaity);
+        assertNotEquals(freeProductionCapacity, restaurant.getTimeSlots().get(0).getFreeProductionCapacity());
+        assertNotEquals(restaurant.getTimeSlots().get(0).getFreeProductionCapacity(), capcaity);
     }
 
 
