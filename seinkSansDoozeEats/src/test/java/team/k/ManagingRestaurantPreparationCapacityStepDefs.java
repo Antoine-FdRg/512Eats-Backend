@@ -1,5 +1,6 @@
 package team.k;
 
+import commonlibrary.repository.DishRepository;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -32,6 +33,7 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
 
     OrderService orderService;
     SubOrderRepository subOrderRepository;
+    DishRepository dishRepository;
 
     Restaurant restaurant;
 
@@ -59,15 +61,19 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
                 subOrderRepository,
                 restaurantRepository,
                 registeredUserRepository);
+        dishRepository = new DishRepository();
     }
 
     @Given("an order with the status {string} in the restaurant {string} with a chosen dish {string} with a production capacity of {int} and an average preparation time of {int} min with a delivery time at {int}:{int}")
     public void anOrderWithTheStatusInTheRestaurantWithAChosenDish(String statusCreated, String restaurantName, String dishName, int productionCapacity, int averagePreparationTime, int hours, int minutes) throws IOException, InterruptedException {
         restaurant = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(12, 0, 0)).setClose(LocalTime.of(15, 0, 0)).setFoodTypes(List.of(FoodType.BURGER)).setAverageOrderPreparationTime(averagePreparationTime).build();
+        restaurant = restaurantRepository.add(restaurant);
         dish = new Dish.Builder().setName(dishName).setDescription("Cheeseburger").setPrice(5).setPreparationTime(productionCapacity).build();
+        dish = dishRepository.add(dish);
         restaurant.addDish(dish);
+        restaurant = restaurantRepository.update(restaurant);
         order = new OrderBuilder().setRestaurantID(restaurant.getId()).setDeliveryTime(LocalDateTime.of(2024, 10, 12, hours, minutes, 0)).build();
-        subOrderRepository.add(order);
+        order = subOrderRepository.add(order);
         order.setStatus(OrderStatus.valueOf(statusCreated));
         restaurantRepository.add(restaurant);
     }
@@ -85,6 +91,7 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
         timeSlot.addOrder(order);
         orderService.addDishToOrder(order.getId(), dish.getId());
         order.setStatus(OrderStatus.PLACED);
+        order = subOrderRepository.update(order);
     }
 
 

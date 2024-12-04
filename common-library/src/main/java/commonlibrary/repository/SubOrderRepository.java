@@ -92,7 +92,7 @@ public class SubOrderRepository {
         return subOrder;
     }
 
-    public void update(SubOrder subOrder) throws IOException, InterruptedException {
+    public SubOrder update(SubOrder subOrder) throws IOException, InterruptedException {
         SubOrderUpdatorDTO subOrderUpdatorDTO = new SubOrderUpdatorDTO(subOrder);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/update"))
@@ -102,5 +102,6 @@ public class SubOrderRepository {
         if (response.statusCode() >= 300) {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
         }
+        return objectMapper.readValue(response.body(), SubOrder.class);
     }
 }

@@ -30,7 +30,7 @@ public class DishRepository {
             return dish;
     }
 
-    public void add(Dish dish) throws IOException, InterruptedException {
+    public Dish add(Dish dish) throws IOException, InterruptedException {
         DishCreatorDTO dishCreatorDTO = new DishCreatorDTO(dish.getName(), dish.getDescription(), dish.getPrice(), dish.getPreparationTime(), dish.getPicture());
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/create"))
@@ -40,6 +40,7 @@ public class DishRepository {
         if (response.statusCode() >= 300) {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
         }
+        return new ObjectMapper().readValue(response.body(), Dish.class);
     }
 
     public void remove(int id) throws IOException, InterruptedException {

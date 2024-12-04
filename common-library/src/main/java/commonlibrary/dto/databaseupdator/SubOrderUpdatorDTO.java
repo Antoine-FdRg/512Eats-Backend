@@ -19,6 +19,6 @@ public record SubOrderUpdatorDTO(int id, int restaurantID, int userID,
                 subOrder.getStatus().name(),
                 subOrder.getPlacedDate(),
                 subOrder.getDeliveryDate(),
-                new PaymentDTO(subOrder.getPayment().getAmount()));
+                subOrder.getPayment() != null ? new PaymentDTO(subOrder.getPayment().getAmount()) : null);
     }
 }

@@ -137,7 +137,7 @@ public class RestaurantRepository {
         return restaurants;
     }
 
-    public void update(Restaurant restaurant) throws IOException, InterruptedException {
+    public Restaurant update(Restaurant restaurant) throws IOException, InterruptedException {
         RestauranUpdatorDTO restauranUpdatorDTO = new RestauranUpdatorDTO(restaurant);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/update"))
@@ -147,6 +147,7 @@ public class RestaurantRepository {
         if (response.statusCode() >= 300) {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
         }
+        return objectMapper.readValue(response.body(), Restaurant.class);
     }
 
 
