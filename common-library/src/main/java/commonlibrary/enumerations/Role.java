@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Role {
-    STUDENT("Student"), CAMPUS_EMPLOYEE("Campus Employee"), RESTAURANT_MANAGER("Restaurant Manager");
+    STUDENT("STUDENT"), CAMPUS_EMPLOYEE("CAMPUS_EMPLOYEE"), RESTAURANT_MANAGER("RESTAURANT_MANAGER");
     final String name;
 
     public boolean canOrder() {
