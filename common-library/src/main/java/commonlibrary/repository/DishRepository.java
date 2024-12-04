@@ -9,7 +9,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -17,7 +16,10 @@ public class DishRepository {
     private static final String BASE_URL = "http://localhost:8082/dishes";
     private static final HttpClient client = HttpClient.newHttpClient();
 
-    public Dish findById(int dishId) throws IOException, InterruptedException {
+    private DishRepository() {
+    }
+
+    public static Dish findById(int dishId) throws IOException, InterruptedException {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(BASE_URL + "/get/" + dishId))
                     .GET()
@@ -30,7 +32,7 @@ public class DishRepository {
             return dish;
     }
 
-    public Dish add(Dish dish) throws IOException, InterruptedException {
+    public static Dish add(Dish dish) throws IOException, InterruptedException {
         DishCreatorDTO dishCreatorDTO = new DishCreatorDTO(dish.getName(), dish.getDescription(), dish.getPrice(), dish.getPreparationTime(), dish.getPicture());
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/create"))
@@ -43,7 +45,7 @@ public class DishRepository {
         return new ObjectMapper().readValue(response.body(), Dish.class);
     }
 
-    public void remove(int id) throws IOException, InterruptedException {
+    public static void remove(int id) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/delete/" + id))
                 .DELETE().build();
@@ -53,7 +55,7 @@ public class DishRepository {
         }
     }
 
-    public List<Dish> findAll() throws IOException, InterruptedException {
+    public static List<Dish> findAll() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL))
                 .GET()

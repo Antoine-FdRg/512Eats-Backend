@@ -16,11 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
 public class LocationRepository {
 
     private static final String BASE_URL = "http://localhost:8082/locations";
     private static final HttpClient client = HttpClient.newHttpClient();
+
+    private LocationRepository() {
+    }
 
     /**
      * Returns a location by its id.
@@ -28,7 +30,7 @@ public class LocationRepository {
      * @param id the id of the location to return.
      * @return the location with the given id, or null if no such location exists.
      */
-    public Location findLocationById(int id) throws IOException, InterruptedException {
+    public static Location findLocationById(int id) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/get/" + id))
                 .GET()
@@ -41,7 +43,7 @@ public class LocationRepository {
         return location;
     }
 
-    public Location add(Location location) throws IOException, InterruptedException {
+    public static Location add(Location location) throws IOException, InterruptedException {
         LocationCreatorDTO locationCreatorDTO = new LocationCreatorDTO(location);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/create"))

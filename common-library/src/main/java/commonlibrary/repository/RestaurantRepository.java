@@ -20,10 +20,12 @@ public class RestaurantRepository {
     private static final String BASE_URL = "http://localhost:8082/restaurants";
     private static final HttpClient client = HttpClient.newHttpClient();
 
-    private final ObjectMapper objectMapper = new ObjectMapper()
+    private static final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
+    private RestaurantRepository() {
+    }
 
     /**
      * Find a restaurant by its id.
@@ -31,7 +33,7 @@ public class RestaurantRepository {
      * @param id the id of the restaurant
      * @return the restaurant if found, null otherwise
      */
-    public Restaurant findById(int id) throws IOException, InterruptedException {
+    public static Restaurant findById(int id) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/get/" + id))
                 .GET()
@@ -49,7 +51,7 @@ public class RestaurantRepository {
      *
      * @return the list of all restaurants
      */
-    public List<Restaurant> findAll() throws IOException, InterruptedException {
+    public static List<Restaurant> findAll() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL))
                 .GET()
@@ -67,7 +69,7 @@ public class RestaurantRepository {
      *
      * @param restaurant the restaurant to add
      */
-    public Restaurant add(Restaurant restaurant) throws IOException, InterruptedException {
+    public static Restaurant add(Restaurant restaurant) throws IOException, InterruptedException {
         RestaurantCreatorDTO restaurantCreatorDTO = new RestaurantCreatorDTO(restaurant);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/create"))
@@ -85,7 +87,7 @@ public class RestaurantRepository {
      *
      * @param restaurantId the restaurant to delete
      */
-    public void delete(int restaurantId) throws IOException, InterruptedException {
+    public static void delete(int restaurantId) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/delete/" + restaurantId))
                 .DELETE().build();
@@ -95,7 +97,7 @@ public class RestaurantRepository {
         }
     }
 
-    public List<Restaurant> findRestaurantByFoodType(List<FoodType> foodTypes) throws IOException, InterruptedException {
+    public static List<Restaurant> findRestaurantByFoodType(List<FoodType> foodTypes) throws IOException, InterruptedException {
         List<String> foodTypesString = foodTypes.stream().map(Enum::name).toList();
         String foodTypesStringJoined = String.join(",", foodTypesString);
         HttpRequest request = HttpRequest.newBuilder()
@@ -110,7 +112,7 @@ public class RestaurantRepository {
         return restaurants;
     }
 
-    public List<Restaurant> findRestaurantsByAvailability(LocalDateTime timeChosen) throws IOException, InterruptedException {
+    public static List<Restaurant> findRestaurantsByAvailability(LocalDateTime timeChosen) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/by/availability?date=" + timeChosen))
                 .GET()
@@ -124,7 +126,7 @@ public class RestaurantRepository {
 
     }
 
-    public List<Restaurant> findRestaurantByName(String name) throws IOException, InterruptedException {
+    public static List<Restaurant> findRestaurantByName(String name) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "?name=" + name))
                 .GET()
@@ -137,7 +139,7 @@ public class RestaurantRepository {
         return restaurants;
     }
 
-    public Restaurant update(Restaurant restaurant) throws IOException, InterruptedException {
+    public static Restaurant update(Restaurant restaurant) throws IOException, InterruptedException {
         RestauranUpdatorDTO restauranUpdatorDTO = new RestauranUpdatorDTO(restaurant);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/update"))

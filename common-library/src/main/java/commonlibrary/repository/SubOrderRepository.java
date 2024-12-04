@@ -20,12 +20,14 @@ public class SubOrderRepository {
 
     private static final String BASE_URL = "http://localhost:8082/sub-orders";
     private static final HttpClient client = HttpClient.newHttpClient();
-    private final ObjectMapper objectMapper = new ObjectMapper()
+    private static final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
+    private SubOrderRepository() {
+    }
 
-    public SubOrder add(SubOrder subOrder) throws IOException, InterruptedException {
+    public static SubOrder add(SubOrder subOrder) throws IOException, InterruptedException {
         SubOrderCreatorDTO subOrderCreatorDTO = new SubOrderCreatorDTO(subOrder);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/create"))
@@ -38,7 +40,7 @@ public class SubOrderRepository {
         return objectMapper.readValue(response.body(), SubOrder.class);
     }
 
-    public SubOrder findById(int id) throws IOException, InterruptedException {
+    public static SubOrder findById(int id) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/get/" + id))
                 .GET()
@@ -51,7 +53,7 @@ public class SubOrderRepository {
         return subOrder;
     }
 
-    public List<SubOrder> findAll() throws IOException, InterruptedException {
+    public static List<SubOrder> findAll() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL))
                 .GET()
@@ -66,7 +68,7 @@ public class SubOrderRepository {
         return subOrders;
     }
 
-    public void delete(int subOrderId) throws IOException, InterruptedException {
+    public static void delete(int subOrderId) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/delete/" + subOrderId))
                 .DELETE().build();
@@ -76,7 +78,7 @@ public class SubOrderRepository {
         }
     }
 
-    public SubOrder findByUserId(int id) throws IOException, InterruptedException {
+    public static SubOrder findByUserId(int id) throws IOException, InterruptedException {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "?userId=" + id))
@@ -92,7 +94,7 @@ public class SubOrderRepository {
         return subOrder;
     }
 
-    public SubOrder update(SubOrder subOrder) throws IOException, InterruptedException {
+    public static SubOrder update(SubOrder subOrder) throws IOException, InterruptedException {
         SubOrderUpdatorDTO subOrderUpdatorDTO = new SubOrderUpdatorDTO(subOrder);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/update"))

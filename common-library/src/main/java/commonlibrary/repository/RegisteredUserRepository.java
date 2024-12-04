@@ -20,11 +20,14 @@ public class RegisteredUserRepository {
     private static final String BASE_URL = "http://localhost:8082/registered-users";
     private static final HttpClient client = HttpClient.newHttpClient();
 
-    private final ObjectMapper objectMapper = new ObjectMapper()
+    private static final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
-    public void add(RegisteredUser registeredUser) throws IOException, InterruptedException {
+    private RegisteredUserRepository() {
+    }
+
+    public static void add(RegisteredUser registeredUser) throws IOException, InterruptedException {
         RegisteredUserCreatorDTO registeredUserCreatorDTO = new RegisteredUserCreatorDTO(registeredUser.getName(), registeredUser.getRole().getName());
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/create"))
@@ -36,7 +39,7 @@ public class RegisteredUserRepository {
         }
     }
 
-    public RegisteredUser findById(int id) throws IOException, InterruptedException {
+    public static RegisteredUser findById(int id) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/get/" + id))
                 .GET()
@@ -49,7 +52,7 @@ public class RegisteredUserRepository {
         return registeredUser;
     }
 
-    public List<RegisteredUser> findAll() throws IOException, InterruptedException {
+    public static List<RegisteredUser> findAll() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL))
                 .GET()
@@ -64,7 +67,7 @@ public class RegisteredUserRepository {
         return registeredUsers;
     }
 
-    public void delete(int registeredUserId) throws IOException, InterruptedException {
+    public static void delete(int registeredUserId) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/delete/" + registeredUserId))
                 .DELETE().build();
@@ -74,7 +77,7 @@ public class RegisteredUserRepository {
         }
     }
 
-    public void update(RegisteredUser registeredUser) throws IOException, InterruptedException {
+    public static void update(RegisteredUser registeredUser) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/update"))
                 .PUT(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(registeredUser)))

@@ -16,16 +16,17 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 @Getter
-@NoArgsConstructor
 public class GroupOrderRepository {
     private static final String BASE_URL = "http://localhost:8082/group-orders";
     private static final HttpClient client = HttpClient.newHttpClient();
-    private final ObjectMapper objectMapper = new ObjectMapper()
+    private static final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
+    private GroupOrderRepository() {
+    }
 
-    public GroupOrder findGroupOrderById(int id) throws IOException, InterruptedException {
+    public static GroupOrder findGroupOrderById(int id) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/get/" + id))
                 .GET()
@@ -39,7 +40,7 @@ public class GroupOrderRepository {
 
     }
 
-    public GroupOrder add(GroupOrder groupOrder) throws IOException, InterruptedException {
+    public static GroupOrder add(GroupOrder groupOrder) throws IOException, InterruptedException {
         GroupOrderCreatorDTO groupOrderCreatorDTO = new GroupOrderCreatorDTO(groupOrder);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/create"))
@@ -52,7 +53,7 @@ public class GroupOrderRepository {
         return objectMapper.readValue(response.body(), GroupOrder.class);
     }
 
-    public GroupOrder update(GroupOrder groupOrder) throws IOException, InterruptedException {
+    public static GroupOrder update(GroupOrder groupOrder) throws IOException, InterruptedException {
         GroupOrderUpdatorDTO groupOrderUpdatorDTO = new GroupOrderUpdatorDTO(groupOrder);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/update"))
