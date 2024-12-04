@@ -28,7 +28,11 @@ public class PersistedRegisteredUser {
         this.id = registeredUser.getId();
         this.name = registeredUser.getName();
         this.role = registeredUser.getRole();
-        this.currentOrderID = registeredUser.getCurrentOrder().getId();
+        if(registeredUser.getCurrentOrder() != null){
+            this.currentOrderID = registeredUser.getCurrentOrder().getId();
+        }else{
+            this.currentOrderID = null;
+        }
         this.orderIDs = registeredUser.getOrders().stream().map(SubOrder::getId).toList();
     }
 }
