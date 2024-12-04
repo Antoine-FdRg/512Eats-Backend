@@ -1,6 +1,10 @@
 package commonlibrary.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import commonlibrary.dto.databasecreation.SubOrderCreatorDTO;
+import commonlibrary.dto.databaseupdator.SubOrderUpdatorDTO;
 import commonlibrary.model.Dish;
 import commonlibrary.model.order.SubOrder;
 
@@ -16,12 +20,17 @@ public class SubOrderRepository {
 
     private static final String BASE_URL = "http://localhost:8082/sub-orders";
     private static final HttpClient client = HttpClient.newHttpClient();
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+
 
 
     public void add(SubOrder subOrder) throws IOException, InterruptedException {
+        SubOrderCreatorDTO subOrderCreatorDTO = new SubOrderCreatorDTO(subOrder);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/create"))
-                .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(subOrder)))
+                .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(subOrderCreatorDTO)))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() >= 300) {
@@ -38,7 +47,7 @@ public class SubOrderRepository {
         if (response.statusCode() >= 300) {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
         }
-        SubOrder subOrder = new ObjectMapper().readValue(response.body(), SubOrder.class);
+        SubOrder subOrder = objectMapper.readValue(response.body(), SubOrder.class);
         return subOrder;
     }
 
@@ -53,7 +62,7 @@ public class SubOrderRepository {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
 
         }
-        List<SubOrder> subOrders = List.of(new ObjectMapper().readValue(response.body(), SubOrder[].class)); // throws exception if response is not a valid JSON array
+        List<SubOrder> subOrders = List.of(objectMapper.readValue(response.body(), SubOrder[].class)); // throws exception if response is not a valid JSON array
         return subOrders;
     }
 
@@ -79,7 +88,19 @@ public class SubOrderRepository {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
 
         }
-        SubOrder subOrder = new ObjectMapper().readValue(response.body(), SubOrder.class); // throws exception if response is not a valid JSON array
+        SubOrder subOrder = objectMapper.readValue(response.body(), SubOrder.class); // throws exception if response is not a valid JSON array
         return subOrder;
+    }
+
+    public void update(SubOrder subOrder) throws IOException, InterruptedException {
+        SubOrderUpdatorDTO subOrderUpdatorDTO = new SubOrderUpdatorDTO(subOrder);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/update"))
+                .PUT(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(subOrderUpdatorDTO)))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() >= 300) {
+            throw new IOException("Error: " + response.statusCode() + " - " + response.body());
+        }
     }
 }

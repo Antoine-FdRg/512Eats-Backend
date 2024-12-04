@@ -54,8 +54,8 @@ public class RestaurantService {
      *
      * @param restaurant the restaurant to add
      */
-    public void addRestaurant(Restaurant restaurant) throws IOException, InterruptedException {
-        this.restaurantRepository.add(restaurant);
+    public Restaurant addRestaurant(Restaurant restaurant) throws IOException, InterruptedException {
+        return this.restaurantRepository.add(restaurant);
     }
 
     public void deleteRestaurant(Restaurant restaurant) throws IOException, InterruptedException {

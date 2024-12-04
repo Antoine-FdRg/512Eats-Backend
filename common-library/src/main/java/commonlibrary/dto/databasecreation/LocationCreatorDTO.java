@@ -4,6 +4,9 @@ import commonlibrary.model.Location;
 
 public record LocationCreatorDTO(String streetNumber, String address, String city) {
 
+    public LocationCreatorDTO(Location location) {
+        this(location.getStreetNumber(), location.getAddress(), location.getCity());
+    }
     public Location toLocation() {
         return new Location.Builder()
                 .setNumber(streetNumber)
@@ -11,4 +14,6 @@ public record LocationCreatorDTO(String streetNumber, String address, String cit
                 .setCity(city)
                 .build();
     }
+
+
 }

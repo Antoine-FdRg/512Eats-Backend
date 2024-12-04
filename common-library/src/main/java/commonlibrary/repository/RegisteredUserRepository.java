@@ -1,6 +1,8 @@
 package commonlibrary.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import commonlibrary.dto.databasecreation.RegisteredUserCreatorDTO;
 import commonlibrary.model.Dish;
 import commonlibrary.model.RegisteredUser;
@@ -17,6 +19,10 @@ public class RegisteredUserRepository {
 
     private static final String BASE_URL = "http://localhost:8082/registered-users";
     private static final HttpClient client = HttpClient.newHttpClient();
+
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
     public void add(RegisteredUser registeredUser) throws IOException, InterruptedException {
         RegisteredUserCreatorDTO registeredUserCreatorDTO = new RegisteredUserCreatorDTO(registeredUser.getName(), registeredUser.getRole().getName());
@@ -39,7 +45,7 @@ public class RegisteredUserRepository {
         if (response.statusCode() >= 300) {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
         }
-        RegisteredUser registeredUser = new ObjectMapper().readValue(response.body(), RegisteredUser.class);
+        RegisteredUser registeredUser = objectMapper.readValue(response.body(), RegisteredUser.class);
         return registeredUser;
     }
 
@@ -54,7 +60,7 @@ public class RegisteredUserRepository {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
 
         }
-        List<RegisteredUser> registeredUsers = List.of(new ObjectMapper().readValue(response.body(), RegisteredUser[].class));
+        List<RegisteredUser> registeredUsers = List.of(objectMapper.readValue(response.body(), RegisteredUser[].class));
         return registeredUsers;
     }
 

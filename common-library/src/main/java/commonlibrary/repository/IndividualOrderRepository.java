@@ -1,6 +1,8 @@
 package commonlibrary.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import commonlibrary.model.Dish;
 import commonlibrary.model.order.IndividualOrder;
 
@@ -16,6 +18,10 @@ public class IndividualOrderRepository {
 
     private static final String BASE_URL = "http://localhost:8082/individual-orders";
     private static final HttpClient client = HttpClient.newHttpClient();
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+
 
 
     public void add(IndividualOrder individualOrder) throws IOException, InterruptedException {
@@ -40,7 +46,7 @@ public class IndividualOrderRepository {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
 
         }
-        List<IndividualOrder> orders = List.of(new ObjectMapper().readValue(response.body(), IndividualOrder[].class)); // throws exception if response is not a valid JSON array
+        List<IndividualOrder> orders = List.of(objectMapper.readValue(response.body(), IndividualOrder[].class)); // throws exception if response is not a valid JSON array
         return orders;
     }
 
@@ -55,7 +61,7 @@ public class IndividualOrderRepository {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
 
         }
-        IndividualOrder order = new ObjectMapper().readValue(response.body(), IndividualOrder.class); // throws exception if response is not a valid JSON array
+        IndividualOrder order = objectMapper.readValue(response.body(), IndividualOrder.class); // throws exception if response is not a valid JSON array
         return order;
     }
 

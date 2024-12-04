@@ -1,6 +1,7 @@
 package commonlibrary.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import commonlibrary.dto.databasecreation.LocationCreatorDTO;
 import commonlibrary.model.Dish;
 import commonlibrary.model.Location;
 import lombok.Getter;
@@ -41,9 +42,10 @@ public class LocationRepository {
     }
 
     public void add(Location location) throws IOException, InterruptedException {
+        LocationCreatorDTO locationCreatorDTO = new LocationCreatorDTO(location);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/create"))
-                .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(location)))
+                .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(locationCreatorDTO)))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() >= 300) {

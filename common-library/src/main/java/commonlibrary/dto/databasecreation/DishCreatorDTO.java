@@ -4,6 +4,9 @@ import commonlibrary.model.Dish;
 
 public record DishCreatorDTO(String name, String description, double price, int preparationTime, String pictureURL) {
 
+    public DishCreatorDTO(Dish dish) {
+        this(dish.getName(), dish.getDescription(), dish.getPrice(), dish.getPreparationTime(), dish.getPicture());
+    }
     /**
      * Convert DishDTO to Dish
      *

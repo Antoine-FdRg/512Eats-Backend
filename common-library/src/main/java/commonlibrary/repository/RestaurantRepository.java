@@ -1,6 +1,10 @@
 package commonlibrary.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import commonlibrary.dto.databasecreation.RestaurantCreatorDTO;
+import commonlibrary.dto.databaseupdator.RestauranUpdatorDTO;
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.restaurant.Restaurant;
 
@@ -15,6 +19,11 @@ import java.util.List;
 public class RestaurantRepository {
     private static final String BASE_URL = "http://localhost:8082/restaurants";
     private static final HttpClient client = HttpClient.newHttpClient();
+
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+
 
     /**
      * Find a restaurant by its id.
@@ -31,7 +40,7 @@ public class RestaurantRepository {
         if (response.statusCode() >= 300) {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
         }
-        Restaurant restaurant = new ObjectMapper().readValue(response.body(), Restaurant.class);
+        Restaurant restaurant = objectMapper.readValue(response.body(), Restaurant.class);
         return restaurant;
     }
 
@@ -49,7 +58,7 @@ public class RestaurantRepository {
         if (response.statusCode() >= 300) {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
         }
-        List<Restaurant> restaurants = List.of(new ObjectMapper().readValue(response.body(), Restaurant[].class)); // throws exception if response is not a valid JSON array
+        List<Restaurant> restaurants = List.of(objectMapper.readValue(response.body(), Restaurant[].class)); // throws exception if response is not a valid JSON array
         return restaurants;
     }
 
@@ -58,15 +67,17 @@ public class RestaurantRepository {
      *
      * @param restaurant the restaurant to add
      */
-    public void add(Restaurant restaurant) throws IOException, InterruptedException {
+    public Restaurant add(Restaurant restaurant) throws IOException, InterruptedException {
+        RestaurantCreatorDTO restaurantCreatorDTO = new RestaurantCreatorDTO(restaurant);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/create"))
-                .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(restaurant)))
+                .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(restaurantCreatorDTO)))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() >= 300) {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
         }
+        return objectMapper.readValue(response.body(), Restaurant.class);
     }
 
     /**
@@ -95,7 +106,7 @@ public class RestaurantRepository {
         if (response.statusCode() >= 300) {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
         }
-        List<Restaurant> restaurants = List.of(new ObjectMapper().readValue(response.body(), Restaurant[].class));
+        List<Restaurant> restaurants = List.of(objectMapper.readValue(response.body(), Restaurant[].class));
         return restaurants;
     }
 
@@ -108,7 +119,7 @@ public class RestaurantRepository {
         if (response.statusCode() >= 300) {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
         }
-        List<Restaurant> restaurants = List.of(new ObjectMapper().readValue(response.body(), Restaurant[].class));
+        List<Restaurant> restaurants = List.of(objectMapper.readValue(response.body(), Restaurant[].class));
         return restaurants;
 
     }
@@ -122,8 +133,20 @@ public class RestaurantRepository {
         if (response.statusCode() >= 300) {
             throw new IOException("Error: " + response.statusCode() + " - " + response.body());
         }
-        List<Restaurant> restaurants = List.of(new ObjectMapper().readValue(response.body(), Restaurant[].class)); // throws exception if response is not a valid JSON array
+        List<Restaurant> restaurants = List.of(objectMapper.readValue(response.body(), Restaurant[].class)); // throws exception if response is not a valid JSON array
         return restaurants;
+    }
+
+    public void update(Restaurant restaurant) throws IOException, InterruptedException {
+        RestauranUpdatorDTO restauranUpdatorDTO = new RestauranUpdatorDTO(restaurant);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/update"))
+                .PUT(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(restauranUpdatorDTO)))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() >= 300) {
+            throw new IOException("Error: " + response.statusCode() + " - " + response.body());
+        }
     }
 
 

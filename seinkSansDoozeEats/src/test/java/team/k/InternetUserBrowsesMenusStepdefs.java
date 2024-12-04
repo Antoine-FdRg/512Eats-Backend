@@ -34,6 +34,7 @@ public class InternetUserBrowsesMenusStepdefs {
     private RestaurantService restaurantService;
     private Restaurant restaurant;
     Restaurant restaurantB;
+    Restaurant restaurantA;
 
     List<Dish> dishes;
     List<Dish> restaurantDishes;
@@ -65,18 +66,19 @@ public class InternetUserBrowsesMenusStepdefs {
         dishes.add(dishB);
         dishRepository.add(dishA);
         dishRepository.add(dishB);
-        Restaurant restaurantA = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).build();
+        restaurantA = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).build();
         restaurantA.addDish(dishA);
         restaurantA.addDish(dishB);
-        restaurantRepository.add(restaurantA);
+        restaurantA = restaurantRepository.add(restaurantA);
         restaurantService.addRestaurant(restaurantA);
+        restaurantB = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).setDishes(dishes).build();
+        restaurantB = restaurantService.addRestaurant(restaurantB);
+
     }
 
     @When("The user wants to have dishes non registered of the restaurant {string}")
     public void theUserWantsToHaveDishesNonRegisteredOfTheRestaurant(String restaurantName) throws IOException, InterruptedException {
-        restaurantB = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).build();
-        restaurantService.addRestaurant(restaurantB);
-        restaurantRepository.add(restaurantB);
+
         try {
             restaurantDishes = restaurantService.getAllDishesFromRestaurant(restaurantB.getId());
         } catch (NoSuchElementException e) {
@@ -108,7 +110,7 @@ public class InternetUserBrowsesMenusStepdefs {
     @Given("A restaurant {string} with no dishes registered")
     public void aRestaurantWithNoDishesRegistered(String restaurantName) throws IOException, InterruptedException {
         restaurantB = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).build();
-        restaurantService.addRestaurant(restaurantB);
+        restaurantB = restaurantService.addRestaurant(restaurantB);
     }
 
     @Then("The user gets no dishes registered in the restaurant selected and have this message :{string}")
