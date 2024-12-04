@@ -1,11 +1,11 @@
 package team.k.repository;
 
-import commonlibrary.model.RegisteredUser;
 import ssdbrestframework.SSDBQueryProcessingException;
+import team.k.models.PersistedRegisteredUser;
 
 import java.util.Objects;
 
-public class RegisteredUserRepository extends GenericRepository<RegisteredUser> {
+public class RegisteredUserRepository extends GenericRepository<PersistedRegisteredUser> {
     private static RegisteredUserRepository instance;
 
     private RegisteredUserRepository() {
@@ -19,7 +19,7 @@ public class RegisteredUserRepository extends GenericRepository<RegisteredUser> 
         return instance;
     }
 
-    public RegisteredUser findById(int id) {
+    public PersistedRegisteredUser findById(int id) {
         return findAll().stream().filter(registeredUser -> registeredUser.getId() == id).findFirst().orElse(null);
     }
 
