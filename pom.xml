@@ -11,6 +11,7 @@
     <modules>
         <module>routing</module>
         <module>ssdb-rest-framework</module>
+        <module>common-library</module>
     </modules>
 
     <properties>
