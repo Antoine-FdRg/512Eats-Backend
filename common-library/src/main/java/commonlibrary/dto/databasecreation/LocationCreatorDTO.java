@@ -8,7 +8,7 @@ public record LocationCreatorDTO(String streetNumber, String address, String cit
         this(location.getStreetNumber(), location.getAddress(), location.getCity());
     }
     public Location toLocation() {
-        return new Location.Builder()
+        return new Location.Builder(false)
                 .setNumber(streetNumber)
                 .setAddress(address)
                 .setCity(city)

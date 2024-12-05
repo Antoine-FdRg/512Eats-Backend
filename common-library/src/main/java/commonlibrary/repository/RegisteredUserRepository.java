@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import commonlibrary.dto.databasecreation.RegisteredUserCreatorDTO;
+import commonlibrary.dto.databaseupdator.RegisteredUserUpdatorDTO;
 import commonlibrary.model.Dish;
 import commonlibrary.model.RegisteredUser;
 
@@ -78,9 +79,10 @@ public class RegisteredUserRepository {
     }
 
     public static void update(RegisteredUser registeredUser) throws IOException, InterruptedException {
+        RegisteredUserUpdatorDTO registeredUserUpdatorDTO = new RegisteredUserUpdatorDTO(registeredUser);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/update"))
-                .PUT(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(registeredUser)))
+                .PUT(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(registeredUserUpdatorDTO)))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() >= 300) {

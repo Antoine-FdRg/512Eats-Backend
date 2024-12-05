@@ -3,10 +3,13 @@ package commonlibrary.model;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import commonlibrary.dto.LocationDTO;
+import commonlibrary.repository.LocationRepository;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.io.IOException;
 
 /**
  * Represents a restaurant or client location in the database.
@@ -26,12 +29,13 @@ public class Location {
 
     private String city;
 
-    private Location(Builder builder) {
+    public Location(boolean persisting, Builder builder) {
         this.id = builder.id;
         this.streetNumber = builder.streetNumber;
         this.address = builder.address;
         this.city = builder.city;
     }
+
 
     public String toString() {
         return "Location [id=" + id + ", number=" + streetNumber + ", address=" + address + ", city=" + city + "]";
@@ -46,11 +50,17 @@ public class Location {
         private String streetNumber;
         private String address;
         private String city;
+        private final boolean persisting;
 
         private static int idCounter = 0;
 
         public Builder() {
+            this(true);
+        }
+
+        public Builder(boolean persisting){
             id = idCounter++;
+            this.persisting = persisting;
         }
 
         public Builder setNumber(String streetNumber) {
@@ -74,7 +84,15 @@ public class Location {
         }
 
         public Location build() {
-            return new Location(this);
+            Location created = new Location(persisting,this);
+            if(persisting){
+                try {
+                    LocationRepository.add(created);
+                } catch (IOException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            return created;
         }
 
     }
