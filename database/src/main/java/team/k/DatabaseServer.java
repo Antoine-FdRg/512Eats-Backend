@@ -30,8 +30,8 @@ import java.util.List;
 
 public class DatabaseServer {
     public static void main(String[] args) {
-        initDataSet();
         SSDBHttpServer serv = new SSDBHttpServer(8082, "team.k");
+        initDataSet();
         serv.start();
     }
 
@@ -59,7 +59,7 @@ public class DatabaseServer {
         restaurant.addTimeSlot(ts);
         restaurant.addTimeSlot(ts2);
         Location location = new Location.Builder().setId(1).setNumber("13").setAddress("Via Roma 1").setCity("Trento").build();
-        RegisteredUser user = new RegisteredUser("John", Role.STUDENT);
+        RegisteredUser user = new RegisteredUser(false, "John", Role.STUDENT);
         GroupOrder groupOrder = new GroupOrder.Builder()
                 .withDeliveryLocationID(location.getId())
                 .withDate(LocalDateTime.of(2025, 1, 1, 10, 50))

@@ -70,7 +70,7 @@ public class RegisteredUserController {
                     SubOrderRepository.getInstance().findById(persistedRegisteredUser.getCurrentOrderID())
             );
         }
-        return new RegisteredUser(
+        return new RegisteredUser(false,
                 persistedRegisteredUser.getId(),
                 persistedRegisteredUser.getName(),
                 persistedRegisteredUser.getRole(),
