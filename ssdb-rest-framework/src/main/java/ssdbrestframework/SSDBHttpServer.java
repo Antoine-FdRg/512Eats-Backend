@@ -1,5 +1,9 @@
 package ssdbrestframework;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import java.nio.file.Paths;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
@@ -27,6 +31,7 @@ import java.io.IOException;
 public class SSDBHttpServer {
     private final HttpServer server;
     private final Map<String, Map<Pattern, SSDBHandler>> routesByController = new HashMap<>();
+    private String folderPath = "";
 
     /**
      * Constructor for the SSDBHttpServer
@@ -41,6 +46,12 @@ public class SSDBHttpServer {
             throw new RuntimeException(e);
         }
         this.registerControllers(basePackage);
+    }
+
+    public SSDBHttpServer(int port, String basePackage, String folderPath) {
+        this(port, basePackage);
+        this.folderPath = folderPath;
+        this.generateOpenApiDocumentation(basePackage);
     }
 
     /**
@@ -170,5 +181,24 @@ public class SSDBHttpServer {
         server.createContext(pattern.pattern(), handler);
 
         log.info("Route enregistrée : " + methodType + " " + pattern.pattern());
+    }
+
+    /**
+     * Génère la documentation OpenAPI pour le package donné
+     *
+     * @param basePackage le package pour lequel générer la documentation
+     */
+    private void generateOpenApiDocumentation(String basePackage) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectNode openApiSpec = OpenApiGenerator.generate(basePackage);
+            objectMapper.writerWithDefaultPrettyPrinter()
+                    .writeValue(Paths.get(folderPath + "openapi.json").toFile(), openApiSpec);
+
+            log.info("Documentation OpenAPI générée : openapi.json");
+        } catch (Exception e) {
+            log.severe("Échec de la génération de la documentation OpenAPI : " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 }
