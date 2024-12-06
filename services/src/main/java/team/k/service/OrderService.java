@@ -123,13 +123,13 @@ public class OrderService {
         if (currentOrder.getDishes().isEmpty()) {
             throw new IllegalArgumentException("Basket is empty");
         }
-        if (paymentProcessor.processPayment(currentOrder.getPrice())) {
-            SubOrder subOrder = subOrderRepository.findById(orderId);
-            subOrder.pay(currentDateTime, restaurant, registeredUser);
-            subOrder.setPayment(new Payment(subOrder.getPrice(), currentDateTime));
-        } else {
+        if (!paymentProcessor.processPayment(currentOrder.getPrice())) {
             throw new PaymentFailedException("Payment failed");
         }
+        currentOrder.pay(currentDateTime, restaurant, registeredUser);
+        currentOrder.setPayment(new Payment(currentOrder.getPrice(), currentDateTime));
+        registeredUser.addOrderToHistory(currentOrder);
+        registeredUser.setCurrentOrder(null);
     }
 
     public List<Dish> getAvailableDishes(int restaurantId, int orderId) {

@@ -1,18 +1,15 @@
 package team.k;
 
+import commonlibrary.model.Location;
+import commonlibrary.model.RegisteredUser;
+import commonlibrary.model.order.GroupOrder;
 import io.cucumber.java.Before;
-import io.cucumber.java.Status;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
-import team.k.common.Dish;
-import team.k.common.Location;
-import team.k.enumerations.OrderStatus;
-import team.k.enumerations.Role;
-import team.k.order.GroupOrder;
+import commonlibrary.model.Dish;
+import commonlibrary.enumerations.OrderStatus;
+import commonlibrary.enumerations.Role;
 import team.k.repository.GroupOrderRepository;
 import team.k.repository.LocationRepository;
 import team.k.repository.RegisteredUserRepository;

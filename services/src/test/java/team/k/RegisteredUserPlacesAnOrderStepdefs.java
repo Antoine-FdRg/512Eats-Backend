@@ -1,22 +1,23 @@
 package team.k;
 
+import commonlibrary.external.PaymentFailedException;
+import commonlibrary.external.PaymentProcessor;
+import commonlibrary.model.RegisteredUser;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import team.k.common.Dish;
-import team.k.enumerations.OrderStatus;
-import team.k.enumerations.Role;
+import commonlibrary.model.Dish;
+import commonlibrary.enumerations.OrderStatus;
+import commonlibrary.enumerations.Role;
 
-import team.k.external.PaymentFailedException;
-import team.k.external.PaymentProcessor;
-import team.k.order.OrderBuilder;
-import team.k.order.SubOrder;
+import commonlibrary.model.order.OrderBuilder;
+import commonlibrary.model.order.SubOrder;
 
 import team.k.repository.RegisteredUserRepository;
+import team.k.repository.RestaurantRepository;
 import team.k.repository.SubOrderRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import team.k.service.OrderService;
@@ -27,7 +28,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -55,21 +55,30 @@ public class RegisteredUserPlacesAnOrderStepdefs {
 
     Exception exception;
 
-    @InjectMocks
+    RestaurantRepository restaurantRepository;
     OrderService orderService;
 
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        restaurantRepository = new RestaurantRepository();
+        orderService = new OrderService(
+                null,
+                null,
+                subOrderRepository,
+                restaurantRepository,
+                registeredUserRepository,
+                paymentProcessor);
     }
 
 
     @Given("an order is created by a registered user whose name is {string} and his role is {role}")
     public void anOrderIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(String name, Role role) {
-        registeredUser = spy(new RegisteredUser(name, role));
+        registeredUser = new RegisteredUser(name, role);
         when(registeredUserRepository.findById(registeredUser.getId())).thenReturn(registeredUser);
         when(restaurant.isAvailable(any())).thenReturn(true);
-        order = new OrderBuilder().setUser(registeredUser).setRestaurant(restaurant).build();
+        restaurantRepository.add(restaurant);
+        order = new OrderBuilder().setUserID(registeredUser.getId()).setRestaurantID(restaurant.getId()).build();
         registeredUser.setCurrentOrder(order);
         order.addDish(dish);
         when(subOrderRepository.findById(order.getId())).thenReturn(order);

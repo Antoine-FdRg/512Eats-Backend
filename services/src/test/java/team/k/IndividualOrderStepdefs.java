@@ -1,5 +1,10 @@
 package team.k;
 
+import commonlibrary.enumerations.OrderStatus;
+import commonlibrary.enumerations.Role;
+import commonlibrary.model.Location;
+import commonlibrary.model.RegisteredUser;
+import commonlibrary.model.order.SubOrder;
 import io.cucumber.java.Before;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
@@ -10,10 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import team.k.common.Location;
-import team.k.enumerations.OrderStatus;
-import team.k.enumerations.Role;
-import team.k.order.SubOrder;
 import team.k.repository.LocationRepository;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;

@@ -1,16 +1,16 @@
 package team.k;
 
+import commonlibrary.enumerations.OrderStatus;
+import commonlibrary.model.order.OrderBuilder;
+import commonlibrary.model.order.SubOrder;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.mockito.Mock;
-import team.k.common.Dish;
-import team.k.enumerations.FoodType;
-import team.k.enumerations.OrderStatus;
-import team.k.order.OrderBuilder;
-import team.k.order.SubOrder;
+import commonlibrary.model.Dish;
+import commonlibrary.enumerations.FoodType;
 import team.k.repository.GroupOrderRepository;
 import team.k.repository.LocationRepository;
 import team.k.repository.RegisteredUserRepository;
@@ -40,7 +40,6 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
     SubOrder order;
     Dish dish;
 
-    @Mock
     RestaurantRepository restaurantRepository;
     @Mock
     LocationRepository locationRepository;
@@ -52,6 +51,7 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
     @Before
     public void setUp() {
         subOrderRepository = new SubOrderRepository();
+        restaurantRepository = new RestaurantRepository();
         orderService = new OrderService(
                 groupOrderRepository,
                 locationRepository,
@@ -65,7 +65,11 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
         restaurant = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(12, 0, 0)).setClose(LocalTime.of(15, 0, 0)).setFoodTypes(List.of(FoodType.BURGER)).setAverageOrderPreparationTime(averagePreparationTime).build();
         dish = new Dish.Builder().setName(dishName).setDescription("Cheeseburger").setPrice(5).setPreparationTime(productionCapacity).build();
         restaurant.addDish(dish);
-        order = new OrderBuilder().setRestaurant(restaurant).setDeliveryTime(LocalDateTime.of(2024, 10, 12, hours, minutes, 0)).build();
+        restaurantRepository.add(restaurant);
+        order = new OrderBuilder()
+                .setRestaurantID(restaurant.getId())
+                .setDeliveryTime(LocalDateTime.of(2024, 10, 12, hours, minutes, 0))
+                .build();
         subOrderRepository.add(order);
         order.setStatus(OrderStatus.valueOf(statusCreated));
     }

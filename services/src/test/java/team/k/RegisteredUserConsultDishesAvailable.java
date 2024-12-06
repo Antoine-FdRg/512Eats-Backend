@@ -1,5 +1,7 @@
 package team.k;
 
+import commonlibrary.enumerations.Role;
+import commonlibrary.model.RegisteredUser;
 import io.cucumber.java.Before;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
@@ -9,10 +11,9 @@ import io.cucumber.java.en.When;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import team.k.common.Dish;
-import team.k.enumerations.Role;
-import team.k.order.OrderBuilder;
-import team.k.order.SubOrder;
+import commonlibrary.model.Dish;
+import commonlibrary.model.order.OrderBuilder;
+import commonlibrary.model.order.SubOrder;
 import team.k.repository.RestaurantRepository;
 import team.k.repository.SubOrderRepository;
 import commonlibrary.model.restaurant.Restaurant;
@@ -73,8 +74,8 @@ public class RegisteredUserConsultDishesAvailable {
     public void userHasACurrentOrderForTheRestaurantNagaInTheTimeslotBeginningAtOn(String userName, int min, int hour, int day, int month, int year) {
         registeredUser = new RegisteredUser(userName, Role.STUDENT);
         order = new OrderBuilder()
-                .setRestaurant(nagaRestaurant)
-                .setUser(registeredUser)
+                .setRestaurantID(nagaRestaurant.getId())
+                .setUserID(registeredUser.getId())
                 .setDeliveryTime(LocalDateTime.of(year, month, day, hour, min))
                 .build();
         registeredUser.setCurrentOrder(order);

@@ -1,5 +1,7 @@
 package team.k;
 
+import commonlibrary.enumerations.FoodType;
+import commonlibrary.model.Dish;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
@@ -9,8 +11,6 @@ import io.cucumber.java.en.When;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import team.k.common.Dish;
-import team.k.enumerations.FoodType;
 import team.k.repository.DishRepository;
 import team.k.repository.RestaurantRepository;
 import commonlibrary.model.restaurant.Restaurant;

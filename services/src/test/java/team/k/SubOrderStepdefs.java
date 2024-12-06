@@ -1,16 +1,17 @@
 package team.k;
 
+import commonlibrary.model.RegisteredUser;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import team.k.common.Location;
-import team.k.enumerations.OrderStatus;
-import team.k.enumerations.Role;
-import team.k.order.GroupOrder;
-import team.k.order.OrderBuilder;
-import team.k.order.SubOrder;
+import commonlibrary.model.Location;
+import commonlibrary.enumerations.OrderStatus;
+import commonlibrary.enumerations.Role;
+import commonlibrary.model.order.GroupOrder;
+import commonlibrary.model.order.OrderBuilder;
+import commonlibrary.model.order.SubOrder;
 import team.k.repository.LocationRepository;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
@@ -93,7 +94,7 @@ public class SubOrderStepdefs {
                 LocalDate.parse(orderDate),
                 LocalTime.parse(orderTime));
         groupOrder = new GroupOrder.Builder()
-                .withDeliveryLocation(deliveryLocation)
+                .withDeliveryLocationID(deliveryLocation.getId())
                 .withDate(deliveryDateTime)
                 .build();
     }
@@ -102,9 +103,8 @@ public class SubOrderStepdefs {
     public void aSuborderCreatedInTheGroupOrderForTheRestaurantNaga(String restaurantName) {
         restaurantService.getRestaurantByName(restaurantName);
         subOrder = new OrderBuilder()
-                .setGroupOrder(groupOrder)
-                .setRestaurant(restaurant)
-                .setUser(registeredUser)
+                .setRestaurantID(restaurant.getId())
+                .setUserID(registeredUser.getId())
                 .setDeliveryTime(groupOrder.getDeliveryDateTime())
                 .build();
         registeredUser.setCurrentOrder(subOrder);
@@ -116,7 +116,7 @@ public class SubOrderStepdefs {
         LocalDateTime paymentTime = LocalDateTime.of(
                 LocalDate.parse(day),
                 LocalTime.parse(hour));
-        registeredUser.getCurrentOrder().pay(paymentTime);
+        registeredUser.getCurrentOrder().pay(paymentTime ,restaurant, registeredUser);
     }
 
     @Then("the subOrder has {status} status in the groupOrder")
