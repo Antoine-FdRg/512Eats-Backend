@@ -1,4 +1,4 @@
-package team.k.controller;
+package team.k.controllers;
 
 import ssdbrestframework.annotations.RestController;
 
