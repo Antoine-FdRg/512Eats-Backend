@@ -12,6 +12,7 @@
         <module>api</module>
         <module>ssdb-rest-framework</module>
         <module>common-library</module>
+        <module>services</module>
     </modules>
 
     <properties>
@@ -103,7 +104,6 @@
             <version>1.18.30</version>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
 
     <build>
