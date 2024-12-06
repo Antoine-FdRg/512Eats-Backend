@@ -117,7 +117,7 @@ public class OrderService {
             throw new IllegalArgumentException("Current datetime cant be null");
         }
         Restaurant restaurant = restaurantRepository.findById(currentOrder.getRestaurantID());
-        if (!restaurant.isAvailable(currentDateTime)) {
+        if (!restaurant.isAvailable(currentOrder.getDeliveryDate())) {
             throw new IllegalArgumentException("Restaurant is not available");
         }
         if (currentOrder.getDishes().isEmpty()) {

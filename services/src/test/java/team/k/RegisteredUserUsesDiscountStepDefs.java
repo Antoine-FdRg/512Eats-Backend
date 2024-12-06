@@ -7,15 +7,16 @@ import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
 import commonlibrary.model.restaurant.Restaurant;
+import commonlibrary.model.restaurant.TimeSlot;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import team.k.repository.RegisteredUserRepository;
+import team.k.repository.RestaurantRepository;
 import team.k.repository.SubOrderRepository;
 import commonlibrary.model.restaurant.discount.FreeDishAfterXOrders;
 import commonlibrary.model.restaurant.discount.RoleDiscount;
@@ -23,9 +24,9 @@ import commonlibrary.model.restaurant.discount.UnconditionalDiscount;
 import team.k.service.OrderService;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -54,28 +55,51 @@ public class RegisteredUserUsesDiscountStepDefs {
     @Mock
     RegisteredUserRepository registeredUserRepository;
 
-    @Mock
     Restaurant restaurant;
 
-    @InjectMocks
+    RestaurantRepository restaurantRepository;
     OrderService orderService;
 
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        restaurantRepository = new RestaurantRepository();
+        orderService = new OrderService(
+                null,
+                null,
+                subOrderRepository,
+                restaurantRepository,
+                registeredUserRepository,
+                paymentProcessor
+        );
     }
 
 
     @Given("an order containing {int} dishes is created by a registered user whose name is {string} and his role is {role}")
     public void anOrderContainingDishesIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(int number, String name, Role role) {
         registeredUser = spy(new RegisteredUser(name, role));
+        restaurant = new Restaurant.Builder()
+                .setName("Le restaurant")
+                .setDescription("Ce restaurant a plein de discount diffférente")
+                .setOpen(LocalTime.of(10, 0))
+                .setClose(LocalTime.of(22, 0))
+                .setAverageOrderPreparationTime(10)
+                .build();
+        restaurantRepository.add(restaurant);
+        restaurant.addTimeSlot(
+                new TimeSlot(
+                        LocalDateTime.of(2025, 1, 1, 10, 0),
+                        restaurant,
+                        3
+                )
+        );
         when(registeredUserRepository.findById(registeredUser.getId())).thenReturn(registeredUser);
         when(previousOrder.getRestaurantID()).thenReturn(restaurant.getId());
         for (int i = 0; i < 10; i++) {
             registeredUser.addOrderToHistory(previousOrder);
         }
-        when(restaurant.isAvailable(any())).thenReturn(true);
-        order = new OrderBuilder().setUserID(registeredUser.getId()).setRestaurantID(restaurant.getId()).build();
+        order = new OrderBuilder().setUserID(registeredUser.getId()).setRestaurantID(restaurant.getId())
+                .setDeliveryTime(LocalDateTime.of(2025, 1, 1, 10, 50)).build();
         registeredUser.setCurrentOrder(order);
         when(subOrderRepository.findById(order.getId())).thenReturn(order);
         when(dish.getPrice()).thenReturn(10.0);
@@ -89,13 +113,13 @@ public class RegisteredUserUsesDiscountStepDefs {
     @And("the restaurant have freeDishAfterXOrders discount")
     public void theRestaurantHaveAUnconditionalDiscount() {
         freeDiscount = new FreeDishAfterXOrders(restaurant.getId(), 10);
-        when(restaurant.getDiscountStrategy()).thenReturn(freeDiscount);
+        restaurant.setDiscountStrategy(freeDiscount);
     }
 
     @When("The user pays the order with the discount")
     public void theUserPaysTheOrderWithTheDiscount() {
         when(paymentProcessor.processPayment(anyDouble())).thenReturn(true);
-        orderService.paySubOrder(registeredUser.getId(), order.getId(), LocalDateTime.now());
+        orderService.paySubOrder(registeredUser.getId(), order.getId(), LocalDateTime.of(2025, 1, 1, 10, 00));
     }
 
     @Then("the cheapest dish is free in the order")
@@ -108,7 +132,7 @@ public class RegisteredUserUsesDiscountStepDefs {
     @And("the restaurant have unconditional discount")
     public void theRestaurantHaveUnconditionalDiscount() {
         unconditionalDiscount = new UnconditionalDiscount(restaurant.getId(), 0.25);
-        when(restaurant.getDiscountStrategy()).thenReturn(unconditionalDiscount);
+        restaurant.setDiscountStrategy(unconditionalDiscount);
     }
 
     @Then("the price is lower than before")
@@ -120,7 +144,7 @@ public class RegisteredUserUsesDiscountStepDefs {
     @And("the restaurant have Role discount")
     public void theRestaurantHaveRoleDiscount() {
         roleDiscount = new RoleDiscount(restaurant.getId(), 0.2, Role.STUDENT);
-        when(restaurant.getDiscountStrategy()).thenReturn(roleDiscount);
+        restaurant.setDiscountStrategy(roleDiscount);
     }
 
     @Then("the price is lower than the previous one")
