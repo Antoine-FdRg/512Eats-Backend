@@ -4,7 +4,6 @@ import commonlibrary.model.Location;
 import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.order.GroupOrder;
 import commonlibrary.model.order.SubOrder;
-import lombok.RequiredArgsConstructor;
 import team.k.repository.GroupOrderRepository;
 import team.k.repository.LocationRepository;
 import commonlibrary.model.restaurant.Restaurant;
@@ -16,6 +15,10 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class GroupOrderService {
+
+    private GroupOrderService() {
+        throw new IllegalStateException("Service class");
+    }
 
     /**
      * Create a group order
@@ -69,7 +72,7 @@ public class GroupOrderService {
             throw new NoSuchElementException("Group order not found");
         }
         if (!Objects.isNull(groupOrder.getDeliveryDateTime())) {
-            throw new UnsupportedOperationException("The group order delivery datetime cannot be changed");
+            throw new UnsupportedOperationException("The group order delivery datetime cannot be changed if it was already set");
         }
         groupOrder.setDeliveryDateTime(deliveryDateTime);
     }

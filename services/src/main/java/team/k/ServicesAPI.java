@@ -8,9 +8,9 @@ public class ServicesAPI {
     public static void main(String[] args) {
         SSDBHttpServer serv = new SSDBHttpServer(8083, "team.k.controller");
         Location location = new Location.Builder()
-                .setNumber("123")
-                .setAddress("ABC")
-                .setCity("DEF")
+                .setNumber("2400")
+                .setAddress("Route des Dollines")
+                .setCity("Valbonne")
                 .build();
         LocationRepository.add(location);
         serv.start();

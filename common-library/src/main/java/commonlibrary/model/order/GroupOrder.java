@@ -70,7 +70,11 @@ public class GroupOrder {
         List<SubOrderDTO> convertedSubOrders = subOrders.stream()
                 .map(SubOrder::convertSubOrderToSubOrderDto)
                 .toList();
-        return new GroupOrderDTO(id, status.toString(), deliveryLocationID, deliveryDateTime.toString(), convertedSubOrders);
+        return new GroupOrderDTO(id,
+                status.toString(),
+                deliveryLocationID,
+                deliveryDateTime != null ? deliveryDateTime.toString() : "",
+                convertedSubOrders);
     }
 
     public static class Builder {
