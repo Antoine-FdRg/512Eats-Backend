@@ -1,12 +1,12 @@
 package team.k.unittests;
 
+import commonlibrary.enumerations.FoodType;
+import commonlibrary.enumerations.OrderStatus;
+import commonlibrary.model.order.IndividualOrder;
+import commonlibrary.model.order.SubOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import team.k.enumerations.FoodType;
-import team.k.enumerations.OrderStatus;
-import team.k.order.IndividualOrder;
-import team.k.order.SubOrder;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
 

@@ -1,13 +1,16 @@
 package team.k.order;
 
+import commonlibrary.enumerations.FoodType;
+import commonlibrary.enumerations.OrderStatus;
+import commonlibrary.enumerations.Role;
+import commonlibrary.model.Dish;
+import commonlibrary.model.RegisteredUser;
+import commonlibrary.model.order.GroupOrder;
+import commonlibrary.model.order.OrderBuilder;
+import commonlibrary.model.order.SubOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import team.k.common.Dish;
-import team.k.RegisteredUser;
-import team.k.enumerations.FoodType;
-import team.k.enumerations.Role;
 import commonlibrary.model.restaurant.Restaurant;
-import team.k.enumerations.OrderStatus;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -28,8 +31,15 @@ class SubOrderTest {
     @BeforeEach
     void setUp() {
         user = new RegisteredUser("John Doe", Role.STUDENT);
-        restaurant = new Restaurant.Builder().setName("512Eats").setOpen(LocalTime.of(12, 0, 0)).setClose(LocalTime.of(15, 0, 0)).setFoodTypes(List.of(FoodType.BURGER)).setAverageOrderPreparationTime(30).build();
-        groupOrder = new GroupOrder.Builder().build();
+        restaurant = new Restaurant.Builder()
+                .setName("512Eats")
+                .setOpen(LocalTime.of(12, 0, 0))
+                .setClose(LocalTime.of(15, 0, 0))
+                .setFoodTypes(List.of(FoodType.BURGER))
+                .setAverageOrderPreparationTime(30)
+                .build();
+        groupOrder = new GroupOrder.Builder()
+                .build();
         paymentDate = LocalDateTime.now();
         dishes = new ArrayList<>();
         dishes.add(new Dish.Builder().setName("pizza").setDescription("pizaa").setPrice(12.5).setPreparationTime(15).build());
@@ -37,12 +47,12 @@ class SubOrderTest {
         dishes.add(new Dish.Builder().setName("Pasta").setDescription("psta").setPrice(10).setPreparationTime(10).build());
         subOrder = new OrderBuilder().setPrice(dishes.stream().
                         mapToDouble(Dish::getPrice).sum()).
-                setRestaurant(restaurant).
-                setUser(user).
+                setRestaurantID(restaurant.getId()).
+                setUserID(user.getId()).
                 setDishes(dishes).
                 setDeliveryTime(LocalDateTime.now().plusHours(1)).
-                setPlacedDate(LocalDateTime.now()).
-                setGroupOrder(groupOrder).build();
+                setPlacedDate(LocalDateTime.now())
+                .build();
 
         groupOrder.addSubOrder(subOrder);
     }
@@ -78,13 +88,13 @@ class SubOrderTest {
 
     @Test
     void placeOrderTest() {
-        subOrder.place(paymentDate);
+        subOrder.place(paymentDate, user);
         assertEquals(OrderStatus.PLACED, subOrder.getStatus());
     }
 
     @Test
     void payOrderTest() {
-        subOrder.pay(paymentDate);
+        subOrder.pay(paymentDate, restaurant, user);
         assertEquals(OrderStatus.PAID, subOrder.getStatus());
     }
 
