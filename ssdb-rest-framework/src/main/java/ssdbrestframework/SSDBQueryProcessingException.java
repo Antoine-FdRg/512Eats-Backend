@@ -9,6 +9,7 @@ public class SSDBQueryProcessingException extends Exception {
     public static final String MAL_FORMED_PARAMS = "Bad request, it is likely that the request parameters or body are not correctly formatted";
     public static final String INTERNAL_SERVER_ERROR = "Internal server error";
     public static final String METHOD_NOT_ALLOWED = "Method not allowed";
+    public static final String UNSUCCESSFUL_PROCESSING = "The handling could not process your input successfully";
 
 
     public SSDBQueryProcessingException(int statusCode, String message) {

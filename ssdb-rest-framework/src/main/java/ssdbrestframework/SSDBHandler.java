@@ -162,7 +162,7 @@ public class SSDBHandler implements HttpHandler {
             if (e.getTargetException() instanceof SSDBQueryProcessingException ssdbQueryProcessingException) {
                 throw ssdbQueryProcessingException;
             }
-            throw new SSDBQueryProcessingException(SSDBResponse.INTERNAL_SERVER_ERROR, SSDBQueryProcessingException.INTERNAL_SERVER_ERROR, e.getMessage());
+            throw new SSDBQueryProcessingException(SSDBResponse.BAD_REQUEST, SSDBQueryProcessingException.UNSUCCESSFUL_PROCESSING, e.getTargetException().getMessage());
         } catch (IllegalAccessException e) {
             throw new SSDBQueryProcessingException(SSDBResponse.INTERNAL_SERVER_ERROR, SSDBQueryProcessingException.INTERNAL_SERVER_ERROR, e.getMessage());
         } catch (IllegalArgumentException e) {
