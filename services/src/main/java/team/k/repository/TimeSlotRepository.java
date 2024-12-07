@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TimeSlotRepository {
-    private final List<TimeSlot> timeSlots = new ArrayList<>();
+    private static final List<TimeSlot> timeSlots = new ArrayList<>();
 
-    public TimeSlot findById(int timeSlotId) {
+    public static TimeSlot findById(int timeSlotId) {
         return timeSlots.stream().filter(restaurant -> restaurant.getId() == timeSlotId).findFirst().orElse(null);
     }
 

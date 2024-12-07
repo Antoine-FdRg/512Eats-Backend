@@ -48,7 +48,7 @@ public class SubOrderStepdefs {
         restaurantRepository = new RestaurantRepository();
         timeSlotRepository = new TimeSlotRepository();
         locationRepository = new LocationRepository();
-        restaurantService = new RestaurantService(restaurantRepository, timeSlotRepository);
+        restaurantService = new RestaurantService();
     }
 
     @Given("a registeredUser called {string} with the role {role}")
