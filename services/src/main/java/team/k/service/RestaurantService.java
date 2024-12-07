@@ -15,7 +15,9 @@ import java.util.NoSuchElementException;
 
 public class RestaurantService {
 
-
+    private RestaurantService() {
+        throw new IllegalStateException("Service class");
+    }
 
     /**
      * Get all dishes from a restaurant

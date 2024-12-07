@@ -8,7 +8,6 @@ import ssdbrestframework.annotations.ApiResponseExample;
 import ssdbrestframework.annotations.Endpoint;
 import ssdbrestframework.annotations.PathVariable;
 import ssdbrestframework.annotations.RequestParam;
-import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
 
 import java.io.IOException;
@@ -124,5 +123,7 @@ public class RestaurantController {
 
         return response.body();
     }
+
+
 
 }
