@@ -28,6 +28,7 @@ public class OrderController {
      * @return the ID of the created order
      */
     @Endpoint(path = "/individual-order", method = HttpMethod.POST)
+    @ApiResponseExample(value = int.class)
     @Response(status = 201) // Created
     public int createIndividualOrder(@RequestBody IndividualOrderDTO individualOrderDTO) {
         try {
@@ -48,6 +49,7 @@ public class OrderController {
      * @param request the details of the dish to add
      */
     @Endpoint(path = "/add-dish", method = HttpMethod.POST)
+    @ApiResponseExample(value = void.class)
     @Response(status = 204) // No Content
     public void addDishToOrder(@RequestBody DishAndOrderRequest request) {
         try {
@@ -58,6 +60,7 @@ public class OrderController {
     }
 
     @Endpoint(path = "/remove-dish", method = HttpMethod.DELETE)
+    @ApiResponseExample(value = void.class)
     @Response(status = 204, message = "Dish removed from order successfully")
     public void removeDishFromOrder(@RequestParam("order-id") int orderId, @RequestParam("dish-id") int dishId) throws SSDBQueryProcessingException {
         OrderService.removeDishFromOrder(orderId, dishId);
@@ -73,6 +76,7 @@ public class OrderController {
      */
     @Endpoint(path = "/pay", method = HttpMethod.POST)
     @Response(status = 204) // No Content
+    @ApiResponseExample(value = void.class)
     public void paySubOrder(@RequestBody PaySubOrderRequest request) throws SSDBQueryProcessingException {
         try {
             PaymentProcessor paymentProcessor = new PaymentProcessor();
@@ -89,6 +93,7 @@ public class OrderController {
      * @return a list of available dishes
      */
     @Endpoint(path = "/available-dishes", method = HttpMethod.GET)
+    @ApiResponseExample(value = DishDTO.class, isArray = true)
     @Response(status = 200) // OK
     public List<DishDTO> getAvailableDishes(@RequestParam("order-id") int orderId) throws SSDBQueryProcessingException {
         try {
@@ -108,6 +113,7 @@ public class OrderController {
      * @param request the details of the sub-order to create
      */
     @Endpoint(path = "/sub-order", method = HttpMethod.POST)
+    @ApiResponseExample(value = int.class)
     @Response(status = 201) // Created
     public int createSuborder(@RequestBody CreateSuborderRequest request) throws SSDBQueryProcessingException {
         try {
@@ -118,6 +124,7 @@ public class OrderController {
     }
 
     @Endpoint(path = "/get/sub-order", method = HttpMethod.GET)
+    @ApiResponseExample(value = SubOrderDTO.class)
     @Response(status = 200)
     public SubOrderDTO getSubOrder(@RequestParam("order-id") int orderId) throws SSDBQueryProcessingException {
         try {

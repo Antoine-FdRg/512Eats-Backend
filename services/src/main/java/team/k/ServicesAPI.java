@@ -17,7 +17,7 @@ import java.util.List;
 
 public class ServicesAPI {
     public static void main(String[] args) {
-        SSDBHttpServer serv = new SSDBHttpServer(8083, "team.k.controller");
+        SSDBHttpServer serv = new SSDBHttpServer(8083, "team.k.controller", "services/");
         initDataset();
         serv.start();
     }
