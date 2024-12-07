@@ -27,4 +27,8 @@ public class RegisteredUserRepository {
     public static void delete(RegisteredUser registeredUser) {
         registeredUsers.remove(registeredUser);
     }
+
+    public static void clear() {
+        registeredUsers.clear();
+    }
 }

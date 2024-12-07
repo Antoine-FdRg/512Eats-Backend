@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class RestaurantRepository {
+    private RestaurantRepository() {
+        throw new IllegalStateException("Utility class");
+    }
+
     private static final List<Restaurant> restaurants = new ArrayList<>();
 
     /**
@@ -54,7 +58,7 @@ public class RestaurantRepository {
      *
      * @param restaurant the restaurant to delete
      */
-    public void delete(Restaurant restaurant) {
+    public static void delete(Restaurant restaurant) {
         restaurants.remove(restaurant);
     }
 
@@ -72,5 +76,8 @@ public class RestaurantRepository {
         return findAll().stream().filter(restaurant -> Objects.equals(restaurant.getName(), name)).toList();
     }
 
+    public static void clear() {
+        restaurants.clear();
+    }
 
 }

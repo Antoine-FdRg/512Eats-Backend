@@ -26,7 +26,7 @@ public class SubOrderRepository {
         subOrders.remove(subOrder);
     }
 
-    public void clear() {
+    public static void clear() {
         subOrders.clear();
     }
 

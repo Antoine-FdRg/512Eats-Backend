@@ -12,10 +12,12 @@ import org.mockito.MockitoAnnotations;
 import commonlibrary.model.Dish;
 import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
+import team.k.repository.LocationRepository;
 import team.k.repository.RestaurantRepository;
 import team.k.repository.SubOrderRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
+import team.k.repository.TimeSlotRepository;
 import team.k.service.OrderService;
 
 import java.time.LocalDateTime;
@@ -46,6 +48,9 @@ public class RegisteredUserConsultDishesAvailable {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        RestaurantRepository.clear();
+        TimeSlotRepository.clear();
+        LocationRepository.clear();
     }
 
     @Given("the restaurant {string} has the following dishes with preparation time")

@@ -6,16 +6,12 @@ import commonlibrary.model.Dish;
 import commonlibrary.model.Location;
 import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.order.GroupOrder;
+import commonlibrary.model.order.IndividualOrder;
 import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
 import commonlibrary.model.payment.Payment;
-import lombok.NoArgsConstructor;
-import team.k.repository.RegisteredUserRepository;
-import team.k.repository.RestaurantRepository;
-import team.k.repository.SubOrderRepository;
+import team.k.repository.*;
 import commonlibrary.model.restaurant.Restaurant;
-import team.k.repository.GroupOrderRepository;
-import team.k.repository.LocationRepository;
 import commonlibrary.model.restaurant.TimeSlot;
 
 import java.time.LocalDateTime;
@@ -23,10 +19,15 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-@NoArgsConstructor
 public class OrderService {
     private static final String RESTAURANT_NOT_FOUND = "Restaurant not found";
     public static final String SUB_ORDER_NOT_FOUND = "SubOrder not found";
+    public static final String INDIVIDUAL_ORDER_NOT_FOUND = "Individual Order not found";
+    public static final String USER_NOT_FOUND = "User not found";
+
+    private OrderService() {
+        throw new IllegalStateException("Utility class");
+    }
 
     /**
      * Create an individual order
@@ -82,13 +83,16 @@ public class OrderService {
         subOrder.addDish(dish);
     }
 
-    public static void placeSubOrder(int orderId, LocalDateTime now) throws NoSuchElementException {
-        SubOrder subOrder = SubOrderRepository.findById(orderId);
-        if (subOrder == null) {
-            throw new NoSuchElementException(SUB_ORDER_NOT_FOUND);
+    public static void placeIndividualOrder(int orderId, LocalDateTime now) throws NoSuchElementException {
+        IndividualOrder individualOrder = IndividualOrderRepository.findById(orderId);
+        if (individualOrder == null) {
+            throw new NoSuchElementException(INDIVIDUAL_ORDER_NOT_FOUND);
         }
-        RegisteredUser orderOwner = RegisteredUserRepository.findById(subOrder.getUserID());
-        subOrder.place(now, orderOwner);
+        RegisteredUser orderOwner = RegisteredUserRepository.findById(individualOrder.getUserID());
+        if (orderOwner == null) {
+            throw new NoSuchElementException(USER_NOT_FOUND);
+        }
+        individualOrder.place(now, orderOwner);
 
     }
 
@@ -144,7 +148,7 @@ public class OrderService {
     private static RegisteredUser registeredUserValidator(int registeredUserID) {
         RegisteredUser registeredUser = RegisteredUserRepository.findById(registeredUserID);
         if (registeredUser == null) {
-            throw new NoSuchElementException("User not found");
+            throw new NoSuchElementException(USER_NOT_FOUND);
         }
         if (!registeredUser.getRole().canOrder()) {
             throw new IllegalArgumentException("User cannot order");
@@ -155,9 +159,9 @@ public class OrderService {
     /**
      * Create a suborder in a group order and set the current order of the user
      *
-     * @param registeredUserID
-     * @param restaurantId
-     * @param groupOrderId
+     * @param registeredUserID the id of the user who wants to create the order
+     * @param restaurantId     the id of the restaurant where the order is placed
+     * @param groupOrderId     the id of the group order
      */
     public static int createSuborder(int registeredUserID, int restaurantId, int groupOrderId) {
         RegisteredUser registeredUser = registeredUserValidator(registeredUserID);

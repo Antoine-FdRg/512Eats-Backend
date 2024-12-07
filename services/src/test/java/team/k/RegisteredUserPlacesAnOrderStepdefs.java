@@ -2,7 +2,9 @@ package team.k;
 
 import commonlibrary.external.PaymentFailedException;
 import commonlibrary.external.PaymentProcessor;
+import commonlibrary.model.Location;
 import commonlibrary.model.RegisteredUser;
+import commonlibrary.model.order.IndividualOrder;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -14,8 +16,8 @@ import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.enumerations.Role;
 
 import commonlibrary.model.order.OrderBuilder;
-import commonlibrary.model.order.SubOrder;
 
+import team.k.repository.IndividualOrderRepository;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
 import team.k.repository.SubOrderRepository;
@@ -28,6 +30,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,7 +39,7 @@ import static org.mockito.Mockito.when;
 public class RegisteredUserPlacesAnOrderStepdefs {
 
     RegisteredUser registeredUser;
-    SubOrder order;
+    IndividualOrder order;
 
     @Mock
     Dish dish;
@@ -53,25 +56,30 @@ public class RegisteredUserPlacesAnOrderStepdefs {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        SubOrderRepository.clear();
+        RegisteredUserRepository.clear();
+        IndividualOrderRepository.clear();
+        RestaurantRepository.clear();
     }
 
 
-    @Given("an order is created by a registered user whose name is {string} and his role is {role}")
-    public void anOrderIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(String name, Role role) {
-        registeredUser = new RegisteredUser(name, role);
+    @Given("an individual order is created by a registered user whose name is {string} and his role is {role}")
+    public void anIndividualOrderIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(String name, Role role) {
+        registeredUser = spy(new RegisteredUser(name, role));
         RegisteredUserRepository.add(registeredUser);
         when(restaurant.isAvailable(any())).thenReturn(true);
         RestaurantRepository.add(restaurant);
-        order = new OrderBuilder().setUserID(registeredUser.getId()).setRestaurantID(restaurant.getId()).build();
+        Location loc = new Location.Builder().setAddress("Antibes").build();
+        order = (IndividualOrder) new OrderBuilder().setId(1).setUserID(registeredUser.getId()).setRestaurantID(restaurant.getId()).setDeliveryLocation(loc).build();
         registeredUser.setCurrentOrder(order);
         order.addDish(dish);
-        when(SubOrderRepository.findById(order.getId())).thenReturn(order);
+        IndividualOrderRepository.add(order);
     }
 
     @When("The user places the order at {int}:{int} on {int}-{int}-{int}")
     public void placeTheOrder(int hour, int minute, int day, int month, int year) {
         LocalDateTime placedTime = LocalDateTime.of(year, month, day, hour, minute);
-        OrderService.placeSubOrder(order.getId(), placedTime);
+        OrderService.placeIndividualOrder(1, placedTime);
     }
 
     @Then("the status of the order is placed now")

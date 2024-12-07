@@ -85,7 +85,7 @@ public class RegisteredUserUsesDiscountStepDefs {
         order = new OrderBuilder().setUserID(registeredUser.getId()).setRestaurantID(restaurant.getId())
                 .setDeliveryTime(LocalDateTime.of(2025, 1, 1, 10, 50)).build();
         registeredUser.setCurrentOrder(order);
-        when(SubOrderRepository.findById(order.getId())).thenReturn(order);
+        SubOrderRepository.add(order);
         when(dish.getPrice()).thenReturn(10.0);
         when(dishCheapest.getPrice()).thenReturn(5.0);
         for (int i = 0; i < number - 1; i++) {

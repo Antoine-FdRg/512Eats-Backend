@@ -33,8 +33,8 @@ public class RegisteredUserCreatesSuborderStepDefs {
 
     @Before
     public void setUp() {
-        registeredUser = new RegisteredUser("John Doe", Role.STUDENT);
-        RegisteredUserRepository.add(registeredUser);
+        RegisteredUserRepository.clear();
+
 
     }
 
@@ -90,5 +90,11 @@ public class RegisteredUserCreatesSuborderStepDefs {
     @Then("the order has the status {status}")
     public void theOrderHasTheStatusCreated(OrderStatus wantedStatus) {
         assertEquals(wantedStatus, OrderStatus.CREATED);
+    }
+
+    @Given("a registered user named {string} with the role STUDENT")
+    public void aRegisteredUserNamedWithTheRoleSTUDENT(String name) {
+        registeredUser = new RegisteredUser(name, Role.STUDENT);
+        RegisteredUserRepository.add(registeredUser);
     }
 }

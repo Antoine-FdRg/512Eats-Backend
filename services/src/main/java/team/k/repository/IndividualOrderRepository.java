@@ -8,17 +8,17 @@ import java.util.List;
 
 public class IndividualOrderRepository {
 
-    private final List<IndividualOrder> individualOrders = new ArrayList<>();
+    private static final List<IndividualOrder> individualOrders = new ArrayList<>();
 
-    public void add(IndividualOrder individualOrder) {
+    public static void add(IndividualOrder individualOrder) {
         individualOrders.add(individualOrder);
     }
 
-    public List<IndividualOrder> findAll() {
+    public static List<IndividualOrder> findAll() {
         return individualOrders;
     }
 
-    public IndividualOrder findById(int id) {
+    public static IndividualOrder findById(int id) {
         return individualOrders.stream()
                 .filter(individualOrder -> individualOrder.getId() == id)
                 .findFirst()
@@ -29,5 +29,7 @@ public class IndividualOrderRepository {
         individualOrders.remove(individualOrder);
     }
 
-
+    public static void clear() {
+        individualOrders.clear();
+    }
 }

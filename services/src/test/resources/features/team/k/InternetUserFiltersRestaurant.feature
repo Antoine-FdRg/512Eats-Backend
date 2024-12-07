@@ -12,7 +12,7 @@ Feature: Internet User can filter  restaurant
     Then Internet User should see a message "No restaurants found with the food types: [PIZZA]"
 
   Scenario: Internet User can filter restaurant by availability
-    When Internet User selects restaurants that are open at 12:10 on 01-01-2025
+    When Internet User selects restaurants that are open at 12:55 on 01-01-2025
     Then Internet User should see the restaurant that are open
 
   Scenario: Internet User can filter restaurant by availability but no restaurant found

@@ -35,16 +35,12 @@ public class SubOrderStepdefs {
     GroupOrder groupOrder;
     SubOrder subOrder;
 
-    RestaurantService restaurantService;
-
-    RestaurantRepository restaurantRepository;
-    TimeSlotRepository timeSlotRepository;
-
     @Before
-    public void setUp() {
-        restaurantRepository = new RestaurantRepository();
-        timeSlotRepository = new TimeSlotRepository();
-        restaurantService = new RestaurantService(restaurantRepository, timeSlotRepository);
+    public void init() {
+        RestaurantRepository.clear();
+        TimeSlotRepository.clear();
+        RegisteredUserRepository.clear();
+        LocationRepository.clear();
     }
 
     @Given("a registeredUser called {string} with the role {role}")
@@ -63,15 +59,15 @@ public class SubOrderStepdefs {
                 .setClose(closeTime)
                 .setAverageOrderPreparationTime(averageOrderPreparationTime)
                 .build();
-        restaurantRepository.add(restaurant);
+        RestaurantRepository.add(restaurant);
     }
 
     @And("with a productionCapacity of {int} on the timeslot beginning at {int}:{int} on {int}-{int}-{int}")
     public void withAProductionCapacityOfForTheTimeslotAtOn(int productionCapacity, int startHours, int startMinutes, int startDay, int startMonth, int startYear) {
         LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, startHours, startMinutes);
         TimeSlot timeSlot = new TimeSlot(startTime, restaurant, productionCapacity);
-        timeSlotRepository.add(timeSlot);
-        restaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
+        TimeSlotRepository.add(timeSlot);
+        RestaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
     }
 
     @And("the delivery location {string}, {string} in {string}")
@@ -97,11 +93,11 @@ public class SubOrderStepdefs {
 
     @And("a suborder created in the group order for the restaurant {string}")
     public void aSuborderCreatedInTheGroupOrderForTheRestaurantNaga(String restaurantName) {
-        restaurantService.getRestaurantByName(restaurantName);
         subOrder = new OrderBuilder()
                 .setRestaurantID(restaurant.getId())
                 .setUserID(registeredUser.getId())
                 .setDeliveryTime(groupOrder.getDeliveryDateTime())
+                .setRestaurantID(restaurant.getId())
                 .build();
         registeredUser.setCurrentOrder(subOrder);
         groupOrder.addSubOrder(subOrder);
@@ -112,13 +108,13 @@ public class SubOrderStepdefs {
         LocalDateTime paymentTime = LocalDateTime.of(
                 LocalDate.parse(day),
                 LocalTime.parse(hour));
-        registeredUser.getCurrentOrder().pay(paymentTime ,restaurant, registeredUser);
+        registeredUser.getCurrentOrder().pay(paymentTime, restaurant, registeredUser);
     }
 
     @Then("the subOrder has {status} status in the groupOrder")
     public void theSubOrderHasPAIDStatusInTheGroupOrder(OrderStatus orderStatus) {
         Optional<SubOrder> subOrderOptional = groupOrder.getSubOrders().stream().findFirst();
         assertTrue(subOrderOptional.isPresent());
-        assertEquals(orderStatus,subOrderOptional.get().getStatus());
+        assertEquals(orderStatus, subOrderOptional.get().getStatus());
     }
 }
