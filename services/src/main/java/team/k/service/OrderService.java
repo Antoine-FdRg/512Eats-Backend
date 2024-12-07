@@ -10,7 +10,6 @@ import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
 import commonlibrary.model.payment.Payment;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
@@ -29,12 +28,8 @@ import java.util.Objects;
 @AllArgsConstructor
 public class OrderService {
 
-    @Getter
-    private final GroupOrderRepository groupOrderRepository;
-    private final LocationRepository locationRepository;
     private final SubOrderRepository subOrderRepository;
     private final RestaurantRepository restaurantRepository;
-    private final RegisteredUserRepository registeredUserRepository;
     private PaymentProcessor paymentProcessor;
     private static final String RESTAURANT_NOT_FOUND = "Restaurant not found";
 
@@ -53,7 +48,7 @@ public class OrderService {
         if (restaurant == null) {
             throw new NoSuchElementException(RESTAURANT_NOT_FOUND);
         }
-        Location deliveryLocation = locationRepository.findLocationById(deliveryLocationId);
+        Location deliveryLocation = LocationRepository.findLocationById(deliveryLocationId);
         if (deliveryLocation == null) {
             throw new NoSuchElementException("Location not found");
         }
@@ -99,7 +94,7 @@ public class OrderService {
         if (subOrder == null) {
             throw new NoSuchElementException("SubOrder not found");
         }
-        RegisteredUser orderOwner = registeredUserRepository.findById(subOrder.getUserID());
+        RegisteredUser orderOwner = RegisteredUserRepository.findById(subOrder.getUserID());
         subOrder.place(now, orderOwner);
 
     }
@@ -145,7 +140,7 @@ public class OrderService {
     }
 
     private RegisteredUser registeredUserValidator(int registeredUserID) {
-        RegisteredUser registeredUser = registeredUserRepository.findById(registeredUserID);
+        RegisteredUser registeredUser = RegisteredUserRepository.findById(registeredUserID);
         if (registeredUser == null) {
             throw new NoSuchElementException("User not found");
         }
@@ -165,7 +160,7 @@ public class OrderService {
     public void createSuborder(int registeredUserID, int restaurantId, int groupOrderId) {
         RegisteredUser registeredUser = this.registeredUserValidator(registeredUserID);
         Restaurant restaurant = restaurantRepository.findById(restaurantId);
-        GroupOrder groupOrder = groupOrderRepository.findGroupOrderById(groupOrderId);
+        GroupOrder groupOrder = GroupOrderRepository.findGroupOrderById(groupOrderId);
         if (restaurant == null) {
             throw new NoSuchElementException(RESTAURANT_NOT_FOUND);
         }

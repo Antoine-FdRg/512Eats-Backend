@@ -37,24 +37,20 @@ public class SubOrderStepdefs {
 
     RestaurantService restaurantService;
 
-    RegisteredUserRepository registeredUserRepository;
     RestaurantRepository restaurantRepository;
     TimeSlotRepository timeSlotRepository;
-    LocationRepository locationRepository;
 
     @Before
     public void setUp() {
-        registeredUserRepository = new RegisteredUserRepository();
         restaurantRepository = new RestaurantRepository();
         timeSlotRepository = new TimeSlotRepository();
-        locationRepository = new LocationRepository();
         restaurantService = new RestaurantService(restaurantRepository, timeSlotRepository);
     }
 
     @Given("a registeredUser called {string} with the role {role}")
     public void aRegisteredUserNamedWithTheRole(String name, Role role) {
         registeredUser = new RegisteredUser(name, role);
-        registeredUserRepository.add(registeredUser);
+        RegisteredUserRepository.add(registeredUser);
     }
 
     @And("a restaurant called {string} open from {int}:{int} to {int}:{int} with an average order preparation time of {int} minutes")
@@ -85,7 +81,7 @@ public class SubOrderStepdefs {
                 .setAddress(street)
                 .setCity(city)
                 .build();
-        locationRepository.add(deliveryLocation);
+        LocationRepository.add(deliveryLocation);
     }
 
     @And("a group order created for {string} the {string}")

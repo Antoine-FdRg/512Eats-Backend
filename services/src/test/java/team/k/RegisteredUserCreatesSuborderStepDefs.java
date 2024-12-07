@@ -32,33 +32,24 @@ public class RegisteredUserCreatesSuborderStepDefs {
     Restaurant restaurant;
     Dish dish;
     RestaurantRepository restaurantRepository;
-    RegisteredUserRepository registeredUserRepository;
-    GroupOrderRepository groupOrderRepository;
-    LocationRepository locationRepository;
     SubOrderRepository subOrderRepository;
     OrderService orderService;
 
     @Before
     public void setUp() {
         registeredUser = new RegisteredUser("John Doe", Role.STUDENT);
-        registeredUserRepository = new RegisteredUserRepository();
-        registeredUserRepository.add(registeredUser);
+        RegisteredUserRepository.add(registeredUser);
         restaurantRepository = new RestaurantRepository();
-        groupOrderRepository = new GroupOrderRepository();
-        locationRepository = new LocationRepository();
         subOrderRepository = new SubOrderRepository();
         orderService = new OrderService(
-                groupOrderRepository,
-                locationRepository,
                 subOrderRepository,
-                restaurantRepository,
-                registeredUserRepository);
+                restaurantRepository);
     }
 
     @Given("a groupOrder without any suborder")
     public void aGroupOrderWithTheId5AndWithoutAnySuborderARegisteredUserJoinTheGroupOrder() {
         groupOrder = new GroupOrder.Builder().build();
-        groupOrderRepository.add(groupOrder);
+        GroupOrderRepository.add(groupOrder);
     }
 
     @Given("a restaurant {string}  with a dish {string} an opening time {string} and closing time {string}")
@@ -98,7 +89,7 @@ public class RegisteredUserCreatesSuborderStepDefs {
         int idrestaurant = restaurantRepository.findRestaurantByName(restaurantName).getFirst().getId();
         int registerId = registeredUser.getId();
         Location loc = new Location.Builder().setAddress(location).build();
-        locationRepository.add(loc);
+        LocationRepository.add(loc);
         restaurant.addTimeSlot(new TimeSlot(LocalDateTime.parse("2024-10-12T11:20:00"), restaurant, 20));
         orderService.createIndividualOrder(registerId, idrestaurant, loc.getId(), LocalDateTime.parse("2024-10-12T12:13:20"), LocalDateTime.parse("2024-10-12T12:11:18"));
         registeredUser.getCurrentOrder().addDish(dish);

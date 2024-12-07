@@ -52,9 +52,6 @@ public class RegisteredUserUsesDiscountStepDefs {
     @Mock
     PaymentProcessor paymentProcessor;
 
-    @Mock
-    RegisteredUserRepository registeredUserRepository;
-
     Restaurant restaurant;
 
     RestaurantRepository restaurantRepository;
@@ -65,11 +62,8 @@ public class RegisteredUserUsesDiscountStepDefs {
         MockitoAnnotations.openMocks(this);
         restaurantRepository = new RestaurantRepository();
         orderService = new OrderService(
-                null,
-                null,
                 subOrderRepository,
                 restaurantRepository,
-                registeredUserRepository,
                 paymentProcessor
         );
     }
@@ -93,7 +87,7 @@ public class RegisteredUserUsesDiscountStepDefs {
                         3
                 )
         );
-        when(registeredUserRepository.findById(registeredUser.getId())).thenReturn(registeredUser);
+        RegisteredUserRepository.add(registeredUser);
         when(previousOrder.getRestaurantID()).thenReturn(restaurant.getId());
         for (int i = 0; i < 10; i++) {
             registeredUser.addOrderToHistory(previousOrder);
