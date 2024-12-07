@@ -35,16 +35,12 @@ public class SubOrderStepdefs {
     GroupOrder groupOrder;
     SubOrder subOrder;
 
-    RestaurantService restaurantService;
 
-    RestaurantRepository restaurantRepository;
     TimeSlotRepository timeSlotRepository;
 
     @Before
     public void setUp() {
-        restaurantRepository = new RestaurantRepository();
         timeSlotRepository = new TimeSlotRepository();
-        restaurantService = new RestaurantService(restaurantRepository, timeSlotRepository);
     }
 
     @Given("a registeredUser called {string} with the role {role}")
@@ -63,7 +59,7 @@ public class SubOrderStepdefs {
                 .setClose(closeTime)
                 .setAverageOrderPreparationTime(averageOrderPreparationTime)
                 .build();
-        restaurantRepository.add(restaurant);
+        RestaurantRepository.add(restaurant);
     }
 
     @And("with a productionCapacity of {int} on the timeslot beginning at {int}:{int} on {int}-{int}-{int}")
@@ -71,7 +67,7 @@ public class SubOrderStepdefs {
         LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, startHours, startMinutes);
         TimeSlot timeSlot = new TimeSlot(startTime, restaurant, productionCapacity);
         timeSlotRepository.add(timeSlot);
-        restaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
+        RestaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
     }
 
     @And("the delivery location {string}, {string} in {string}")
@@ -97,7 +93,7 @@ public class SubOrderStepdefs {
 
     @And("a suborder created in the group order for the restaurant {string}")
     public void aSuborderCreatedInTheGroupOrderForTheRestaurantNaga(String restaurantName) {
-        restaurantService.getRestaurantByName(restaurantName);
+        RestaurantService.getRestaurantByName(restaurantName);
         subOrder = new OrderBuilder()
                 .setRestaurantID(restaurant.getId())
                 .setUserID(registeredUser.getId())

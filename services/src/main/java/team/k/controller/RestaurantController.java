@@ -6,6 +6,7 @@ import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.Dish;
 import commonlibrary.model.restaurant.Restaurant;
 import lombok.AllArgsConstructor;
+import ssdbrestframework.SSDBQueryProcessingException;
 import ssdbrestframework.annotations.Endpoint;
 import ssdbrestframework.annotations.PathVariable;
 import ssdbrestframework.annotations.RequestBody;
@@ -32,12 +33,12 @@ public class RestaurantController {
      */
     @Endpoint(path = "/dishes", method = ssdbrestframework.HttpMethod.GET)
     @Response(status = 200) // OK
-    public List<DishDTO> getAllDishes(@RequestParam("restaurant-id") int restaurantId) {
+    public List<DishDTO> getAllDishes(@RequestParam("restaurant-id") int restaurantId) throws SSDBQueryProcessingException {
         try {
             List<Dish> dishes = RestaurantService.getAllDishesFromRestaurant(restaurantId);
             return dishes.stream().map(Dish::convertDishToDishDto).toList();
         } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("No dishes available");
+            throw new  SSDBQueryProcessingException(404, "Les dishes du restaurant id"+ restaurantId+"sont introuvables");
         }
     }
 
@@ -63,11 +64,11 @@ public class RestaurantController {
     @Response(status = 200) // OK
     public List<LocalDateTime> getAvailableDeliveryTimes(
             @PathVariable("restaurantId") int restaurantId, @PathVariable("day") LocalDate day
-    ) {
+    ) throws SSDBQueryProcessingException {
         try {
             return RestaurantService.getAllAvailableDeliveryTimesOfRestaurantOnDay(restaurantId, day);
         } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("No available delivery times");
+            throw new SSDBQueryProcessingException(404,"No available delivery times");
         }
     }
 
@@ -90,9 +91,9 @@ public class RestaurantController {
      *
      * @param restaurantId the restaurant to delete
      */
-    @Endpoint(path = "/delete", method = ssdbrestframework.HttpMethod.DELETE)
+    @Endpoint(path = "/delete/{restaurantId}", method = ssdbrestframework.HttpMethod.DELETE)
     @Response(status = 204) // No Content
-    public void deleteRestaurant(@RequestBody int restaurantId) {
+    public void deleteRestaurant(@PathVariable("restaurantId") int restaurantId) {
         RestaurantService.deleteRestaurant(restaurantId);
     }
 
@@ -116,12 +117,12 @@ public class RestaurantController {
      */
     @Endpoint(path = "/{restaurantName}", method = ssdbrestframework.HttpMethod.GET)
     @Response(status = 200) // OK
-    public List<RestaurantDTO> getRestaurantsByName(@RequestParam("restaurantName") String restaurantName) {
+    public List<RestaurantDTO> getRestaurantsByName(@PathVariable("restaurantName") String restaurantName) throws SSDBQueryProcessingException {
         try {
             List<Restaurant> restaurants = RestaurantService.getRestaurantsByName(restaurantName);
             return restaurants.stream().map(Restaurant::convertRestaurantToRestaurantDTO).toList();
         } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("No restaurants found with the name: " + restaurantName);
+            throw new SSDBQueryProcessingException(404,"No restaurants found with the name: " + restaurantName);
         }
     }
 
@@ -133,7 +134,7 @@ public class RestaurantController {
      */
     @Endpoint(path = "/by/food-types", method = ssdbrestframework.HttpMethod.GET)
     @Response(status = 200) // OK
-    public List<RestaurantDTO> getRestaurantsByFoodType(@RequestParam("food-types") List<FoodType> foodTypes) {
+    public List<RestaurantDTO> getRestaurantsByFoodType(@RequestParam("food-types") List<FoodType> foodTypes) throws SSDBQueryProcessingException {
         try {
             List<Restaurant> restaurants = RestaurantService.getRestaurantsByFoodType(foodTypes);
             return restaurants
@@ -141,7 +142,7 @@ public class RestaurantController {
                     .map(Restaurant::convertRestaurantToRestaurantDTO)
                     .toList();
         } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("No restaurants found with the food types: " + foodTypes);
+            throw new SSDBQueryProcessingException(404,"No restaurants found with the food types: " + foodTypes);
         }
     }
 
@@ -152,7 +153,7 @@ public class RestaurantController {
      */
     @Endpoint(path = "/by/availability", method = ssdbrestframework.HttpMethod.GET)
     @Response(status = 200) // OK
-    public List<RestaurantDTO> getRestaurantsByAvailability() {
+    public List<RestaurantDTO> getRestaurantsByAvailability() throws SSDBQueryProcessingException {
         try {
             List<Restaurant> restaurants = RestaurantService.getRestaurantsByAvailability(LocalDateTime.now());
             return restaurants
@@ -160,7 +161,7 @@ public class RestaurantController {
                     .map(Restaurant::convertRestaurantToRestaurantDTO)
                     .toList();
         } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("No restaurants found with availability at: " + LocalDateTime.now());
+            throw new SSDBQueryProcessingException(404,"No restaurants found with availability at: " + LocalDateTime.now());
         }
     }
 
