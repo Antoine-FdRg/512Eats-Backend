@@ -5,6 +5,13 @@
     "version" : "1.0.0"
   },
   "paths" : {
+    "/orders/pay" : {
+      "post" : {
+        "summary" : "pay",
+        "operationId" : "pay",
+        "parameters" : [ ]
+      }
+    },
     "/orders/add-dish" : {
       "post" : {
         "summary" : "addDish",
@@ -45,18 +52,37 @@
         "parameters" : [ ]
       }
     },
-    "/orders/pay" : {
-      "post" : {
-        "summary" : "pay",
-        "operationId" : "pay",
-        "parameters" : [ ]
-      }
-    },
-    "/orders/sub-order" : {
-      "post" : {
-        "summary" : "createSubOrder",
-        "operationId" : "createSubOrder",
-        "parameters" : [ ]
+    "/orders/remove-dish" : {
+      "delete" : {
+        "summary" : "removeDish",
+        "operationId" : "removeDish",
+        "parameters" : [ {
+          "name" : "order-id",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "dish-id",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/void"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/orders/available-dishes" : {
@@ -85,6 +111,13 @@
         }
       }
     },
+    "/orders/sub-order" : {
+      "post" : {
+        "summary" : "createSubOrder",
+        "operationId" : "createSubOrder",
+        "parameters" : [ ]
+      }
+    },
     "/restaurants/dishes" : {
       "get" : {
         "summary" : "getDishes",
@@ -104,6 +137,44 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/DishList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/restaurants" : {
+      "get" : {
+        "summary" : "getRestaurants",
+        "operationId" : "getRestaurants",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RestaurantDTOList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/restaurants/food-types" : {
+      "get" : {
+        "summary" : "getFoodTypes",
+        "operationId" : "getFoodTypes",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FoodTypeList"
                 }
               }
             }
@@ -150,44 +221,6 @@
           }
         }
       }
-    },
-    "/restaurants/food-types" : {
-      "get" : {
-        "summary" : "getFoodTypes",
-        "operationId" : "getFoodTypes",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "Successful response",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/FoodTypeList"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/restaurants" : {
-      "get" : {
-        "summary" : "getRestaurants",
-        "operationId" : "getRestaurants",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "Successful response",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/RestaurantDTOList"
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "components" : {
@@ -220,6 +253,10 @@
         "items" : {
           "$ref" : "#/components/schemas/Dish"
         }
+      },
+      "void" : {
+        "type" : "object",
+        "properties" : { }
       },
       "byte[]" : {
         "type" : "object",
