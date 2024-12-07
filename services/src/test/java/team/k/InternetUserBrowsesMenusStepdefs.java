@@ -51,7 +51,7 @@ public class InternetUserBrowsesMenusStepdefs {
     @After
     public void tearDown() {
         if (restaurant != null) {
-            restaurantService.deleteRestaurant(restaurant);
+            restaurantService.deleteRestaurant(restaurant.getId());
         }
     }
 
@@ -77,7 +77,7 @@ public class InternetUserBrowsesMenusStepdefs {
     public void theUserWantsToHaveDishesNonRegisteredOfTheRestaurant(String restaurantName) {
         when(restaurantRepository.findByName(restaurantName)).thenReturn(restaurantB);
         try {
-            restaurantDishes = restaurantService.getAllDishesFromRestaurant(restaurantName);
+            restaurantDishes = restaurantService.getAllDishesFromRestaurant(restaurantB.getId());
         } catch (NoSuchElementException e) {
             this.errorMessage = e;
         }

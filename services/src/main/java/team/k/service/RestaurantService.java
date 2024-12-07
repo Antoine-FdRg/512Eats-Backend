@@ -22,11 +22,11 @@ public class RestaurantService {
     /**
      * Get all dishes from a restaurant
      *
-     * @param restaurantName the name of the restaurant
+     * @param restaurantId the name of the restaurant
      * @return the list of dishes if the restaurant is found, null otherwise
      */
-    public List<Dish> getAllDishesFromRestaurant(String restaurantName) throws NoSuchElementException {
-        Restaurant restaurant = getRestaurantOrThrowIfNull(this.getRestaurantByName(restaurantName));
+    public List<Dish> getAllDishesFromRestaurant(int restaurantId) throws NoSuchElementException {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId);
         List<Dish> dishes = restaurant.getDishes();
         if (dishes.isEmpty()) {
             throw new NoSuchElementException("No dishes available");
@@ -59,8 +59,8 @@ public class RestaurantService {
         this.restaurantRepository.add(restaurant);
     }
 
-    public void deleteRestaurant(Restaurant restaurant) {
-        this.restaurantRepository.delete(restaurant);
+    public void deleteRestaurant(int restaurantId) {
+        this.restaurantRepository.delete(restaurantId);
     }
 
     /***** Update *****/
@@ -121,5 +121,14 @@ public class RestaurantService {
             throw new NoSuchElementException("No restaurants found with the name: " + name);
         }
         return restaurants;
+    }
+
+    /**
+     * Get all food types
+     *
+     * @return the list of food types
+     */
+    public List<FoodType> getFoodTypes() {
+        return List.of(FoodType.values());
     }
 }
