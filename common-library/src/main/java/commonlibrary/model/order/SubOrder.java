@@ -58,6 +58,20 @@ public class SubOrder {
         return dishes.add(dish);
     }
 
+    /**
+     * Remove a dish from the order and decrease the price of the order
+     * @param dishID the id of the dish to remove
+     * @return true if the dish was removed, false otherwise
+     */
+    public boolean removeDish(int dishID) {
+        Dish dishToRemove = dishes.stream().filter(dish -> dish.getId() == dishID).findFirst().orElse(null);
+        if (dishToRemove == null) {
+            return false;
+        }
+        this.price -= dishToRemove.getPrice();
+        return dishes.remove(dishToRemove);
+    }
+
     public int getPreparationTime() {
         return dishes.stream().mapToInt(Dish::getPreparationTime).sum();
     }
