@@ -1,5 +1,6 @@
 # Rendu Rapport D2 - Team K
 
+![logo](ressources/logo.png)
 # 512 Eats
 
 Équipe :
@@ -9,11 +10,11 @@
 - FADDA RODRIGUEZ Antoine : SA
 - LEFÈVRE Clément : PO
 
-## 1. Périmètre fonctionnel
+# 1. Périmètre fonctionnel
 
-### 1.1 Hypothèses de travail & limites identfiées
+## 1.1 Hypothèses de travail & limites identfiées
 
-#### Hypothèses de travail
+### Hypothèses de travail
 
 Pour mener à bien notre projet et répondre aux exigences, nous avons formulé plusieurs hypothèses de travail pour
 clarifier certains points :
@@ -26,7 +27,7 @@ clarifier certains points :
 - #### H6. Temps maximum de préparation : Le temps maximal pour préparer une commande est supposé être de 30 minutes.
 - #### H7. Temps moyen de livraison : Le temps de livraison estimé pour une commande est de 20 minutes.
 
-#### Limites identifiées
+### Limites identifiées
 
 En fonction des hypothèses posées et des exigences initiales, certaines limites ont été identifiées :
 
@@ -35,22 +36,47 @@ En fonction des hypothèses posées et des exigences initiales, certaines limite
 - #### L3. Non responsabilité du paiement: Le processus de paiement n’étant pas à prendre en charge, malgré une couverture de cas d’erreur pour les objets envoyés au processus de paiement, nous ne pouvons pas garantir le bon déroulé d’un processus externe.
 - #### L4. Préavis de commande de 50 min minimum : Pour assurer la préparation de la commande, celle-ci doit être faite au moins 50 minutes à l’avance car il faut prendre en compte le temps de livraison (20 minutes) et le temps de préparation maximum (30 minutes dans le créneau horaire du restaurant).
 
-### 1.2 Points non implémentés relativement à la spécification et aux extensions requises
+### Stratégie choisie et éléments spécifiques
 
-### 1.3 Points forts
+Nous avons mis en place une stratégie bien particulière pour la gestion des commandes en fonction des temps de
+préparation de celles-ci. Cette stratégie permet un compromis entre les utilisateurs et les restaurateurs, et donc
+éviter de créer une frustration importante d’un côté comme de l’autre.
+Nous sommes partis de l’exigence R2 qui fixe la durée d’un créneau (time slot) à 30 minutes.
+Exemple de fonctionnement :
+En ayant un temps moyen de préparation de 10 minutes par commande, avec une seule personne pour les préparer, nous
+autorisons 3 commandes passée par TimeSlot (30 minutes/10 minutes * 1 préparateur(s) de commande). Si nous avons 2
+préparateurs de commande, alors nous permettrons à 6 utilisateurs enregistrés de passer une commande, etc.
+Remarque:
+Si il y a trop de demandes pour un restaurant à un horaire précis, alors nous n'autorisons plus la création de commande
+pour ce restaurant. Reprenons notre exemple avec 2 préparateurs de commandes, soit 6 commandes possibles. Si les 3
+premières prennent l'entièreté du temps disponible, alors seulement 3 utilisateurs ayant déjà créé une commande seront
+bloqués avant de pouvoir valider celle-ci. (voir schéma ci-dessous). A l’inverse, peut être que les 6 commandes seront
+courtes et du temps pourrait être perdu, ou bien que le temps de préparation de la dernière commande acceptée peut être
+plus long que le temps disponible, ce qui mettrait en retard le restaurant.
 
-### 1.4 Points faibles
+![schema explicatif](ressources/schemaP1.png)
+![schema explicatif](ressources/schemaP2.png)
 
-## 2. Conception
+## 1.2 Points non implémentés relativement à la spécification et aux extensions requises
 
-### 2.1 Architecture
+## 1.3 Points forts
 
-### 2.2 Justification de l'architecture
+## 1.4 Points faibles
 
-## 3. Qualité des codes
+# 2. Conception
 
-## 4. Gestion de projet
+## 2.1 Architecture
 
-## 5.Restrospective
+## 2.2 Justification de l'architecture
 
-## 6. Autoévaluation
+# 3. Qualité des codes
+
+# 4. Gestion de projet
+
+# 5.Restrospective
+
+# 6. Autoévaluation
+
+- Concernant l'attribution des points, ayant tous travaillés équitablement, nous avons décider d’attribuer les points de
+  manière homogène:
+  Emma: 100pts / Roxane: 100pts / Antoine: 100pts / Clément: 100pts
