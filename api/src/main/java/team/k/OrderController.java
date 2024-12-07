@@ -2,12 +2,15 @@ package team.k;
 
 import commonlibrary.model.Dish;
 import ssdbrestframework.HttpMethod;
+import ssdbrestframework.SSDBQueryProcessingException;
 import ssdbrestframework.annotations.ApiResponseExample;
 import ssdbrestframework.annotations.Endpoint;
 import ssdbrestframework.annotations.RequestBody;
 import ssdbrestframework.annotations.RequestParam;
+import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -34,6 +37,33 @@ public class OrderController {
 
         return response.body();
     }
+
+    @Endpoint(path = "/remove-dish", method = HttpMethod.DELETE)
+    @ApiResponseExample(value=void.class)
+    @Response(status = 204, message = "Dish removed from order successfully")
+    public void removeDish(@RequestParam("order-id") String orderId, @RequestParam("dish-id") String dishId) throws SSDBQueryProcessingException {
+        if(orderId == null){
+            throw new SSDBQueryProcessingException(400,"Order ID is required");
+        }
+        if(dishId == null){
+            throw new SSDBQueryProcessingException(400,"Dish ID is required");
+        }
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(ORDER_SERVICE_URL + "/remove-dish?order-id=" + orderId + "&dish-id=" + dishId))
+                .DELETE()
+                .build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 204) {
+                throw new SSDBQueryProcessingException(response.statusCode(), response.body());
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new SSDBQueryProcessingException(500, e.getMessage());
+        }
+    }
+
 
     @Endpoint(path = "/dishes", method = HttpMethod.GET)
     @ApiResponseExample(value= Dish.class, isArray = true)

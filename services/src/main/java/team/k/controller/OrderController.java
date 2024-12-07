@@ -39,7 +39,7 @@ public class OrderController {
     }
 
 
-    public record AddDishToOrderRequest(int orderId, int dishId) {
+    public record DishAndOrderRequest(int orderId, int dishId) {
     }
 
     /**
@@ -49,12 +49,18 @@ public class OrderController {
      */
     @Endpoint(path = "/add-dish", method = HttpMethod.POST)
     @Response(status = 204) // No Content
-    public void addDishToOrder(@RequestBody AddDishToOrderRequest request) {
+    public void addDishToOrder(@RequestBody DishAndOrderRequest request) {
         try {
             OrderService.addDishToOrder(request.orderId, request.dishId);
         } catch (Exception e) {
             throw new IllegalArgumentException(e.getMessage());
         }
+    }
+
+    @Endpoint(path = "/remove-dish", method = HttpMethod.DELETE)
+    @Response(status = 204, message = "Dish removed from order successfully")
+    public void removeDishFromOrder(@RequestParam("order-id") int orderId, @RequestParam("dish-id") int dishId) throws SSDBQueryProcessingException {
+        OrderService.removeDishFromOrder(orderId, dishId);
     }
 
     public record PaySubOrderRequest(int registeredUserID, int orderId) {
