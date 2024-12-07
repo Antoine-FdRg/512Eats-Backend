@@ -7,25 +7,24 @@ import java.util.List;
 
 public class RegisteredUserRepository {
 
-    private final List<RegisteredUser> registeredUsers = new ArrayList<>();
+    private RegisteredUserRepository() {
+    }
 
-    public void add(RegisteredUser registeredUser) {
+    private static final List<RegisteredUser> registeredUsers = new ArrayList<>();
+
+    public static void add(RegisteredUser registeredUser) {
         registeredUsers.add(registeredUser);
     }
 
-    public RegisteredUser findById(int id) {
+    public static RegisteredUser findById(int id) {
         return registeredUsers.stream().filter(registeredUser -> registeredUser.getId() == id).findFirst().orElse(null);
     }
 
-    public List<RegisteredUser> findAll() {
+    public static List<RegisteredUser> findAll() {
         return registeredUsers;
     }
 
-    public void delete(RegisteredUser registeredUser) {
+    public static void delete(RegisteredUser registeredUser) {
         registeredUsers.remove(registeredUser);
-    }
-
-    public void clear() {
-        registeredUsers.clear();
     }
 }

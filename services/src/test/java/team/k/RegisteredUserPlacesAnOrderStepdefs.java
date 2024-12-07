@@ -45,9 +45,6 @@ public class RegisteredUserPlacesAnOrderStepdefs {
     Dish dish;
 
     @Mock
-    RegisteredUserRepository registeredUserRepository;
-
-    @Mock
     Restaurant restaurant;
 
     @Mock
@@ -63,11 +60,8 @@ public class RegisteredUserPlacesAnOrderStepdefs {
         MockitoAnnotations.openMocks(this);
         restaurantRepository = new RestaurantRepository();
         orderService = new OrderService(
-                null,
-                null,
                 subOrderRepository,
                 restaurantRepository,
-                registeredUserRepository,
                 paymentProcessor);
     }
 
@@ -75,7 +69,7 @@ public class RegisteredUserPlacesAnOrderStepdefs {
     @Given("an order is created by a registered user whose name is {string} and his role is {role}")
     public void anOrderIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(String name, Role role) {
         registeredUser = new RegisteredUser(name, role);
-        when(registeredUserRepository.findById(registeredUser.getId())).thenReturn(registeredUser);
+        RegisteredUserRepository.add(registeredUser);
         when(restaurant.isAvailable(any())).thenReturn(true);
         restaurantRepository.add(restaurant);
         order = new OrderBuilder().setUserID(registeredUser.getId()).setRestaurantID(restaurant.getId()).build();

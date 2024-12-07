@@ -8,12 +8,8 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.mockito.Mock;
 import commonlibrary.model.Dish;
 import commonlibrary.enumerations.FoodType;
-import team.k.repository.GroupOrderRepository;
-import team.k.repository.LocationRepository;
-import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
 import team.k.repository.SubOrderRepository;
 import commonlibrary.model.restaurant.Restaurant;
@@ -41,23 +37,14 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
     Dish dish;
 
     RestaurantRepository restaurantRepository;
-    @Mock
-    LocationRepository locationRepository;
-    @Mock
-    GroupOrderRepository groupOrderRepository;
-    @Mock
-    RegisteredUserRepository registeredUserRepository;
 
     @Before
     public void setUp() {
         subOrderRepository = new SubOrderRepository();
         restaurantRepository = new RestaurantRepository();
         orderService = new OrderService(
-                groupOrderRepository,
-                locationRepository,
                 subOrderRepository,
-                restaurantRepository,
-                registeredUserRepository);
+                restaurantRepository);
     }
 
     @Given("an order with the status {string} in the restaurant {string} with a chosen dish {string} with a production capacity of {int} and an average preparation time of {int} min with a delivery time at {int}:{int}")

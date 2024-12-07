@@ -42,17 +42,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-java</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-junit-platform-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
 
         <dependency> <!-- Junit 5 vintage to JUnit 4 necessary for Cucumber 4.X + Junit 5.X -->
             <groupId>org.junit.vintage</groupId>

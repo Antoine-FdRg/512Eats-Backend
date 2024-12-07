@@ -20,6 +20,16 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit-platform-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <artifactId>ssdb-rest-framework</artifactId>
             <groupId>fr.unice.polytech.team.k</groupId>
             <version>1.0.0</version>

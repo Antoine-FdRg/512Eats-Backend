@@ -3,6 +3,7 @@
 Feature: A registered user validates a group order
 
   Background:
+    Given a delivery location
     Given a group order created with "2024-12-10" at "12:00" as delivery datetime
 
   Scenario:

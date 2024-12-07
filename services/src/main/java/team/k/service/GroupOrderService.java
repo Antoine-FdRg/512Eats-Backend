@@ -4,7 +4,6 @@ import commonlibrary.model.Location;
 import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.order.GroupOrder;
 import commonlibrary.model.order.SubOrder;
-import lombok.RequiredArgsConstructor;
 import team.k.repository.GroupOrderRepository;
 import team.k.repository.LocationRepository;
 import commonlibrary.model.restaurant.Restaurant;
@@ -15,11 +14,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-@RequiredArgsConstructor
 public class GroupOrderService {
-    private final GroupOrderRepository groupOrderRepository;
-    private final LocationRepository locationRepository;
-    private final RegisteredUserRepository registeredUserRepository;
+
+    private GroupOrderService() {
+        throw new IllegalStateException("Service class");
+    }
 
     /**
      * Create a group order
@@ -28,8 +27,8 @@ public class GroupOrderService {
      * @param now the current time
      * @return the id of the created group order to share with friends
      */
-    public int createGroupOrder(int deliveryLocationId, LocalDateTime deliveryDateTime, LocalDateTime now){
-        Location location = locationRepository.findLocationById(deliveryLocationId);
+    public static int createGroupOrder(int deliveryLocationId, LocalDateTime deliveryDateTime, LocalDateTime now){
+        Location location = LocationRepository.findLocationById(deliveryLocationId);
         if (location == null) {
             throw new NoSuchElementException("Location not found");
         }
@@ -43,12 +42,12 @@ public class GroupOrderService {
                 .withDeliveryLocationID(location.getId())
                 .withDate(deliveryDateTime)
                 .build();
-        groupOrderRepository.add(groupOrder);
+        GroupOrderRepository.add(groupOrder);
         return groupOrder.getId();
     }
 
-    public GroupOrder findGroupOrderById(int id) {
-        return groupOrderRepository.findGroupOrderById(id);
+    public static GroupOrder findGroupOrderById(int id) {
+        return GroupOrderRepository.findGroupOrderById(id);
     }
 
     /**
@@ -57,7 +56,7 @@ public class GroupOrderService {
      * @param deliveryDateTime the delivery datetime for the group order
      * @param now the current time (to ensure that the chosen deliveryDateTime is not too early
      */
-    public void modifyGroupOrderDeliveryDateTime(int groupOrderId, LocalDateTime deliveryDateTime, LocalDateTime now){
+    public static void modifyGroupOrderDeliveryDateTime(int groupOrderId, LocalDateTime deliveryDateTime, LocalDateTime now){
 
         if (Objects.isNull(deliveryDateTime)) {
             throw new IllegalArgumentException("Delivery datetime cannot be null");
@@ -68,24 +67,24 @@ public class GroupOrderService {
         if (deliveryDateTime.isBefore(now.plusMinutes(Restaurant.ORDER_PROCESSING_TIME_MINUTES))) {
             throw new IllegalArgumentException("Delivery time cannot be this early");
         }
-        GroupOrder groupOrder = groupOrderRepository.findGroupOrderById(groupOrderId);
+        GroupOrder groupOrder = GroupOrderRepository.findGroupOrderById(groupOrderId);
         if (Objects.isNull(groupOrder)) {
             throw new NoSuchElementException("Group order not found");
         }
         if (!Objects.isNull(groupOrder.getDeliveryDateTime())) {
-            throw new UnsupportedOperationException("The group order delivery datetime cannot be changed");
+            throw new UnsupportedOperationException("The group order delivery datetime cannot be changed if it was already set");
         }
         groupOrder.setDeliveryDateTime(deliveryDateTime);
     }
 
-    public void place(int groupOrderId, LocalDateTime now) {
-        GroupOrder groupOrder = groupOrderRepository.findGroupOrderById(groupOrderId);
+    public static void place(int groupOrderId, LocalDateTime now) {
+        GroupOrder groupOrder = GroupOrderRepository.findGroupOrderById(groupOrderId);
         if (Objects.isNull(groupOrder)) {
             throw new NoSuchElementException("Group order not found");
         }
         List<RegisteredUser> members = groupOrder.getSubOrders().stream()
                 .map(SubOrder::getUserID)
-                .map(registeredUserRepository::findById)
+                .map(RegisteredUserRepository::findById)
                 .toList();
         groupOrder.place(now, members);
     }

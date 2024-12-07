@@ -10,13 +10,13 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class GroupOrderRepository {
-    List<GroupOrder> groupOrders = new ArrayList<>();
+    private static final List<GroupOrder> groupOrders = new ArrayList<>();
 
-    public GroupOrder findGroupOrderById(int id) {
+    public static GroupOrder findGroupOrderById(int id) {
         return groupOrders.stream().filter(groupOrder -> groupOrder.getId() == id).findFirst().orElse(null);
     }
 
-    public void add(GroupOrder groupOrder) {
+    public static void add(GroupOrder groupOrder) {
         groupOrders.add(groupOrder);
     }
 }
