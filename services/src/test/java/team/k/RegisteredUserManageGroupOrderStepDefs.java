@@ -16,6 +16,7 @@ import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
 import team.k.repository.GroupOrderRepository;
 import team.k.repository.LocationRepository;
+import team.k.repository.RegisteredUserRepository;
 import team.k.service.GroupOrderService;
 
 import java.time.LocalDate;
@@ -29,14 +30,13 @@ import static org.junit.Assert.assertNull;
 
 
 public class RegisteredUserManageGroupOrderStepDefs {
-    LocationRepository locationRepository;
     int codeToShare;
     Location location;
     Exception exception;
 
-    SubOrder PaidSuborder;
+    SubOrder paidSuborder;
 
-    SubOrder UnpaidSuborder;
+    SubOrder unpaidSuborder;
 
     GroupOrder groupOrder;
     RegisteredUser user1;
@@ -46,7 +46,6 @@ public class RegisteredUserManageGroupOrderStepDefs {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        locationRepository = new LocationRepository();
     }
 
     @Given("a delivery location")
@@ -56,7 +55,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 .setAddress("123 Main St")
                 .setCity("Springfield")
                 .build();
-        locationRepository.add(location);
+        LocationRepository.add(location);
     }
 
     @When("the user creates a group order with the delivery location for the {string} at {string} on {string} at {string}")
@@ -196,17 +195,19 @@ public class RegisteredUserManageGroupOrderStepDefs {
     @And("a suborder of the user {string} with the status {status} added in the group order")
     public void aSuborderWithTheStatusAddedInTheGroupOrder(String name, OrderStatus status) {
         user1 = new RegisteredUser(name, Role.STUDENT);
-        PaidSuborder = new OrderBuilder().setUserID(user1.getId()).build();
-        PaidSuborder.setStatus(status);
-        groupOrder.addSubOrder(PaidSuborder);
+        RegisteredUserRepository.add(user1);
+        paidSuborder = new OrderBuilder().setUserID(user1.getId()).build();
+        paidSuborder.setStatus(status);
+        groupOrder.addSubOrder(paidSuborder);
     }
 
     @And("a suborder of the user {string} not already placed with the status {status} added in the group order")
     public void aSuborderNotAlreadyPlacedWithTheStatusCREATEDAddedInTheGroupOrder(String name, OrderStatus status) {
         user2 = new RegisteredUser(name, Role.STUDENT);
-        UnpaidSuborder = new OrderBuilder().setUserID(user2.getId()).build();
-        UnpaidSuborder.setStatus(status);
-        groupOrder.addSubOrder(UnpaidSuborder);
+        RegisteredUserRepository.add(user2);
+        unpaidSuborder = new OrderBuilder().setUserID(user2.getId()).build();
+        unpaidSuborder.setStatus(status);
+        groupOrder.addSubOrder(unpaidSuborder);
 
     }
 
@@ -223,21 +224,21 @@ public class RegisteredUserManageGroupOrderStepDefs {
     @Then("one suborder is placed and the other one is canceled")
     public void oneSuborderIsPlacedAndTheOtherOneIsCanceled() {
         assertEquals(OrderStatus.PLACED, groupOrder.getStatus());
-        assertEquals(OrderStatus.PLACED, PaidSuborder.getStatus());
-        assertEquals(OrderStatus.CANCELED, UnpaidSuborder.getStatus());
+        assertEquals(OrderStatus.PLACED, paidSuborder.getStatus());
+        assertEquals(OrderStatus.CANCELED, unpaidSuborder.getStatus());
     }
 
 
     @Then("the suborder and the groupOrder are canceled")
     public void theSuborderAndTheGroupOrderIsCanceled() {
-        assertEquals(OrderStatus.CANCELED, UnpaidSuborder.getStatus());
+        assertEquals(OrderStatus.CANCELED, unpaidSuborder.getStatus());
         assertEquals(OrderStatus.CANCELED, groupOrder.getStatus());
     }
 
     @Then("the suborder and the groupOrder are placed")
     public void theSuborderAndTheGroupOrderIsPlaced() {
         assertEquals(OrderStatus.PLACED, groupOrder.getStatus());
-        assertEquals(OrderStatus.PLACED, PaidSuborder.getStatus());
+        assertEquals(OrderStatus.PLACED, paidSuborder.getStatus());
     }
 
 
