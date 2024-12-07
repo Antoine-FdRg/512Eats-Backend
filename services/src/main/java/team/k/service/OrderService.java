@@ -88,7 +88,7 @@ public class OrderService {
         }
         subOrder.addDish(dish);
     }
-    public boolean removeDishFromOrder(int orderId, int dishId) throws SSDBQueryProcessingException {
+    public static void removeDishFromOrder(int orderId, int dishId) throws SSDBQueryProcessingException {
         SubOrder subOrder = SubOrderRepository.findById(orderId);
         if (subOrder == null) {
             throw new SSDBQueryProcessingException(404, SUB_ORDER_NOT_FOUND);
@@ -99,7 +99,7 @@ public class OrderService {
         if(subOrder.getDishes().stream().noneMatch(dish -> dish.getId() == dishId)){
             throw new SSDBQueryProcessingException(404, "Dish not found in order");
         }
-        return subOrder.removeDish(dishId);
+        subOrder.removeDish(dishId);
     }
 
     public static void placeIndividualOrder(int orderId, LocalDateTime now) throws NoSuchElementException {
