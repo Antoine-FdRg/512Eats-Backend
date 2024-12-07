@@ -1,5 +1,6 @@
 package team.k.service;
 
+import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.external.PaymentFailedException;
 import commonlibrary.external.PaymentProcessor;
 import commonlibrary.model.Dish;
@@ -11,6 +12,11 @@ import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
 import commonlibrary.model.payment.Payment;
 import team.k.repository.*;
+import lombok.NoArgsConstructor;
+import ssdbrestframework.SSDBQueryProcessingException;
+import team.k.repository.RegisteredUserRepository;
+import team.k.repository.RestaurantRepository;
+import team.k.repository.SubOrderRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
 
@@ -81,6 +87,19 @@ public class OrderService {
             throw new IllegalArgumentException("The total preparation time of the dishes is greater than 30 minutes");
         }
         subOrder.addDish(dish);
+    }
+    public boolean removeDishFromOrder(int orderId, int dishId) throws SSDBQueryProcessingException {
+        SubOrder subOrder = SubOrderRepository.findById(orderId);
+        if (subOrder == null) {
+            throw new SSDBQueryProcessingException(404, SUB_ORDER_NOT_FOUND);
+        }
+        if (subOrder.getStatus() != OrderStatus.CREATED) {
+            throw new SSDBQueryProcessingException(400, "Order is already placed");
+        }
+        if(subOrder.getDishes().stream().noneMatch(dish -> dish.getId() == dishId)){
+            throw new SSDBQueryProcessingException(404, "Dish not found in order");
+        }
+        return subOrder.removeDish(dishId);
     }
 
     public static void placeIndividualOrder(int orderId, LocalDateTime now) throws NoSuchElementException {
