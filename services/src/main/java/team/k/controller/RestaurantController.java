@@ -164,4 +164,10 @@ public class RestaurantController {
             throw new NoSuchElementException("No restaurants found with availability at: " + LocalDateTime.now());
         }
     }
+
+    @Endpoint(path = "/{restaurantId}/average-price", method = ssdbrestframework.HttpMethod.GET)
+    @Response(status = 200) // OK
+    public double getAverageValueOfRestaurantPrices(@PathVariable("restaurantId") int restaurantId) {
+        return restaurantService.getAverageValueOfRestaurantPrices(restaurantId);
+    }
 }

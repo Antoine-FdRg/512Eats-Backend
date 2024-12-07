@@ -84,6 +84,17 @@ public class RestaurantService {
         restaurant.addDish(dish);
     }
 
+    /**
+     * Calcul de la moyenne des prix des plats d'un restaurant
+     *
+     * @param restaurantId
+     * @return 1 si les prix sont entre 0 et 10, 2 si les prix sont entre 10 et 20, 3 si les prix sont entre 20 et 30
+     */
+    public int getAverageValueOfRestaurantPrices(int restaurantId) {
+        double restaurantAveragePrice = restaurantRepository.findById(restaurantId).getAveragePrice();
+        return (restaurantAveragePrice <= 10 ? 1 : restaurantAveragePrice <= 20 ? 2 : 3);
+    }
+
     /***** Searching methods *****/
     public List<Restaurant> getAllRestaurants() {
         return this.restaurantRepository.findAll();

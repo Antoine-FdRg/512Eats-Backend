@@ -40,7 +40,6 @@ public class Restaurant {
     private int averageOrderPreparationTime;
     private String description;
     private List<String> urlPicture;
-    private double averagePrice;
 
     private Restaurant(Builder builder) {
         this.id = builder.id;
@@ -149,7 +148,7 @@ public class Restaurant {
         return new RestaurantDTO(this.id, this.name, this.open.toString(), this.close.toString(), foodTypes, this.getAveragePrice(), this.description, this.getFirstDishPictureURLList());
     }
 
-    private double getAveragePrice() {
+    public double getAveragePrice() {
         return dishes.stream().mapToDouble(Dish::getPrice).average().orElse(0);
     }
 
@@ -159,7 +158,7 @@ public class Restaurant {
 
     public RestaurantDTO convertRestaurantToRestaurantDTO() {
         List<String> foodTypes = this.foodTypes.stream().map(Enum::name).toList();
-        return new RestaurantDTO(this.id, this.name, this.open.toString(), this.close.toString(), foodTypes, this.averagePrice, this.description, this.urlPicture);
+        return new RestaurantDTO(this.id, this.name, this.open.toString(), this.close.toString(), foodTypes, getAveragePrice(),this.description, this.urlPicture);
     }
 
     public static class Builder {

@@ -6,9 +6,13 @@ import commonlibrary.model.Dish;
 import ssdbrestframework.HttpMethod;
 import ssdbrestframework.annotations.ApiResponseExample;
 import ssdbrestframework.annotations.Endpoint;
+import ssdbrestframework.annotations.PathVariable;
 import ssdbrestframework.annotations.RequestParam;
+import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 
 import java.net.URI;
@@ -98,6 +102,24 @@ public class RestaurantController {
 
         if (response.statusCode() != 200) {
             throw new RuntimeException("Failed to get dishes: " + response.statusCode());
+        }
+
+        return response.body();
+    }
+
+    @Endpoint(path = "/{restaurantId}/average-price", method = ssdbrestframework.HttpMethod.GET)
+    @ApiResponseExample(value = Double.class)
+    public String getAverageValueOfRestaurantPrices(@PathVariable("restaurantId") int restaurantId) throws URISyntaxException, IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(RESTAURANT_SERVICE_URL +'/'+ restaurantId+"/average-price"))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("Failed to get average price: " + response.statusCode());
         }
 
         return response.body();
