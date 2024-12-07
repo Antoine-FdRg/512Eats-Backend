@@ -1,10 +1,7 @@
 package commonlibrary.model.order;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import commonlibrary.dto.DishDTO;
-import commonlibrary.dto.PaymentDTO;
 import commonlibrary.dto.SubOrderDTO;
 import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.model.Dish;
@@ -87,9 +84,12 @@ public class SubOrder {
                 .map(Dish::convertDishToDishDto)
                 .toList();
 
-        PaymentDTO convertedPayment = payment.convertPaymentToPaymentDto();
-
         return new SubOrderDTO(id, String.valueOf(price), restaurantID, userID,
-                convertedDishes, status.toString(), placedDate.toString(), deliveryDate.toString(), convertedPayment);
+                convertedDishes,
+                status != null ? status.toString() : null,
+                placedDate != null ? placedDate.toString() : null,
+                deliveryDate != null ? deliveryDate.toString() : null,
+                payment != null ? payment.convertPaymentToPaymentDto() : null
+        );
     }
 }

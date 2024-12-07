@@ -8,13 +8,13 @@ import java.util.List;
 
 public class SubOrderRepository {
 
-    private final List<SubOrder> subOrders = new ArrayList<>();
+    private static final List<SubOrder> subOrders = new ArrayList<>();
 
-    public void add(SubOrder subOrder) {
+    public static void add(SubOrder subOrder) {
         subOrders.add(subOrder);
     }
 
-    public SubOrder findById(int id) {
+    public static SubOrder findById(int id) {
         return subOrders.stream().filter(subOrder -> subOrder.getId() == id).findFirst().orElse(null);
     }
 

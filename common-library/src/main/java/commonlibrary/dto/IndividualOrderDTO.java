@@ -15,7 +15,7 @@ import java.util.List;
 
 public record IndividualOrderDTO(int id, String price, int restaurantId, int userId,
                                  List<DishDTO> dishes, String status, String placedDate, String deliveryDateTime,
-                                 PaymentDTO payment, int deliveryLocationID) {
+                                 PaymentDTO payment, LocationDTO deliveryLocation) {
 
     /*
      * Converts an IndividualOrderDTO object to an IndividualOrder object
@@ -39,7 +39,7 @@ public record IndividualOrderDTO(int id, String price, int restaurantId, int use
                 .setPlacedDate(LocalDateTime.parse(placedDate))
                 .setDeliveryTime(LocalDateTime.parse(deliveryDateTime))
                 .setPayment(convertedPayment)
-                .setDeliveryLocationID(deliveryLocationID)
+                .setDeliveryLocation(deliveryLocation.convertLocationDtoToLocation())
                 .build();
     }
 }

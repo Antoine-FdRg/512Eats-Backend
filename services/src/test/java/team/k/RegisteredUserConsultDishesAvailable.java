@@ -8,8 +8,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import commonlibrary.model.Dish;
 import commonlibrary.model.order.OrderBuilder;
@@ -26,7 +24,6 @@ import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 
 public class RegisteredUserConsultDishesAvailable {
 
@@ -35,12 +32,6 @@ public class RegisteredUserConsultDishesAvailable {
     RegisteredUser registeredUser;
     SubOrder order;
     List<Dish> availableDishes;
-    @Mock
-    RestaurantRepository restaurantRepository;
-    @Mock
-    SubOrderRepository subOrderRepository;
-    @InjectMocks
-    OrderService orderService;
 
     @DataTableType
     public Dish dishEntry(Map<String, String> entry) {
@@ -61,19 +52,21 @@ public class RegisteredUserConsultDishesAvailable {
     public void theRestaurantNagaHasTheFollowingDishesWithPreparationTime(String restaurantName, List<Dish> dishes) {
 
         nagaRestaurant = new Restaurant.Builder()
+                .setId(1)
                 .setName(restaurantName)
                 .setAverageOrderPreparationTime(10)
                 .build();
         for (Dish dish : dishes) {
             nagaRestaurant.addDish(dish);
         }
-        when(restaurantRepository.findById(1)).thenReturn(nagaRestaurant);
+        RestaurantRepository.add(nagaRestaurant);
     }
 
     @And("User {string} has a currentOrder for the restaurant Naga in the timeslot beginning at {int}:{int} on {int}-{int}-{int}")
     public void userHasACurrentOrderForTheRestaurantNagaInTheTimeslotBeginningAtOn(String userName, int min, int hour, int day, int month, int year) {
         registeredUser = new RegisteredUser(userName, Role.STUDENT);
         order = new OrderBuilder()
+                .setId(1)
                 .setRestaurantID(nagaRestaurant.getId())
                 .setUserID(registeredUser.getId())
                 .setDeliveryTime(LocalDateTime.of(year, month, day, hour, min))
@@ -81,12 +74,12 @@ public class RegisteredUserConsultDishesAvailable {
         registeredUser.setCurrentOrder(order);
         TimeSlot timeSlot = new TimeSlot(LocalDateTime.of(year, month, day, hour, min), nagaRestaurant, nagaRestaurant.getAverageOrderPreparationTime());
         nagaRestaurant.addTimeSlot(timeSlot);
-        when(subOrderRepository.findById(1)).thenReturn(order);
+        SubOrderRepository.add(order);
     }
 
     @When("Jack consults the available dishes of the restaurant Naga")
     public void jackConsultsTheAvailableDishesOfTheRestaurantNagaForTheTimeslotBeginningAtOn() {
-        availableDishes = orderService.getAvailableDishes(1, 1);
+        availableDishes = OrderService.getAvailableDishes(1);
     }
 
     @Then("he can see only the following dishes")
