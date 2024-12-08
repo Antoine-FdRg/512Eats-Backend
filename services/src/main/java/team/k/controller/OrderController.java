@@ -17,10 +17,6 @@ import java.util.NoSuchElementException;
 
 @RestController(path = "/orders")
 public class OrderController {
-    private OrderController() {
-        throw new IllegalStateException("Utility class");
-    }
-
     /**
      * Create an individual order
      *
