@@ -32,13 +32,13 @@ public class GroupOrderController {
     public int createGroupOrder(
             @RequestParam("delivery-location-id") int deliveryLocationId,
             @RequestParam("delivery-date-time") LocalDateTime deliveryDateTime
-    ) {
+    ) throws SSDBQueryProcessingException {
         try {
             return GroupOrderService.createGroupOrder(deliveryLocationId, deliveryDateTime, LocalDateTime.now());
         } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Location not found: " + deliveryLocationId);
+            throw new SSDBQueryProcessingException(404, e.getMessage());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid input: " + e.getMessage());
+            throw new SSDBQueryProcessingException(400, e.getMessage());
         }
     }
 
@@ -65,7 +65,7 @@ public class GroupOrderController {
      * @param deliveryDateTime the new delivery date and time
      */
     @Endpoint(path = "/modify-delivery-datetime/{groupOrderId}", method = ssdbrestframework.HttpMethod.PUT)
-    @Response(status = 204,message = "Group order delivery date and time modified successfully")
+    @Response(status = 204, message = "Group order delivery date and time modified successfully")
     public void modifyGroupOrderDeliveryDateTime(
             @PathVariable("groupOrderId") int groupOrderId,
             @RequestParam("delivery-date-time") LocalDateTime deliveryDateTime
@@ -75,7 +75,7 @@ public class GroupOrderController {
         } catch (NoSuchElementException e) {
             throw new SSDBQueryProcessingException(404, ERROR_GROUP_ORDER_NOT_FOUND + groupOrderId);
         } catch (IllegalArgumentException | UnsupportedOperationException e) {
-            throw new IllegalArgumentException(e.getMessage());
+            throw new SSDBQueryProcessingException(400, e.getMessage());
         }
     }
 
@@ -86,11 +86,11 @@ public class GroupOrderController {
      */
     @Endpoint(path = "/place/{groupOrderId}", method = ssdbrestframework.HttpMethod.POST)
     @Response(status = 204)
-    public void placeGroupOrder(@PathVariable("groupOrderId") int groupOrderId) {
+    public void placeGroupOrder(@PathVariable("groupOrderId") int groupOrderId) throws SSDBQueryProcessingException {
         try {
             GroupOrderService.place(groupOrderId, LocalDateTime.now());
         } catch (NoSuchElementException e) {
-            throw new NoSuchElementException(ERROR_GROUP_ORDER_NOT_FOUND + groupOrderId);
+            throw new SSDBQueryProcessingException(404, ERROR_GROUP_ORDER_NOT_FOUND + groupOrderId);
         }
     }
 }

@@ -8,25 +8,29 @@ import java.util.List;
 
 
 public class DishRepository {
-    private final List<Dish> dishes = new ArrayList<>();
+    private static final List<Dish> dishes = new ArrayList<>();
 
-    public Dish findById(int dishId) {
+    private DishRepository() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    public static Dish findById(int dishId) {
         return dishes.stream().filter(restaurant -> restaurant.getId() == dishId).findFirst().orElse(null);
     }
 
-    public void add(Dish dish) {
+    public static void add(Dish dish) {
         dishes.add(dish);
     }
 
-    public void remove(Dish dish) {
+    public static void remove(Dish dish) {
         dishes.remove(dish);
     }
 
-    public List<Dish> findAll() {
+    public static List<Dish> findAll() {
         return dishes;
     }
 
-    public void clear() {
+    public static void clear() {
         dishes.clear();
     }
 }

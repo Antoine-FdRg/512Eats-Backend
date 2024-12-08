@@ -2,7 +2,9 @@ package team.k;
 
 import commonlibrary.external.PaymentFailedException;
 import commonlibrary.external.PaymentProcessor;
+import commonlibrary.model.Location;
 import commonlibrary.model.RegisteredUser;
+import commonlibrary.model.order.IndividualOrder;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -14,8 +16,8 @@ import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.enumerations.Role;
 
 import commonlibrary.model.order.OrderBuilder;
-import commonlibrary.model.order.SubOrder;
 
+import team.k.repository.IndividualOrderRepository;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
 import team.k.repository.SubOrderRepository;
@@ -28,6 +30,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,10 +39,7 @@ import static org.mockito.Mockito.when;
 public class RegisteredUserPlacesAnOrderStepdefs {
 
     RegisteredUser registeredUser;
-    SubOrder order;
-
-    @Mock
-    SubOrderRepository subOrderRepository;
+    IndividualOrder order;
 
     @Mock
     Dish dish;
@@ -52,36 +52,34 @@ public class RegisteredUserPlacesAnOrderStepdefs {
 
     Exception exception;
 
-    RestaurantRepository restaurantRepository;
-    OrderService orderService;
 
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        restaurantRepository = new RestaurantRepository();
-        orderService = new OrderService(
-                subOrderRepository,
-                restaurantRepository,
-                paymentProcessor);
+        SubOrderRepository.clear();
+        RegisteredUserRepository.clear();
+        IndividualOrderRepository.clear();
+        RestaurantRepository.clear();
     }
 
 
-    @Given("an order is created by a registered user whose name is {string} and his role is {role}")
-    public void anOrderIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(String name, Role role) {
-        registeredUser = new RegisteredUser(name, role);
+    @Given("an individual order is created by a registered user whose name is {string} and his role is {role}")
+    public void anIndividualOrderIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(String name, Role role) {
+        registeredUser = spy(new RegisteredUser(name, role));
         RegisteredUserRepository.add(registeredUser);
         when(restaurant.isAvailable(any())).thenReturn(true);
-        restaurantRepository.add(restaurant);
-        order = new OrderBuilder().setUserID(registeredUser.getId()).setRestaurantID(restaurant.getId()).build();
+        RestaurantRepository.add(restaurant);
+        Location loc = new Location.Builder().setAddress("Antibes").build();
+        order = (IndividualOrder) new OrderBuilder().setId(1).setUserID(registeredUser.getId()).setRestaurantID(restaurant.getId()).setDeliveryLocation(loc).build();
         registeredUser.setCurrentOrder(order);
         order.addDish(dish);
-        when(subOrderRepository.findById(order.getId())).thenReturn(order);
+        IndividualOrderRepository.add(order);
     }
 
     @When("The user places the order at {int}:{int} on {int}-{int}-{int}")
     public void placeTheOrder(int hour, int minute, int day, int month, int year) {
         LocalDateTime placedTime = LocalDateTime.of(year, month, day, hour, minute);
-        orderService.placeSubOrder(order.getId(), placedTime);
+        OrderService.placeIndividualOrder(1, placedTime);
     }
 
     @Then("the status of the order is placed now")
@@ -94,7 +92,7 @@ public class RegisteredUserPlacesAnOrderStepdefs {
     public void theUserPaysTheOrder(int hour, int minute, int day, int month, int year) {
         LocalDateTime paymentTime = LocalDateTime.of(year, month, day, hour, minute);
         when(paymentProcessor.processPayment(anyDouble())).thenReturn(true);
-        orderService.paySubOrder(registeredUser.getId(), order.getId(), paymentTime);
+        OrderService.paySubOrder(registeredUser.getId(), order.getId(), paymentTime, paymentProcessor);
     }
 
     @Then("the order appears in the user's history")
@@ -107,7 +105,7 @@ public class RegisteredUserPlacesAnOrderStepdefs {
     public void theUserPaysTheOrderAndThePaymentFails(int hour, int minute, int day, int month, int year) {
         when(paymentProcessor.processPayment(anyDouble())).thenReturn(false);
         try {
-            orderService.paySubOrder(registeredUser.getId(), order.getId(), LocalDateTime.of(year, month, day, hour, minute));
+            OrderService.paySubOrder(registeredUser.getId(), order.getId(), LocalDateTime.of(year, month, day, hour, minute), paymentProcessor);
         } catch (PaymentFailedException e) {
             exception = e;
         }

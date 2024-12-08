@@ -19,7 +19,6 @@ import java.util.Set;
 
 @Log
 public class OpenApiGenerator {
-
     private OpenApiGenerator() {
     }
 
@@ -27,6 +26,7 @@ public class OpenApiGenerator {
     public static final String ARRAY = "array";
     public static final String OBJECT = "object";
     public static final String SCHEMAS = "schemas";
+    public static final String ITEMS = "items";
 
     public static ObjectNode generate(String basePackage) {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -80,14 +80,26 @@ public class OpenApiGenerator {
                         Class<?> modelClass = responseModel.value();
                         boolean isArray = responseModel.isArray();
 
-                        addSchemaForClass(components, modelClass, objectMapper, isArray);
-
                         ObjectNode responses = objectMapper.createObjectNode();
                         ObjectNode successResponse = objectMapper.createObjectNode();
                         successResponse.put("description", "Successful response");
                         ObjectNode content = objectMapper.createObjectNode();
                         ObjectNode jsonSchema = objectMapper.createObjectNode();
-                        jsonSchema.put("$ref", COMPONENTS_SCHEMAS + (isArray ? modelClass.getSimpleName() + "List" : modelClass.getSimpleName()));
+
+                        if (isSimpleType(modelClass)) {
+                            if (isArray) {
+                                jsonSchema.put("type", ARRAY);
+                                ObjectNode itemsNode = objectMapper.createObjectNode();
+                                itemsNode.put("type", getType(modelClass));
+                                jsonSchema.set(ITEMS, itemsNode);
+                            } else {
+                                jsonSchema.put("type", getType(modelClass));
+                            }
+                        } else {
+                            addSchemaForClass(components, modelClass, objectMapper, isArray);
+                            jsonSchema.put("$ref", COMPONENTS_SCHEMAS + (isArray ? modelClass.getSimpleName() + "List" : modelClass.getSimpleName()));
+                        }
+
                         content.set("application/json", objectMapper.createObjectNode().set("schema", jsonSchema));
 
                         successResponse.set("content", content);
@@ -119,7 +131,7 @@ public class OpenApiGenerator {
             schemaNode.put("type", ARRAY);
             ObjectNode itemsNode = objectMapper.createObjectNode();
             itemsNode.put("$ref", COMPONENTS_SCHEMAS + modelClass.getSimpleName());
-            schemaNode.set("items", itemsNode);
+            schemaNode.set(ITEMS, itemsNode);
 
             String listSchemaName = modelClass.getSimpleName() + "List";
             if (!components.with(SCHEMAS).has(listSchemaName)) {
@@ -157,7 +169,7 @@ public class OpenApiGenerator {
                         ObjectNode itemsNode = objectMapper.createObjectNode();
                         itemsNode.put("$ref", COMPONENTS_SCHEMAS + genericType.getSimpleName());
                         fieldSchema.put("type", ARRAY);
-                        fieldSchema.set("items", itemsNode);
+                        fieldSchema.set(ITEMS, itemsNode);
                     } else {
                         fieldSchema.put("type", ARRAY);
                     }
@@ -196,4 +208,15 @@ public class OpenApiGenerator {
         if (List.class.isAssignableFrom(clazz)) return ARRAY;
         return OBJECT;
     }
+
+    private static boolean isSimpleType(Class<?> clazz) {
+        return clazz.isPrimitive() ||
+                clazz == String.class ||
+                clazz == Integer.class ||
+                clazz == Double.class ||
+                clazz == Boolean.class ||
+                clazz == Long.class ||
+                clazz == Float.class;
+    }
+
 }

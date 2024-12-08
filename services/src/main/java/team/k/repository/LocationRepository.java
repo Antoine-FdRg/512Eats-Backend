@@ -2,15 +2,17 @@ package team.k.repository;
 
 import commonlibrary.model.Location;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
 public class LocationRepository {
-    private static final  List<Location> locations = new ArrayList<>();
+    private LocationRepository() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    private static final List<Location> locations = new ArrayList<>();
 
     /**
      * Returns a location by its id.
@@ -24,5 +26,9 @@ public class LocationRepository {
 
     public static void add(Location location) {
         locations.add(location);
+    }
+
+    public static void clear() {
+        locations.clear();
     }
 }

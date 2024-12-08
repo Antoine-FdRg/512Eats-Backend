@@ -1,5 +1,7 @@
 Feature: Registered user creates a suborder
 
+  Background:
+    Given a registered user named "Jack" with the role STUDENT
 
   Scenario: A registered user creates a suborder in a group order
     Given a groupOrder without any suborder

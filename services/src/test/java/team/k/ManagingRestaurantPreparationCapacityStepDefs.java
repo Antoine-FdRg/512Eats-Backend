@@ -23,11 +23,6 @@ import java.util.List;
 import static org.junit.Assert.assertNotEquals;
 
 public class ManagingRestaurantPreparationCapacityStepDefs {
-
-
-    OrderService orderService;
-    SubOrderRepository subOrderRepository;
-
     Restaurant restaurant;
 
     int freeProductionCapacity;
@@ -36,28 +31,17 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
     SubOrder order;
     Dish dish;
 
-    RestaurantRepository restaurantRepository;
-
-    @Before
-    public void setUp() {
-        subOrderRepository = new SubOrderRepository();
-        restaurantRepository = new RestaurantRepository();
-        orderService = new OrderService(
-                subOrderRepository,
-                restaurantRepository);
-    }
-
     @Given("an order with the status {string} in the restaurant {string} with a chosen dish {string} with a production capacity of {int} and an average preparation time of {int} min with a delivery time at {int}:{int}")
     public void anOrderWithTheStatusInTheRestaurantWithAChosenDish(String statusCreated, String restaurantName, String dishName, int productionCapacity, int averagePreparationTime, int hours, int minutes) {
         restaurant = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(12, 0, 0)).setClose(LocalTime.of(15, 0, 0)).setFoodTypes(List.of(FoodType.BURGER)).setAverageOrderPreparationTime(averagePreparationTime).build();
         dish = new Dish.Builder().setName(dishName).setDescription("Cheeseburger").setPrice(5).setPreparationTime(productionCapacity).build();
         restaurant.addDish(dish);
-        restaurantRepository.add(restaurant);
+        RestaurantRepository.add(restaurant);
         order = new OrderBuilder()
                 .setRestaurantID(restaurant.getId())
                 .setDeliveryTime(LocalDateTime.of(2024, 10, 12, hours, minutes, 0))
                 .build();
-        subOrderRepository.add(order);
+        SubOrderRepository.add(order);
         order.setStatus(OrderStatus.valueOf(statusCreated));
     }
 
@@ -72,7 +56,7 @@ public class ManagingRestaurantPreparationCapacityStepDefs {
     @When("a registered user places the command")
     public void aRegisteredUserPlacesTheCommand() {
         timeSlot.addOrder(order);
-        orderService.addDishToOrder(order.getId(), dish.getId());
+        OrderService.addDishToOrder(order.getId(), dish.getId());
         order.setStatus(OrderStatus.PLACED);
     }
 

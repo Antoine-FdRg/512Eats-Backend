@@ -9,7 +9,11 @@ import java.util.List;
 import java.util.Objects;
 
 public class RestaurantRepository {
-    private final List<Restaurant> restaurants = new ArrayList<>();
+    private RestaurantRepository() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    private static final List<Restaurant> restaurants = new ArrayList<>();
 
     /**
      * Find a restaurant by its name.
@@ -17,16 +21,17 @@ public class RestaurantRepository {
      * @param name the name of the restaurant
      * @return the restaurant if found, null otherwise
      */
-    public Restaurant findByName(String name) {
+    public static Restaurant findByName(String name) {
         return restaurants.stream().filter(restaurant -> restaurant.getName().equals(name)).findFirst().orElse(null);
     }
 
     /**
      * Find a restaurant by its id.
+     *
      * @param id the id of the restaurant
      * @return the restaurant if found, null otherwise
      */
-    public Restaurant findById(int id) {
+    public static Restaurant findById(int id) {
         return restaurants.stream().filter(restaurant -> restaurant.getId() == id).findFirst().orElse(null);
     }
 
@@ -35,7 +40,7 @@ public class RestaurantRepository {
      *
      * @return the list of all restaurants
      */
-    public List<Restaurant> findAll() {
+    public static List<Restaurant> findAll() {
         return restaurants;
     }
 
@@ -44,7 +49,7 @@ public class RestaurantRepository {
      *
      * @param restaurant the restaurant to add
      */
-    public void add(Restaurant restaurant) {
+    public static void add(Restaurant restaurant) {
         restaurants.add(restaurant);
     }
 
@@ -53,23 +58,26 @@ public class RestaurantRepository {
      *
      * @param restaurant the restaurant to delete
      */
-    public void delete(Restaurant restaurant) {
+    public static void delete(Restaurant restaurant) {
         restaurants.remove(restaurant);
     }
 
-    public List<Restaurant> findRestaurantByFoodType(List<FoodType> foodTypes) {
-        return this.restaurants.stream()
+    public static List<Restaurant> findRestaurantByFoodType(List<FoodType> foodTypes) {
+        return restaurants.stream()
                 .filter(restaurant -> restaurant.getFoodTypes().stream().anyMatch(foodTypes::contains))
                 .toList();
     }
 
-    public List<Restaurant> findRestaurantsByAvailability(LocalDateTime timeChosen) {
-        return this.findAll().stream().filter(restaurant -> restaurant.isAvailable(timeChosen)).toList();
+    public static List<Restaurant> findRestaurantsByAvailability(LocalDateTime timeChosen) {
+        return findAll().stream().filter(restaurant -> restaurant.isAvailable(timeChosen)).toList();
     }
 
-    public List<Restaurant> findRestaurantByName(String name) {
-        return this.findAll().stream().filter(restaurant -> Objects.equals(restaurant.getName(), name)).toList();
+    public static List<Restaurant> findRestaurantByName(String name) {
+        return findAll().stream().filter(restaurant -> Objects.equals(restaurant.getName(), name)).toList();
     }
 
+    public static void clear() {
+        restaurants.clear();
+    }
 
 }

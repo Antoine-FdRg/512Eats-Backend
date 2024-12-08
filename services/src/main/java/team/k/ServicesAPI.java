@@ -1,19 +1,23 @@
 package team.k;
 
+import commonlibrary.enumerations.FoodType;
 import commonlibrary.enumerations.Role;
+import commonlibrary.model.Dish;
 import commonlibrary.model.Location;
 import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.order.GroupOrder;
+import commonlibrary.model.restaurant.Restaurant;
+import commonlibrary.model.restaurant.TimeSlot;
 import ssdbrestframework.SSDBHttpServer;
-import team.k.repository.GroupOrderRepository;
-import team.k.repository.LocationRepository;
-import team.k.repository.RegisteredUserRepository;
+import team.k.repository.*;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 
 public class ServicesAPI {
     public static void main(String[] args) {
-        SSDBHttpServer serv = new SSDBHttpServer(8083, "team.k.controller");
+        SSDBHttpServer serv = new SSDBHttpServer(8083, "team.k.controller", "services/");
         initDataset();
         serv.start();
     }
@@ -22,6 +26,8 @@ public class ServicesAPI {
         initLocationData();
         initRegisteredUsersData();
         initGroupOrderData();
+        initDishData();
+        initRestaurantData();
     }
 
     private static void initGroupOrderData() {
@@ -86,4 +92,105 @@ public class ServicesAPI {
                 .build();
         LocationRepository.add(location4);
     }
+
+    private static void initDishData() {
+        Dish burger = new Dish.Builder()
+                .setName("Burger")
+                .setDescription("Un bon burger")
+                .setPrice(10)
+                .setPreparationTime(5)
+                .build();
+
+        Dish pizza = new Dish.Builder()
+                .setName("Pizza")
+                .setDescription("Une bonne pizza")
+                .setPrice(12)
+                .setPreparationTime(7)
+                .build();
+        Dish Sushi = new Dish.Builder()
+                .setName("Sushi")
+                .setDescription("Des sushis frais")
+                .setPrice(15)
+                .setPreparationTime(10)
+                .build();
+        DishRepository.add(burger);
+        DishRepository.add(pizza);
+        DishRepository.add(Sushi);
+    }
+
+    private static void initRestaurantData() {
+        Restaurant restaurant = new Restaurant.Builder()
+                .setName("512EatRestaurant")
+                .setDescription("Restaurants de qualitÃ©")
+                .setFoodTypes(List.of(FoodType.BURGER, FoodType.PIZZA, FoodType.SUSHI))
+                .setOpen(LocalTime.of(10, 0))
+                .setClose(LocalTime.of(22, 0))
+                .setAverageOrderPreparationTime(10)
+                .setDishes(List.of(
+                        new Dish.Builder()
+                                .setName("Burger")
+                                .setDescription("Un bon burger")
+                                .setPrice(10)
+                                .setPreparationTime(5)
+                                .build(),
+                        new Dish.Builder()
+                                .setName("Pizza")
+                                .setDescription("Une bonne pizza")
+                                .setPrice(12)
+                                .setPreparationTime(7)
+                                .build(),
+                        new Dish.Builder()
+                                .setName("Sushi")
+                                .setDescription("Des sushis frais")
+                                .setPrice(15)
+                                .setPreparationTime(10)
+                                .build()
+                ))
+                .build();
+
+        TimeSlot timeSlot = new TimeSlot(LocalDateTime.of(2024, 12, 18, 12, 0), restaurant, restaurant.getAverageOrderPreparationTime());
+        restaurant.addTimeSlot(timeSlot);
+        RestaurantRepository.add(restaurant);
+        Restaurant restaurant1 = new Restaurant.Builder()
+                .setName("512EatBurger")
+                .setDescription("Restaurant de burgerf")
+                .setFoodTypes(List.of(FoodType.BURGER))
+                .setOpen(LocalTime.of(10, 0))
+                .setClose(LocalTime.of(22, 0))
+                .setAverageOrderPreparationTime(10)
+                .setDishes(List.of(
+                        new Dish.Builder()
+                                .setName("Burger")
+                                .setDescription("Un bon burger")
+                                .setPrice(10)
+                                .setPreparationTime(5)
+                                .build()
+                ))
+                .build();
+        TimeSlot timeSlot2 = new TimeSlot(LocalDateTime.of(2024, 12, 18, 12, 0), restaurant1, restaurant1.getAverageOrderPreparationTime());
+        restaurant1.addTimeSlot(timeSlot2);
+        RestaurantRepository.add(restaurant1);
+        Restaurant restaurant2 = new Restaurant.Builder()
+                .setName("512EatSushi")
+                .setDescription("Restaurant de sushi")
+                .setFoodTypes(List.of(FoodType.SUSHI))
+                .setOpen(LocalTime.of(10, 0))
+                .setClose(LocalTime.of(22, 0))
+                .setAverageOrderPreparationTime(10)
+                .setDishes(List.of(
+                        new Dish.Builder()
+                                .setName("Sushi")
+                                .setDescription("Un bon sushi")
+                                .setPrice(10)
+                                .setPreparationTime(5)
+                                .build()
+                ))
+                .build();
+
+        TimeSlot timeSlot3 = new TimeSlot(LocalDateTime.of(2024, 12, 18, 12, 0), restaurant2, restaurant2.getAverageOrderPreparationTime());
+        restaurant1.addTimeSlot(timeSlot3);
+        RestaurantRepository.add(restaurant2);
+
+    }
+
 }

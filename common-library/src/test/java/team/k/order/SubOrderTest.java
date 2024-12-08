@@ -24,6 +24,7 @@ class SubOrderTest {
     private SubOrder subOrder;
     private RegisteredUser user;
     private Restaurant restaurant;
+    private Dish pizza;
     private List<Dish> dishes;
     private GroupOrder groupOrder;
     LocalDateTime paymentDate;
@@ -42,7 +43,8 @@ class SubOrderTest {
                 .build();
         paymentDate = LocalDateTime.now();
         dishes = new ArrayList<>();
-        dishes.add(new Dish.Builder().setName("pizza").setDescription("pizaa").setPrice(12.5).setPreparationTime(15).build());
+        pizza = new Dish.Builder().setName("pizza").setDescription("pizaa").setPrice(12.5).setPreparationTime(15).build();
+        dishes.add(pizza);
         dishes.add(new Dish.Builder().setName("Salad").setDescription("salad").setPrice(7).setPreparationTime(5).build());
         dishes.add(new Dish.Builder().setName("Pasta").setDescription("psta").setPrice(10).setPreparationTime(10).build());
         subOrder = new OrderBuilder().setPrice(dishes.stream().
@@ -64,6 +66,34 @@ class SubOrderTest {
         assertTrue(result);
         assertEquals(4, subOrder.getDishes().size());
         assertEquals(37.5, subOrder.getPrice());
+    }
+
+    @Test
+    void removeDishDecreasesPriceAndRemovesDishTest() {
+        double priceBefore = subOrder.getPrice();
+        boolean result = subOrder.removeDish(pizza.getId());
+        assertTrue(result);
+        assertEquals(2, subOrder.getDishes().size());
+        assertEquals(priceBefore-pizza.getPrice(), subOrder.getPrice());
+    }
+
+    @Test
+    void removeDishNotFoundTest() {
+        boolean result = subOrder.removeDish(100);
+        assertFalse(result);
+    }
+
+    @Test
+    void  removeDishInEmptyOrderTest() {
+        subOrder = new OrderBuilder().setPrice(0).
+                setRestaurantID(restaurant.getId()).
+                setUserID(user.getId()).
+                setDishes(new ArrayList<>()).
+                setDeliveryTime(LocalDateTime.now().plusHours(1)).
+                setPlacedDate(LocalDateTime.now())
+                .build();
+        boolean result = subOrder.removeDish(100);
+        assertFalse(result);
     }
 
     @Test

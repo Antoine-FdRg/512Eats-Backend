@@ -38,8 +38,6 @@ public class RegisteredUserUsesDiscountStepDefs {
     FreeDishAfterXOrders freeDiscount;
     UnconditionalDiscount unconditionalDiscount;
     RoleDiscount roleDiscount;
-    @Mock
-    SubOrderRepository subOrderRepository;
 
     @Mock
     Dish dish;
@@ -54,18 +52,10 @@ public class RegisteredUserUsesDiscountStepDefs {
 
     Restaurant restaurant;
 
-    RestaurantRepository restaurantRepository;
-    OrderService orderService;
 
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        restaurantRepository = new RestaurantRepository();
-        orderService = new OrderService(
-                subOrderRepository,
-                restaurantRepository,
-                paymentProcessor
-        );
     }
 
 
@@ -79,7 +69,7 @@ public class RegisteredUserUsesDiscountStepDefs {
                 .setClose(LocalTime.of(22, 0))
                 .setAverageOrderPreparationTime(10)
                 .build();
-        restaurantRepository.add(restaurant);
+        RestaurantRepository.add(restaurant);
         restaurant.addTimeSlot(
                 new TimeSlot(
                         LocalDateTime.of(2025, 1, 1, 10, 0),
@@ -95,7 +85,7 @@ public class RegisteredUserUsesDiscountStepDefs {
         order = new OrderBuilder().setUserID(registeredUser.getId()).setRestaurantID(restaurant.getId())
                 .setDeliveryTime(LocalDateTime.of(2025, 1, 1, 10, 50)).build();
         registeredUser.setCurrentOrder(order);
-        when(subOrderRepository.findById(order.getId())).thenReturn(order);
+        SubOrderRepository.add(order);
         when(dish.getPrice()).thenReturn(10.0);
         when(dishCheapest.getPrice()).thenReturn(5.0);
         for (int i = 0; i < number - 1; i++) {
@@ -113,7 +103,7 @@ public class RegisteredUserUsesDiscountStepDefs {
     @When("The user pays the order with the discount")
     public void theUserPaysTheOrderWithTheDiscount() {
         when(paymentProcessor.processPayment(anyDouble())).thenReturn(true);
-        orderService.paySubOrder(registeredUser.getId(), order.getId(), LocalDateTime.of(2025, 1, 1, 10, 00));
+        OrderService.paySubOrder(registeredUser.getId(), order.getId(), LocalDateTime.of(2025, 1, 1, 10, 00), paymentProcessor);
     }
 
     @Then("the cheapest dish is free in the order")
