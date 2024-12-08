@@ -22,8 +22,8 @@ public class GroupOrderController {
     private static final String GROUPORDER_SERVICE_URL = "http://localhost:8083/group-orders";
 
     @Endpoint(path = "", method = HttpMethod.POST)
-    @ApiResponseExample(value = int.class) //TODO @Clement check why this is not working well in the swagger
-    public int createGroupOrder(
+    @ApiResponseExample(value = int.class)
+    public String createGroupOrder(
             @RequestParam("delivery-location-id") String deliveryLocationId,
             @RequestParam("delivery-date-time") String deliveryDateTime
     ) throws URISyntaxException, IOException, InterruptedException, SSDBQueryProcessingException {
@@ -43,7 +43,7 @@ public class GroupOrderController {
         if (response.statusCode() != 201) {
             throw new SSDBQueryProcessingException(response.statusCode(), response.body());
         }
-        return Integer.parseInt(response.body());
+        return response.body();
     }
 
     @Endpoint(path = "/get/{groupOrderId}", method = HttpMethod.GET)
