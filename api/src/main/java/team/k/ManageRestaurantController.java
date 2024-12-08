@@ -9,7 +9,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-@RestController(path = "/manage-restaurant")
+@RestController(path = "/management")
 public class ManageRestaurantController {
     private static final String MANAGE_RESTAURANT_SERVICE_URL = "http://localhost:8083/manage-restaurant";
 
