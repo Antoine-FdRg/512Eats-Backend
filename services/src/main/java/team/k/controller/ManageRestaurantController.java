@@ -9,7 +9,7 @@ import ssdbrestframework.SSDBQueryProcessingException;
 import ssdbrestframework.annotations.*;
 import team.k.service.ManageRestaurantService;
 
-@RestController(path = "/manage-restaurant")
+@RestController(path = "/management")
 public class ManageRestaurantController {
 
 
