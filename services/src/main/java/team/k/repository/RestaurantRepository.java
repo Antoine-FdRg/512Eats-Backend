@@ -27,6 +27,7 @@ public class RestaurantRepository {
 
     /**
      * Find a restaurant by its id.
+     *
      * @param id the id of the restaurant
      * @return the restaurant if found, null otherwise
      */
