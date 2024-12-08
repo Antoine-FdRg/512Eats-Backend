@@ -117,6 +117,10 @@ public class SSDBHttpServer {
         String path = exchange.getRequestURI().getPath();
         boolean found = false;
 
+        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*"); // Permettre tous les domaines
+        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
         for (Map.Entry<Pattern, SSDBHandler> entry : routesByController.get(basePath).entrySet()) {
             Pattern pattern = entry.getKey();
             Matcher matcher = pattern.matcher(path);
