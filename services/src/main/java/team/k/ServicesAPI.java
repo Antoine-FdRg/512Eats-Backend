@@ -95,26 +95,26 @@ public class ServicesAPI {
         LocationRepository.add(location4);
     }
 
-    private static void initDishData(){
-        Dish burger=new Dish.Builder()
+    private static void initDishData() {
+        Dish burger = new Dish.Builder()
                 .setName("Burger")
                 .setDescription("Un bon burger")
                 .setPrice(10)
                 .setPreparationTime(5)
                 .build();
 
-        Dish pizza=new Dish.Builder()
-                        .setName("Pizza")
-                        .setDescription("Une bonne pizza")
-                        .setPrice(12)
-                        .setPreparationTime(7)
-                        .build();
-        Dish Sushi=new Dish.Builder()
-                        .setName("Sushi")
-                        .setDescription("Des sushis frais")
-                        .setPrice(15)
-                        .setPreparationTime(10)
-                        .build();
+        Dish pizza = new Dish.Builder()
+                .setName("Pizza")
+                .setDescription("Une bonne pizza")
+                .setPrice(12)
+                .setPreparationTime(7)
+                .build();
+        Dish Sushi = new Dish.Builder()
+                .setName("Sushi")
+                .setDescription("Des sushis frais")
+                .setPrice(15)
+                .setPreparationTime(10)
+                .build();
         DishRepository.add(burger);
         DishRepository.add(pizza);
         DishRepository.add(Sushi);

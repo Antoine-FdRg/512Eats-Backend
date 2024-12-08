@@ -34,7 +34,7 @@ public class RestaurantController {
     @Response(status = 200) // OK
     public List<DishDTO> getAllDishes(@RequestParam("restaurant-id") int restaurantId) throws SSDBQueryProcessingException {
         try {
-            List<Dish> dishes = RestaurantService.getAllDishesFromRestaurant(RestaurantRepository.findById(restaurantId).getName());
+            List<Dish> dishes = RestaurantService.getAllDishesFromRestaurant(restaurantId);
             return dishes.stream().map(Dish::convertDishToDishDto).toList();
         } catch (NoSuchElementException e) {
             throw new  SSDBQueryProcessingException(404, "Les dishes du restaurant id"+ restaurantId+"sont introuvables");

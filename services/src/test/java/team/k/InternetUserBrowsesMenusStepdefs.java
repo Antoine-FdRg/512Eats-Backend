@@ -66,7 +66,7 @@ public class InternetUserBrowsesMenusStepdefs {
     @When("The user wants to have dishes non registered of the restaurant {string}")
     public void theUserWantsToHaveDishesNonRegisteredOfTheRestaurant(String restaurantName) {
         try {
-            restaurantDishes = RestaurantService.getAllDishesFromRestaurant(restaurantName);
+            restaurantDishes = RestaurantService.getAllDishesFromRestaurant(RestaurantRepository.findByName(restaurantName).getId());
         } catch (NoSuchElementException e) {
             this.errorMessage = e;
         }
