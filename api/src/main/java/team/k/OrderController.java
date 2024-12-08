@@ -154,4 +154,21 @@ public class OrderController {
         return response.body();
     }
 
+    @Endpoint(path="/individual-order", method = HttpMethod.POST)
+    public String createIndividualOrder(@RequestBody String createIndividualOrderRequest) throws Exception {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(ORDER_SERVICE_URL + "/individual-order"))
+                .POST(HttpRequest.BodyPublishers.ofString(createIndividualOrderRequest))
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() > 204) {
+            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
+        }
+
+        return response.body();
+    }
+
 }
