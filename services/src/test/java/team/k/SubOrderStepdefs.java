@@ -93,7 +93,6 @@ public class SubOrderStepdefs {
 
     @And("a suborder created in the group order for the restaurant {string}")
     public void aSuborderCreatedInTheGroupOrderForTheRestaurantNaga(String restaurantName) {
-        RestaurantService.getRestaurantByName(restaurantName);
         subOrder = new OrderBuilder()
                 .setRestaurantID(restaurant.getId())
                 .setUserID(registeredUser.getId())

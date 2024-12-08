@@ -106,23 +106,6 @@ public class RestaurantController {
         return response.body();
     }
 
-    @Endpoint(path = "/{restaurantId}/average-price", method = ssdbrestframework.HttpMethod.GET)
-    @ApiResponseExample(value = Double.class)
-    public String getAverageValueOfRestaurantPrices(@PathVariable("restaurantId") int restaurantId) throws URISyntaxException, IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(RESTAURANT_SERVICE_URL +'/'+ restaurantId+"/average-price"))
-                .GET()
-                .build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        if (response.statusCode() != 200) {
-            throw new RuntimeException("Failed to get average price: " + response.statusCode());
-        }
-
-        return response.body();
-    }
 
 
 

@@ -50,18 +50,7 @@ public class RestaurantService {
         return availableTimes;
     }
 
-    /**
-     * Add a restaurant to the repository
-     *
-     * @param restaurant the restaurant to add
-     */
-    public static void addRestaurant(Restaurant restaurant) {
-        RestaurantRepository.add(restaurant);
-    }
 
-    public static void deleteRestaurant(int restaurantId) {
-        RestaurantRepository.delete(restaurantId);
-    }
 
     /***** Update *****/
     public static void addTimeSlotToRestaurant(int restaurantId, int timeSlotId) {
@@ -90,15 +79,6 @@ public class RestaurantService {
         return RestaurantRepository.findAll();
     }
 
-    /**
-     * Get a restaurant by its name
-     *
-     * @param restaurantName the name of the restaurant
-     * @return the restaurant if found, null otherwise
-     */
-    public static Restaurant getRestaurantByName(String restaurantName) {
-        return RestaurantRepository.findByName(restaurantName);
-    }
 
     public static List<Restaurant> getRestaurantsByFoodType(List<FoodType> foodTypes) throws NoSuchElementException {
         List<Restaurant> restaurants = RestaurantRepository.findRestaurantByFoodType(foodTypes);

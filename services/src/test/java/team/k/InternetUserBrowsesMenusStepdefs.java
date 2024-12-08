@@ -14,6 +14,7 @@ import org.mockito.MockitoAnnotations;
 import team.k.repository.DishRepository;
 import team.k.repository.RestaurantRepository;
 import commonlibrary.model.restaurant.Restaurant;
+import team.k.service.ManageRestaurantService;
 import team.k.service.RestaurantService;
 
 import java.time.LocalTime;
@@ -51,7 +52,7 @@ public class InternetUserBrowsesMenusStepdefs {
     @After
     public void tearDown() {
         if (restaurant != null) {
-            restaurantService.deleteRestaurant(restaurant.getId());
+            ManageRestaurantService.deleteRestaurant(restaurant.getId());
         }
     }
 
@@ -70,7 +71,7 @@ public class InternetUserBrowsesMenusStepdefs {
         restaurantA.addDish(dishB);
         when(restaurantRepository.findByName(restaurantName)).thenReturn(restaurantA);
         when(restaurantRepository.findById(restaurantA.getId())).thenReturn(restaurantA);
-        restaurantService.addRestaurant(restaurantA);
+        ManageRestaurantService.addRestaurant(restaurantA);
     }
 
     @When("The user wants to have dishes non registered of the restaurant {string}")
@@ -86,7 +87,7 @@ public class InternetUserBrowsesMenusStepdefs {
 
     @When("The user wants to have dishes of the restaurant {string}")
     public void theUserWantsToHaveDishesOfTheRestaurant(String restaurantName) {
-        restaurant = restaurantService.getRestaurantByName(restaurantName);
+        restaurant = RestaurantRepository.findRestaurantByName(restaurantName).getFirst();
 
         try {
             restaurantDishes = restaurant.getDishes();
@@ -107,7 +108,7 @@ public class InternetUserBrowsesMenusStepdefs {
     @Given("A restaurant {string} with no dishes registered")
     public void aRestaurantWithNoDishesRegistered(String restaurantName) {
         restaurantB = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).build();
-        restaurantService.addRestaurant(restaurantB);
+        ManageRestaurantService.addRestaurant(restaurantB);
     }
 
     @Then("The user gets no dishes registered in the restaurant selected and have this message :{string}")

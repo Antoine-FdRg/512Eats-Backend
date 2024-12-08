@@ -60,7 +60,7 @@ public class RestaurantController {
      * @param day the specific day
      * @return the list of available delivery times
      */
-    @Endpoint(path = "/{restaurantId}/delivery-times/{day}", method = ssdbrestframework.HttpMethod.GET)
+    @Endpoint(path = "/get/delivery-times/{restaurantId}/delivery-times/{day}", method = ssdbrestframework.HttpMethod.GET)
     @Response(status = 200) // OK
     public List<LocalDateTime> getAvailableDeliveryTimes(
             @PathVariable("restaurantId") int restaurantId, @PathVariable("day") LocalDate day
@@ -72,30 +72,7 @@ public class RestaurantController {
         }
     }
 
-    /**
-     * Add a new restaurant
-     *
-     * @param restaurantDto the restaurant to add
-     * @return the restaurant id
-     */
-    @Endpoint(path = "/", method = ssdbrestframework.HttpMethod.POST)
-    @Response(status = 201) // Created
-    public int addRestaurant(@RequestBody RestaurantDTO restaurantDto) {
-        Restaurant restaurant = restaurantDto.convertRestaurantDtoToRestaurant();
-        RestaurantService.addRestaurant(restaurant);
-        return restaurant.getId();
-    }
 
-    /**
-     * Delete a restaurant
-     *
-     * @param restaurantId the restaurant to delete
-     */
-    @Endpoint(path = "/delete/{restaurantId}", method = ssdbrestframework.HttpMethod.DELETE)
-    @Response(status = 204) // No Content
-    public void deleteRestaurant(@PathVariable("restaurantId") int restaurantId) {
-        RestaurantService.deleteRestaurant(restaurantId);
-    }
 
     /**
      * Get all restaurants

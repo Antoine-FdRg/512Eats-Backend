@@ -1,6 +1,7 @@
 package team.k.service;
 
 
+import commonlibrary.dto.RestaurantDTO;
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.Dish;
 import commonlibrary.model.restaurant.Restaurant;
@@ -19,9 +20,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class RestaurantServiceTest {
-    private final RestaurantRepository restaurantRepository = mock(RestaurantRepository.class);
-    @InjectMocks
-    RestaurantService restaurantService;
 
     @BeforeEach
     void setUp() {
@@ -34,11 +32,9 @@ class RestaurantServiceTest {
         restaurant.addDish(new Dish.Builder().setName("pizza").setDescription("pizza").setPrice(5).setPreparationTime(15).build());
         restaurant.addDish(new Dish.Builder().setName("burger").setDescription("burger").setPrice(3).setPreparationTime(15).build());
 
-        when(RestaurantRepository.findById(1)).thenReturn(restaurant);
+        RestaurantDTO restaurantDto=restaurant.convertRestaurantToRestaurantDTO();
 
-        int result = RestaurantService.getAverageValueOfRestaurantPrices(1);
-
-        assertEquals(1, result);
+        assertEquals(1,(int) restaurantDto.averagePrice());
     }
 
     @Test
@@ -47,11 +43,10 @@ class RestaurantServiceTest {
         restaurant.addDish(new Dish.Builder().setName("pizza").setDescription("pizza").setPrice(15).setPreparationTime(15).build());
         restaurant.addDish(new Dish.Builder().setName("burger").setDescription("burger").setPrice(10).setPreparationTime(15).build());
 
-        when(RestaurantRepository.findById(2)).thenReturn(restaurant);
 
-        int result = RestaurantService.getAverageValueOfRestaurantPrices(2);
+        RestaurantDTO restaurantDto=restaurant.convertRestaurantToRestaurantDTO();
 
-        assertEquals(2, result);
+        assertEquals(2, (int)restaurantDto.averagePrice());
     }
 
     @Test
@@ -60,22 +55,18 @@ class RestaurantServiceTest {
         restaurant.addDish(new Dish.Builder().setName("pizza").setDescription("pizza").setPrice(30).setPreparationTime(15).build());
         restaurant.addDish(new Dish.Builder().setName("burger").setDescription("burger").setPrice(20).setPreparationTime(15).build());
 
-        when(RestaurantRepository.findById(3)).thenReturn(restaurant);
+        RestaurantDTO restaurantDto=restaurant.convertRestaurantToRestaurantDTO();
 
-        int result = RestaurantService.getAverageValueOfRestaurantPrices(3);
-
-        assertEquals(3, result);
+        assertEquals(3, (int)restaurantDto.averagePrice());
     }
 
     @Test
     void testGetAverageValueOfRestaurantPricesNoDishesRange1() throws IOException, InterruptedException {
         Restaurant restaurant = new Restaurant.Builder().setName("512Eats").setOpen(LocalTime.of(12, 0, 0)).setClose(LocalTime.of(15, 0, 0)).setFoodTypes(List.of(FoodType.BURGER)).setAverageOrderPreparationTime(30).build();
 
-        when(RestaurantRepository.findById(4)).thenReturn(restaurant);
 
-        int result = RestaurantService.getAverageValueOfRestaurantPrices(4);
-
-        assertEquals(1, result);
+        RestaurantDTO restaurantDto=restaurant.convertRestaurantToRestaurantDTO();
+        assertEquals(1,(int) restaurantDto.averagePrice());
     }
 
 }
