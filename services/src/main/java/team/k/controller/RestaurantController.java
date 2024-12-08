@@ -165,9 +165,4 @@ public class RestaurantController {
         }
     }
 
-    @Endpoint(path = "/{restaurantId}/average-price", method = ssdbrestframework.HttpMethod.GET)
-    @Response(status = 200) // OK
-    public double getAverageValueOfRestaurantPrices(@PathVariable("restaurantId") int restaurantId) {
-        return RestaurantService.getAverageValueOfRestaurantPrices(restaurantId);
-    }
 }

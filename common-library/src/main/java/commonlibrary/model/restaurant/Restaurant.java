@@ -158,7 +158,8 @@ public class Restaurant {
 
     public RestaurantDTO convertRestaurantToRestaurantDTO() {
         List<String> foodTypes = this.foodTypes.stream().map(Enum::name).toList();
-        return new RestaurantDTO(this.id, this.name, this.open.toString(), this.close.toString(), foodTypes, getAveragePrice(),this.description, this.urlPicture);
+        double averagePrice = this.getAveragePrice();
+        return new RestaurantDTO(this.id, this.name, this.open.toString(), this.close.toString(), foodTypes, (averagePrice <= 10 ? 1 : averagePrice <= 20 ? 2 : 3),this.description, this.urlPicture);
     }
 
     public static class Builder {
