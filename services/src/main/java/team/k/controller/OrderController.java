@@ -2,7 +2,6 @@ package team.k.controller;
 
 import commonlibrary.dto.SubOrderDTO;
 import commonlibrary.external.PaymentProcessor;
-import lombok.NoArgsConstructor;
 import ssdbrestframework.HttpMethod;
 import ssdbrestframework.SSDBQueryProcessingException;
 import ssdbrestframework.annotations.*;
@@ -17,9 +16,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController(path = "/orders")
-@NoArgsConstructor
 public class OrderController {
-
+    private OrderController() {
+        throw new IllegalStateException("Utility class");
+    }
 
     /**
      * Create an individual order
@@ -30,12 +30,14 @@ public class OrderController {
     @Endpoint(path = "/individual-order", method = HttpMethod.POST)
     @ApiResponseExample(value = int.class)
     @Response(status = 201) // Created
-    public int createIndividualOrder(@RequestBody IndividualOrderDTO individualOrderDTO) {
+    public int createIndividualOrder(@RequestBody IndividualOrderDTO individualOrderDTO) throws SSDBQueryProcessingException {
         try {
             LocalDateTime deliveryDateTime = LocalDateTime.parse(individualOrderDTO.deliveryDateTime());
             return OrderService.createIndividualOrder(individualOrderDTO.userId(), individualOrderDTO.restaurantId(), individualOrderDTO.deliveryLocation().id(), deliveryDateTime, LocalDateTime.now());
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new SSDBQueryProcessingException(400, e.getMessage());
+        } catch (NoSuchElementException e) {
+            throw new SSDBQueryProcessingException(404, e.getMessage());
         }
     }
 
@@ -51,11 +53,13 @@ public class OrderController {
     @Endpoint(path = "/add-dish", method = HttpMethod.POST)
     @ApiResponseExample(value = void.class)
     @Response(status = 204) // No Content
-    public void addDishToOrder(@RequestBody DishAndOrderRequest request) {
+    public void addDishToOrder(@RequestBody DishAndOrderRequest request) throws SSDBQueryProcessingException {
         try {
             OrderService.addDishToOrder(request.orderId, request.dishId);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new SSDBQueryProcessingException(400, e.getMessage());
+        } catch (NoSuchElementException e) {
+            throw new SSDBQueryProcessingException(404, e.getMessage());
         }
     }
 

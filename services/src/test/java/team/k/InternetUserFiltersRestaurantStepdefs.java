@@ -86,7 +86,7 @@ public class InternetUserFiltersRestaurantStepdefs {
 
     //By Availability//
 
-    @When("Internet User selects restaurants that are open at {int}:{int} on {int}-{int}-{int}")
+    @When("Internet User selects restaurants that are open for a delivery {int}:{int} on {int}-{int}-{int}")
     public void internetUserSelectsRestaurantsThatAreOpenAtOClock(int hours, int minutes, int day, int month, int year) {
         try {
             restaurantsAvailable = RestaurantService.getRestaurantsByAvailability(LocalDateTime.of(year, month, day, hours, minutes, 0));
@@ -98,7 +98,7 @@ public class InternetUserFiltersRestaurantStepdefs {
     @Then("Internet User should see the restaurant that are open")
     public void internetUserShouldSeeTheRestaurantThatAreOpen() {
         assertNotNull(restaurantsAvailable);
-        assertEquals(1, restaurantsAvailable.size());
+        assertEquals(2, restaurantsAvailable.size());
     }
 
 

@@ -12,7 +12,6 @@ import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
 import commonlibrary.model.payment.Payment;
 import team.k.repository.*;
-import lombok.NoArgsConstructor;
 import ssdbrestframework.SSDBQueryProcessingException;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
@@ -88,6 +87,7 @@ public class OrderService {
         }
         subOrder.addDish(dish);
     }
+
     public static void removeDishFromOrder(int orderId, int dishId) throws SSDBQueryProcessingException {
         SubOrder subOrder = SubOrderRepository.findById(orderId);
         if (subOrder == null) {
@@ -96,7 +96,7 @@ public class OrderService {
         if (subOrder.getStatus() != OrderStatus.CREATED) {
             throw new SSDBQueryProcessingException(400, "Order is already placed");
         }
-        if(subOrder.getDishes().stream().noneMatch(dish -> dish.getId() == dishId)){
+        if (subOrder.getDishes().stream().noneMatch(dish -> dish.getId() == dishId)) {
             throw new SSDBQueryProcessingException(404, "Dish not found in order");
         }
         subOrder.removeDish(dishId);
