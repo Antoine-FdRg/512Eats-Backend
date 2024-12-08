@@ -8,6 +8,8 @@ import team.k.repository.GroupOrderRepository;
 import team.k.repository.LocationRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import team.k.repository.RegisteredUserRepository;
+import team.k.repository.RestaurantRepository;
+import team.k.repository.SubOrderRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -82,11 +84,38 @@ public class GroupOrderService {
         if (Objects.isNull(groupOrder)) {
             throw new NoSuchElementException("Group order not found");
         }
+        LocalDateTime deliveryDateTime = groupOrder.getDeliveryDateTime();
+        if (Objects.isNull(deliveryDateTime)) {
+            throw new UnsupportedOperationException("The group order delivery datetime must be set before placing the order");
+        }
+        if (deliveryDateTime.isBefore(now)) {
+            throw new NoSuchElementException("Delivery time cannot be in the past");
+        }
         List<RegisteredUser> members = groupOrder.getSubOrders().stream()
                 .map(SubOrder::getUserID)
                 .map(RegisteredUserRepository::findById)
                 .toList();
         groupOrder.place(now, members);
+        groupOrder.getSubOrders().forEach(subOrder -> {
+            subOrder.setDeliveryDate(deliveryDateTime);
+            placeSubOrder(subOrder.getId());
+        });
+    }
+
+    private static void placeSubOrder(int subOrderId) {
+        SubOrder subOrder = SubOrderRepository.findById(subOrderId);
+        if (Objects.isNull(subOrder)) {
+            throw new NoSuchElementException("Suborder not found");
+        }
+        Restaurant restaurant = RestaurantRepository.findById(subOrder.getRestaurantID());
+        if (Objects.isNull(restaurant)) {
+            throw new NoSuchElementException("Restaurant not found");
+        }
+        LocalDateTime deliveryDateTime = subOrder.getDeliveryDate();
+        if (!restaurant.isAvailable(deliveryDateTime)) {
+            throw new IllegalArgumentException("Restaurant is no longer available at the chosen time");
+        }
+        restaurant.addOrderToTimeslot(subOrder);
     }
 
 }
