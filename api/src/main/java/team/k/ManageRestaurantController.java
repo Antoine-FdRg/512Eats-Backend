@@ -2,6 +2,7 @@ package team.k;
 
 import commonlibrary.dto.RestaurantDTO;
 import ssdbrestframework.HttpMethod;
+import ssdbrestframework.SSDBQueryProcessingException;
 import ssdbrestframework.annotations.*;
 
 import java.net.URI;
@@ -23,11 +24,12 @@ public class ManageRestaurantController {
                 .POST(HttpRequest.BodyPublishers.ofString(managingRestaurantDTO))
                 .build();
 
-        if (client.send(request, HttpResponse.BodyHandlers.ofString()).statusCode() != 204) {
-            throw new RuntimeException("Failed to update restaurant infos");
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() > 204) {
+            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
         }
 
-        return client.send(request, HttpResponse.BodyHandlers.ofString()).body();
+        return response.body();
     }
 
     @Endpoint(path = "/add-dish", method = HttpMethod.POST)
@@ -40,11 +42,12 @@ public class ManageRestaurantController {
                 .POST(HttpRequest.BodyPublishers.ofString(dishDTO))
                 .build();
 
-        if (client.send(request, HttpResponse.BodyHandlers.ofString()).statusCode() != 201) {
-            throw new RuntimeException("Failed to add dish");
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() > 204) {
+            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
         }
 
-        return client.send(request, HttpResponse.BodyHandlers.ofString()).body();
+        return response.body();
     }
 
     @Endpoint(path = "/remove-dish", method = HttpMethod.DELETE)
@@ -56,11 +59,12 @@ public class ManageRestaurantController {
                 .DELETE()
                 .build();
 
-        if (client.send(request, HttpResponse.BodyHandlers.ofString()).statusCode() != 200) {
-            throw new RuntimeException("Failed to remove dish");
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() > 204) {
+            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
         }
 
-        return client.send(request, HttpResponse.BodyHandlers.ofString()).body();
+        return response.body();
     }
 
     @Endpoint(path = "/update-dish", method = HttpMethod.PUT)
@@ -73,10 +77,11 @@ public class ManageRestaurantController {
                 .PUT(HttpRequest.BodyPublishers.ofString(dishDTO))
                 .build();
 
-        if (client.send(request, HttpResponse.BodyHandlers.ofString()).statusCode() != 204) {
-            throw new RuntimeException("Failed to update dish");
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() > 204) {
+            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
         }
 
-        return client.send(request, HttpResponse.BodyHandlers.ofString()).body();
+        return response.body();
     }
 }
