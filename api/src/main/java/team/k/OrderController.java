@@ -2,6 +2,7 @@ package team.k;
 
 import commonlibrary.model.Dish;
 import ssdbrestframework.HttpMethod;
+import ssdbrestframework.SSDBQueryProcessingException;
 import ssdbrestframework.annotations.ApiResponseExample;
 import ssdbrestframework.annotations.Endpoint;
 import ssdbrestframework.annotations.RequestBody;
@@ -28,8 +29,8 @@ public class OrderController {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        if (response.statusCode() != 200) {
-            throw new RuntimeException("Failed to add dish: " + response.statusCode());
+        if (response.statusCode() > 204) {
+            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
         }
 
         return response.body();
@@ -46,8 +47,8 @@ public class OrderController {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        if (response.statusCode() != 200) {
-            throw new RuntimeException("Failed to get dishes: " + response.statusCode());
+        if (response.statusCode() > 204) {
+            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
         }
 
         return response.body();
@@ -64,8 +65,8 @@ public class OrderController {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        if (response.statusCode() != 200) {
-            throw new RuntimeException("Failed to get available dishes: " + response.statusCode());
+        if (response.statusCode() > 204) {
+            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
         }
 
         return response.body();
@@ -81,8 +82,8 @@ public class OrderController {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        if (response.statusCode() != 200) {
-            throw new RuntimeException("Failed to pay: " + response.statusCode());
+        if (response.statusCode() > 204) {
+            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
         }
 
         return response.body();
@@ -98,8 +99,8 @@ public class OrderController {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        if (response.statusCode() != 200) {
-            throw new RuntimeException("Failed to place: " + response.statusCode());
+        if (response.statusCode() > 204) {
+            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
         }
 
         return response.body();
@@ -115,8 +116,8 @@ public class OrderController {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        if (response.statusCode() != 200) {
-            throw new RuntimeException("Failed to create sub order: " + response.statusCode());
+        if (response.statusCode() > 204) {
+            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
         }
 
         return response.body();
