@@ -4,8 +4,6 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import commonlibrary.model.Dish;
 import commonlibrary.enumerations.FoodType;
@@ -20,16 +18,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static junit.framework.TestCase.assertEquals;
-import static org.mockito.Mockito.when;
+import static junit.framework.TestCase.assertNotNull;
 
 public class InternetUserFiltersRestaurantStepdefs {
 
-
-    @Mock
-    private RestaurantRepository restaurantRepository;
-
-    @InjectMocks
-    private RestaurantService restaurantService;
 
     List<Restaurant> restaurantsByFoodType;
     List<Restaurant> restaurantsAvailable;
@@ -53,22 +45,19 @@ public class InternetUserFiltersRestaurantStepdefs {
         restaurantB = new Restaurant.Builder().setName(restaurantNameB).setOpen(LocalTime.of(openningB, 0, 0)).setClose(LocalTime.of(closingB, 0, 0)).setFoodTypes(List.of(FoodType.valueOf(restaurantTypeB))).setAverageOrderPreparationTime(15).build();
         Dish dishA = new Dish.Builder().setName("sushi").setDescription("Description").setPrice(5).setPreparationTime(0).build();
         Dish dishB = new Dish.Builder().setName("burger").setDescription("Description").setPrice(5).setPreparationTime(0).build();
-        restaurantA.addTimeSlot(new TimeSlot(LocalDateTime.of(2024, 10, 12, openningA, 0, 0), restaurantA, 5));
-        restaurantB.addTimeSlot(new TimeSlot(LocalDateTime.of(2024, 10, 12, openningB, 0, 0), restaurantB, 5));
+        restaurantA.addTimeSlot(new TimeSlot(LocalDateTime.of(2025, 1, 1, openningA, 0, 0), restaurantA, 5));
+        restaurantB.addTimeSlot(new TimeSlot(LocalDateTime.of(2025, 1, 1, openningB, 0, 0), restaurantB, 5));
         restaurantA.addDish(dishA);
         restaurantB.addDish(dishB);
-        when(restaurantRepository.findRestaurantByFoodType(List.of(FoodType.SUSHI))).thenReturn(List.of(restaurantA, restaurantB));
-        when(restaurantRepository.findRestaurantByFoodType(List.of(FoodType.BURGER))).thenReturn(List.of());
-        when(restaurantRepository.findRestaurantsByAvailability(LocalDateTime.of(2025, 1, 1, 12, 10, 0))).thenReturn(List.of(restaurantA)).thenReturn(List.of());
-        when(restaurantRepository.findRestaurantByName(restaurantNameB)).thenReturn(List.of(restaurantB));
-        when(restaurantRepository.findRestaurantByName("512PizzaRestaurant")).thenReturn(List.of());
+        RestaurantRepository.add(restaurantA);
+        RestaurantRepository.add(restaurantB);
     }
 
     //By Name//
     @When("Internet User searches for a restaurant with name {string}")
     public void internetUserSearchesForARestaurantWithNameButDoesnTExist(String restaurantName) {
         try {
-            restaurantsByName = this.restaurantService.getRestaurantsByName(restaurantName);
+            restaurantsByName = RestaurantService.getRestaurantsByName(restaurantName);
         } catch (NoSuchElementException e) {
             this.exception = e;
         }
@@ -84,7 +73,7 @@ public class InternetUserFiltersRestaurantStepdefs {
     @When("Internet User selects a food type : {string}")
     public void internetUserSelectsAFoodType(String type) {
         try {
-            restaurantsByFoodType = this.restaurantService.getRestaurantsByFoodType(List.of(FoodType.valueOf(type)));
+            restaurantsByFoodType = RestaurantService.getRestaurantsByFoodType(List.of(FoodType.valueOf(type)));
         } catch (NoSuchElementException e) {
             this.exception = e;
         }
@@ -97,10 +86,10 @@ public class InternetUserFiltersRestaurantStepdefs {
 
     //By Availability//
 
-    @When("Internet User selects restaurants that are open at {int}:{int} on {int}-{int}-{int}")
+    @When("Internet User selects restaurants that are open for a delivery {int}:{int} on {int}-{int}-{int}")
     public void internetUserSelectsRestaurantsThatAreOpenAtOClock(int hours, int minutes, int day, int month, int year) {
         try {
-            restaurantsAvailable = this.restaurantService.getRestaurantsByAvailability(LocalDateTime.of(year, month, day, hours, minutes, 0));
+            restaurantsAvailable = RestaurantService.getRestaurantsByAvailability(LocalDateTime.of(year, month, day, hours, minutes, 0));
         } catch (NoSuchElementException e) {
             this.exception = e;
         }
@@ -108,7 +97,8 @@ public class InternetUserFiltersRestaurantStepdefs {
 
     @Then("Internet User should see the restaurant that are open")
     public void internetUserShouldSeeTheRestaurantThatAreOpen() {
-        assertEquals(1, restaurantsAvailable.size());
+        assertNotNull(restaurantsAvailable);
+        assertEquals(2, restaurantsAvailable.size());
     }
 
 

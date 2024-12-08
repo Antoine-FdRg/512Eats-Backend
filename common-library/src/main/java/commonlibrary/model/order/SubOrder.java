@@ -1,10 +1,7 @@
 package commonlibrary.model.order;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import commonlibrary.dto.DishDTO;
-import commonlibrary.dto.PaymentDTO;
 import commonlibrary.dto.SubOrderDTO;
 import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.model.Dish;
@@ -61,6 +58,20 @@ public class SubOrder {
         return dishes.add(dish);
     }
 
+    /**
+     * Remove a dish from the order and decrease the price of the order
+     * @param dishID the id of the dish to remove
+     * @return true if the dish was removed, false otherwise
+     */
+    public boolean removeDish(int dishID) {
+        Dish dishToRemove = dishes.stream().filter(dish -> dish.getId() == dishID).findFirst().orElse(null);
+        if (dishToRemove == null) {
+            return false;
+        }
+        this.price -= dishToRemove.getPrice();
+        return dishes.remove(dishToRemove);
+    }
+
     public int getPreparationTime() {
         return dishes.stream().mapToInt(Dish::getPreparationTime).sum();
     }
@@ -87,9 +98,12 @@ public class SubOrder {
                 .map(Dish::convertDishToDishDto)
                 .toList();
 
-        PaymentDTO convertedPayment = payment.convertPaymentToPaymentDto();
-
         return new SubOrderDTO(id, String.valueOf(price), restaurantID, userID,
-                convertedDishes, status.toString(), placedDate.toString(), deliveryDate.toString(), convertedPayment);
+                convertedDishes,
+                status != null ? status.toString() : null,
+                placedDate != null ? placedDate.toString() : null,
+                deliveryDate != null ? deliveryDate.toString() : null,
+                payment != null ? payment.convertPaymentToPaymentDto() : null
+        );
     }
 }

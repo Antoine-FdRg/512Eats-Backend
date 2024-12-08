@@ -10,10 +10,8 @@ import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
 import ssdbrestframework.SSDBHttpServer;
 import team.k.repository.DishRepository;
-import team.k.repository.GroupOrderRepository;
-import team.k.repository.LocationRepository;
-import team.k.repository.RegisteredUserRepository;
-import team.k.repository.RestaurantRepository;
+
+import team.k.repository.*;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -21,7 +19,7 @@ import java.util.List;
 
 public class ServicesAPI {
     public static void main(String[] args) {
-        SSDBHttpServer serv = new SSDBHttpServer(8083, "team.k.controller");
+        SSDBHttpServer serv = new SSDBHttpServer(8083, "team.k.controller", "services/");
         initDataset();
         serv.start();
     }

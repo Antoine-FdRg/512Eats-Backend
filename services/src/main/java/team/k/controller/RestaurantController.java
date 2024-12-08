@@ -11,6 +11,7 @@ import ssdbrestframework.annotations.PathVariable;
 import ssdbrestframework.annotations.RequestParam;
 import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
+import team.k.repository.RestaurantRepository;
 import team.k.service.RestaurantService;
 
 import java.time.LocalDate;
@@ -33,7 +34,7 @@ public class RestaurantController {
     @Response(status = 200) // OK
     public List<DishDTO> getAllDishes(@RequestParam("restaurant-id") int restaurantId) throws SSDBQueryProcessingException {
         try {
-            List<Dish> dishes = RestaurantService.getAllDishesFromRestaurant(restaurantId);
+            List<Dish> dishes = RestaurantService.getAllDishesFromRestaurant(RestaurantRepository.findById(restaurantId).getName());
             return dishes.stream().map(Dish::convertDishToDishDto).toList();
         } catch (NoSuchElementException e) {
             throw new  SSDBQueryProcessingException(404, "Les dishes du restaurant id"+ restaurantId+"sont introuvables");

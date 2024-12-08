@@ -11,8 +11,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import team.k.repository.LocationRepository;
@@ -35,28 +33,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class IndividualOrderStepdefs {
     RegisteredUser registeredUser;
     Restaurant restaurant;
     Location deliveryLocation;
-    @Mock
-    TimeSlotRepository timeSlotRepository;
-    @Mock
-    RestaurantRepository restaurantRepository;
-    @InjectMocks
-    RestaurantService restaurantService;
-
-    @Mock
-    LocationRepository locationRepository;
-    @Mock
-    SubOrderRepository subOrderRepository;
-    @Mock
-    RegisteredUserRepository registeredUserRepository;
-    @InjectMocks
-    OrderService orderService;
 
     private IllegalArgumentException orderNotCreatedException;
     private List<LocalDateTime> effectivePossibleDeliveryTimes;
@@ -74,12 +56,14 @@ public class IndividualOrderStepdefs {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        RestaurantRepository.clear();
+        SubOrderRepository.clear();
     }
 
     @Given("a registeredUser named {string} with the role {role}")
     public void aRegisteredUserNamedWithTheRole(String name, Role role) {
         registeredUser = new RegisteredUser(name, role);
-        when(registeredUserRepository.findById(registeredUser.getId())).thenReturn(registeredUser);
+        RegisteredUserRepository.add(registeredUser);
     }
 
     @And("a restaurant named {string} open from {int}:{int} to {int}:{int} with an average order preparation time of {int} minutes")
@@ -92,15 +76,15 @@ public class IndividualOrderStepdefs {
                 .setClose(closeTime)
                 .setAverageOrderPreparationTime(averageOrderPreparationTime)
                 .build();
-        when(restaurantRepository.findById(restaurant.getId())).thenReturn(restaurant);
+        RestaurantRepository.add(restaurant);
     }
 
     @And("with a productionCapacity of {int} for the timeslot beginning at {int}:{int} on {int}-{int}-{int}")
     public void withAProduvtionCapacityOfForTheTimeslotAtOn(int productionCapacity, int startHours, int startMinutes, int startDay, int startMonth, int startYear) {
         LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, startHours, startMinutes);
         TimeSlot timeSlot = new TimeSlot(startTime, restaurant, productionCapacity);
-        when(timeSlotRepository.findById(timeSlot.getId())).thenReturn(timeSlot);
-        restaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
+        TimeSlotRepository.add(timeSlot);
+        RestaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
     }
 
     @And("a delivery location with the number {string}, the street {string} and the city {string}")
@@ -110,7 +94,7 @@ public class IndividualOrderStepdefs {
                 .setAddress(street)
                 .setCity(city)
                 .build();
-        when(locationRepository.findLocationById(deliveryLocation.getId())).thenReturn(deliveryLocation);
+        LocationRepository.add(deliveryLocation);
     }
 
     @When("a registeredUser creates an order for the restaurant Naga with the deliveryPlace created for {int}h{int} on {int}-{int}-{int} the current date being {int}-{int}-{int} {int}:{int}")
@@ -118,7 +102,7 @@ public class IndividualOrderStepdefs {
         LocalDateTime deliveryTime = LocalDateTime.of(deliveryTimeYear, deliveryTimeMonth, deliveryTimeDay, deliveryTimeHours, deliveryTimeMinutes);
         LocalDateTime now = LocalDateTime.of(currentYear, currentMonth, currentDay, currentHours, currentMinutes);
         try {
-            orderService.createIndividualOrder(registeredUser.getId(), restaurant.getId(), deliveryLocation.getId(), deliveryTime, now);
+            OrderService.createIndividualOrder(registeredUser.getId(), restaurant.getId(), deliveryLocation.getId(), deliveryTime, now);
         } catch (IllegalArgumentException e) {
             orderNotCreatedException = e;
         }
@@ -144,14 +128,14 @@ public class IndividualOrderStepdefs {
 
     @And("the order should have been added to the suborder repository")
     public void theOrderShouldHaveBeenAddedToTheSuborderRepository() {
-        verify(subOrderRepository).add(registeredUser.getCurrentOrder());
+        assertNotNull(SubOrderRepository.findById(registeredUser.getCurrentOrder().getId()));
     }
 
     @When("a registeredUser creates an order for the restaurant Naga with the deliveryPlace created but without delivery date the current date being {int}-{int}-{int} {int}:{int}")
     public void aRegisteredUserCreatesAnOrderForTheRestaurantNagaWithTheDeliveryPlaceCreatedButWithoutDeliveryDateTheCurrentDateBeing(int currentDay, int currentMonth, int currentYear, int currentHours, int currentMinutes) {
         LocalDateTime now = LocalDateTime.of(currentYear, currentMonth, currentDay, currentHours, currentMinutes);
         try {
-            orderService.createIndividualOrder(registeredUser.getId(), restaurant.getId(), deliveryLocation.getId(), null, now);
+            OrderService.createIndividualOrder(registeredUser.getId(), restaurant.getId(), deliveryLocation.getId(), null, now);
         } catch (IllegalArgumentException e) {
             orderNotCreatedException = e;
         }
@@ -172,8 +156,8 @@ public class IndividualOrderStepdefs {
         SubOrder orderToFillTimeSlot2 = Mockito.mock(SubOrder.class);
         timeSlot.addOrder(orderToFillTimeSlot1);
         timeSlot.addOrder(orderToFillTimeSlot2);
-        when(timeSlotRepository.findById(timeSlot.getId())).thenReturn(timeSlot);
-        restaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
+        TimeSlotRepository.add(timeSlot);
+        RestaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
     }
 
     @Given("Naga has a productionCapacity of {int} for the all the timeslots of {int}-{int}-{int} starting at")
@@ -184,7 +168,7 @@ public class IndividualOrderStepdefs {
             int minutes = Integer.parseInt(parts[1]);
             LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, hours, minutes);
             TimeSlot timeSlot = new TimeSlot(startTime, restaurant, productionCapacity);
-            when(timeSlotRepository.findById(timeSlot.getId())).thenReturn(timeSlot);
+            TimeSlotRepository.add(timeSlot);
             restaurant.addTimeSlot(timeSlot);
         }
     }
@@ -208,7 +192,7 @@ public class IndividualOrderStepdefs {
 
     @When("Jack consults the possible delivery times for the restaurant Naga for the {int}-{int}-{int}")
     public void jackConsultsThePossibleDeliveryTimesForTheRestaurantNaga(int day, int month, int year) {
-        effectivePossibleDeliveryTimes = restaurantService.getAllAvailableDeliveryTimesOfRestaurantOnDay(restaurant.getId(), LocalDate.of(year, month, day));
+        effectivePossibleDeliveryTimes = RestaurantService.getAllAvailableDeliveryTimesOfRestaurantOnDay(restaurant.getId(), LocalDate.of(year, month, day));
     }
 
     @Then("he can see the timeslots starting at following hours for the {int}-{int}-{int}")

@@ -10,6 +10,10 @@ import java.util.List;
 public class DishRepository {
     private static final List<Dish> dishes = new ArrayList<>();
 
+    private DishRepository() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static Dish findById(int dishId) {
         return dishes.stream().filter(restaurant -> restaurant.getId() == dishId).findFirst().orElse(null);
     }

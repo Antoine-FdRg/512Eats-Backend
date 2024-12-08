@@ -2,7 +2,6 @@ package team.k.service;
 
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.Dish;
-import lombok.RequiredArgsConstructor;
 import team.k.repository.RestaurantRepository;
 import team.k.repository.TimeSlotRepository;
 import commonlibrary.model.restaurant.Restaurant;
@@ -16,17 +15,17 @@ import java.util.NoSuchElementException;
 public class RestaurantService {
 
     private RestaurantService() {
-        throw new IllegalStateException("Service class");
+        throw new IllegalStateException("Utility class");
     }
 
     /**
      * Get all dishes from a restaurant
      *
-     * @param restaurantId the name of the restaurant
+     * @param restaurantName the name of the restaurant
      * @return the list of dishes if the restaurant is found, null otherwise
      */
-    public static List<Dish> getAllDishesFromRestaurant(int restaurantId) throws NoSuchElementException {
-        Restaurant restaurant = RestaurantRepository.findById(restaurantId);
+    public static List<Dish> getAllDishesFromRestaurant(String restaurantName) throws NoSuchElementException {
+        Restaurant restaurant = getRestaurantOrThrowIfNull(getRestaurantByName(restaurantName));
         List<Dish> dishes = restaurant.getDishes();
         if (dishes.isEmpty()) {
             throw new NoSuchElementException("No dishes available");
@@ -79,6 +78,15 @@ public class RestaurantService {
         return RestaurantRepository.findAll();
     }
 
+    /**
+     * Get a restaurant by its name
+     *
+     * @param restaurantName the name of the restaurant
+     * @return the restaurant if found, null otherwise
+     */
+    public static Restaurant getRestaurantByName(String restaurantName) {
+        return RestaurantRepository.findByName(restaurantName);
+    }
 
     public static List<Restaurant> getRestaurantsByFoodType(List<FoodType> foodTypes) throws NoSuchElementException {
         List<Restaurant> restaurants = RestaurantRepository.findRestaurantByFoodType(foodTypes);

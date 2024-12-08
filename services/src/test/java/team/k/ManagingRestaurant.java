@@ -19,7 +19,6 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.when;
 
 public class ManagingRestaurant {
     @Mock
@@ -39,6 +38,7 @@ public class ManagingRestaurant {
     public void theRestaurantHasTheFollowingInformation(String restaurantName, Map<String, String> restaurantInfo) {
         nagaRestaurant = new Restaurant.Builder()
                 .setName(restaurantName)
+                .setId(1)
                 .setAverageOrderPreparationTime(10)
                 .setOpen(LocalTime.parse(restaurantInfo.get("open")))
                 .setClose(LocalTime.parse(restaurantInfo.get("closed")))
@@ -47,8 +47,7 @@ public class ManagingRestaurant {
         Dish dishB = new Dish.Builder().setName("burger").setDescription("Description").setPrice(5).setPreparationTime(0).build();
         nagaRestaurant.addDish(dishA);
         nagaRestaurant.addDish(dishB);
-        when(restaurantRepository.findById(1)).thenReturn(nagaRestaurant);
-
+        RestaurantRepository.add(nagaRestaurant);
     }
 
     @When("the restaurant manager updates the open time to {string}")
