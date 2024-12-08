@@ -6,12 +6,9 @@ import commonlibrary.model.Dish;
 import ssdbrestframework.HttpMethod;
 import ssdbrestframework.annotations.ApiResponseExample;
 import ssdbrestframework.annotations.Endpoint;
-import ssdbrestframework.annotations.PathVariable;
 import ssdbrestframework.annotations.RequestParam;
 import ssdbrestframework.annotations.RestController;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 
 import java.net.URI;

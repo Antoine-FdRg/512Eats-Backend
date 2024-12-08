@@ -8,9 +8,8 @@ import ssdbrestframework.annotations.RequestBody;
 import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
 import team.k.service.ManageRestaurantService;
-import team.k.service.RestaurantService;
 
-@RestController(path = "/manage-restaurants")
+@RestController(path = "/management")
 public class ManageRestaurantController {
 
     /**
@@ -19,7 +18,7 @@ public class ManageRestaurantController {
      * @param restaurantDto the restaurant to add
      * @return the restaurant id
      */
-    @Endpoint(path = "/", method = ssdbrestframework.HttpMethod.POST)
+    @Endpoint(path = "/add/restaurant", method = ssdbrestframework.HttpMethod.POST)
     @Response(status = 201) // Created
     public int addRestaurant(@RequestBody RestaurantDTO restaurantDto) {
         Restaurant restaurant = restaurantDto.convertRestaurantDtoToRestaurant();
