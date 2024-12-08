@@ -62,4 +62,17 @@ public class ManageRestaurantService {
         }
         return restaurant;
     }
+
+    /**
+     * Add a restaurant to the repository
+     *
+     * @param restaurant the restaurant to add
+     */
+    public static void addRestaurant(Restaurant restaurant) {
+        RestaurantRepository.add(restaurant);
+    }
+
+    public static void deleteRestaurant(int restaurantId) {
+        RestaurantRepository.delete(restaurantId);
+    }
 }

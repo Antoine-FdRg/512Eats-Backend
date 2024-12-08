@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public class RestaurantService {
+
     private RestaurantService() {
         throw new IllegalStateException("Utility class");
     }
@@ -20,11 +21,11 @@ public class RestaurantService {
     /**
      * Get all dishes from a restaurant
      *
-     * @param restaurantName the name of the restaurant
+     * @param restaurantId the name of the restaurant
      * @return the list of dishes if the restaurant is found, null otherwise
      */
-    public static List<Dish> getAllDishesFromRestaurant(String restaurantName) throws NoSuchElementException {
-        Restaurant restaurant = getRestaurantOrThrowIfNull(getRestaurantByName(restaurantName));
+    public static List<Dish> getAllDishesFromRestaurant(int restaurantId) throws NoSuchElementException {
+        Restaurant restaurant = getRestaurantOrThrowIfNull(RestaurantRepository.findById(restaurantId));
         List<Dish> dishes = restaurant.getDishes();
         if (dishes.isEmpty()) {
             throw new NoSuchElementException("No dishes available");
@@ -48,18 +49,7 @@ public class RestaurantService {
         return availableTimes;
     }
 
-    /**
-     * Add a restaurant to the repository
-     *
-     * @param restaurant the restaurant to add
-     */
-    public static void addRestaurant(Restaurant restaurant) {
-        RestaurantRepository.add(restaurant);
-    }
 
-    public static void deleteRestaurant(Restaurant restaurant) {
-        RestaurantRepository.delete(restaurant);
-    }
 
     /***** Update *****/
     public static void addTimeSlotToRestaurant(int restaurantId, int timeSlotId) {
@@ -81,6 +71,7 @@ public class RestaurantService {
     public static void addDishToRestaurant(Restaurant restaurant, Dish dish) {
         restaurant.addDish(dish);
     }
+
 
     /***** Searching methods *****/
     public static List<Restaurant> getAllRestaurants() {
@@ -119,5 +110,14 @@ public class RestaurantService {
             throw new NoSuchElementException("No restaurants found with the name: " + name);
         }
         return restaurants;
+    }
+
+    /**
+     * Get all food types
+     *
+     * @return the list of food types
+     */
+    public static List<FoodType> getFoodTypes() {
+        return List.of(FoodType.values());
     }
 }

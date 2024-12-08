@@ -27,7 +27,6 @@ public class RestaurantRepository {
 
     /**
      * Find a restaurant by its id.
-     *
      * @param id the id of the restaurant
      * @return the restaurant if found, null otherwise
      */
@@ -56,9 +55,10 @@ public class RestaurantRepository {
     /**
      * Delete a restaurant from the repository.
      *
-     * @param restaurant the restaurant to delete
+     * @param restaurantId the restaurant to delete
      */
-    public static void delete(Restaurant restaurant) {
+    public static void delete(int restaurantId) {
+        Restaurant restaurant = findById(restaurantId);
         restaurants.remove(restaurant);
     }
 

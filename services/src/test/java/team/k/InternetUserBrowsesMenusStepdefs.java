@@ -12,6 +12,7 @@ import org.mockito.MockitoAnnotations;
 import team.k.repository.DishRepository;
 import team.k.repository.RestaurantRepository;
 import commonlibrary.model.restaurant.Restaurant;
+import team.k.service.ManageRestaurantService;
 import team.k.service.RestaurantService;
 
 import java.time.LocalTime;
@@ -43,7 +44,7 @@ public class InternetUserBrowsesMenusStepdefs {
     @After
     public void tearDown() {
         if (restaurant != null) {
-            RestaurantService.deleteRestaurant(restaurant);
+            ManageRestaurantService.deleteRestaurant(restaurant.getId());
         }
     }
 
@@ -65,7 +66,7 @@ public class InternetUserBrowsesMenusStepdefs {
     @When("The user wants to have dishes non registered of the restaurant {string}")
     public void theUserWantsToHaveDishesNonRegisteredOfTheRestaurant(String restaurantName) {
         try {
-            restaurantDishes = RestaurantService.getAllDishesFromRestaurant(restaurantName);
+            restaurantDishes = RestaurantService.getAllDishesFromRestaurant(RestaurantRepository.findByName(restaurantName).getId());
         } catch (NoSuchElementException e) {
             this.errorMessage = e;
         }
@@ -95,7 +96,7 @@ public class InternetUserBrowsesMenusStepdefs {
     @Given("A restaurant {string} with no dishes registered")
     public void aRestaurantWithNoDishesRegistered(String restaurantName) {
         restaurantB = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).build();
-        RestaurantService.addRestaurant(restaurantB);
+        ManageRestaurantService.addRestaurant(restaurantB);
     }
 
     @Then("The user gets no dishes registered in the restaurant selected and have this message :{string}")

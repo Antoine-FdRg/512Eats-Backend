@@ -9,6 +9,8 @@ import commonlibrary.model.order.GroupOrder;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
 import ssdbrestframework.SSDBHttpServer;
+import team.k.repository.DishRepository;
+
 import team.k.repository.*;
 
 import java.time.LocalDateTime;
@@ -26,8 +28,8 @@ public class ServicesAPI {
         initLocationData();
         initRegisteredUsersData();
         initGroupOrderData();
-        initDishData();
         initRestaurantData();
+        initDishData();
     }
 
     private static void initGroupOrderData() {
@@ -121,7 +123,7 @@ public class ServicesAPI {
     private static void initRestaurantData() {
         Restaurant restaurant = new Restaurant.Builder()
                 .setName("512EatRestaurant")
-                .setDescription("Restaurants de qualitÃ©")
+                .setDescription("Restaurants de qualité")
                 .setFoodTypes(List.of(FoodType.BURGER, FoodType.PIZZA, FoodType.SUSHI))
                 .setOpen(LocalTime.of(10, 0))
                 .setClose(LocalTime.of(22, 0))
@@ -167,6 +169,7 @@ public class ServicesAPI {
                                 .build()
                 ))
                 .build();
+
         TimeSlot timeSlot2 = new TimeSlot(LocalDateTime.of(2024, 12, 18, 12, 0), restaurant1, restaurant1.getAverageOrderPreparationTime());
         restaurant1.addTimeSlot(timeSlot2);
         RestaurantRepository.add(restaurant1);
@@ -192,5 +195,4 @@ public class ServicesAPI {
         RestaurantRepository.add(restaurant2);
 
     }
-
 }
