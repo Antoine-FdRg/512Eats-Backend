@@ -52,6 +52,8 @@ public class Restaurant {
         this.foodTypes = builder.foodTypes;
         this.averageOrderPreparationTime = builder.averageOrderPreparationTime;
         this.discountStrategy = builder.discountStrategy;
+        this.urlPicture = new ArrayList<>();
+        this.dishes.forEach(dish -> this.urlPicture.add(dish.getPicture()));
     }
 
     /**
