@@ -5,11 +5,20 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import commonlibrary.dto.RestaurantDTO;
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.Dish;
+import commonlibrary.model.order.SubOrder;
+import commonlibrary.model.restaurant.discount.DiscountStrategy;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import commonlibrary.model.order.SubOrder;
-import commonlibrary.model.restaurant.discount.DiscountStrategy;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,6 +31,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@Entity
 public class Restaurant {
 
     public static final long DELIVERY_DURATION = 20;
@@ -30,15 +40,24 @@ public class Restaurant {
      */
     public static final long ORDER_PROCESSING_TIME_MINUTES = DELIVERY_DURATION + TimeSlot.DURATION;
     private String name;
+    @Id
     private int id;
     private LocalTime open;
     private LocalTime close;
+    @OneToMany
     private List<TimeSlot> timeSlots;
+    @OneToMany
     private List<Dish> dishes;
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "food_types", joinColumns = @JoinColumn(name = "food_type_id"))
+    @ElementCollection
     private List<FoodType> foodTypes;
+    @OneToOne
     private DiscountStrategy discountStrategy;
     private int averageOrderPreparationTime;
     private String description;
+    @CollectionTable(name = "url_picture", joinColumns = @JoinColumn(name = "url_picture_id"))
+    @ElementCollection
     private List<String> urlPicture;
 
     private Restaurant(Builder builder) {
@@ -159,7 +178,7 @@ public class Restaurant {
     public RestaurantDTO convertRestaurantToRestaurantDTO() {
         List<String> foodTypes = this.foodTypes.stream().map(Enum::name).toList();
         double averagePrice = this.getAveragePrice();
-        return new RestaurantDTO(this.id, this.name, this.open.toString(), this.close.toString(), foodTypes, (averagePrice <= 10 ? 1 : averagePrice <= 20 ? 2 : 3),this.description, this.urlPicture);
+        return new RestaurantDTO(this.id, this.name, this.open.toString(), this.close.toString(), foodTypes, (averagePrice <= 10 ? 1 : averagePrice <= 20 ? 2 : 3), this.description, this.urlPicture);
     }
 
     public static class Builder {

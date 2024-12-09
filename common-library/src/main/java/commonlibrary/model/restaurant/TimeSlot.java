@@ -2,12 +2,15 @@ package commonlibrary.model.restaurant;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import commonlibrary.enumerations.OrderStatus;
+import commonlibrary.model.order.SubOrder;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import commonlibrary.model.order.SubOrder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,9 +28,12 @@ import java.util.List;
         setterVisibility = JsonAutoDetect.Visibility.NONE,
         isGetterVisibility = JsonAutoDetect.Visibility.NONE)
 @NoArgsConstructor
+@Entity
 public class TimeSlot {
+    @Id
     private int id;
     public static final int DURATION = 30;
+    @ManyToMany
     private List<SubOrder> orders;
     private LocalDateTime start;
     private int productionCapacity; //number of cooks

@@ -3,12 +3,16 @@ package commonlibrary.model;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import commonlibrary.dto.UserDTO;
+import commonlibrary.enumerations.Role;
+import commonlibrary.model.order.SubOrder;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import commonlibrary.enumerations.Role;
-import commonlibrary.model.order.SubOrder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +22,15 @@ import java.util.List;
 @AllArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @NoArgsConstructor
+@Entity
 public class RegisteredUser {
+    @Id
     private int id;
     private String name;
     private Role role;
+    @OneToOne
     private SubOrder currentOrder;
+    @OneToMany
     private List<SubOrder> orders;
     private static int idCounter = 0;
 

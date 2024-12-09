@@ -2,15 +2,21 @@ package commonlibrary.model.restaurant.discount;
 
 import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.order.SubOrder;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import lombok.NoArgsConstructor;
 
 /**
  * Represents a discount strategy where a free dish is given after a certain number of orders in the restaurant.
  */
+@Entity
+@DiscriminatorValue("FreeDishAfterXOrders")
+@NoArgsConstructor
 public class FreeDishAfterXOrders extends DiscountStrategy {
     /**
      * The number of orders required in the restaurant to get a free dish
      */
-    private final int nbOrdersRequired;
+    private int nbOrdersRequired;
 
     public FreeDishAfterXOrders(int restaurantID, int nbOrdersRequired) {
         super(restaurantID);

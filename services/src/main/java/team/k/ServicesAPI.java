@@ -8,6 +8,7 @@ import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.order.GroupOrder;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import ssdbrestframework.SSDBHttpServer;
 import team.k.repository.DishRepository;
 
@@ -20,6 +21,7 @@ import java.util.Random;
 
 public class ServicesAPI {
     public static void main(String[] args) {
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
         SSDBHttpServer serv = new SSDBHttpServer(8083, "team.k.controller", "services/");
         initDataset();
         serv.start();
