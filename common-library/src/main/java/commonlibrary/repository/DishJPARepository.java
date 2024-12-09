@@ -1,9 +1,9 @@
 package commonlibrary.repository;
 
-import commonlibrary.model.order.GroupOrder;
+import commonlibrary.model.Dish;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface GroupOrderRepository extends JpaRepository<GroupOrder, Long> {
+public interface DishJPARepository extends JpaRepository<Dish, Long> {
     // Méthodes CRUD standard fournies automatiquement par Spring Data
     // Tu peux ajouter des requêtes personnalisées si nécessaire
 }
