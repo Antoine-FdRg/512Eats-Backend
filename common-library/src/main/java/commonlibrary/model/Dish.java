@@ -3,6 +3,7 @@ package commonlibrary.model;
 import commonlibrary.dto.DishDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
+@Table(name = "dish")
 public class Dish {
     @Id
     private int id;

@@ -10,8 +10,10 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +29,7 @@ import java.util.List;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @NoArgsConstructor
 @Entity
+@Table(name = "group_order")
 public class GroupOrder {
     public static final int GROUP_ORDER_CODE_LENGTH = 6;
     @Id
@@ -34,7 +37,7 @@ public class GroupOrder {
     private LocalDateTime deliveryDateTime;
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
-    @OneToMany(mappedBy = "groupOrder", cascade = CascadeType.ALL, orphanRemoval = true) // Association
+    @OneToMany(mappedBy = "groupOrder", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<SubOrder> subOrders;
     private int deliveryLocationID;
 

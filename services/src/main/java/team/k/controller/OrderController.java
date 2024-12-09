@@ -2,6 +2,7 @@ package team.k.controller;
 
 import commonlibrary.dto.SubOrderDTO;
 import commonlibrary.external.PaymentProcessor;
+import org.springframework.stereotype.Component;
 import ssdbrestframework.HttpMethod;
 import ssdbrestframework.SSDBQueryProcessingException;
 import ssdbrestframework.annotations.*;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController(path = "/orders")
+@Component
 public class OrderController {
     /**
      * Create an individual order

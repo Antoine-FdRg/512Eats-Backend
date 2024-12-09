@@ -5,13 +5,13 @@ import commonlibrary.dto.RestaurantDTO;
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.Dish;
 import commonlibrary.model.restaurant.Restaurant;
+import org.springframework.stereotype.Component;
 import ssdbrestframework.SSDBQueryProcessingException;
 import ssdbrestframework.annotations.Endpoint;
 import ssdbrestframework.annotations.PathVariable;
 import ssdbrestframework.annotations.RequestParam;
 import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
-import team.k.repository.RestaurantRepository;
 import team.k.service.RestaurantService;
 
 import java.time.LocalDate;
@@ -21,6 +21,7 @@ import java.util.NoSuchElementException;
 
 
 @RestController(path = "/restaurants")
+@Component
 public class RestaurantController {
 
 

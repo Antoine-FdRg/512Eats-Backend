@@ -2,6 +2,7 @@ package team.k.controller;
 
 import commonlibrary.dto.RestaurantDTO;
 import commonlibrary.model.restaurant.Restaurant;
+import org.springframework.stereotype.Component;
 import ssdbrestframework.annotations.Endpoint;
 import ssdbrestframework.annotations.PathVariable;
 import ssdbrestframework.annotations.RequestBody;
@@ -18,6 +19,7 @@ import ssdbrestframework.annotations.*;
 
 
 @RestController(path = "/management")
+@Component
 public class ManageRestaurantController {
 
 

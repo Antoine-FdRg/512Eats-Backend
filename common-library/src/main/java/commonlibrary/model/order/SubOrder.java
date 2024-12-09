@@ -10,12 +10,14 @@ import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.payment.Payment;
 import commonlibrary.model.restaurant.Restaurant;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,21 +35,22 @@ import java.util.List;
         isGetterVisibility = JsonAutoDetect.Visibility.NONE)
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "sub_order")
 public class SubOrder {
     @Id
     private int id;
     private double price;
     private int restaurantID;
     private int userID;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Dish> dishes;
     private OrderStatus status;
     private LocalDateTime placedDate;
     private LocalDateTime deliveryDate;
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     private Payment payment;
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private GroupOrder groupOrder;
 
     SubOrder(OrderBuilder orderBuilder) {

@@ -6,9 +6,11 @@ import commonlibrary.dto.UserDTO;
 import commonlibrary.enumerations.Role;
 import commonlibrary.model.order.SubOrder;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,14 +25,15 @@ import java.util.List;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @NoArgsConstructor
 @Entity
+@Table
 public class RegisteredUser {
     @Id
     private int id;
     private String name;
     private Role role;
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     private SubOrder currentOrder;
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<SubOrder> orders;
     private static int idCounter = 0;
 

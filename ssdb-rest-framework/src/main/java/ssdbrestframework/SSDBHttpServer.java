@@ -1,27 +1,25 @@
 package ssdbrestframework;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import java.nio.file.Paths;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import lombok.extern.java.Log;
 import org.reflections.Reflections;
-import ssdbrestframework.annotations.RestController;
+import org.springframework.context.ApplicationContext;
 import ssdbrestframework.annotations.Endpoint;
+import ssdbrestframework.annotations.RestController;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Set;
-
-import java.io.IOException;
 
 /**
  * Main class to use in the SSDB REST framework.
@@ -32,6 +30,7 @@ public class SSDBHttpServer {
     private final HttpServer server;
     private final Map<String, Map<Pattern, SSDBHandler>> routesByController = new HashMap<>();
     private String folderPath = "";
+    private ApplicationContext applicationContext;
 
     /**
      * Constructor for the SSDBHttpServer
@@ -52,6 +51,17 @@ public class SSDBHttpServer {
         this(port, basePackage);
         this.folderPath = folderPath;
         this.generateOpenApiDocumentation(basePackage);
+    }
+
+    public SSDBHttpServer(int port, String basePackage, String folderPath, ApplicationContext applicationContext) {
+        try {
+            server = HttpServer.create(new InetSocketAddress(port), 0);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        this.folderPath = folderPath;
+        this.applicationContext = applicationContext;
+        this.registerControllers(basePackage);
     }
 
     /**
@@ -96,7 +106,11 @@ public class SSDBHttpServer {
         routesByController.put(basePath, new HashMap<>());
         Object controllerInstance;
         try {
-            controllerInstance = clazz.getDeclaredConstructor().newInstance();
+            if (applicationContext != null) {
+                controllerInstance = applicationContext.getBean(clazz);
+            } else {
+                controllerInstance = clazz.getDeclaredConstructor().newInstance();
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
