@@ -6,7 +6,6 @@ import commonlibrary.repository.RestaurantJPARepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import team.k.repository.RestaurantRepository;
 import team.k.repository.TimeSlotRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
@@ -15,7 +14,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 @Service
 public class RestaurantService {
@@ -118,7 +116,7 @@ public class RestaurantService {
     }
 
     public List<Restaurant> getRestaurantsByName(String name) throws NoSuchElementException {
-        List<Restaurant> restaurants = restaurantJPARepository.findAll().stream().filter(restaurant -> Objects.equals(restaurant.getName(), name)).toList();
+        List<Restaurant> restaurants = restaurantJPARepository.findAll().stream().filter(restaurant -> restaurant.getName().toLowerCase().contains(name.toLowerCase())).toList();
         if (restaurants.isEmpty()) {
             throw new NoSuchElementException("No restaurants found with the name: " + name);
         }

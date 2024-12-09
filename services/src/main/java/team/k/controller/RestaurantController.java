@@ -99,7 +99,7 @@ public class RestaurantController {
      * @param restaurantName the name of the restaurant
      * @return list of matching restaurants
      */
-    @Endpoint(path = "/{restaurantName}", method = ssdbrestframework.HttpMethod.GET)
+    @Endpoint(path = "/by/name/{restaurantName}", method = ssdbrestframework.HttpMethod.GET)
     @Response(status = 200) // OK
     public List<RestaurantDTO> getRestaurantsByName(@PathVariable("restaurantName") String restaurantName) throws SSDBQueryProcessingException {
         try {
