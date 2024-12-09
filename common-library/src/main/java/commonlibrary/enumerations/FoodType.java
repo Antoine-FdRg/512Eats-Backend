@@ -15,6 +15,8 @@ public enum FoodType {
     POKEBOWL("POKEBOWL"),
     BURGER("BURGER"),
     SANDWICH("SANDWICH"),
-    TACOS("TACOS");
+    TACOS("TACOS"),
+    SALAD("SALAD"),
+    CHINESE("CHINESE");
     final String name;
 }
