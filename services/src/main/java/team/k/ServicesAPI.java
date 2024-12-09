@@ -8,44 +8,117 @@ import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.order.GroupOrder;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
+import commonlibrary.repository.DishJPARepository;
+import commonlibrary.repository.GroupOrderJPARepository;
+import commonlibrary.repository.LocationJPARepository;
+import commonlibrary.repository.RegisteredUserJPARepository;
+import commonlibrary.repository.RestaurantJPARepository;
+import commonlibrary.repository.TimeSlotJPARepository;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Service;
 import ssdbrestframework.SSDBHttpServer;
-import team.k.repository.DishRepository;
-
-import team.k.repository.*;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Random;
 
+@Service
 public class ServicesAPI {
+
+    public static LocationJPARepository locationJPARepository;
+    public static GroupOrderJPARepository groupOrderJPARepository;
+    public static RegisteredUserJPARepository registeredUserJPARepository;
+    public static DishJPARepository dishJPARepository;
+    public static RestaurantJPARepository restaurantJPARepository;
+    public static TimeSlotJPARepository timeSlotJPARepository;
+    private static AnnotationConfigApplicationContext context;
+
     public static void main(String[] args) {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
-        SSDBHttpServer serv = new SSDBHttpServer(8083, "team.k.controller", "services/");
-        initDataset();
+        context = new AnnotationConfigApplicationContext(AppConfig.class);
+        locationJPARepository = context.getBean(LocationJPARepository.class);
+        groupOrderJPARepository = context.getBean(GroupOrderJPARepository.class);
+        registeredUserJPARepository = context.getBean(RegisteredUserJPARepository.class);
+        dishJPARepository = context.getBean(DishJPARepository.class);
+        restaurantJPARepository = context.getBean(RestaurantJPARepository.class);
+        timeSlotJPARepository = context.getBean(TimeSlotJPARepository.class);
+        SSDBHttpServer serv = new SSDBHttpServer(8083, "team.k.controller", "services/", context);
+//        initDataset();
         serv.start();
     }
 
     private static void initDataset() {
         initLocationData();
         initRegisteredUsersData();
+        initDishData();
         initGroupOrderData();
         initRestaurantData();
-        initDishData();
         initTimeSlot();
     }
 
-    private static void initGroupOrderData() {
-        GroupOrder groupOrder = new GroupOrder.Builder()
-                .withDeliveryLocationID(3)
-                .withDate(LocalDateTime.of(2024, 12, 18, 12, 0))
+    private static void initLocationData() {
+        Location location = new Location.Builder()
+                .setNumber("650")
+                .setAddress("Route des Colles")
+                .setCity("Biot")
                 .build();
-        GroupOrderRepository.add(groupOrder);
-        GroupOrder groupOrder2 = new GroupOrder.Builder()
-                .withDeliveryLocationID(0)
+        locationJPARepository.save(location);
+        Location location2 = new Location.Builder()
+                .setNumber("2004")
+                .setAddress("Route des Lucioles")
+                .setCity("Sophia Antipolis")
                 .build();
-        GroupOrderRepository.add(groupOrder2);
+        locationJPARepository.save(location2);
+        Location location3 = new Location.Builder()
+                .setNumber("400")
+                .setAddress("Route des Macarons")
+                .setCity("Biot")
+                .build();
+        locationJPARepository.save(location3);
+        Location location4 = new Location.Builder()
+                .setNumber("930 ")
+                .setAddress("Route des Colles")
+                .setCity("Biot")
+                .build();
+        locationJPARepository.save(location4);
+        Location location5 = new Location.Builder()
+                .setNumber("2 ")
+                .setAddress("Passage Marie Antoinette")
+                .setCity("Antibes")
+                .build();
+        locationJPARepository.save(location5);
+        Location location6 = new Location.Builder()
+                .setNumber("12 ")
+                .setAddress("Les Oliviers")
+                .setCity("Antibes")
+                .build();
+        locationJPARepository.save(location6);
+        Location location7 = new Location.Builder()
+                .setNumber("34 ")
+                .setAddress("Avenue Saint Augustin")
+                .setCity("Nice")
+                .build();
+        locationJPARepository.save(location7);
+        Location location8 = new Location.Builder()
+                .setNumber("2400 ")
+                .setAddress("Route des Dolines")
+                .setCity("Valbonne")
+                .build();
+        locationJPARepository.save(location8);
+        Location location9 = new Location.Builder()
+                .setNumber("1 ")
+                .setAddress("Avenue des Templiers")
+                .setCity("Cagnes-sur-Mer")
+                .build();
+        locationJPARepository.save(location9);
+        Location location10 = new Location.Builder()
+                .setNumber("1 ")
+                .setAddress("Avenue des Templiers")
+                .setCity("Cagnes-sur-Mer")
+                .build();
+        locationJPARepository.save(location10);
     }
 
     private static void initRegisteredUsersData() {
@@ -60,82 +133,19 @@ public class ServicesAPI {
         RegisteredUser user9 = new RegisteredUser("Nathalie Moreau", Role.CAMPUS_EMPLOYEE);
         RegisteredUser user10 = new RegisteredUser("Julien Robert", Role.CAMPUS_EMPLOYEE);
 
-        RegisteredUserRepository.add(user1);
-        RegisteredUserRepository.add(user2);
-        RegisteredUserRepository.add(user3);
-        RegisteredUserRepository.add(user4);
-        RegisteredUserRepository.add(user5);
-        RegisteredUserRepository.add(user6);
-        RegisteredUserRepository.add(user7);
-        RegisteredUserRepository.add(user8);
-        RegisteredUserRepository.add(user9);
-        RegisteredUserRepository.add(user10);
+        registeredUserJPARepository.save(user1);
+        registeredUserJPARepository.save(user2);
+        registeredUserJPARepository.save(user3);
+        registeredUserJPARepository.save(user4);
+        registeredUserJPARepository.save(user5);
+        registeredUserJPARepository.save(user6);
+        registeredUserJPARepository.save(user7);
+        registeredUserJPARepository.save(user8);
+        registeredUserJPARepository.save(user9);
+        registeredUserJPARepository.save(user10);
     }
 
-    private static void initLocationData() {
-        Location location = new Location.Builder()
-                .setNumber("650")
-                .setAddress("Route des Colles")
-                .setCity("Biot")
-                .build();
-        LocationRepository.add(location);
-        Location location2 = new Location.Builder()
-                .setNumber("2004")
-                .setAddress("Route des Lucioles")
-                .setCity("Sophia Antipolis")
-                .build();
-        LocationRepository.add(location2);
-        Location location3 = new Location.Builder()
-                .setNumber("400")
-                .setAddress("Route des Macarons")
-                .setCity("Biot")
-                .build();
-        LocationRepository.add(location3);
-        Location location4 = new Location.Builder()
-                .setNumber("930 ")
-                .setAddress("Route des Colles")
-                .setCity("Biot")
-                .build();
-        LocationRepository.add(location4);
-        Location location5 = new Location.Builder()
-                .setNumber("2 ")
-                .setAddress("Passage Marie Antoinette")
-                .setCity("Antibes")
-                .build();
-        LocationRepository.add(location5);
-        Location location6 = new Location.Builder()
-                .setNumber("12 ")
-                .setAddress("Les Oliviers")
-                .setCity("Antibes")
-                .build();
-        LocationRepository.add(location6);
-        Location location7 = new Location.Builder()
-                .setNumber("34 ")
-                .setAddress("Avenue Saint Augustin")
-                .setCity("Nice")
-                .build();
-        LocationRepository.add(location7);
-        Location location8 = new Location.Builder()
-                .setNumber("2400 ")
-                .setAddress("Route des Dolines")
-                .setCity("Valbonne")
-                .build();
-        LocationRepository.add(location8);
-        Location location9 = new Location.Builder()
-                .setNumber("1 ")
-                .setAddress("Avenue des Templiers")
-                .setCity("Cagnes-sur-Mer")
-                .build();
-        LocationRepository.add(location9);
-        Location location10 = new Location.Builder()
-                .setNumber("1 ")
-                .setAddress("Avenue des Templiers")
-                .setCity("Cagnes-sur-Mer")
-                .build();
-        LocationRepository.add(location10);
-    }
-
-    private static List<Dish> initDishData() {
+    private static void initDishData() {
         List<Dish> dishes = List.of(
                 new Dish.Builder()
                         .setName("Burger")
@@ -285,10 +295,19 @@ public class ServicesAPI {
                         .setPicture("https://kissmychef.com/wp-content/uploads/2021/04/mousse.png")
                         .build()
         );
-        dishes.forEach(DishRepository::add);
-        return dishes;
+        dishJPARepository.saveAll(dishes);
+    }
 
-
+    private static void initGroupOrderData() {
+        GroupOrder groupOrder = new GroupOrder.Builder()
+                .withDeliveryLocationID(3)
+                .withDate(LocalDateTime.of(2024, 12, 18, 12, 0))
+                .build();
+        groupOrderJPARepository.save(groupOrder);
+        GroupOrder groupOrder2 = new GroupOrder.Builder()
+                .withDeliveryLocationID(0)
+                .build();
+        groupOrderJPARepository.save(groupOrder2);
     }
 
     private static void initRestaurantData() {
@@ -299,10 +318,10 @@ public class ServicesAPI {
                 .setOpen(LocalTime.of(10, 0))
                 .setClose(LocalTime.of(22, 0))
                 .setAverageOrderPreparationTime(10)
-                .setDishes(initDishData())
+                .setDishes(dishJPARepository.findAll())
                 .build();
 
-        RestaurantRepository.add(restaurant);
+        restaurantJPARepository.save(restaurant);
 
 
         Restaurant restaurantBurger = new Restaurant.Builder()
@@ -313,20 +332,19 @@ public class ServicesAPI {
                 .setClose(LocalTime.of(22, 0))
                 .setAverageOrderPreparationTime(10)
                 .setDishes(List.of(
-                        initDishData().get(0),
-                        initDishData().get(1),
-                        initDishData().get(2),
-                        initDishData().get(6),
-                        initDishData().get(16),
-                        initDishData().get(17),
-                        initDishData().get(18),
-                        initDishData().get(19),
-                        initDishData().get(20)
+                        dishJPARepository.findById((long)0).orElseThrow(),
+                        dishJPARepository.findById((long)1).orElseThrow(),
+                        dishJPARepository.findById((long)2).orElseThrow(),
+                        dishJPARepository.findById((long)6).orElseThrow(),
+                        dishJPARepository.findById((long)16).orElseThrow(),
+                        dishJPARepository.findById((long)17).orElseThrow(),
+                        dishJPARepository.findById((long)18).orElseThrow(),
+                        dishJPARepository.findById((long)19).orElseThrow(),
+                        dishJPARepository.findById((long)20).orElseThrow()
                 ))
                 .build();
 
-        RestaurantRepository.add(restaurantBurger);
-
+        restaurantJPARepository.save(restaurantBurger);
 
         Restaurant restaurantSushi = new Restaurant.Builder()
                 .setName("512EatSushi")
@@ -336,18 +354,18 @@ public class ServicesAPI {
                 .setClose(LocalTime.of(22, 0))
                 .setAverageOrderPreparationTime(10)
                 .setDishes(List.of(
-                        initDishData().get(6),
-                        initDishData().get(5),
-                        initDishData().get(16),
-                        initDishData().get(17),
-                        initDishData().get(18),
-                        initDishData().get(19),
-                        initDishData().get(20)
+                        dishJPARepository.findById((long)6).orElseThrow(),
+                        dishJPARepository.findById((long)5).orElseThrow(),
+                        dishJPARepository.findById((long)16).orElseThrow(),
+                        dishJPARepository.findById((long)17).orElseThrow(),
+                        dishJPARepository.findById((long)18).orElseThrow(),
+                        dishJPARepository.findById((long)19).orElseThrow(),
+                        dishJPARepository.findById((long)20).orElseThrow()
 
                 ))
                 .build();
 
-        RestaurantRepository.add(restaurantSushi);
+        restaurantJPARepository.save(restaurantSushi);
 
 
         Restaurant restaurantPizza = new Restaurant.Builder()
@@ -358,20 +376,20 @@ public class ServicesAPI {
                 .setClose(LocalTime.of(22, 0))
                 .setAverageOrderPreparationTime(10)
                 .setDishes(List.of(
-                        initDishData().get(3),
-                        initDishData().get(4),
-                        initDishData().get(7),
-                        initDishData().get(8),
-                        initDishData().get(16),
-                        initDishData().get(17),
-                        initDishData().get(18),
-                        initDishData().get(19),
-                        initDishData().get(20)
+                        dishJPARepository.findById((long)3).orElseThrow(),
+                        dishJPARepository.findById((long)4).orElseThrow(),
+                        dishJPARepository.findById((long)7).orElseThrow(),
+                        dishJPARepository.findById((long)8).orElseThrow(),
+                        dishJPARepository.findById((long)16).orElseThrow(),
+                        dishJPARepository.findById((long)17).orElseThrow(),
+                        dishJPARepository.findById((long)18).orElseThrow(),
+                        dishJPARepository.findById((long)19).orElseThrow(),
+                        dishJPARepository.findById((long)20).orElseThrow()
 
                 ))
                 .build();
 
-        RestaurantRepository.add(restaurantPizza);
+        restaurantJPARepository.save(restaurantPizza);
 
 
         Restaurant restaurantChinois = new Restaurant.Builder()
@@ -382,20 +400,20 @@ public class ServicesAPI {
                 .setClose(LocalTime.of(23, 0))
                 .setAverageOrderPreparationTime(10)
                 .setDishes(List.of(
-                        initDishData().get(9),
-                        initDishData().get(13),
-                        initDishData().get(14),
-                        initDishData().get(15),
-                        initDishData().get(16),
-                        initDishData().get(17),
-                        initDishData().get(18),
-                        initDishData().get(19),
-                        initDishData().get(20)
+                        dishJPARepository.findById((long)9).orElseThrow(),
+                        dishJPARepository.findById((long)13).orElseThrow(),
+                        dishJPARepository.findById((long)14).orElseThrow(),
+                        dishJPARepository.findById((long)15).orElseThrow(),
+                        dishJPARepository.findById((long)16).orElseThrow(),
+                        dishJPARepository.findById((long)17).orElseThrow(),
+                        dishJPARepository.findById((long)18).orElseThrow(),
+                        dishJPARepository.findById((long)19).orElseThrow(),
+                        dishJPARepository.findById((long)20).orElseThrow()
 
                 ))
                 .build();
 
-        RestaurantRepository.add(restaurantChinois);
+        restaurantJPARepository.save(restaurantChinois);
 
 
         Restaurant restaurantHealthy = new Restaurant.Builder()
@@ -406,41 +424,43 @@ public class ServicesAPI {
                 .setClose(LocalTime.of(22, 0))
                 .setAverageOrderPreparationTime(10)
                 .setDishes(List.of(
-                        initDishData().get(1),
-                        initDishData().get(6),
-                        initDishData().get(10),
-                        initDishData().get(11),
-                        initDishData().get(15),
-                        initDishData().get(16),
-                        initDishData().get(17),
-                        initDishData().get(18),
-                        initDishData().get(19),
-                        initDishData().get(20)
+                        dishJPARepository.findById((long)1).orElseThrow(),
+                        dishJPARepository.findById((long)6).orElseThrow(),
+                        dishJPARepository.findById((long)10).orElseThrow(),
+                        dishJPARepository.findById((long)11).orElseThrow(),
+                        dishJPARepository.findById((long)15).orElseThrow(),
+                        dishJPARepository.findById((long)16).orElseThrow(),
+                        dishJPARepository.findById((long)17).orElseThrow(),
+                        dishJPARepository.findById((long)18).orElseThrow(),
+                        dishJPARepository.findById((long)19).orElseThrow(),
+                        dishJPARepository.findById((long)20).orElseThrow()
 
                 ))
                 .build();
 
-        RestaurantRepository.add(restaurantHealthy);
-
-    }
-
+        restaurantJPARepository.save(restaurantHealthy);
+}
     private static void initTimeSlot() {
-        List<Restaurant> restaurants = RestaurantRepository.findAll();
+        List<Restaurant> restaurants = restaurantJPARepository.findAll();
         for (Restaurant restaurant : restaurants) {
             LocalTime open = restaurant.getOpen();
             LocalTime close = restaurant.getClose();
             LocalDateTime currentSlotStart = LocalDateTime.of(2024, 12, 10, open.getHour(), open.getMinute());
 
+            Random random = new Random();
             while (currentSlotStart.toLocalTime().isBefore(close)) {
-                Random random = new Random();
                 int randomNumber = random.nextInt(7) + 1;
                 TimeSlot timeSlot = new TimeSlot(currentSlotStart, restaurant, randomNumber);
+                saveTimeSlot(timeSlot);
                 restaurant.addTimeSlot(timeSlot);
-
                 // Passer au prochain créneau de 30 minutes
                 currentSlotStart = currentSlotStart.plusMinutes(30);
             }
         }
+    }
+
+    public static void saveTimeSlot(TimeSlot timeSlot) {
+        timeSlotJPARepository.save(timeSlot);
     }
 
 }

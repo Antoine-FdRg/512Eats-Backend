@@ -11,12 +11,14 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan(basePackages = {"commonlibrary"}) // Scanne les modèles et repositories
+@EnableTransactionManagement
+@ComponentScan(basePackages = {"commonlibrary","team.k.service","team.k.controller"}) // Scanne les modèles et repositories
 @EnableJpaRepositories(basePackages = {"commonlibrary.repository"}) // Active les repositories
 public class AppConfig {
 
@@ -35,7 +37,7 @@ public class AppConfig {
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.h2.Driver");
-        dataSource.setUrl("jdbc:h2:mem:testdb");
+        dataSource.setUrl("jdbc:h2:./database");
         dataSource.setUsername("sa");
         dataSource.setPassword("");
         return dataSource;
@@ -43,8 +45,9 @@ public class AppConfig {
 
     private Properties jpaProperties() {
         Properties properties = new Properties();
-        properties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
         properties.put("hibernate.hbm2ddl.auto", "update");
+        properties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+        properties.put("hibernate.show_sql", "true");
         return properties;
     }
 

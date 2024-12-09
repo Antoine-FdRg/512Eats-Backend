@@ -2,6 +2,7 @@ package team.k.controller;
 
 import commonlibrary.dto.SubOrderDTO;
 import commonlibrary.external.PaymentProcessor;
+import org.springframework.stereotype.Component;
 import ssdbrestframework.HttpMethod;
 import ssdbrestframework.SSDBQueryProcessingException;
 import ssdbrestframework.annotations.*;
@@ -20,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController(path = "/orders")
+@Component
 public class OrderController {
     public record createIndividualOrderRequest(int userId, int restaurantId, int deliveryLocationId,
                                                String deliveryDateTime) {

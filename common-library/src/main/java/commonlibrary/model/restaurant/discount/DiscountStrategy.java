@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -19,6 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE) // Une seule table pour toute la hiérarchie
 @DiscriminatorColumn(name = "strategy_type", discriminatorType = DiscriminatorType.STRING) // Colonne discriminante
+@Table(name = "discount_strategy")
 public abstract class DiscountStrategy {
 
     private static int idCounter = 0;

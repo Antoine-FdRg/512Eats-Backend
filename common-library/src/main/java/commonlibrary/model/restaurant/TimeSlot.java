@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.model.order.SubOrder;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,11 +31,12 @@ import java.util.List;
         isGetterVisibility = JsonAutoDetect.Visibility.NONE)
 @NoArgsConstructor
 @Entity
+@Table(name = "time_slot")
 public class TimeSlot {
     @Id
     private int id;
     public static final int DURATION = 30;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<SubOrder> orders;
     private LocalDateTime start;
     private int productionCapacity; //number of cooks

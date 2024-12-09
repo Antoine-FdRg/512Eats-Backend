@@ -4,8 +4,10 @@ import commonlibrary.model.Location;
 import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.order.GroupOrder;
 import commonlibrary.model.order.SubOrder;
-import team.k.repository.GroupOrderRepository;
-import team.k.repository.LocationRepository;
+import commonlibrary.repository.GroupOrderJPARepository;
+import commonlibrary.repository.LocationJPARepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import commonlibrary.model.restaurant.Restaurant;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
@@ -16,11 +18,17 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+@Service
 public class GroupOrderService {
+    private final LocationJPARepository locationJPARepository;
+    private final GroupOrderJPARepository groupOrderJPARepository;
 
-    private GroupOrderService() {
-        throw new IllegalStateException("Service class");
+    @Autowired
+    GroupOrderService(LocationJPARepository locationJPARepository, GroupOrderJPARepository groupOrderJPARepository) {
+        this.locationJPARepository = locationJPARepository;
+        this.groupOrderJPARepository = groupOrderJPARepository;
     }
+
 
     /**
      * Create a group order
@@ -29,8 +37,8 @@ public class GroupOrderService {
      * @param now the current time
      * @return the id of the created group order to share with friends
      */
-    public static int createGroupOrder(int deliveryLocationId, LocalDateTime deliveryDateTime, LocalDateTime now){
-        Location location = LocationRepository.findLocationById(deliveryLocationId);
+    public int createGroupOrder(int deliveryLocationId, LocalDateTime deliveryDateTime, LocalDateTime now){
+        Location location = locationJPARepository.getReferenceById((long) deliveryLocationId);
         if (location == null) {
             throw new NoSuchElementException("Location not found");
         }
@@ -44,12 +52,12 @@ public class GroupOrderService {
                 .withDeliveryLocationID(location.getId())
                 .withDate(deliveryDateTime)
                 .build();
-        GroupOrderRepository.add(groupOrder);
+        groupOrderJPARepository.save(groupOrder);
         return groupOrder.getId();
     }
 
-    public static GroupOrder findGroupOrderById(int id) {
-        return GroupOrderRepository.findGroupOrderById(id);
+    public GroupOrder findGroupOrderById(int id) {
+        return groupOrderJPARepository.findById((long)id).orElse(null);
     }
 
     /**
@@ -58,7 +66,7 @@ public class GroupOrderService {
      * @param deliveryDateTime the delivery datetime for the group order
      * @param now the current time (to ensure that the chosen deliveryDateTime is not too early
      */
-    public static void modifyGroupOrderDeliveryDateTime(int groupOrderId, LocalDateTime deliveryDateTime, LocalDateTime now){
+    public void modifyGroupOrderDeliveryDateTime(int groupOrderId, LocalDateTime deliveryDateTime, LocalDateTime now){
 
         if (Objects.isNull(deliveryDateTime)) {
             throw new IllegalArgumentException("Delivery datetime cannot be null");
@@ -69,7 +77,7 @@ public class GroupOrderService {
         if (deliveryDateTime.isBefore(now.plusMinutes(Restaurant.ORDER_PROCESSING_TIME_MINUTES))) {
             throw new IllegalArgumentException("Delivery time cannot be this early");
         }
-        GroupOrder groupOrder = GroupOrderRepository.findGroupOrderById(groupOrderId);
+        GroupOrder groupOrder = groupOrderJPARepository.findById((long) groupOrderId).orElse(null);
         if (Objects.isNull(groupOrder)) {
             throw new NoSuchElementException("Group order not found");
         }
@@ -79,8 +87,8 @@ public class GroupOrderService {
         groupOrder.setDeliveryDateTime(deliveryDateTime);
     }
 
-    public static void place(int groupOrderId, LocalDateTime now) {
-        GroupOrder groupOrder = GroupOrderRepository.findGroupOrderById(groupOrderId);
+    public void place(int groupOrderId, LocalDateTime now) {
+        GroupOrder groupOrder = groupOrderJPARepository.findById((long) groupOrderId).orElse(null);
         if (Objects.isNull(groupOrder)) {
             throw new NoSuchElementException("Group order not found");
         }
