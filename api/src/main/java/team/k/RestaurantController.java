@@ -16,6 +16,8 @@ import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import static team.k.APIServer.getErrorMessage;
+
 @RestController(path = "/restaurants")
 public class RestaurantController {
     private static final String RESTAURANT_SERVICE_URL = "http://localhost:8083/restaurants";
@@ -32,7 +34,7 @@ public class RestaurantController {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() > 204) {
-            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
+            throw new SSDBQueryProcessingException(response.statusCode(), getErrorMessage(response.body()));
         }
         return response.body();
     }
@@ -49,7 +51,7 @@ public class RestaurantController {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() > 204) {
-            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
+            throw new SSDBQueryProcessingException(response.statusCode(), getErrorMessage(response.body()));
         }
 
         return response.body();
@@ -81,7 +83,7 @@ public class RestaurantController {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() > 204) {
-            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
+            throw new SSDBQueryProcessingException(response.statusCode(), getErrorMessage(response.body()));
         }
         return response.body();
     }
@@ -98,7 +100,7 @@ public class RestaurantController {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() > 204) {
-            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
+            throw new SSDBQueryProcessingException(response.statusCode(), getErrorMessage(response.body()));
         }
 
         return response.body();

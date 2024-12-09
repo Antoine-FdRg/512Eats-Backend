@@ -10,6 +10,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import static team.k.APIServer.getErrorMessage;
+
 @RestController(path = "/management")
 public class ManageRestaurantController {
     private static final String MANAGE_RESTAURANT_SERVICE_URL = "http://localhost:8083/manage-restaurant";
@@ -26,7 +28,7 @@ public class ManageRestaurantController {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() > 204) {
-            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
+            throw new SSDBQueryProcessingException(response.statusCode(), getErrorMessage(response.body()));
         }
 
         return response.body();
@@ -44,7 +46,7 @@ public class ManageRestaurantController {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() > 204) {
-            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
+            throw new SSDBQueryProcessingException(response.statusCode(), getErrorMessage(response.body()));
         }
 
         return response.body();
@@ -61,7 +63,7 @@ public class ManageRestaurantController {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() > 204) {
-            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
+            throw new SSDBQueryProcessingException(response.statusCode(), getErrorMessage(response.body()));
         }
 
         return response.body();
@@ -79,7 +81,7 @@ public class ManageRestaurantController {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() > 204) {
-            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
+            throw new SSDBQueryProcessingException(response.statusCode(), getErrorMessage(response.body()));
         }
 
         return response.body();
