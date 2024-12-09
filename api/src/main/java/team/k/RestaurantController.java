@@ -57,6 +57,7 @@ public class RestaurantController {
         return response.body();
     }
 
+    //TODO fix this of the services endpoint
     @Endpoint(path = "/by", method = HttpMethod.GET)
     @ApiResponseExample(value = RestaurantDTO.class, isArray = true)
     public String getRestaurantBy(
