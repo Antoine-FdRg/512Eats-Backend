@@ -1,10 +1,12 @@
 package ssdbrestframework;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Getter
 public class SSDBQueryProcessingException extends Exception {
-    private final int statusCode;
+    private int statusCode;
     private String exception;
     public static final String MAL_FORMED_PARAMS = "Bad request, it is likely that the request parameters or body are not correctly formatted";
     public static final String INTERNAL_SERVER_ERROR = "Internal server error";

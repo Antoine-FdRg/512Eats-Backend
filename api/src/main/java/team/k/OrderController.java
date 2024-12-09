@@ -16,6 +16,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import static team.k.APIServer.getErrorMessage;
+
 @RestController(path = "/orders")
 public class OrderController {
     private static final String ORDER_SERVICE_URL = "http://localhost:8083/orders";
@@ -32,7 +34,7 @@ public class OrderController {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() > 204) {
-            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
+            throw new SSDBQueryProcessingException(response.statusCode(), getErrorMessage(response.body()));
         }
 
         return response.body();
@@ -57,7 +59,7 @@ public class OrderController {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 204) {
-                throw new SSDBQueryProcessingException(response.statusCode(), response.body());
+                throw new SSDBQueryProcessingException(response.statusCode(), getErrorMessage(response.body()));
             }
         } catch (IOException | InterruptedException e) {
             throw new SSDBQueryProcessingException(500, e.getMessage());
@@ -77,7 +79,7 @@ public class OrderController {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() > 204) {
-            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
+            throw new SSDBQueryProcessingException(response.statusCode(), getErrorMessage(response.body()));
         }
 
         return response.body();
@@ -95,7 +97,7 @@ public class OrderController {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() > 204) {
-            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
+            throw new SSDBQueryProcessingException(response.statusCode(), getErrorMessage(response.body()));
         }
 
         return response.body();
@@ -112,7 +114,7 @@ public class OrderController {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() > 204) {
-            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
+            throw new SSDBQueryProcessingException(response.statusCode(), getErrorMessage(response.body()));
         }
 
         return response.body();
@@ -129,7 +131,7 @@ public class OrderController {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() > 204) {
-            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
+            throw new SSDBQueryProcessingException(response.statusCode(), getErrorMessage(response.body()));
         }
 
         return response.body();
@@ -146,7 +148,7 @@ public class OrderController {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() > 204) {
-            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
+            throw new SSDBQueryProcessingException(response.statusCode(), getErrorMessage(response.body()));
         }
 
         return response.body();
