@@ -10,17 +10,25 @@ import ssdbrestframework.annotations.RestController;
 import team.k.service.ManageRestaurantService;
 import commonlibrary.dto.DishDTO;
 import commonlibrary.dto.ManagingRestaurantDTO;
-import commonlibrary.dto.RestaurantDTO;
+
 import commonlibrary.model.Dish;
 import ssdbrestframework.HttpMethod;
 import ssdbrestframework.SSDBQueryProcessingException;
 import ssdbrestframework.annotations.*;
-import team.k.service.ManageRestaurantService;
+
 
 @RestController(path = "/management")
 public class ManageRestaurantController {
 
 
+    /**
+     * Update the restaurant infos
+     *
+     * @param restaurantId          the id of the restaurant
+     * @param ManagingRestaurantDTO the new infos
+     * @return the updated restaurant
+     * @throws SSDBQueryProcessingException if the restaurant is not found
+     */
     @Endpoint(path = "/update-restaurant-infos", method = HttpMethod.POST)
     @Response(status = 204)
     public static RestaurantDTO updateRestaurantInfos(@RequestParam("restaurant-id") int restaurantId, @RequestBody ManagingRestaurantDTO ManagingRestaurantDTO) throws SSDBQueryProcessingException {
@@ -32,6 +40,14 @@ public class ManageRestaurantController {
 
     }
 
+    /**
+     * Add a dish to the restaurant
+     *
+     * @param restaurantId the id of the restaurant
+     * @param dishDTO   the dish to add
+     * @return the updated restaurant
+     * @throws SSDBQueryProcessingException if the restaurant is not found
+     */
     @Endpoint(path = "/add-dish", method = HttpMethod.POST)
     @Response(status = 201)
     public static RestaurantDTO addDish(@RequestParam("restaurant-id") int restaurantId, @RequestBody DishDTO dishDTO) throws SSDBQueryProcessingException {
@@ -45,6 +61,14 @@ public class ManageRestaurantController {
         ).restaurantToRestaurantDTO();
     }
 
+    /**
+     * Remove a dish from the restaurant
+     *
+     * @param restaurantId the id of the restaurant
+     * @param dishId  the id of the dish to remove
+     * @return the updated restaurant
+     * @throws SSDBQueryProcessingException if the dish is not found
+     */
     @Endpoint(path = "/remove-dish", method = HttpMethod.DELETE)
     @Response(status = 200)
     public static RestaurantDTO removeDish(@RequestParam("restaurant-id") int restaurantId, @RequestParam("dish-id") int dishId) throws SSDBQueryProcessingException {
@@ -54,6 +78,14 @@ public class ManageRestaurantController {
         ).restaurantToRestaurantDTO();
     }
 
+    /**
+     * Update a dish from the restaurant
+     *
+     * @param restaurantId the id of the restaurant
+     * @param dishDTO  the dish to update
+     * @return the updated restaurant
+     * @throws SSDBQueryProcessingException if the dish is not found
+     */
     @Endpoint(path = "/update-dish", method = HttpMethod.PUT)
     @Response(status = 204)
     public static RestaurantDTO updateDish(@RequestParam("restaurant-id") int restaurantId, @RequestBody DishDTO dishDTO) throws SSDBQueryProcessingException {
