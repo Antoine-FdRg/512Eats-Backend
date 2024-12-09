@@ -6,6 +6,12 @@ import commonlibrary.dto.GroupOrderDTO;
 import commonlibrary.dto.SubOrderDTO;
 import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.model.RegisteredUser;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,11 +26,15 @@ import java.util.List;
 @AllArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @NoArgsConstructor
+@Entity
 public class GroupOrder {
     public static final int GROUP_ORDER_CODE_LENGTH = 6;
+    @Id
     private int id;
     private LocalDateTime deliveryDateTime;
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
+    @OneToMany(mappedBy = "groupOrder", cascade = CascadeType.ALL, orphanRemoval = true) // Association
     private List<SubOrder> subOrders;
     private int deliveryLocationID;
 

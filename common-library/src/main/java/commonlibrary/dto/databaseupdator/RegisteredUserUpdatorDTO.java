@@ -5,7 +5,8 @@ import commonlibrary.model.order.SubOrder;
 
 import java.util.List;
 
-public record RegisteredUserUpdatorDTO(int id, String name, String role, Integer currentOrderID, List<Integer> orderIDs) {
+public record RegisteredUserUpdatorDTO(int id, String name, String role, Integer currentOrderID,
+                                       List<Integer> orderIDs) {
     public RegisteredUserUpdatorDTO(RegisteredUser registeredUser) {
         this(registeredUser.getId(),
                 registeredUser.getName(),

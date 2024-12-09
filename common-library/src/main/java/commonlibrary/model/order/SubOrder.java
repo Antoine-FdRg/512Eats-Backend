@@ -1,16 +1,24 @@
 package commonlibrary.model.order;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import commonlibrary.dto.DishDTO;
 import commonlibrary.dto.SubOrderDTO;
 import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.model.Dish;
 import commonlibrary.model.RegisteredUser;
+import commonlibrary.model.payment.Payment;
 import commonlibrary.model.restaurant.Restaurant;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import commonlibrary.model.payment.Payment;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -23,16 +31,24 @@ import java.util.List;
         getterVisibility = JsonAutoDetect.Visibility.NONE,
         setterVisibility = JsonAutoDetect.Visibility.NONE,
         isGetterVisibility = JsonAutoDetect.Visibility.NONE)
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class SubOrder {
+    @Id
     private int id;
     private double price;
     private int restaurantID;
     private int userID;
+    @ManyToMany
     private List<Dish> dishes;
     private OrderStatus status;
     private LocalDateTime placedDate;
     private LocalDateTime deliveryDate;
+    @OneToOne
     private Payment payment;
+    @JsonIgnore
+    @ManyToOne
+    private GroupOrder groupOrder;
 
     SubOrder(OrderBuilder orderBuilder) {
         this.id = orderBuilder.id;
@@ -60,6 +76,7 @@ public class SubOrder {
 
     /**
      * Remove a dish from the order and decrease the price of the order
+     *
      * @param dishID the id of the dish to remove
      * @return true if the dish was removed, false otherwise
      */
