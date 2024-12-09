@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import commonlibrary.model.Dish;
+import ssdbrestframework.SSDBQueryProcessingException;
 import team.k.repository.RestaurantRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import team.k.service.ManageRestaurantService;
@@ -51,12 +52,12 @@ public class ManagingRestaurant {
     }
 
     @When("the restaurant manager updates the open time to {string}")
-    public void theRestaurantManagerUpdatesTheOpenTimeTo(String open) {
+    public void theRestaurantManagerUpdatesTheOpenTimeTo(String open) throws SSDBQueryProcessingException {
         manageRestaurantService.updateRestaurantInfos(1, open, null);
     }
 
     @When("the restaurant manager updates the closed time to {string}")
-    public void theRestaurantManagerUpdatesTheClosedTimeTo(String closed) {
+    public void theRestaurantManagerUpdatesTheClosedTimeTo(String closed) throws SSDBQueryProcessingException {
         manageRestaurantService.updateRestaurantInfos(1, null, closed);
     }
 
@@ -67,7 +68,7 @@ public class ManagingRestaurant {
     }
 
     @When("the restaurant manager adds a new dish {string} with price {double}")
-    public void theRestaurantManagerAddsANewDishWithPrice(String dishName, double dishPrice) {
+    public void theRestaurantManagerAddsANewDishWithPrice(String dishName, double dishPrice) throws SSDBQueryProcessingException {
         manageRestaurantService.addDish(1, dishName, "Description", dishPrice, 0);
         this.dishAdded = nagaRestaurant.getDishes().stream().filter(d -> d.getName().equals(dishName)).findFirst().orElse(null).getId();
     }
@@ -79,7 +80,7 @@ public class ManagingRestaurant {
     }
 
     @And("the restaurant manager removes the dish recently added")
-    public void theRestaurantManagerRemovesTheDish() {
+    public void theRestaurantManagerRemovesTheDish() throws SSDBQueryProcessingException {
         manageRestaurantService.removeDish(1, this.dishAdded);
     }
 
@@ -89,12 +90,12 @@ public class ManagingRestaurant {
     }
 
     @And("the restaurant manager updates the dish {int} price to {double}")
-    public void theRestaurantManagerUpdatesTheDishPriceTo(int dishId, double newPrice) {
+    public void theRestaurantManagerUpdatesTheDishPriceTo(int dishId, double newPrice) throws SSDBQueryProcessingException {
         manageRestaurantService.updateDish(1, dishId, newPrice, 0);
     }
 
     @And("the restaurant manager updates a dish with price to {double} with preparation time {int}")
-    public void theRestaurantManagerUpdatesTheDishPriceToWithPreparationTime(double price, int preparationTime) {
+    public void theRestaurantManagerUpdatesTheDishPriceToWithPreparationTime(double price, int preparationTime) throws SSDBQueryProcessingException {
         Dish dish = nagaRestaurant.getDishes().stream().findFirst().orElse(null);
         assertNotNull(dish);
         this.dishUpdated = dish.getId();
