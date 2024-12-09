@@ -41,14 +41,14 @@ public class OrderController {
     }
 
     @Endpoint(path = "/remove-dish", method = HttpMethod.DELETE)
-    @ApiResponseExample(value=void.class)
+    @ApiResponseExample(value = void.class)
     @Response(status = 204, message = "Dish removed from order successfully")
     public void removeDish(@RequestParam("order-id") String orderId, @RequestParam("dish-id") String dishId) throws SSDBQueryProcessingException {
-        if(orderId == null){
-            throw new SSDBQueryProcessingException(400,"Order ID is required");
+        if (orderId == null) {
+            throw new SSDBQueryProcessingException(400, "Order ID is required");
         }
-        if(dishId == null){
-            throw new SSDBQueryProcessingException(400,"Dish ID is required");
+        if (dishId == null) {
+            throw new SSDBQueryProcessingException(400, "Dish ID is required");
         }
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -68,7 +68,7 @@ public class OrderController {
 
 
     @Endpoint(path = "/dishes", method = HttpMethod.GET)
-    @ApiResponseExample(value= Dish.class, isArray = true)
+    @ApiResponseExample(value = Dish.class, isArray = true)
     public String getDishes(@RequestParam("order-id") String orderId) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -86,7 +86,7 @@ public class OrderController {
     }
 
     @Endpoint(path = "/available-dishes", method = HttpMethod.GET)
-    @ApiResponseExample(value= Dish.class, isArray = true)
+    @ApiResponseExample(value = Dish.class, isArray = true)
     public String getAvailableDishes(@RequestParam("order-id") String orderId) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -154,12 +154,29 @@ public class OrderController {
         return response.body();
     }
 
-    @Endpoint(path="/individual-order", method = HttpMethod.POST)
+    @Endpoint(path = "/individual-order", method = HttpMethod.POST)
     public String createIndividualOrder(@RequestBody String createIndividualOrderRequest) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI(ORDER_SERVICE_URL + "/individual-order"))
                 .POST(HttpRequest.BodyPublishers.ofString(createIndividualOrderRequest))
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() > 204) {
+            throw new SSDBQueryProcessingException(response.statusCode(), response.body());
+        }
+
+        return response.body();
+    }
+
+    @Endpoint(path = "/get/sub-order", method = HttpMethod.GET)
+    public String getSubOrder(@RequestParam("order-id") String orderId) throws Exception {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(ORDER_SERVICE_URL + "/get/sub-order?order-id=" + orderId))
+                .GET()
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
