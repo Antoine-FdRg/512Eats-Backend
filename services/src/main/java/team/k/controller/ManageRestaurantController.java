@@ -27,6 +27,7 @@ public class ManageRestaurantController {
      * @param restaurantId          the id of the restaurant
      * @param ManagingRestaurantDTO the new infos
      * @return the updated restaurant
+     * @throws SSDBQueryProcessingException if the restaurant is not found
      */
     @Endpoint(path = "/update-restaurant-infos", method = HttpMethod.POST)
     @Response(status = 204)
@@ -42,9 +43,10 @@ public class ManageRestaurantController {
     /**
      * Add a dish to the restaurant
      *
-     * @param restaurantId
-     * @param dishDTO
+     * @param restaurantId the id of the restaurant
+     * @param dishDTO   the dish to add
      * @return the updated restaurant
+     * @throws SSDBQueryProcessingException if the restaurant is not found
      */
     @Endpoint(path = "/add-dish", method = HttpMethod.POST)
     @Response(status = 201)
@@ -62,9 +64,10 @@ public class ManageRestaurantController {
     /**
      * Remove a dish from the restaurant
      *
-     * @param restaurantId
-     * @param dishId
+     * @param restaurantId the id of the restaurant
+     * @param dishId  the id of the dish to remove
      * @return the updated restaurant
+     * @throws SSDBQueryProcessingException if the dish is not found
      */
     @Endpoint(path = "/remove-dish", method = HttpMethod.DELETE)
     @Response(status = 200)
@@ -78,9 +81,10 @@ public class ManageRestaurantController {
     /**
      * Update a dish from the restaurant
      *
-     * @param restaurantId
-     * @param dishDTO
+     * @param restaurantId the id of the restaurant
+     * @param dishDTO  the dish to update
      * @return the updated restaurant
+     * @throws SSDBQueryProcessingException if the dish is not found
      */
     @Endpoint(path = "/update-dish", method = HttpMethod.PUT)
     @Response(status = 204)
