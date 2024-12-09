@@ -6,6 +6,7 @@ import commonlibrary.model.order.GroupOrder;
 import commonlibrary.model.order.SubOrder;
 import commonlibrary.repository.GroupOrderJPARepository;
 import commonlibrary.repository.LocationJPARepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import commonlibrary.model.restaurant.Restaurant;
@@ -37,6 +38,7 @@ public class GroupOrderService {
      * @param now the current time
      * @return the id of the created group order to share with friends
      */
+    @Transactional
     public int createGroupOrder(int deliveryLocationId, LocalDateTime deliveryDateTime, LocalDateTime now){
         Location location = locationJPARepository.getReferenceById((long) deliveryLocationId);
         if (location == null) {
@@ -66,6 +68,7 @@ public class GroupOrderService {
      * @param deliveryDateTime the delivery datetime for the group order
      * @param now the current time (to ensure that the chosen deliveryDateTime is not too early
      */
+    @Transactional
     public void modifyGroupOrderDeliveryDateTime(int groupOrderId, LocalDateTime deliveryDateTime, LocalDateTime now){
 
         if (Objects.isNull(deliveryDateTime)) {
@@ -87,6 +90,7 @@ public class GroupOrderService {
         groupOrder.setDeliveryDateTime(deliveryDateTime);
     }
 
+    @Transactional
     public void place(int groupOrderId, LocalDateTime now) {
         GroupOrder groupOrder = groupOrderJPARepository.findById((long) groupOrderId).orElse(null);
         if (Objects.isNull(groupOrder)) {
@@ -110,7 +114,8 @@ public class GroupOrderService {
         });
     }
 
-    private static void placeSubOrder(int subOrderId) {
+    @Transactional
+    protected void placeSubOrder(int subOrderId) {
         SubOrder subOrder = SubOrderRepository.findById(subOrderId);
         if (Objects.isNull(subOrder)) {
             throw new NoSuchElementException("Suborder not found");
