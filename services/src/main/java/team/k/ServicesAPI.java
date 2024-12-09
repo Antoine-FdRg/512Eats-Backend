@@ -16,6 +16,7 @@ import team.k.repository.*;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Random;
 
 public class ServicesAPI {
     public static void main(String[] args) {
@@ -30,6 +31,7 @@ public class ServicesAPI {
         initGroupOrderData();
         initRestaurantData();
         initDishData();
+        initTimeSlot();
     }
 
     private static void initGroupOrderData() {
@@ -277,9 +279,9 @@ public class ServicesAPI {
                 .setDishes(initDishData())
                 .build();
 
-        TimeSlot timeSlot = new TimeSlot(LocalDateTime.of(2024, 12, 18, 12, 0), restaurant, restaurant.getAverageOrderPreparationTime());
-        restaurant.addTimeSlot(timeSlot);
         RestaurantRepository.add(restaurant);
+
+
         Restaurant restaurantBurger = new Restaurant.Builder()
                 .setName("512EatBurger")
                 .setDescription("Restaurant de burger")
@@ -300,9 +302,9 @@ public class ServicesAPI {
                 ))
                 .build();
 
-        TimeSlot timeSlot2 = new TimeSlot(LocalDateTime.of(2024, 12, 18, 12, 0), restaurantBurger, restaurantBurger.getAverageOrderPreparationTime());
-        restaurantBurger.addTimeSlot(timeSlot2);
         RestaurantRepository.add(restaurantBurger);
+
+
         Restaurant restaurantSushi = new Restaurant.Builder()
                 .setName("512EatSushi")
                 .setDescription("Restaurant de sushi")
@@ -322,9 +324,8 @@ public class ServicesAPI {
                 ))
                 .build();
 
-        TimeSlot timeSlot3 = new TimeSlot(LocalDateTime.of(2024, 12, 18, 12, 0), restaurantSushi, restaurantSushi.getAverageOrderPreparationTime());
-        restaurantSushi.addTimeSlot(timeSlot3);
         RestaurantRepository.add(restaurantSushi);
+
 
         Restaurant restaurantPizza = new Restaurant.Builder()
                 .setName("512EatPizza")
@@ -347,10 +348,8 @@ public class ServicesAPI {
                 ))
                 .build();
 
-
-        TimeSlot timeSlot4 = new TimeSlot(LocalDateTime.of(2024, 12, 18, 12, 0), restaurantPizza, restaurantPizza.getAverageOrderPreparationTime());
-        restaurantPizza.addTimeSlot(timeSlot4);
         RestaurantRepository.add(restaurantPizza);
+
 
         Restaurant restaurantChinois = new Restaurant.Builder()
                 .setName("512EatChinois")
@@ -373,10 +372,8 @@ public class ServicesAPI {
                 ))
                 .build();
 
-
-        TimeSlot timeSlot5 = new TimeSlot(LocalDateTime.of(2024, 12, 18, 12, 0), restaurantPizza, restaurantPizza.getAverageOrderPreparationTime());
-        restaurantChinois.addTimeSlot(timeSlot5);
         RestaurantRepository.add(restaurantChinois);
+
 
         Restaurant restaurantHealthy = new Restaurant.Builder()
                 .setName("512EatSalade")
@@ -400,10 +397,27 @@ public class ServicesAPI {
                 ))
                 .build();
 
-
-        TimeSlot timeSlot6 = new TimeSlot(LocalDateTime.of(2024, 12, 18, 12, 0), restaurantPizza, restaurantPizza.getAverageOrderPreparationTime());
-        restaurantHealthy.addTimeSlot(timeSlot6);
         RestaurantRepository.add(restaurantHealthy);
 
     }
+
+    private static void initTimeSlot() {
+        List<Restaurant> restaurants = RestaurantRepository.findAll();
+        for (Restaurant restaurant : restaurants) {
+            LocalTime open = restaurant.getOpen();
+            LocalTime close = restaurant.getClose();
+            LocalDateTime currentSlotStart = LocalDateTime.of(2024, 12, 18, open.getHour(), open.getMinute());
+
+            while (currentSlotStart.toLocalTime().isBefore(close)) {
+                Random random = new Random();
+                int randomNumber = random.nextInt(7) + 1;
+                TimeSlot timeSlot = new TimeSlot(currentSlotStart, restaurant, randomNumber);
+                restaurant.addTimeSlot(timeSlot);
+
+                // Passer au prochain créneau de 30 minutes
+                currentSlotStart = currentSlotStart.plusMinutes(30);
+            }
+        }
+    }
+
 }
