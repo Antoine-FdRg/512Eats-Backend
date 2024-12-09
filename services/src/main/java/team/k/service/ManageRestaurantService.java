@@ -1,17 +1,28 @@
 package team.k.service;
 
 import commonlibrary.model.Dish;
+import commonlibrary.repository.RestaurantJPARepository;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ssdbrestframework.SSDBQueryProcessingException;
 import team.k.repository.RestaurantRepository;
 import commonlibrary.model.restaurant.Restaurant;
 
 import java.time.LocalTime;
 
-
+@Service
 public class ManageRestaurantService {
-    private static final String RESTAURANT_NOT_FOUND = "Restaurant not found";
+    private final String RESTAURANT_NOT_FOUND = "Restaurant not found";
+    private RestaurantJPARepository restaurantJPARepository;
+    
+    @Autowired
+    public ManageRestaurantService(RestaurantJPARepository restaurantJPARepository) {
+        this.restaurantJPARepository = restaurantJPARepository;
+    }
 
-    public static Restaurant updateRestaurantInfos(int restaurantId, String openTime, String closeTime) throws SSDBQueryProcessingException {
+    @Transactional
+    public Restaurant updateRestaurantInfos(int restaurantId, String openTime, String closeTime) throws SSDBQueryProcessingException {
         Restaurant restaurant = restaurantValidator(restaurantId);
         if (openTime != null) {
             restaurant.setOpen(LocalTime.parse(openTime));
@@ -22,7 +33,8 @@ public class ManageRestaurantService {
         return restaurant;
     }
 
-    public static Restaurant addDish(int restaurantId, String dishName, String dishDescription, double dishPrice, int dishPreparationTime) throws SSDBQueryProcessingException {
+    @Transactional
+    public Restaurant addDish(int restaurantId, String dishName, String dishDescription, double dishPrice, int dishPreparationTime) throws SSDBQueryProcessingException {
         Restaurant restaurant = restaurantValidator(restaurantId);
         restaurant.addDish(new Dish.Builder()
                 .setName(dishName)
@@ -34,13 +46,15 @@ public class ManageRestaurantService {
         return restaurant;
     }
 
-    public static Restaurant removeDish(int restaurantId, int dishId) throws SSDBQueryProcessingException {
+    @Transactional
+    public Restaurant removeDish(int restaurantId, int dishId) throws SSDBQueryProcessingException {
         Restaurant restaurant = restaurantValidator(restaurantId);
         restaurant.removeDish(dishId);
         return restaurant;
     }
 
-    public static Restaurant updateDish(int restaurantId, int dishId, double newDishPrice, int newDishPreparationTime) throws SSDBQueryProcessingException {
+    @Transactional
+    public Restaurant updateDish(int restaurantId, int dishId, double newDishPrice, int newDishPreparationTime) throws SSDBQueryProcessingException {
         Restaurant restaurant = restaurantValidator(restaurantId);
         Dish dish = restaurant.getDishes().stream().filter(d -> d.getId() == dishId).findFirst().orElse(null);
         if (dish == null) {
@@ -56,8 +70,8 @@ public class ManageRestaurantService {
 
     }
 
-    private static Restaurant restaurantValidator(int restaurantId) throws SSDBQueryProcessingException {
-        Restaurant restaurant = RestaurantRepository.findById(restaurantId);
+    private Restaurant restaurantValidator(int restaurantId) throws SSDBQueryProcessingException {
+        Restaurant restaurant = restaurantJPARepository.findById((long)restaurantId).orElse(null);
         if (restaurant == null) {
             throw new SSDBQueryProcessingException(404, RESTAURANT_NOT_FOUND);
         }
@@ -69,11 +83,13 @@ public class ManageRestaurantService {
      *
      * @param restaurant the restaurant to add
      */
-    public static void addRestaurant(Restaurant restaurant) {
-        RestaurantRepository.add(restaurant);
+    @Transactional
+    public void addRestaurant(Restaurant restaurant) {
+        restaurantJPARepository.save(restaurant);
     }
 
-    public static void deleteRestaurant(int restaurantId) {
-        RestaurantRepository.delete(restaurantId);
+    @Transactional
+    public void deleteRestaurant(int restaurantId) {
+        restaurantJPARepository.deleteById((long)restaurantId);
     }
 }
