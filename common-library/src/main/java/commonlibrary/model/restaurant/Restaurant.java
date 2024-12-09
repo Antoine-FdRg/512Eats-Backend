@@ -54,14 +54,14 @@ public class Restaurant {
     private List<Dish> dishes;
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "food_types", joinColumns = @JoinColumn(name = "food_type_id"))
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<FoodType> foodTypes;
     @OneToOne(fetch = FetchType.EAGER)
     private DiscountStrategy discountStrategy;
     private int averageOrderPreparationTime;
     private String description;
     @CollectionTable(name = "url_picture", joinColumns = @JoinColumn(name = "url_picture_id"))
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> urlPicture;
 
     private Restaurant(Builder builder) {
