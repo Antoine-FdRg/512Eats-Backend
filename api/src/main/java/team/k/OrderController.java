@@ -20,7 +20,7 @@ import static team.k.APIServer.getErrorMessage;
 
 @RestController(path = "/orders")
 public class OrderController {
-    private static final String ORDER_SERVICE_URL = "http://localhost:8083/orders";
+    private static final String ORDER_SERVICE_URL = "http://localhost:8086/orders";
 
 
     @Endpoint(path = "/add-dish", method = HttpMethod.POST)

@@ -1,4 +1,4 @@
-package team.k.service;
+package team.k.restaurantservice;
 
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.Dish;

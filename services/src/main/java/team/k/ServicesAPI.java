@@ -14,8 +14,6 @@ import commonlibrary.repository.LocationJPARepository;
 import commonlibrary.repository.RegisteredUserJPARepository;
 import commonlibrary.repository.RestaurantJPARepository;
 import commonlibrary.repository.TimeSlotJPARepository;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Service;
 import ssdbrestframework.SSDBHttpServer;
@@ -44,8 +42,8 @@ public class ServicesAPI {
         dishJPARepository = context.getBean(DishJPARepository.class);
         restaurantJPARepository = context.getBean(RestaurantJPARepository.class);
         timeSlotJPARepository = context.getBean(TimeSlotJPARepository.class);
-        SSDBHttpServer serv = new SSDBHttpServer(8083, "team.k.controller", "services/", context);
-//        initDataset();
+        SSDBHttpServer serv = new SSDBHttpServer(8084, "team.k.controller", "services/", context);
+        initDataset();
         serv.start();
     }
 

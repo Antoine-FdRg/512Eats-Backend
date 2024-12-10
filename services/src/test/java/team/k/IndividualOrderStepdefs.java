@@ -21,7 +21,7 @@ import team.k.repository.TimeSlotRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
 import team.k.orderservice.OrderService;
-import team.k.service.RestaurantService;
+import team.k.restaurantservice.RestaurantService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

@@ -14,7 +14,7 @@ import static team.k.APIServer.getErrorMessage;
 
 @RestController(path = "/management")
 public class ManageRestaurantController {
-    private static final String MANAGE_RESTAURANT_SERVICE_URL = "http://localhost:8083/manage-restaurant";
+    private static final String MANAGE_RESTAURANT_SERVICE_URL = "http://localhost:8084/manage-restaurant";
 
     @Endpoint(path = "/update-restaurant-infos", method = HttpMethod.POST)
     @ApiResponseExample(value = RestaurantDTO.class)

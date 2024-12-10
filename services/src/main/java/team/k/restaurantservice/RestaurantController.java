@@ -1,4 +1,4 @@
-package team.k.controller;
+package team.k.restaurantservice;
 
 import commonlibrary.dto.DishDTO;
 import commonlibrary.dto.RestaurantDTO;
@@ -13,7 +13,6 @@ import ssdbrestframework.annotations.PathVariable;
 import ssdbrestframework.annotations.RequestParam;
 import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
-import team.k.service.RestaurantService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
