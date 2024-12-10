@@ -20,7 +20,7 @@ import team.k.repository.LocationRepository;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
 import team.k.repository.SubOrderRepository;
-import team.k.service.GroupOrderService;
+import team.k.grouporderservice.GroupOrderService;
 import team.k.service.OrderService;
 
 import java.time.LocalDate;

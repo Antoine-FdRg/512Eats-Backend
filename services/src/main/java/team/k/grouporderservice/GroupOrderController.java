@@ -1,4 +1,4 @@
-package team.k.controller;
+package team.k.grouporderservice;
 
 import commonlibrary.dto.GroupOrderDTO;
 import commonlibrary.model.order.GroupOrder;
@@ -10,7 +10,6 @@ import ssdbrestframework.annotations.PathVariable;
 import ssdbrestframework.annotations.RequestParam;
 import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
-import team.k.service.GroupOrderService;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
