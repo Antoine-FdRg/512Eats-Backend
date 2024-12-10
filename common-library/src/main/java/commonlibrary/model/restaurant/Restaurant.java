@@ -93,7 +93,6 @@ public class Restaurant {
                 || deliveryTimeWanted.toLocalTime().isAfter(close.plusMinutes(DELIVERY_DURATION))) {
             return false;
         }
-        //TODO available timeslots nto works in tests
         // Check if the restaurant has a time slot available 20 minutes (of delivery) before the chosen time
         TimeSlot currentTimeSlot = getPreviousTimeSlot(deliveryTimeWanted.minusMinutes(DELIVERY_DURATION));
         if (currentTimeSlot == null) {
