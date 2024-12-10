@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:13.18
+    container_name: 512east-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: myuser          # Nom d'utilisateur PostgreSQL
+      POSTGRES_PASSWORD: mypassword  # Mot de passe PostgreSQL
+      POSTGRES_DB: 512eats-database        # Base de données initiale
+    ports:
+      - "5432:5432"                  # Expose le port 5432

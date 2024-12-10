@@ -47,6 +47,11 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
             <version>3.3.3</version> <!-- Vérifie la compatibilité avec ta version de Java -->
         </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.3</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
