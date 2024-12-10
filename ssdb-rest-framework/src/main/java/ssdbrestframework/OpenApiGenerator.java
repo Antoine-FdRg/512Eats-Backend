@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 import ssdbrestframework.annotations.ApiResponseExample;
 import ssdbrestframework.annotations.Endpoint;
+import ssdbrestframework.annotations.RequestBody;
 import ssdbrestframework.annotations.RequestParam;
 import ssdbrestframework.annotations.RestController;
 
@@ -72,6 +73,26 @@ public class OpenApiGenerator {
                             paramSpec.set("schema", schema);
                             parameters.add(paramSpec);
                         }
+
+                        if (param.isAnnotationPresent(RequestBody.class)) {
+                            ObjectNode requestBody = objectMapper.createObjectNode();
+                            requestBody.put("description", "Request body for " + method.getName());
+
+                            ObjectNode content = objectMapper.createObjectNode();
+                            ObjectNode jsonSchema = objectMapper.createObjectNode();
+
+                            Class<?> bodyType = param.getType();
+                            if (isSimpleType(bodyType)) {
+                                jsonSchema.put("type", getType(bodyType));
+                            } else {
+                                addSchemaForClass(components, bodyType, objectMapper, false);
+                                jsonSchema.put("$ref", COMPONENTS_SCHEMAS + bodyType.getSimpleName());
+                            }
+
+                            content.set("application/json", objectMapper.createObjectNode().set("schema", jsonSchema));
+                            requestBody.set("content", content);
+                            operation.set("requestBody", requestBody);
+                        }
                     }
                     operation.set("parameters", parameters);
 
@@ -100,12 +121,15 @@ public class OpenApiGenerator {
                             jsonSchema.put("$ref", COMPONENTS_SCHEMAS + (isArray ? modelClass.getSimpleName() + "List" : modelClass.getSimpleName()));
                         }
 
+
+
                         content.set("application/json", objectMapper.createObjectNode().set("schema", jsonSchema));
 
                         successResponse.set("content", content);
                         responses.set("200", successResponse);
                         operation.set("responses", responses);
                     }
+
 
                     pathItem.set(endpoint.method().toString().toLowerCase(), operation);
 
