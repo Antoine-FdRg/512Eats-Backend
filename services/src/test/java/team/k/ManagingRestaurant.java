@@ -12,7 +12,7 @@ import commonlibrary.model.Dish;
 import ssdbrestframework.SSDBQueryProcessingException;
 import team.k.repository.RestaurantRepository;
 import commonlibrary.model.restaurant.Restaurant;
-import team.k.service.ManageRestaurantService;
+import team.k.managementservice.ManageRestaurantService;
 
 import java.time.LocalTime;
 import java.util.Map;

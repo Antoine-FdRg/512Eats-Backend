@@ -1,4 +1,4 @@
-package team.k.controller;
+package team.k.managementservice;
 
 import commonlibrary.dto.RestaurantDTO;
 import commonlibrary.model.restaurant.Restaurant;
@@ -9,7 +9,6 @@ import ssdbrestframework.annotations.PathVariable;
 import ssdbrestframework.annotations.RequestBody;
 import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
-import team.k.service.ManageRestaurantService;
 import commonlibrary.dto.DishDTO;
 import commonlibrary.dto.ManagingRestaurantDTO;
 

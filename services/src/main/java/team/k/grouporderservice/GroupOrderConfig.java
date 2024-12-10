@@ -18,7 +18,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@ComponentScan(basePackages = {"commonlibrary","team.k.service","team.k.grouporderservice"}) // Scanne les modèles et repositories
+@ComponentScan(basePackages = {"commonlibrary","team.k.grouporderservice"}) // Scanne les modèles et repositories
 @EnableJpaRepositories(basePackages = {"commonlibrary.repository"}) // Active les repositories
 public class GroupOrderConfig {
 

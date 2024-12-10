@@ -12,7 +12,7 @@ import org.mockito.MockitoAnnotations;
 import team.k.repository.DishRepository;
 import team.k.repository.RestaurantRepository;
 import commonlibrary.model.restaurant.Restaurant;
-import team.k.service.ManageRestaurantService;
+import team.k.managementservice.ManageRestaurantService;
 import team.k.restaurantservice.RestaurantService;
 
 import java.time.LocalTime;

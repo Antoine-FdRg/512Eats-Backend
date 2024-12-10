@@ -1,4 +1,4 @@
-package team.k;
+package team.k.managementservice;
 
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.context.annotation.Bean;
@@ -18,9 +18,9 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@ComponentScan(basePackages = {"commonlibrary","team.k.service","team.k.controller"}) // Scanne les modèles et repositories
+@ComponentScan(basePackages = {"commonlibrary","team.k.managementservice"}) // Scanne les modèles et repositories
 @EnableJpaRepositories(basePackages = {"commonlibrary.repository"}) // Active les repositories
-public class AppConfig {
+public class ManagementConfig {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {

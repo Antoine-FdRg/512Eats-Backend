@@ -1,4 +1,4 @@
-package team.k.service;
+package team.k.managementservice;
 
 import commonlibrary.model.Dish;
 import commonlibrary.repository.RestaurantJPARepository;
@@ -6,7 +6,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ssdbrestframework.SSDBQueryProcessingException;
-import team.k.repository.RestaurantRepository;
 import commonlibrary.model.restaurant.Restaurant;
 
 import java.time.LocalTime;

@@ -1,4 +1,4 @@
-package team.k;
+package team.k.managementservice;
 
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.enumerations.Role;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Random;
 
 @Service
-public class ServicesAPI {
+public class ManagementAPI {
 
     public static LocationJPARepository locationJPARepository;
     public static GroupOrderJPARepository groupOrderJPARepository;
@@ -35,14 +35,14 @@ public class ServicesAPI {
     private static AnnotationConfigApplicationContext context;
 
     public static void main(String[] args) {
-        context = new AnnotationConfigApplicationContext(AppConfig.class);
+        context = new AnnotationConfigApplicationContext(ManagementConfig.class);
         locationJPARepository = context.getBean(LocationJPARepository.class);
         groupOrderJPARepository = context.getBean(GroupOrderJPARepository.class);
         registeredUserJPARepository = context.getBean(RegisteredUserJPARepository.class);
         dishJPARepository = context.getBean(DishJPARepository.class);
         restaurantJPARepository = context.getBean(RestaurantJPARepository.class);
         timeSlotJPARepository = context.getBean(TimeSlotJPARepository.class);
-        SSDBHttpServer serv = new SSDBHttpServer(8084, "team.k.controller", "services/", context);
+        SSDBHttpServer serv = new SSDBHttpServer(8084, "team.k.managementservice", "managementservice/", context);
         initDataset();
         serv.start();
     }

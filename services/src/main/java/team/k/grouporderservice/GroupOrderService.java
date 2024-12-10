@@ -46,7 +46,7 @@ public class GroupOrderService {
      */
     @Transactional
     public int createGroupOrder(int deliveryLocationId, LocalDateTime deliveryDateTime, LocalDateTime now){
-        Location location = locationJPARepository.getReferenceById((long) deliveryLocationId);
+        Location location = locationJPARepository.findById((long) deliveryLocationId).orElse(null);
         if (location == null) {
             throw new NoSuchElementException("Location not found");
         }
