@@ -67,10 +67,10 @@ public class RestaurantController {
      * @param day the specific day
      * @return the list of available delivery times
      */
-    @Endpoint(path = "/get/delivery-times/{restaurantId}/delivery-times/{day}", method = ssdbrestframework.HttpMethod.GET)
+    @Endpoint(path = "/get/delivery-times/{restaurantId}", method = ssdbrestframework.HttpMethod.GET)
     @Response(status = 200) // OK
     public List<LocalDateTime> getAvailableDeliveryTimes(
-            @PathVariable("restaurantId") int restaurantId, @PathVariable("day") LocalDate day
+            @PathVariable("restaurantId") int restaurantId, @RequestParam("day") LocalDate day
     ) throws SSDBQueryProcessingException {
         try {
             return restaurantService.getAllAvailableDeliveryTimesOfRestaurantOnDay(restaurantId, day);
