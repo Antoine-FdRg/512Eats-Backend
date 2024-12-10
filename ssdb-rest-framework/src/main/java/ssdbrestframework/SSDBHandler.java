@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -245,6 +246,9 @@ public class SSDBHandler implements HttpHandler {
      */
     private Object parseRequestBody(InputStream requestBody, Class<?> targetType) throws SSDBQueryProcessingException {
         try {
+            if (targetType == String.class) {
+                return new String(requestBody.readAllBytes(), StandardCharsets.UTF_8);
+            }
             return objectMapper.readValue(requestBody, targetType);
         } catch (IOException e) {
             throw new SSDBQueryProcessingException(SSDBResponse.BAD_REQUEST, SSDBQueryProcessingException.MAL_FORMED_PARAMS, e.getMessage());

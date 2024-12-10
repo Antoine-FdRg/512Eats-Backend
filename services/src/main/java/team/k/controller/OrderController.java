@@ -9,7 +9,6 @@ import team.k.repository.RestaurantRepository;
 import team.k.service.OrderService;
 
 import commonlibrary.dto.DishDTO;
-import commonlibrary.dto.IndividualOrderDTO;
 import commonlibrary.model.Dish;
 import team.k.service.RestaurantService;
 
@@ -22,6 +21,10 @@ import java.util.stream.Collectors;
 
 @RestController(path = "/orders")
 public class OrderController {
+    public record createIndividualOrderRequest(int userId, int restaurantId, int deliveryLocationId,
+                                               String deliveryDateTime) {
+    }
+
     /**
      * Create an individual order
      *
@@ -31,10 +34,10 @@ public class OrderController {
     @Endpoint(path = "/individual-order", method = HttpMethod.POST)
     @ApiResponseExample(value = int.class)
     @Response(status = 201) // Created
-    public int createIndividualOrder(@RequestBody IndividualOrderDTO individualOrderDTO) throws SSDBQueryProcessingException {
+    public int createIndividualOrder(@RequestBody createIndividualOrderRequest individualOrderDTO) throws SSDBQueryProcessingException {
         try {
             LocalDateTime deliveryDateTime = LocalDateTime.parse(individualOrderDTO.deliveryDateTime());
-            return OrderService.createIndividualOrder(individualOrderDTO.userId(), individualOrderDTO.restaurantId(), individualOrderDTO.deliveryLocation().id(), deliveryDateTime, LocalDateTime.now());
+            return OrderService.createIndividualOrder(individualOrderDTO.userId(), individualOrderDTO.restaurantId(), individualOrderDTO.deliveryLocationId(), deliveryDateTime, LocalDateTime.now());
         } catch (IllegalArgumentException e) {
             throw new SSDBQueryProcessingException(400, e.getMessage());
         } catch (NoSuchElementException e) {
