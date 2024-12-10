@@ -6,13 +6,13 @@ import commonlibrary.model.order.GroupOrder;
 import commonlibrary.model.order.SubOrder;
 import commonlibrary.repository.GroupOrderJPARepository;
 import commonlibrary.repository.LocationJPARepository;
+import commonlibrary.repository.RegisteredUserJPARepository;
+import commonlibrary.repository.RestaurantJPARepository;
+import commonlibrary.repository.SubOrderJPARepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import commonlibrary.model.restaurant.Restaurant;
-import team.k.repository.RegisteredUserRepository;
-import team.k.repository.RestaurantRepository;
-import team.k.repository.SubOrderRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,11 +23,17 @@ import java.util.Objects;
 public class GroupOrderService {
     private final LocationJPARepository locationJPARepository;
     private final GroupOrderJPARepository groupOrderJPARepository;
+    private final RegisteredUserJPARepository registeredUserJPARepository;
+    private final SubOrderJPARepository subOrderJPARepository;
+    private final RestaurantJPARepository restaurantJPARepository;
 
     @Autowired
-    GroupOrderService(LocationJPARepository locationJPARepository, GroupOrderJPARepository groupOrderJPARepository) {
+    GroupOrderService(LocationJPARepository locationJPARepository, GroupOrderJPARepository groupOrderJPARepository, RegisteredUserJPARepository registeredUserJPARepository, SubOrderJPARepository subOrderJPARepository, RestaurantJPARepository restaurantJPARepository) {
         this.locationJPARepository = locationJPARepository;
         this.groupOrderJPARepository = groupOrderJPARepository;
+        this.registeredUserJPARepository = registeredUserJPARepository;
+        this.subOrderJPARepository = subOrderJPARepository;
+        this.restaurantJPARepository = restaurantJPARepository;
     }
 
 
@@ -96,6 +102,9 @@ public class GroupOrderService {
         if (Objects.isNull(groupOrder)) {
             throw new NoSuchElementException("Group order not found");
         }
+        if(groupOrder.getSubOrders().isEmpty()){
+            throw new UnsupportedOperationException("Group order must have at least one suborder to be placed");
+        }
         LocalDateTime deliveryDateTime = groupOrder.getDeliveryDateTime();
         if (Objects.isNull(deliveryDateTime)) {
             throw new UnsupportedOperationException("The group order delivery datetime must be set before placing the order");
@@ -103,9 +112,11 @@ public class GroupOrderService {
         if (deliveryDateTime.isBefore(now)) {
             throw new NoSuchElementException("Delivery time cannot be in the past");
         }
+
         List<RegisteredUser> members = groupOrder.getSubOrders().stream()
                 .map(SubOrder::getUserID)
-                .map(RegisteredUserRepository::findById)
+                .map(id->registeredUserJPARepository.findById((long)id).orElse(null))
+                .filter(Objects::nonNull)
                 .toList();
         groupOrder.place(now, members);
         groupOrder.getSubOrders().forEach(subOrder -> {
@@ -116,11 +127,11 @@ public class GroupOrderService {
 
     @Transactional
     protected void placeSubOrder(int subOrderId) {
-        SubOrder subOrder = SubOrderRepository.findById(subOrderId);
+        SubOrder subOrder = subOrderJPARepository.findById((long)subOrderId).orElse(null);
         if (Objects.isNull(subOrder)) {
             throw new NoSuchElementException("Suborder not found");
         }
-        Restaurant restaurant = RestaurantRepository.findById(subOrder.getRestaurantID());
+        Restaurant restaurant = restaurantJPARepository.findById((long)subOrder.getRestaurantID()).orElse(null);
         if (Objects.isNull(restaurant)) {
             throw new NoSuchElementException("Restaurant not found");
         }
