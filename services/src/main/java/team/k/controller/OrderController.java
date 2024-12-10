@@ -5,15 +5,20 @@ import commonlibrary.external.PaymentProcessor;
 import ssdbrestframework.HttpMethod;
 import ssdbrestframework.SSDBQueryProcessingException;
 import ssdbrestframework.annotations.*;
+import team.k.repository.RestaurantRepository;
 import team.k.service.OrderService;
 
 import commonlibrary.dto.DishDTO;
 import commonlibrary.dto.IndividualOrderDTO;
 import commonlibrary.model.Dish;
+import team.k.service.RestaurantService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController(path = "/orders")
 public class OrderController {
@@ -97,8 +102,21 @@ public class OrderController {
     @Response(status = 200) // OK
     public List<DishDTO> getAvailableDishes(@RequestParam("order-id") int orderId) throws SSDBQueryProcessingException {
         try {
+            int restaurantId = OrderService.getSubOrder(orderId).getRestaurantID();
+
+            // Récupération des plats disponibles et du restaurant
             List<Dish> availableDishes = OrderService.getAvailableDishes(orderId);
-            return availableDishes.stream().map(Dish::convertDishToDishDto).toList();
+            Set<Integer> availableDishIds = availableDishes.stream()
+                    .map(Dish::getId)
+                    .collect(Collectors.toSet());
+
+            // Conversion des plats désactivés et marquage
+            return RestaurantRepository.findById(restaurantId).getDishes().stream()
+                    .map(dish -> {
+                        boolean isAvailable = availableDishIds.contains(dish.getId());
+                        return isAvailable ? dish.convertDishToDishDto() : dish.convertDishDisabledToDishDto();
+                    })
+                    .toList();
         } catch (NoSuchElementException e) {
             throw new SSDBQueryProcessingException(404, e.getMessage());
         }

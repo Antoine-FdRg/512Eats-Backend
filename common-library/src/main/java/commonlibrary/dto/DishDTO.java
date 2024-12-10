@@ -2,7 +2,7 @@ package commonlibrary.dto;
 
 import commonlibrary.model.Dish;
 
-public record DishDTO(int id, String name, String description, double price, int preparationTime, String pictureURL) {
+public record DishDTO(int id, String name, String description, double price, int preparationTime, String pictureURL,boolean disabled) {
 
     /**
      * Convert DishDTO to Dish

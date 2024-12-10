@@ -50,7 +50,11 @@ public class Dish {
     }
 
     public DishDTO convertDishToDishDto() {
-        return new DishDTO(id, name, description, price, preparationTime, picture);
+        return new DishDTO(id, name, description, price, preparationTime, picture, false);
+    }
+
+    public DishDTO convertDishDisabledToDishDto() {
+        return new DishDTO(id, name, description, price, preparationTime, picture, true);
     }
 
     public static class Builder {
