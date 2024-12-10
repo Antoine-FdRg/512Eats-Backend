@@ -220,6 +220,9 @@ public class OrderService {
     @Transactional
     public int createSuborder(int registeredUserID, int restaurantId, int groupOrderId) {
         RegisteredUser registeredUser = registeredUserValidator(registeredUserID);
+        if(registeredUser.getCurrentOrder() != null){
+            throw new UnsupportedOperationException("User already has an order");
+        }
         Restaurant restaurant = restaurantJPARepository.findById((long)restaurantId).orElse(null);
         GroupOrder groupOrder = groupOrderJPARepository.findById((long)groupOrderId).orElse(null);
         if (restaurant == null) {
@@ -227,6 +230,9 @@ public class OrderService {
         }
         if (groupOrder == null) {
             throw new NoSuchElementException("GroupOrder does not exist");
+        }
+        if(groupOrder.getStatus() != OrderStatus.CREATED){
+            throw new UnsupportedOperationException("Group order is already placed");
         }
         SubOrder suborder = new OrderBuilder()
                 .setUserID(registeredUser.getId())
