@@ -112,7 +112,7 @@ public class Restaurant {
         for (TimeSlot timeSlot : timeSlots) {
             LocalDateTime timeSlotStart = timeSlot.getStart();
             LocalDateTime timeSlotEnd = timeSlot.getEnd();
-            if (now.isAfter(timeSlotStart) && now.isBefore(timeSlotEnd) || now.equals(timeSlotStart)) {
+            if ((now.isAfter(timeSlotStart) && now.isBefore(timeSlotEnd)) || now.equals(timeSlotStart)) {
                 return timeSlot;
             }
         }
