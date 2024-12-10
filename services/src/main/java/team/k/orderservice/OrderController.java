@@ -1,4 +1,4 @@
-package team.k.controller;
+package team.k.orderservice;
 
 import commonlibrary.dto.SubOrderDTO;
 import commonlibrary.external.PaymentProcessor;
@@ -8,7 +8,6 @@ import ssdbrestframework.HttpMethod;
 import ssdbrestframework.SSDBQueryProcessingException;
 import ssdbrestframework.annotations.*;
 import team.k.repository.RestaurantRepository;
-import team.k.service.OrderService;
 
 import commonlibrary.dto.DishDTO;
 import commonlibrary.model.Dish;
@@ -119,7 +118,7 @@ public class OrderController {
             int restaurantId = orderService.get(orderId).getRestaurantID();
 
             // Récupération des plats disponibles et du restaurant
-            List<Dish> availableDishes = OrderService.getAvailableDishes(orderId);
+            List<Dish> availableDishes = orderService.getAvailableDishes(orderId);
             Set<Integer> availableDishIds = availableDishes.stream()
                     .map(Dish::getId)
                     .collect(Collectors.toSet());

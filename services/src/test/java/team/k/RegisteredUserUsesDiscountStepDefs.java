@@ -21,7 +21,7 @@ import team.k.repository.SubOrderRepository;
 import commonlibrary.model.restaurant.discount.FreeDishAfterXOrders;
 import commonlibrary.model.restaurant.discount.RoleDiscount;
 import commonlibrary.model.restaurant.discount.UnconditionalDiscount;
-import team.k.service.OrderService;
+import team.k.orderservice.OrderService;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;

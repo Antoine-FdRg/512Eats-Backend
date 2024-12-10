@@ -21,7 +21,7 @@ import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
 import team.k.repository.SubOrderRepository;
 import team.k.grouporderservice.GroupOrderService;
-import team.k.service.OrderService;
+import team.k.orderservice.OrderService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

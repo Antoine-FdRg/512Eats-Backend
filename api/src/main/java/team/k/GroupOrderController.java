@@ -24,9 +24,6 @@ import static team.k.APIServer.getErrorMessage;
 public class GroupOrderController {
     private static final String GROUPORDER_SERVICE_URL = "http://localhost:8085/group-orders";
 
-
-
-
     @Endpoint(path = "", method = HttpMethod.POST)
     @ApiResponseExample(value = int.class)
     public String createGroupOrder(

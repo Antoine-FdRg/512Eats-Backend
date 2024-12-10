@@ -1,4 +1,4 @@
-package team.k.grouporderservice;
+package team.k.orderservice;
 
 import commonlibrary.repository.DishJPARepository;
 import commonlibrary.repository.GroupOrderJPARepository;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import ssdbrestframework.SSDBHttpServer;
 
 @Service
-public class GroupOrderAPI {
+public class OrderAPI {
 
     public static LocationJPARepository locationJPARepository;
     public static GroupOrderJPARepository groupOrderJPARepository;
@@ -22,14 +22,14 @@ public class GroupOrderAPI {
     private static AnnotationConfigApplicationContext context;
 
     public static void main(String[] args) {
-        context = new AnnotationConfigApplicationContext(GroupOrderConfig.class);
+        context = new AnnotationConfigApplicationContext(OrderConfig.class);
         locationJPARepository = context.getBean(LocationJPARepository.class);
         groupOrderJPARepository = context.getBean(GroupOrderJPARepository.class);
         registeredUserJPARepository = context.getBean(RegisteredUserJPARepository.class);
         dishJPARepository = context.getBean(DishJPARepository.class);
         restaurantJPARepository = context.getBean(RestaurantJPARepository.class);
         timeSlotJPARepository = context.getBean(TimeSlotJPARepository.class);
-        SSDBHttpServer serv = new SSDBHttpServer(8085, "team.k.grouporderservice", "grouporderservice/", context);
+        SSDBHttpServer serv = new SSDBHttpServer(8086, "team.k.orderservice", "orderservice/", context);
         serv.start();
     }
 

@@ -1,4 +1,4 @@
-package team.k.service;
+package team.k.orderservice;
 
 import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.external.PaymentFailedException;
@@ -31,10 +31,10 @@ import java.util.Objects;
 
 @Service
 public class OrderService {
-    private final static String RESTAURANT_NOT_FOUND = "Restaurant not found";
-    public final static String SUB_ORDER_NOT_FOUND = "SubOrder not found";
-    public final static String INDIVIDUAL_ORDER_NOT_FOUND = "Individual Order not found";
-    public final static String USER_NOT_FOUND = "User not found";
+    private static final String RESTAURANT_NOT_FOUND = "Restaurant not found";
+    public static final String SUB_ORDER_NOT_FOUND = "SubOrder not found";
+    public static final String INDIVIDUAL_ORDER_NOT_FOUND = "Individual Order not found";
+    public static final String USER_NOT_FOUND = "User not found";
 
     private LocationJPARepository locationJPARepository;
     private RestaurantJPARepository restaurantJPARepository;
