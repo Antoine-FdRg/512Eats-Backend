@@ -9,7 +9,10 @@ import commonlibrary.model.Dish;
 import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.payment.Payment;
 import commonlibrary.model.restaurant.Restaurant;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
@@ -44,13 +47,14 @@ public class SubOrder {
     private int userID;
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Dish> dishes;
+//    @Enumerated(EnumType.STRING) //TODO decommentez ça
     private OrderStatus status;
     private LocalDateTime placedDate;
     private LocalDateTime deliveryDate;
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Payment payment;
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY) // Relation ManyToOne avec GroupOrder
     private GroupOrder groupOrder;
 
     SubOrder(OrderBuilder orderBuilder) {
@@ -63,9 +67,11 @@ public class SubOrder {
         this.placedDate = orderBuilder.placedDate;
         this.deliveryDate = orderBuilder.deliveryTime;
         this.payment = orderBuilder.payment;
+        this.groupOrder = orderBuilder.groupOrder;
         if (this.price == 0 && !dishes.isEmpty()) {
             this.price = dishes.stream().mapToDouble(Dish::getPrice).sum();
         }
+
     }
 
     public Dish getCheaperDish() {

@@ -20,6 +20,7 @@ public class OrderBuilder {
     private Location deliveryLocation;
     LocalDateTime placedDate;
     Payment payment;
+    GroupOrder groupOrder;
 
     private static int idCounter = 0;
 
@@ -76,6 +77,11 @@ public class OrderBuilder {
 
     public OrderBuilder setStatus(OrderStatus status) {
         this.status = status;
+        return this;
+    }
+
+    public OrderBuilder setGroupOrder(GroupOrder groupOrder) {
+        this.groupOrder = groupOrder;
         return this;
     }
 

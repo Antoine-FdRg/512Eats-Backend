@@ -31,10 +31,10 @@ import java.util.Objects;
 
 @Service
 public class OrderService {
-    private final String RESTAURANT_NOT_FOUND = "Restaurant not found";
-    public final String SUB_ORDER_NOT_FOUND = "SubOrder not found";
-    public final String INDIVIDUAL_ORDER_NOT_FOUND = "Individual Order not found";
-    public final String USER_NOT_FOUND = "User not found";
+    private final static String RESTAURANT_NOT_FOUND = "Restaurant not found";
+    public final static String SUB_ORDER_NOT_FOUND = "SubOrder not found";
+    public final static String INDIVIDUAL_ORDER_NOT_FOUND = "Individual Order not found";
+    public final static String USER_NOT_FOUND = "User not found";
 
     private LocationJPARepository locationJPARepository;
     private RestaurantJPARepository restaurantJPARepository;
@@ -163,7 +163,7 @@ public class OrderService {
         if (restaurant == null) {
             throw new NoSuchElementException(RESTAURANT_NOT_FOUND);
         }
-        if (currentOrder.getDeliveryDate() != null && !restaurant.isAvailable(currentOrder.getDeliveryDate())) {
+        if (currentOrder.getDeliveryDate()!= null && !restaurant.isAvailable(currentOrder.getDeliveryDate())) {
             throw new IllegalArgumentException("Restaurant is not available");
         }
         if (currentOrder.getDishes().isEmpty()) {
@@ -230,6 +230,7 @@ public class OrderService {
         }
         SubOrder suborder = new OrderBuilder()
                 .setUserID(registeredUser.getId())
+                .setGroupOrder(groupOrder)
                 .setRestaurantID(restaurant.getId())
                 .build();
         registeredUser.setCurrentOrder(suborder);
