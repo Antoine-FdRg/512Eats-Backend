@@ -6,7 +6,9 @@ import commonlibrary.model.order.SubOrder;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -41,11 +43,14 @@ public class TimeSlot {
     private LocalDateTime start;
     private int productionCapacity; //number of cooks
     private int maxNumberOfOrders;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Restaurant restaurant;
 
     private static int idCounter = 0;
 
     public TimeSlot(LocalDateTime start, Restaurant restaurant, int productionCapacity) {
         this.start = start;
+        this.restaurant = restaurant;
         this.productionCapacity = productionCapacity;
         this.maxNumberOfOrders = getTotalMaxPreparationTime() / restaurant.getAverageOrderPreparationTime();
         this.orders = new ArrayList<>();

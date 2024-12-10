@@ -5,10 +5,10 @@
     "version" : "1.0.0"
   },
   "paths" : {
-    "/management/update-restaurant-infos" : {
+    "/management/add-dish" : {
       "post" : {
-        "summary" : "updateRestaurantInfos",
-        "operationId" : "updateRestaurantInfos",
+        "summary" : "addDish",
+        "operationId" : "addDish",
         "parameters" : [ {
           "name" : "restaurant-id",
           "in" : "query",
@@ -90,10 +90,10 @@
         }
       }
     },
-    "/management/add-dish" : {
+    "/management/update-restaurant-infos" : {
       "post" : {
-        "summary" : "addDish",
-        "operationId" : "addDish",
+        "summary" : "updateRestaurantInfos",
+        "operationId" : "updateRestaurantInfos",
         "parameters" : [ {
           "name" : "restaurant-id",
           "in" : "query",
@@ -114,6 +114,20 @@
             }
           }
         }
+      }
+    },
+    "/orders/add-dish" : {
+      "post" : {
+        "summary" : "addDish",
+        "operationId" : "addDish",
+        "parameters" : [ ]
+      }
+    },
+    "/orders/sub-order" : {
+      "post" : {
+        "summary" : "createSubOrder",
+        "operationId" : "createSubOrder",
+        "parameters" : [ ]
       }
     },
     "/orders/available-dishes" : {
@@ -140,13 +154,6 @@
             }
           }
         }
-      }
-    },
-    "/orders/sub-order" : {
-      "post" : {
-        "summary" : "createSubOrder",
-        "operationId" : "createSubOrder",
-        "parameters" : [ ]
       }
     },
     "/orders/remove-dish" : {
@@ -182,10 +189,10 @@
         }
       }
     },
-    "/orders/place" : {
+    "/orders/pay" : {
       "post" : {
-        "summary" : "place",
-        "operationId" : "place",
+        "summary" : "pay",
+        "operationId" : "pay",
         "parameters" : [ ]
       }
     },
@@ -215,25 +222,25 @@
         }
       }
     },
-    "/orders/add-dish" : {
+    "/orders/place" : {
       "post" : {
-        "summary" : "addDish",
-        "operationId" : "addDish",
+        "summary" : "place",
+        "operationId" : "place",
         "parameters" : [ ]
       }
     },
-    "/orders/pay" : {
-      "post" : {
-        "summary" : "pay",
-        "operationId" : "pay",
-        "parameters" : [ ]
-      }
-    },
-    "/group-orders/place/{groupOrderId}" : {
-      "post" : {
-        "summary" : "placeGroupOrder",
-        "operationId" : "placeGroupOrder",
-        "parameters" : [ ],
+    "/group-orders/modify-delivery-datetime/{groupOrderId}" : {
+      "put" : {
+        "summary" : "modifyGroupOrderDeliveryDateTime",
+        "operationId" : "modifyGroupOrderDeliveryDateTime",
+        "parameters" : [ {
+          "name" : "delivery-date-time",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
         "responses" : {
           "200" : {
             "description" : "Successful response",
@@ -300,18 +307,11 @@
         }
       }
     },
-    "/group-orders/modify-delivery-datetime/{groupOrderId}" : {
-      "put" : {
-        "summary" : "modifyGroupOrderDeliveryDateTime",
-        "operationId" : "modifyGroupOrderDeliveryDateTime",
-        "parameters" : [ {
-          "name" : "delivery-date-time",
-          "in" : "query",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
+    "/group-orders/place/{groupOrderId}" : {
+      "post" : {
+        "summary" : "placeGroupOrder",
+        "operationId" : "placeGroupOrder",
+        "parameters" : [ ],
         "responses" : {
           "200" : {
             "description" : "Successful response",
@@ -338,25 +338,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/RestaurantDTOList"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/restaurants/food-types" : {
-      "get" : {
-        "summary" : "getFoodTypes",
-        "operationId" : "getFoodTypes",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "Successful response",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/FoodTypeList"
                 }
               }
             }
@@ -397,6 +378,25 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/RestaurantDTOList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/restaurants/food-types" : {
+      "get" : {
+        "summary" : "getFoodTypes",
+        "operationId" : "getFoodTypes",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FoodTypeList"
                 }
               }
             }
