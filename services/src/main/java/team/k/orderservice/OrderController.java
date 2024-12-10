@@ -1,6 +1,6 @@
 package team.k.orderservice;
 
-import commonlibrary.dto.DishDTO;
+import commonlibrary.dto.DishCreationDTO;
 import commonlibrary.dto.SubOrderDTO;
 import commonlibrary.external.PaymentProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,9 +109,9 @@ public class OrderController {
      * @return a list of available dishes
      */
     @Endpoint(path = "/available-dishes", method = HttpMethod.GET)
-    @ApiResponseExample(value = DishDTO.class, isArray = true)
+    @ApiResponseExample(value = DishCreationDTO.class, isArray = true)
     @Response(status = 200) // OK
-    public List<DishDTO> getAvailableDishes(@RequestParam("order-id") int orderId) throws SSDBQueryProcessingException {
+    public List<DishCreationDTO> getAvailableDishes(@RequestParam("order-id") int orderId) throws SSDBQueryProcessingException {
         try{
             return orderService.getAvailableDishesDTO(orderId);
         } catch (NoSuchElementException e) {

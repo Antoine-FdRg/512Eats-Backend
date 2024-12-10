@@ -1,6 +1,6 @@
 package team.k.restaurantservice;
 
-import commonlibrary.dto.DishDTO;
+import commonlibrary.dto.DishCreationDTO;
 import commonlibrary.dto.RestaurantDTO;
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.Dish;
@@ -39,7 +39,7 @@ public class RestaurantController {
      */
     @Endpoint(path = "/dishes", method = ssdbrestframework.HttpMethod.GET)
     @Response(status = 200) // OK
-    public List<DishDTO> getAllDishes(@RequestParam("restaurant-id") int restaurantId) throws SSDBQueryProcessingException {
+    public List<DishCreationDTO> getAllDishes(@RequestParam("restaurant-id") int restaurantId) throws SSDBQueryProcessingException {
         try {
             List<Dish> dishes = restaurantService.getAllDishesFromRestaurant(restaurantId);
             return dishes.stream().map(Dish::convertDishToDishDto).toList();

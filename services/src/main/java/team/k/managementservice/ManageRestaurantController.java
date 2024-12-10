@@ -9,7 +9,7 @@ import ssdbrestframework.annotations.PathVariable;
 import ssdbrestframework.annotations.RequestBody;
 import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
-import commonlibrary.dto.DishDTO;
+import commonlibrary.dto.DishCreationDTO;
 import commonlibrary.dto.ManagingRestaurantDTO;
 
 import commonlibrary.model.Dish;
@@ -53,14 +53,14 @@ public class ManageRestaurantController {
      * Add a dish to the restaurant
      *
      * @param restaurantId the id of the restaurant
-     * @param dishDTO   the dish to add
+     * @param dishCreationDTO   the dish to add
      * @return the updated restaurant
      * @throws SSDBQueryProcessingException if the restaurant is not found
      */
     @Endpoint(path = "/add-dish", method = HttpMethod.POST)
     @Response(status = 201)
-    public RestaurantDTO addDish(@RequestParam("restaurant-id") int restaurantId, @RequestBody DishDTO dishDTO) throws SSDBQueryProcessingException {
-        Dish dish = dishDTO.convertDishDtoToDish();
+    public RestaurantDTO addDish(@RequestParam("restaurant-id") int restaurantId, @RequestBody DishCreationDTO dishCreationDTO) throws SSDBQueryProcessingException {
+        Dish dish = dishCreationDTO.convertDishDtoToDish();
         return manageRestaurantService.addDish(
                 restaurantId,
                 dish.getName(),
@@ -95,17 +95,17 @@ public class ManageRestaurantController {
      * @return the updated restaurant
      * @throws SSDBQueryProcessingException if the dish is not found
      */
-    @Endpoint(path = "/update-dish", method = HttpMethod.PUT)
-    @Response(status = 204)
-    public RestaurantDTO updateDish(@RequestParam("restaurant-id") int restaurantId, @RequestBody DishDTO dishDTO) throws SSDBQueryProcessingException {
-        Dish dish = dishDTO.convertDishDtoToDish();
-        return manageRestaurantService.updateDish(
-                restaurantId,
-                dish.getId(),
-                dish.getPrice(),
-                dish.getPreparationTime()
-        ).restaurantToRestaurantDTO();
-    }
+//    @Endpoint(path = "/update-dish", method = HttpMethod.PUT)
+//    @Response(status = 204)
+//    public RestaurantDTO updateDish(@RequestParam("restaurant-id") int restaurantId, @RequestBody DishDTO dishDTO) throws SSDBQueryProcessingException {
+//        Dish dish = dishDTO.convertDishDtoToDish();
+//        return manageRestaurantService.updateDish(
+//                restaurantId,
+//                dish.getId(),
+//                dish.getPrice(),
+//                dish.getPreparationTime()
+//        ).restaurantToRestaurantDTO();
+//    }
 
     /**
      * Add a new restaurant

@@ -1,7 +1,8 @@
 package commonlibrary.model;
 
-import commonlibrary.dto.DishDTO;
+import commonlibrary.dto.DishCreationDTO;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -18,6 +19,7 @@ import lombok.Setter;
 @Table(name = "dish")
 public class Dish {
     @Id
+    @GeneratedValue(generator = "increment")
     private int id;
     private String name;
     private String description;
@@ -26,7 +28,7 @@ public class Dish {
     private String picture;
 
     private Dish(Builder builder) {
-        this.id = builder.id;
+//        this.id = builder.id;
         this.name = builder.name;
         this.description = builder.description;
         this.price = builder.price;
@@ -54,16 +56,16 @@ public class Dish {
         return Integer.hashCode(id);
     }
 
-    public DishDTO convertDishToDishDto() {
-        return new DishDTO(id, name, description, price, preparationTime, picture, false);
+    public DishCreationDTO convertDishToDishDto() {
+        return new DishCreationDTO(name, description, price, preparationTime, picture, false);
     }
 
-    public DishDTO convertDishDisabledToDishDto() {
-        return new DishDTO(id, name, description, price, preparationTime, picture, true);
+    public DishCreationDTO convertDishDisabledToDishDto() {
+        return new DishCreationDTO(name, description, price, preparationTime, picture, true);
     }
 
     public static class Builder {
-        private int id;
+        private Integer id;
         private String name;
         private String description;
         private double price;
@@ -72,7 +74,7 @@ public class Dish {
         private static int idCounter = 0;
 
         public Builder() {
-            this.id = idCounter++;
+//            this.id = idCounter++;
         }
 
         public Builder setId(int id) {

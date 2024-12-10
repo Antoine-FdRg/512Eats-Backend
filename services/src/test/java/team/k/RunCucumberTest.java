@@ -12,7 +12,6 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @Suite
 @IncludeEngines("cucumber")
 
-//Specifies the location of the feature files. The feature files are stored in the "features/biblio" directory within the classpath.
 @SelectClasspathResource("features/team/k")
 
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
