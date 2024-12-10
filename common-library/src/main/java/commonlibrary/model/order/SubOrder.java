@@ -14,6 +14,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -41,6 +42,7 @@ import java.util.List;
 @Table(name = "sub_order")
 public class SubOrder {
     @Id
+    @GeneratedValue(generator = "increment")
     private int id;
     private double price;
     private int restaurantID;
@@ -60,7 +62,6 @@ public class SubOrder {
     private GroupOrder groupOrder;
 
     SubOrder(OrderBuilder orderBuilder) {
-        this.id = orderBuilder.id;
         this.price = orderBuilder.price;
         this.restaurantID = orderBuilder.restaurantID;
         this.userID = orderBuilder.userID;

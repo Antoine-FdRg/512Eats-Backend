@@ -22,10 +22,7 @@ public class OrderBuilder {
     Payment payment;
     GroupOrder groupOrder;
 
-    private static int idCounter = 0;
-
     public OrderBuilder() {
-        id = idCounter++;
         dishes = new ArrayList<>();
         status = OrderStatus.CREATED;
     }
