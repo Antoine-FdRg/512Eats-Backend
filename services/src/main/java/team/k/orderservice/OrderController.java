@@ -1,24 +1,22 @@
 package team.k.orderservice;
 
+import commonlibrary.dto.DishDTO;
 import commonlibrary.dto.SubOrderDTO;
 import commonlibrary.external.PaymentProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ssdbrestframework.HttpMethod;
 import ssdbrestframework.SSDBQueryProcessingException;
-import ssdbrestframework.annotations.*;
-import team.k.repository.RestaurantRepository;
-
-import commonlibrary.dto.DishDTO;
-import commonlibrary.model.Dish;
-import team.k.service.RestaurantService;
+import ssdbrestframework.annotations.ApiResponseExample;
+import ssdbrestframework.annotations.Endpoint;
+import ssdbrestframework.annotations.RequestBody;
+import ssdbrestframework.annotations.RequestParam;
+import ssdbrestframework.annotations.Response;
+import ssdbrestframework.annotations.RestController;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController(path = "/orders")
 @Component
@@ -114,22 +112,8 @@ public class OrderController {
     @ApiResponseExample(value = DishDTO.class, isArray = true)
     @Response(status = 200) // OK
     public List<DishDTO> getAvailableDishes(@RequestParam("order-id") int orderId) throws SSDBQueryProcessingException {
-        try {
-            int restaurantId = orderService.get(orderId).getRestaurantID();
-
-            // Récupération des plats disponibles et du restaurant
-            List<Dish> availableDishes = orderService.getAvailableDishes(orderId);
-            Set<Integer> availableDishIds = availableDishes.stream()
-                    .map(Dish::getId)
-                    .collect(Collectors.toSet());
-
-            // Conversion des plats désactivés et marquage
-            return RestaurantRepository.findById(restaurantId).getDishes().stream()
-                    .map(dish -> {
-                        boolean isAvailable = availableDishIds.contains(dish.getId());
-                        return isAvailable ? dish.convertDishToDishDto() : dish.convertDishDisabledToDishDto();
-                    })
-                    .toList();
+        try{
+            return orderService.getAvailableDishesDTO(orderId);
         } catch (NoSuchElementException e) {
             throw new SSDBQueryProcessingException(404, e.getMessage());
         }

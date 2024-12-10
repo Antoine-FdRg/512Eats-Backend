@@ -1,5 +1,6 @@
 package team.k.orderservice;
 
+import commonlibrary.dto.DishDTO;
 import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.external.PaymentFailedException;
 import commonlibrary.external.PaymentProcessor;
@@ -23,11 +24,14 @@ import org.springframework.stereotype.Service;
 import ssdbrestframework.SSDBQueryProcessingException;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
+import team.k.repository.RestaurantRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -189,6 +193,24 @@ public class OrderService {
             throw new NoSuchElementException(RESTAURANT_NOT_FOUND);
         }
         return restaurant.getDishesReadyInLessThan(TimeSlot.DURATION - order.getPreparationTime());
+    }
+
+    public List<DishDTO> getAvailableDishesDTO(int orderId) {
+        int restaurantId = this.getSubOrder(orderId).getRestaurantID();
+
+        // Récupération des plats disponibles et du restaurant
+        List<Dish> availableDishes = this.getAvailableDishes(orderId);
+        Set<Integer> availableDishIds = availableDishes.stream()
+                .map(Dish::getId)
+                .collect(Collectors.toSet());
+
+        // Conversion des plats désactivés et marquage
+        return RestaurantRepository.findById(restaurantId).getDishes().stream()
+                .map(dish -> {
+                    boolean isAvailable = availableDishIds.contains(dish.getId());
+                    return isAvailable ? dish.convertDishToDishDto() : dish.convertDishDisabledToDishDto();
+                })
+                .toList();
     }
 
     public SubOrder getSubOrder(int orderId) {
