@@ -1,4 +1,4 @@
-package team.k.service;
+package team.k.grouporderservice;
 
 import commonlibrary.model.Location;
 import commonlibrary.model.RegisteredUser;
