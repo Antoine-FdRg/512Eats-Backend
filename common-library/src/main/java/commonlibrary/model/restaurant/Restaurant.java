@@ -7,6 +7,7 @@ import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.Dish;
 import commonlibrary.model.order.SubOrder;
 import commonlibrary.model.restaurant.discount.DiscountStrategy;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -48,7 +49,7 @@ public class Restaurant {
     private int id;
     private LocalTime open;
     private LocalTime close;
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<TimeSlot> timeSlots;
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Dish> dishes;
@@ -92,6 +93,7 @@ public class Restaurant {
                 || deliveryTimeWanted.toLocalTime().isAfter(close.plusMinutes(DELIVERY_DURATION))) {
             return false;
         }
+        //TODO available timeslots nto works in tests
         // Check if the restaurant has a time slot available 20 minutes (of delivery) before the chosen time
         TimeSlot currentTimeSlot = getPreviousTimeSlot(deliveryTimeWanted.minusMinutes(DELIVERY_DURATION));
         if (currentTimeSlot == null) {

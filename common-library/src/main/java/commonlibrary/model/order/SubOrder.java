@@ -45,9 +45,11 @@ public class SubOrder {
     private double price;
     private int restaurantID;
     private int userID;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private RegisteredUser user;
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Dish> dishes;
-//    @Enumerated(EnumType.STRING) //TODO decommentez ça
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
     private LocalDateTime placedDate;
     private LocalDateTime deliveryDate;

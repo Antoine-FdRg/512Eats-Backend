@@ -49,6 +49,7 @@ public class RestaurantService {
      */
     public List<LocalDateTime> getAllAvailableDeliveryTimesOfRestaurantOnDay(int restaurantId, LocalDate day) throws NoSuchElementException {
         Restaurant restaurant = getRestaurantOrThrowIfNull(restaurantJPARepository.findById((long)restaurantId).orElse(null));
+        //TODO trouver pq on  a pas les timeslots
         List<LocalDateTime> availableTimes = restaurant.getAvailableDeliveryTimesOnDay(day);
         if (availableTimes.isEmpty()) {
             throw new NoSuchElementException("No available delivery times");

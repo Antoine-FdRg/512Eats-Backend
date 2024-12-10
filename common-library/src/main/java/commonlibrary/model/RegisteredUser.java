@@ -33,7 +33,7 @@ public class RegisteredUser {
     private Role role;
     @OneToOne(fetch = FetchType.EAGER)
     private SubOrder currentOrder;
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user")
     private List<SubOrder> orders;
     private static int idCounter = 0;
 
