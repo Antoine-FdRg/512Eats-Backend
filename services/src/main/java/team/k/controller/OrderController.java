@@ -16,7 +16,8 @@ import java.util.NoSuchElementException;
 
 @RestController(path = "/orders")
 public class OrderController {
-    public record createIndividualOrderRequest(int userId, int restaurantId, int deliveryLocationId, String deliveryDateTime) {
+    public record createIndividualOrderRequest(int userId, int restaurantId, int deliveryLocationId,
+                                               String deliveryDateTime) {
     }
 
     /**

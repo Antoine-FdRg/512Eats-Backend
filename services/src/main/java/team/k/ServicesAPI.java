@@ -426,7 +426,7 @@ public class ServicesAPI {
         for (Restaurant restaurant : restaurants) {
             LocalTime open = restaurant.getOpen();
             LocalTime close = restaurant.getClose();
-            LocalDateTime currentSlotStart = LocalDateTime.of(2024, 12, 18, open.getHour(), open.getMinute());
+            LocalDateTime currentSlotStart = LocalDateTime.of(2024, 12, 10, open.getHour(), open.getMinute());
 
             while (currentSlotStart.toLocalTime().isBefore(close)) {
                 Random random = new Random();
