@@ -1,7 +1,9 @@
 package team.k.grouporderservice;
 
 import commonlibrary.dto.GroupOrderDTO;
+import commonlibrary.model.Location;
 import commonlibrary.model.order.GroupOrder;
+import commonlibrary.repository.LocationJPARepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ssdbrestframework.SSDBQueryProcessingException;
@@ -20,10 +22,12 @@ public class GroupOrderController {
 
     private static final String ERROR_GROUP_ORDER_NOT_FOUND = "Group order not found: ";
     private final GroupOrderService groupOrderService;
+    private final LocationJPARepository locationJPARepository;
 
     @Autowired
-    public GroupOrderController(GroupOrderService groupOrderService) {
+    public GroupOrderController(GroupOrderService groupOrderService, LocationJPARepository locationJPARepository) {
         this.groupOrderService = groupOrderService;
+        this.locationJPARepository = locationJPARepository;
     }
 
     /**
@@ -61,7 +65,11 @@ public class GroupOrderController {
         if (groupOrder == null) {
             throw new SSDBQueryProcessingException(404, ERROR_GROUP_ORDER_NOT_FOUND + groupOrderId);
         }
-        return groupOrder.convertGroupOrderToGroupOrderDto();
+        Location deliveryLocation = locationJPARepository.findById((long)groupOrderId).orElse(null);
+        if(deliveryLocation == null) {
+            throw new SSDBQueryProcessingException(404, "Delivery location not found");
+        }
+        return groupOrder.convertGroupOrderToGroupOrderDto(deliveryLocation);
     }
 
     /**
