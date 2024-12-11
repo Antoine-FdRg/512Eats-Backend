@@ -68,11 +68,11 @@ public class RestaurantController {
         HttpClient client = HttpClient.newHttpClient();
         String parameter = "?";
         if (availability != null) {
-            parameter += "availability=" + availability;
+            parameter += "/by/availability";
         } else if (foodTypes != null) {
-            parameter += "food-types=" + foodTypes;
+            parameter += "/by/food-type?food-types=" + foodTypes;
         } else if (name != null) {
-            parameter += "name=" + name;
+            parameter += "/by/name/" + name;
         } else {
             throw new IllegalArgumentException("No parameter provided");
         }

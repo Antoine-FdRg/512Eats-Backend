@@ -330,15 +330,15 @@ public class ManagementAPI {
                 .setClose(LocalTime.of(22, 0))
                 .setAverageOrderPreparationTime(10)
                 .setDishes(List.of(
-                        dishJPARepository.findById((long)0).orElseThrow(),
-                        dishJPARepository.findById((long)1).orElseThrow(),
-                        dishJPARepository.findById((long)2).orElseThrow(),
-                        dishJPARepository.findById((long)6).orElseThrow(),
-                        dishJPARepository.findById((long)16).orElseThrow(),
-                        dishJPARepository.findById((long)17).orElseThrow(),
-                        dishJPARepository.findById((long)18).orElseThrow(),
-                        dishJPARepository.findById((long)19).orElseThrow(),
-                        dishJPARepository.findById((long)20).orElseThrow()
+                        dishJPARepository.findById((long) 0).orElseThrow(),
+                        dishJPARepository.findById((long) 1).orElseThrow(),
+                        dishJPARepository.findById((long) 2).orElseThrow(),
+                        dishJPARepository.findById((long) 6).orElseThrow(),
+                        dishJPARepository.findById((long) 16).orElseThrow(),
+                        dishJPARepository.findById((long) 17).orElseThrow(),
+                        dishJPARepository.findById((long) 18).orElseThrow(),
+                        dishJPARepository.findById((long) 19).orElseThrow(),
+                        dishJPARepository.findById((long) 20).orElseThrow()
                 ))
                 .build();
 
@@ -352,13 +352,13 @@ public class ManagementAPI {
                 .setClose(LocalTime.of(22, 0))
                 .setAverageOrderPreparationTime(10)
                 .setDishes(List.of(
-                        dishJPARepository.findById((long)6).orElseThrow(),
-                        dishJPARepository.findById((long)5).orElseThrow(),
-                        dishJPARepository.findById((long)16).orElseThrow(),
-                        dishJPARepository.findById((long)17).orElseThrow(),
-                        dishJPARepository.findById((long)18).orElseThrow(),
-                        dishJPARepository.findById((long)19).orElseThrow(),
-                        dishJPARepository.findById((long)20).orElseThrow()
+                        dishJPARepository.findById((long) 6).orElseThrow(),
+                        dishJPARepository.findById((long) 5).orElseThrow(),
+                        dishJPARepository.findById((long) 16).orElseThrow(),
+                        dishJPARepository.findById((long) 17).orElseThrow(),
+                        dishJPARepository.findById((long) 18).orElseThrow(),
+                        dishJPARepository.findById((long) 19).orElseThrow(),
+                        dishJPARepository.findById((long) 20).orElseThrow()
 
                 ))
                 .build();
@@ -374,15 +374,15 @@ public class ManagementAPI {
                 .setClose(LocalTime.of(22, 0))
                 .setAverageOrderPreparationTime(10)
                 .setDishes(List.of(
-                        dishJPARepository.findById((long)3).orElseThrow(),
-                        dishJPARepository.findById((long)4).orElseThrow(),
-                        dishJPARepository.findById((long)7).orElseThrow(),
-                        dishJPARepository.findById((long)8).orElseThrow(),
-                        dishJPARepository.findById((long)16).orElseThrow(),
-                        dishJPARepository.findById((long)17).orElseThrow(),
-                        dishJPARepository.findById((long)18).orElseThrow(),
-                        dishJPARepository.findById((long)19).orElseThrow(),
-                        dishJPARepository.findById((long)20).orElseThrow()
+                        dishJPARepository.findById((long) 3).orElseThrow(),
+                        dishJPARepository.findById((long) 4).orElseThrow(),
+                        dishJPARepository.findById((long) 7).orElseThrow(),
+                        dishJPARepository.findById((long) 8).orElseThrow(),
+                        dishJPARepository.findById((long) 16).orElseThrow(),
+                        dishJPARepository.findById((long) 17).orElseThrow(),
+                        dishJPARepository.findById((long) 18).orElseThrow(),
+                        dishJPARepository.findById((long) 19).orElseThrow(),
+                        dishJPARepository.findById((long) 20).orElseThrow()
 
                 ))
                 .build();
@@ -398,15 +398,15 @@ public class ManagementAPI {
                 .setClose(LocalTime.of(23, 0))
                 .setAverageOrderPreparationTime(10)
                 .setDishes(List.of(
-                        dishJPARepository.findById((long)9).orElseThrow(),
-                        dishJPARepository.findById((long)13).orElseThrow(),
-                        dishJPARepository.findById((long)14).orElseThrow(),
-                        dishJPARepository.findById((long)15).orElseThrow(),
-                        dishJPARepository.findById((long)16).orElseThrow(),
-                        dishJPARepository.findById((long)17).orElseThrow(),
-                        dishJPARepository.findById((long)18).orElseThrow(),
-                        dishJPARepository.findById((long)19).orElseThrow(),
-                        dishJPARepository.findById((long)20).orElseThrow()
+                        dishJPARepository.findById((long) 9).orElseThrow(),
+                        dishJPARepository.findById((long) 13).orElseThrow(),
+                        dishJPARepository.findById((long) 14).orElseThrow(),
+                        dishJPARepository.findById((long) 15).orElseThrow(),
+                        dishJPARepository.findById((long) 16).orElseThrow(),
+                        dishJPARepository.findById((long) 17).orElseThrow(),
+                        dishJPARepository.findById((long) 18).orElseThrow(),
+                        dishJPARepository.findById((long) 19).orElseThrow(),
+                        dishJPARepository.findById((long) 20).orElseThrow()
 
                 ))
                 .build();
@@ -422,28 +422,29 @@ public class ManagementAPI {
                 .setClose(LocalTime.of(22, 0))
                 .setAverageOrderPreparationTime(10)
                 .setDishes(List.of(
-                        dishJPARepository.findById((long)1).orElseThrow(),
-                        dishJPARepository.findById((long)6).orElseThrow(),
-                        dishJPARepository.findById((long)10).orElseThrow(),
-                        dishJPARepository.findById((long)11).orElseThrow(),
-                        dishJPARepository.findById((long)15).orElseThrow(),
-                        dishJPARepository.findById((long)16).orElseThrow(),
-                        dishJPARepository.findById((long)17).orElseThrow(),
-                        dishJPARepository.findById((long)18).orElseThrow(),
-                        dishJPARepository.findById((long)19).orElseThrow(),
-                        dishJPARepository.findById((long)20).orElseThrow()
+                        dishJPARepository.findById((long) 1).orElseThrow(),
+                        dishJPARepository.findById((long) 6).orElseThrow(),
+                        dishJPARepository.findById((long) 10).orElseThrow(),
+                        dishJPARepository.findById((long) 11).orElseThrow(),
+                        dishJPARepository.findById((long) 15).orElseThrow(),
+                        dishJPARepository.findById((long) 16).orElseThrow(),
+                        dishJPARepository.findById((long) 17).orElseThrow(),
+                        dishJPARepository.findById((long) 18).orElseThrow(),
+                        dishJPARepository.findById((long) 19).orElseThrow(),
+                        dishJPARepository.findById((long) 20).orElseThrow()
 
                 ))
                 .build();
 
         restaurantJPARepository.save(restaurantHealthy);
-}
+    }
+
     private static void initTimeSlot() {
         List<Restaurant> restaurants = restaurantJPARepository.findAll();
         for (Restaurant restaurant : restaurants) {
             LocalTime open = restaurant.getOpen();
             LocalTime close = restaurant.getClose();
-            LocalDateTime currentSlotStart = LocalDateTime.of(2024, 12, 10, open.getHour(), open.getMinute());
+            LocalDateTime currentSlotStart = LocalDateTime.of(2024, 12, 11, open.getHour(), open.getMinute());
 
             Random random = new Random();
             while (currentSlotStart.toLocalTime().isBefore(close)) {
