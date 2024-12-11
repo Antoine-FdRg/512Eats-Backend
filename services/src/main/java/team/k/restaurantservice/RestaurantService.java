@@ -3,10 +3,10 @@ package team.k.restaurantservice;
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.Dish;
 import commonlibrary.repository.RestaurantJPARepository;
+import commonlibrary.repository.TimeSlotJPARepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import team.k.repository.TimeSlotRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
 
@@ -18,11 +18,13 @@ import java.util.NoSuchElementException;
 @Service
 public class RestaurantService {
 
+    private final TimeSlotJPARepository timeSlotJPARepository;
     private RestaurantJPARepository restaurantJPARepository;
     
     @Autowired
-    public RestaurantService(RestaurantJPARepository restaurantJPARepository) {
+    public RestaurantService(RestaurantJPARepository restaurantJPARepository, TimeSlotJPARepository timeSlotJPARepository) {
         this.restaurantJPARepository = restaurantJPARepository;
+        this.timeSlotJPARepository = timeSlotJPARepository;
     }
     
     /**
@@ -62,7 +64,7 @@ public class RestaurantService {
     @Transactional
     public void addTimeSlotToRestaurant(int restaurantId, int timeSlotId) {
         Restaurant restaurant = getRestaurantOrThrowIfNull(restaurantJPARepository.findById((long)restaurantId).orElse(null));
-        TimeSlot ts = TimeSlotRepository.findById(timeSlotId);
+        TimeSlot ts = timeSlotJPARepository.findById((long)timeSlotId).orElse(null);
         if (ts == null) {
             throw new NoSuchElementException("Time slot not found");
         }
