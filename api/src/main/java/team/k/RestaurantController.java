@@ -57,6 +57,7 @@ public class RestaurantController {
         return response.body();
     }
 
+    //TODO fix this of the services endpoint
     @Endpoint(path = "/by", method = HttpMethod.GET)
     @ApiResponseExample(value = RestaurantDTO.class, isArray = true)
     public String getRestaurantBy(
@@ -67,11 +68,11 @@ public class RestaurantController {
         HttpClient client = HttpClient.newHttpClient();
         String parameter = "?";
         if (availability != null) {
-            parameter += "availability=" + availability;
+            parameter += "/by/availability";
         } else if (foodTypes != null) {
-            parameter += "food-types=" + foodTypes;
+            parameter += "/by/food-type?food-types=" + foodTypes;
         } else if (name != null) {
-            parameter += "name=" + name;
+            parameter += "/by/name/" + name;
         } else {
             throw new IllegalArgumentException("No parameter provided");
         }
@@ -90,7 +91,7 @@ public class RestaurantController {
 
     @Endpoint(path = "/dishes", method = HttpMethod.GET)
     @ApiResponseExample(value = Dish.class, isArray = true)
-    public String getDishes(@RequestParam("restaurant-id") int restaurantId) throws Exception { //TODO: voir si cet enpoint est utile puisqu'on a déjà  un GET available-dishes
+    public String getDishes(@RequestParam("restaurant-id") int restaurantId) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI(RESTAURANT_SERVICE_URL + "/dishes?restaurant-id=" + restaurantId))
@@ -105,8 +106,4 @@ public class RestaurantController {
 
         return response.body();
     }
-
-
-
-
 }

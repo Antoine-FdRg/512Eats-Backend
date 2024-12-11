@@ -1,26 +1,34 @@
-package team.k.controller;
-
-import commonlibrary.dto.SubOrderDTO;
-import commonlibrary.external.PaymentProcessor;
-import ssdbrestframework.HttpMethod;
-import ssdbrestframework.SSDBQueryProcessingException;
-import ssdbrestframework.annotations.*;
-import team.k.repository.RestaurantRepository;
-import team.k.service.OrderService;
+package team.k.orderservice;
 
 import commonlibrary.dto.DishDTO;
-import commonlibrary.model.Dish;
-import team.k.service.RestaurantService;
+import commonlibrary.dto.SubOrderDTO;
+import commonlibrary.external.PaymentProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import ssdbrestframework.HttpMethod;
+import ssdbrestframework.SSDBQueryProcessingException;
+import ssdbrestframework.annotations.ApiResponseExample;
+import ssdbrestframework.annotations.Endpoint;
+import ssdbrestframework.annotations.RequestBody;
+import ssdbrestframework.annotations.RequestParam;
+import ssdbrestframework.annotations.Response;
+import ssdbrestframework.annotations.RestController;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController(path = "/orders")
+@Component
 public class OrderController {
+
+    private OrderService orderService;
+
+    @Autowired
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
+
     public record createIndividualOrderRequest(int userId, int restaurantId, int deliveryLocationId,
                                                String deliveryDateTime) {
     }
@@ -37,7 +45,7 @@ public class OrderController {
     public int createIndividualOrder(@RequestBody createIndividualOrderRequest individualOrderDTO) throws SSDBQueryProcessingException {
         try {
             LocalDateTime deliveryDateTime = LocalDateTime.parse(individualOrderDTO.deliveryDateTime());
-            return OrderService.createIndividualOrder(individualOrderDTO.userId(), individualOrderDTO.restaurantId(), individualOrderDTO.deliveryLocationId(), deliveryDateTime, LocalDateTime.now());
+            return orderService.createIndividualOrder(individualOrderDTO.userId(), individualOrderDTO.restaurantId(), individualOrderDTO.deliveryLocationId(), deliveryDateTime, LocalDateTime.now());
         } catch (IllegalArgumentException e) {
             throw new SSDBQueryProcessingException(400, e.getMessage());
         } catch (NoSuchElementException e) {
@@ -59,7 +67,7 @@ public class OrderController {
     @Response(status = 204) // No Content
     public void addDishToOrder(@RequestBody DishAndOrderRequest request) throws SSDBQueryProcessingException {
         try {
-            OrderService.addDishToOrder(request.orderId, request.dishId);
+            orderService.addDishToOrder(request.orderId, request.dishId);
         } catch (IllegalArgumentException e) {
             throw new SSDBQueryProcessingException(400, e.getMessage());
         } catch (NoSuchElementException e) {
@@ -71,7 +79,7 @@ public class OrderController {
     @ApiResponseExample(value = void.class)
     @Response(status = 204, message = "Dish removed from order successfully")
     public void removeDishFromOrder(@RequestParam("order-id") int orderId, @RequestParam("dish-id") int dishId) throws SSDBQueryProcessingException {
-        OrderService.removeDishFromOrder(orderId, dishId);
+        orderService.removeDishFromOrder(orderId, dishId);
     }
 
     public record PaySubOrderRequest(int registeredUserID, int orderId) {
@@ -88,7 +96,7 @@ public class OrderController {
     public void paySubOrder(@RequestBody PaySubOrderRequest request) throws SSDBQueryProcessingException {
         try {
             PaymentProcessor paymentProcessor = new PaymentProcessor();
-            OrderService.paySubOrder(request.registeredUserID, request.orderId, LocalDateTime.now(), paymentProcessor);
+            orderService.paySubOrder(request.registeredUserID, request.orderId, LocalDateTime.now(), paymentProcessor);
         } catch (IllegalArgumentException e) {
             throw new SSDBQueryProcessingException(400, e.getMessage());
         }
@@ -104,22 +112,8 @@ public class OrderController {
     @ApiResponseExample(value = DishDTO.class, isArray = true)
     @Response(status = 200) // OK
     public List<DishDTO> getAvailableDishes(@RequestParam("order-id") int orderId) throws SSDBQueryProcessingException {
-        try {
-            int restaurantId = OrderService.getSubOrder(orderId).getRestaurantID();
-
-            // Récupération des plats disponibles et du restaurant
-            List<Dish> availableDishes = OrderService.getAvailableDishes(orderId);
-            Set<Integer> availableDishIds = availableDishes.stream()
-                    .map(Dish::getId)
-                    .collect(Collectors.toSet());
-
-            // Conversion des plats désactivés et marquage
-            return RestaurantRepository.findById(restaurantId).getDishes().stream()
-                    .map(dish -> {
-                        boolean isAvailable = availableDishIds.contains(dish.getId());
-                        return isAvailable ? dish.convertDishToDishDto() : dish.convertDishDisabledToDishDto();
-                    })
-                    .toList();
+        try{
+            return orderService.getAvailableDishesDTO(orderId);
         } catch (NoSuchElementException e) {
             throw new SSDBQueryProcessingException(404, e.getMessage());
         }
@@ -138,7 +132,7 @@ public class OrderController {
     @Response(status = 201) // Created
     public int createSuborder(@RequestBody CreateSuborderRequest request) throws SSDBQueryProcessingException {
         try {
-            return OrderService.createSuborder(request.registeredUserID, request.restaurantId, request.groupOrderId);
+            return orderService.createSuborder(request.registeredUserID, request.restaurantId, request.groupOrderId);
         } catch (NoSuchElementException e) {
             throw new SSDBQueryProcessingException(404, e.getMessage());
         }
@@ -149,7 +143,7 @@ public class OrderController {
     @Response(status = 200)
     public SubOrderDTO getSubOrder(@RequestParam("order-id") int orderId) throws SSDBQueryProcessingException {
         try {
-            return OrderService.getSubOrder(orderId).convertSubOrderToSubOrderDto();
+            return orderService.getSubOrder(orderId).convertSubOrderToSubOrderDto();
         } catch (NoSuchElementException e) {
             throw new SSDBQueryProcessingException(404, e.getMessage());
         }

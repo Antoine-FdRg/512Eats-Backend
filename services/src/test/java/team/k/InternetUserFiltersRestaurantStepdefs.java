@@ -10,7 +10,7 @@ import commonlibrary.enumerations.FoodType;
 import team.k.repository.RestaurantRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
-import team.k.service.RestaurantService;
+import team.k.restaurantservice.RestaurantService;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;

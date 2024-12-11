@@ -5,11 +5,24 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import commonlibrary.dto.RestaurantDTO;
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.Dish;
+import commonlibrary.model.order.SubOrder;
+import commonlibrary.model.restaurant.discount.DiscountStrategy;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import commonlibrary.model.order.SubOrder;
-import commonlibrary.model.restaurant.discount.DiscountStrategy;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,6 +35,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@Entity
+@Table(name = "restaurant")
 public class Restaurant {
 
     public static final long DELIVERY_DURATION = 20;
@@ -30,15 +45,24 @@ public class Restaurant {
      */
     public static final long ORDER_PROCESSING_TIME_MINUTES = DELIVERY_DURATION + TimeSlot.DURATION;
     private String name;
+    @Id
     private int id;
     private LocalTime open;
     private LocalTime close;
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<TimeSlot> timeSlots;
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Dish> dishes;
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "food_types", joinColumns = @JoinColumn(name = "food_type_id"))
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<FoodType> foodTypes;
+    @OneToOne(fetch = FetchType.EAGER)
     private DiscountStrategy discountStrategy;
     private int averageOrderPreparationTime;
     private String description;
+    @CollectionTable(name = "url_picture", joinColumns = @JoinColumn(name = "url_picture_id"))
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> urlPicture;
 
     private Restaurant(Builder builder) {
@@ -88,7 +112,7 @@ public class Restaurant {
         for (TimeSlot timeSlot : timeSlots) {
             LocalDateTime timeSlotStart = timeSlot.getStart();
             LocalDateTime timeSlotEnd = timeSlot.getEnd();
-            if (now.isAfter(timeSlotStart) && now.isBefore(timeSlotEnd) || now.equals(timeSlotStart)) {
+            if ((now.isAfter(timeSlotStart) && now.isBefore(timeSlotEnd)) || now.equals(timeSlotStart)) {
                 return timeSlot;
             }
         }

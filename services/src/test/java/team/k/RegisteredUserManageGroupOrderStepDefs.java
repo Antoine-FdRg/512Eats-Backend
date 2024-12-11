@@ -20,8 +20,8 @@ import team.k.repository.LocationRepository;
 import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
 import team.k.repository.SubOrderRepository;
-import team.k.service.GroupOrderService;
-import team.k.service.OrderService;
+import team.k.grouporderservice.GroupOrderService;
+import team.k.orderservice.OrderService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,7 +33,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-
+@
 public class RegisteredUserManageGroupOrderStepDefs {
     Exception exception;
 
@@ -49,6 +49,8 @@ public class RegisteredUserManageGroupOrderStepDefs {
     SubOrder unpaidSuborder;
     private Restaurant restaurantLeo;
 
+
+    GroupOrderService groupOrderService;
 
 
     @Before
@@ -111,7 +113,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 LocalDate.parse(currentDate),
                 LocalTime.parse(currentTime)
         );
-        codeToShare = GroupOrderService.createGroupOrder(location.getId(), deliveryDateTime, currentDateTime);
+        codeToShare = groupOrderService.createGroupOrder(location.getId(), deliveryDateTime, currentDateTime);
     }
 
     @Then("the group order is created and the delivery location is initialized and the delivery date time is the {string} at {string}")
@@ -121,14 +123,14 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 LocalTime.parse(orderTime)
         );
 
-        GroupOrder groupOrder = GroupOrderService.findGroupOrderById(codeToShare);
+        GroupOrder groupOrder = groupOrderService.findGroupOrderById(codeToShare);
         assertEquals(location.getId(), groupOrder.getDeliveryLocationID());
         assertEquals(deliveryDateTime, groupOrder.getDeliveryDateTime());
     }
 
     @Then("the group order is created and the delivery location and delivery date time are initialized")
     public void theGroupOrderIsCreatedAndTheDeliveryLocationAndDeliveryDateTimeAreInitialized() {
-        GroupOrder groupOrder = GroupOrderService.findGroupOrderById(codeToShare);
+        GroupOrder groupOrder = groupOrderService.findGroupOrderById(codeToShare);
         assertEquals(location.getId(), groupOrder.getDeliveryLocationID());
     }
 
@@ -143,7 +145,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 LocalTime.parse(currentTime)
         );
         try {
-            codeToShare = GroupOrderService.createGroupOrder(-1, deliveryDateTime, currentDateTime);
+            codeToShare = groupOrderService.createGroupOrder(-1, deliveryDateTime, currentDateTime);
         } catch (Exception e) {
             exception = e;
         }
@@ -151,7 +153,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
 
     @Then("the group order is not created")
     public void theGroupOrderIsNotCreated() {
-        assertNull(GroupOrderService.findGroupOrderById(codeToShare));
+        assertNull(groupOrderService.findGroupOrderById(codeToShare));
         assertNotNull(exception);
         assertEquals(NoSuchElementException.class, exception.getClass());
     }
@@ -163,7 +165,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 LocalTime.parse(currentTime)
         );
         try {
-            codeToShare = GroupOrderService.createGroupOrder(location.getId(), null, currentDateTime);
+            codeToShare = groupOrderService.createGroupOrder(location.getId(), null, currentDateTime);
         } catch (Exception e) {
             exception = e;
         }
@@ -171,7 +173,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
 
     @Then("the group order is created and the delivery location is initialized but the delivery date time is not")
     public void theGroupOrderIsCreatedAndTheDeliveryLocationIsInitializedButTheDeliveryDateTimeIsNot() {
-        GroupOrder groupOrder = GroupOrderService.findGroupOrderById(codeToShare);
+        GroupOrder groupOrder = groupOrderService.findGroupOrderById(codeToShare);
         assertEquals(location.getId(), groupOrder.getDeliveryLocationID());
         assertNull(groupOrder.getDeliveryDateTime());
     }
@@ -196,7 +198,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 LocalTime.parse(currentTime)
         );
         try {
-            GroupOrderService.modifyGroupOrderDeliveryDateTime(codeToShare, deliveryDateTime, currentDateTime);
+            groupOrderService.modifyGroupOrderDeliveryDateTime(codeToShare, deliveryDateTime, currentDateTime);
         } catch (Exception e) {
             exception = e;
         }
@@ -257,7 +259,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 LocalDate.parse(orderDate),
                 LocalTime.parse(orderTime)
         );
-        GroupOrderService.place(groupOrder.getId(), placedDateTime);
+        groupOrderService.place(groupOrder.getId(), placedDateTime);
     }
 
 

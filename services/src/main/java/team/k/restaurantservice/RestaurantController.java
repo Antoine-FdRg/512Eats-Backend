@@ -1,18 +1,18 @@
-package team.k.controller;
+package team.k.restaurantservice;
 
 import commonlibrary.dto.DishDTO;
 import commonlibrary.dto.RestaurantDTO;
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.Dish;
 import commonlibrary.model.restaurant.Restaurant;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ssdbrestframework.SSDBQueryProcessingException;
 import ssdbrestframework.annotations.Endpoint;
 import ssdbrestframework.annotations.PathVariable;
 import ssdbrestframework.annotations.RequestParam;
 import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
-import team.k.repository.RestaurantRepository;
-import team.k.service.RestaurantService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,8 +21,15 @@ import java.util.NoSuchElementException;
 
 
 @RestController(path = "/restaurants")
+@Component
 public class RestaurantController {
 
+    private RestaurantService restaurantService;
+
+    @Autowired
+    public RestaurantController(RestaurantService RestaurantService) {
+        this.restaurantService = RestaurantService;
+    }
 
     /**
      * Get all dishes from a restaurant
@@ -34,7 +41,7 @@ public class RestaurantController {
     @Response(status = 200) // OK
     public List<DishDTO> getAllDishes(@RequestParam("restaurant-id") int restaurantId) throws SSDBQueryProcessingException {
         try {
-            List<Dish> dishes = RestaurantService.getAllDishesFromRestaurant(restaurantId);
+            List<Dish> dishes = restaurantService.getAllDishesFromRestaurant(restaurantId);
             return dishes.stream().map(Dish::convertDishToDishDto).toList();
         } catch (NoSuchElementException e) {
             throw new  SSDBQueryProcessingException(404, "Les dishes du restaurant id"+ restaurantId+"sont introuvables");
@@ -49,7 +56,7 @@ public class RestaurantController {
     @Endpoint(path = "/food-types", method = ssdbrestframework.HttpMethod.GET)
     @Response(status = 200) // OK
     public List<FoodType> getFoodTypes() {
-        return RestaurantService.getFoodTypes();
+        return restaurantService.getFoodTypes();
     }
 
     /**
@@ -59,13 +66,13 @@ public class RestaurantController {
      * @param day the specific day
      * @return the list of available delivery times
      */
-    @Endpoint(path = "/get/delivery-times/{restaurantId}/delivery-times/{day}", method = ssdbrestframework.HttpMethod.GET)
+    @Endpoint(path = "/get/delivery-times/{restaurantId}", method = ssdbrestframework.HttpMethod.GET)
     @Response(status = 200) // OK
     public List<LocalDateTime> getAvailableDeliveryTimes(
-            @PathVariable("restaurantId") int restaurantId, @PathVariable("day") LocalDate day
+            @PathVariable("restaurantId") int restaurantId, @RequestParam("day") LocalDate day
     ) throws SSDBQueryProcessingException {
         try {
-            return RestaurantService.getAllAvailableDeliveryTimesOfRestaurantOnDay(restaurantId, day);
+            return restaurantService.getAllAvailableDeliveryTimesOfRestaurantOnDay(restaurantId, day);
         } catch (NoSuchElementException e) {
             throw new SSDBQueryProcessingException(404,"No available delivery times");
         }
@@ -81,7 +88,7 @@ public class RestaurantController {
     @Endpoint(path = "", method = ssdbrestframework.HttpMethod.GET)
     @Response(status = 200) // OK
     public List<RestaurantDTO> getAllRestaurants() {
-        List<Restaurant> restaurants = RestaurantService.getAllRestaurants();
+        List<Restaurant> restaurants = restaurantService.getAllRestaurants();
         return restaurants.stream().map(Restaurant::convertRestaurantToRestaurantDTO).toList();
     }
 
@@ -91,11 +98,11 @@ public class RestaurantController {
      * @param restaurantName the name of the restaurant
      * @return list of matching restaurants
      */
-    @Endpoint(path = "/{restaurantName}", method = ssdbrestframework.HttpMethod.GET)
+    @Endpoint(path = "/by/name/{restaurantName}", method = ssdbrestframework.HttpMethod.GET)
     @Response(status = 200) // OK
     public List<RestaurantDTO> getRestaurantsByName(@PathVariable("restaurantName") String restaurantName) throws SSDBQueryProcessingException {
         try {
-            List<Restaurant> restaurants = RestaurantService.getRestaurantsByName(restaurantName);
+            List<Restaurant> restaurants = restaurantService.getRestaurantsByName(restaurantName);
             return restaurants.stream().map(Restaurant::convertRestaurantToRestaurantDTO).toList();
         } catch (NoSuchElementException e) {
             throw new SSDBQueryProcessingException(404,"No restaurants found with the name: " + restaurantName);
@@ -112,7 +119,7 @@ public class RestaurantController {
     @Response(status = 200) // OK
     public List<RestaurantDTO> getRestaurantsByFoodType(@RequestParam("food-types") List<FoodType> foodTypes) throws SSDBQueryProcessingException {
         try {
-            List<Restaurant> restaurants = RestaurantService.getRestaurantsByFoodType(foodTypes);
+            List<Restaurant> restaurants = restaurantService.getRestaurantsByFoodType(foodTypes);
             return restaurants
                     .stream()
                     .map(Restaurant::convertRestaurantToRestaurantDTO)
@@ -131,7 +138,7 @@ public class RestaurantController {
     @Response(status = 200) // OK
     public List<RestaurantDTO> getRestaurantsByAvailability() throws SSDBQueryProcessingException {
         try {
-            List<Restaurant> restaurants = RestaurantService.getRestaurantsByAvailability(LocalDateTime.now());
+            List<Restaurant> restaurants = restaurantService.getRestaurantsByAvailability(LocalDateTime.now());
             return restaurants
                     .stream()
                     .map(Restaurant::convertRestaurantToRestaurantDTO)

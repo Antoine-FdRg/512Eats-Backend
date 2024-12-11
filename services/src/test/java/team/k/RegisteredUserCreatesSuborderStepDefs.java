@@ -16,7 +16,7 @@ import team.k.repository.RegisteredUserRepository;
 import team.k.repository.RestaurantRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
-import team.k.service.OrderService;
+import team.k.orderservice.OrderService;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;

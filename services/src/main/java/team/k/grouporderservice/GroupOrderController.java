@@ -1,24 +1,30 @@
-package team.k.controller;
+package team.k.grouporderservice;
 
 import commonlibrary.dto.GroupOrderDTO;
 import commonlibrary.model.order.GroupOrder;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ssdbrestframework.SSDBQueryProcessingException;
 import ssdbrestframework.annotations.Endpoint;
 import ssdbrestframework.annotations.PathVariable;
 import ssdbrestframework.annotations.RequestParam;
 import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
-import team.k.service.GroupOrderService;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
-@RequiredArgsConstructor
 @RestController(path = "/group-orders")
+@Component
 public class GroupOrderController {
 
     private static final String ERROR_GROUP_ORDER_NOT_FOUND = "Group order not found: ";
+    private final GroupOrderService groupOrderService;
+
+    @Autowired
+    public GroupOrderController(GroupOrderService groupOrderService) {
+        this.groupOrderService = groupOrderService;
+    }
 
     /**
      * Create a group order
@@ -34,7 +40,7 @@ public class GroupOrderController {
             @RequestParam("delivery-date-time") LocalDateTime deliveryDateTime
     ) throws SSDBQueryProcessingException {
         try {
-            return GroupOrderService.createGroupOrder(deliveryLocationId, deliveryDateTime, LocalDateTime.now());
+            return groupOrderService.createGroupOrder(deliveryLocationId, deliveryDateTime, LocalDateTime.now());
         } catch (NoSuchElementException e) {
             throw new SSDBQueryProcessingException(404, e.getMessage());
         } catch (IllegalArgumentException e) {
@@ -51,7 +57,7 @@ public class GroupOrderController {
     @Endpoint(path = "/get/{groupOrderId}", method = ssdbrestframework.HttpMethod.GET)
     @Response(status = 200)
     public GroupOrderDTO findGroupOrderById(@PathVariable("groupOrderId") int groupOrderId) throws SSDBQueryProcessingException {
-        GroupOrder groupOrder = GroupOrderService.findGroupOrderById(groupOrderId);
+        GroupOrder groupOrder = groupOrderService.findGroupOrderById(groupOrderId);
         if (groupOrder == null) {
             throw new SSDBQueryProcessingException(404, ERROR_GROUP_ORDER_NOT_FOUND + groupOrderId);
         }
@@ -71,7 +77,7 @@ public class GroupOrderController {
             @RequestParam("delivery-date-time") LocalDateTime deliveryDateTime
     ) throws SSDBQueryProcessingException {
         try {
-            GroupOrderService.modifyGroupOrderDeliveryDateTime(groupOrderId, deliveryDateTime, LocalDateTime.now());
+            groupOrderService.modifyGroupOrderDeliveryDateTime(groupOrderId, deliveryDateTime, LocalDateTime.now());
         } catch (NoSuchElementException e) {
             throw new SSDBQueryProcessingException(404, ERROR_GROUP_ORDER_NOT_FOUND + groupOrderId);
         } catch (IllegalArgumentException | UnsupportedOperationException e) {
@@ -88,7 +94,7 @@ public class GroupOrderController {
     @Response(status = 204)
     public void placeGroupOrder(@PathVariable("groupOrderId") int groupOrderId) throws SSDBQueryProcessingException {
         try {
-            GroupOrderService.place(groupOrderId, LocalDateTime.now());
+            groupOrderService.place(groupOrderId, LocalDateTime.now());
         } catch (NoSuchElementException e) {
             throw new SSDBQueryProcessingException(404, ERROR_GROUP_ORDER_NOT_FOUND + groupOrderId);
         }

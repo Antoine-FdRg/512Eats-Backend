@@ -6,6 +6,10 @@ import commonlibrary.model.Dish;
 import commonlibrary.model.Location;
 import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.restaurant.Restaurant;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,7 +20,10 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@Entity
+@Table(name = "individual_order")
 public class IndividualOrder extends SubOrder {
+    @ManyToOne(fetch = FetchType.EAGER)
     private Location deliveryLocation;
 
     public IndividualOrder(OrderBuilder orderBuilder) {

@@ -1,16 +1,30 @@
 package commonlibrary.model.order;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import commonlibrary.dto.DishDTO;
 import commonlibrary.dto.SubOrderDTO;
 import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.model.Dish;
 import commonlibrary.model.RegisteredUser;
+import commonlibrary.model.payment.Payment;
 import commonlibrary.model.restaurant.Restaurant;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import commonlibrary.model.payment.Payment;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -23,19 +37,31 @@ import java.util.List;
         getterVisibility = JsonAutoDetect.Visibility.NONE,
         setterVisibility = JsonAutoDetect.Visibility.NONE,
         isGetterVisibility = JsonAutoDetect.Visibility.NONE)
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "sub_order")
 public class SubOrder {
+    @Id
+    @GeneratedValue(generator = "increment")
     private int id;
     private double price;
     private int restaurantID;
     private int userID;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private RegisteredUser user;
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Dish> dishes;
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
     private LocalDateTime placedDate;
     private LocalDateTime deliveryDate;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Payment payment;
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY) // Relation ManyToOne avec GroupOrder
+    private GroupOrder groupOrder;
 
     SubOrder(OrderBuilder orderBuilder) {
-        this.id = orderBuilder.id;
         this.price = orderBuilder.price;
         this.restaurantID = orderBuilder.restaurantID;
         this.userID = orderBuilder.userID;
@@ -44,9 +70,11 @@ public class SubOrder {
         this.placedDate = orderBuilder.placedDate;
         this.deliveryDate = orderBuilder.deliveryTime;
         this.payment = orderBuilder.payment;
+        this.groupOrder = orderBuilder.groupOrder;
         if (this.price == 0 && !dishes.isEmpty()) {
             this.price = dishes.stream().mapToDouble(Dish::getPrice).sum();
         }
+
     }
 
     public Dish getCheaperDish() {
@@ -60,6 +88,7 @@ public class SubOrder {
 
     /**
      * Remove a dish from the order and decrease the price of the order
+     *
      * @param dishID the id of the dish to remove
      * @return true if the dish was removed, false otherwise
      */

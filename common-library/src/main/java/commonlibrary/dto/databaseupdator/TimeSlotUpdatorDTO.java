@@ -1,8 +1,7 @@
 package commonlibrary.dto.databaseupdator;
 
-import commonlibrary.model.restaurant.TimeSlot;
-
 import commonlibrary.model.order.SubOrder;
+import commonlibrary.model.restaurant.TimeSlot;
 
 import java.time.LocalDateTime;
 import java.util.List;

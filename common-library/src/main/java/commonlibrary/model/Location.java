@@ -3,6 +3,9 @@ package commonlibrary.model;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import commonlibrary.dto.LocationDTO;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,8 +19,10 @@ import lombok.Setter;
 @EqualsAndHashCode
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @NoArgsConstructor
+@Entity
+@Table(name = "location")
 public class Location {
-
+    @Id
     private int id;
 
     private String streetNumber;

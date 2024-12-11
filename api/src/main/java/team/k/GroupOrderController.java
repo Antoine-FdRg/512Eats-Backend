@@ -22,10 +22,7 @@ import static team.k.APIServer.getErrorMessage;
 
 @RestController(path = "/group-orders")
 public class GroupOrderController {
-    private static final String GROUPORDER_SERVICE_URL = "http://localhost:8083/group-orders";
-
-
-
+    private static final String GROUPORDER_SERVICE_URL = "http://localhost:8085/group-orders";
 
     @Endpoint(path = "", method = HttpMethod.POST)
     @ApiResponseExample(value = int.class)

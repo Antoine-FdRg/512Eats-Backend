@@ -1,13 +1,14 @@
-package team.k.controller;
+package team.k.managementservice;
 
 import commonlibrary.dto.RestaurantDTO;
 import commonlibrary.model.restaurant.Restaurant;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ssdbrestframework.annotations.Endpoint;
 import ssdbrestframework.annotations.PathVariable;
 import ssdbrestframework.annotations.RequestBody;
 import ssdbrestframework.annotations.Response;
 import ssdbrestframework.annotations.RestController;
-import team.k.service.ManageRestaurantService;
 import commonlibrary.dto.DishDTO;
 import commonlibrary.dto.ManagingRestaurantDTO;
 
@@ -18,7 +19,15 @@ import ssdbrestframework.annotations.*;
 
 
 @RestController(path = "/management")
+@Component
 public class ManageRestaurantController {
+
+    private ManageRestaurantService manageRestaurantService;
+
+    @Autowired
+    public ManageRestaurantController(ManageRestaurantService ManageRestaurantService) {
+        this.manageRestaurantService = ManageRestaurantService;
+    }
 
 
     /**
@@ -31,8 +40,8 @@ public class ManageRestaurantController {
      */
     @Endpoint(path = "/update-restaurant-infos", method = HttpMethod.POST)
     @Response(status = 204)
-    public static RestaurantDTO updateRestaurantInfos(@RequestParam("restaurant-id") int restaurantId, @RequestBody ManagingRestaurantDTO ManagingRestaurantDTO) throws SSDBQueryProcessingException {
-        return ManageRestaurantService.updateRestaurantInfos(
+    public RestaurantDTO updateRestaurantInfos(@RequestParam("restaurant-id") int restaurantId, @RequestBody ManagingRestaurantDTO ManagingRestaurantDTO) throws SSDBQueryProcessingException {
+        return manageRestaurantService.updateRestaurantInfos(
                 restaurantId,
                 ManagingRestaurantDTO.openTime(),
                 ManagingRestaurantDTO.closeTime()
@@ -50,9 +59,9 @@ public class ManageRestaurantController {
      */
     @Endpoint(path = "/add-dish", method = HttpMethod.POST)
     @Response(status = 201)
-    public static RestaurantDTO addDish(@RequestParam("restaurant-id") int restaurantId, @RequestBody DishDTO dishDTO) throws SSDBQueryProcessingException {
+    public RestaurantDTO addDish(@RequestParam("restaurant-id") int restaurantId, @RequestBody DishDTO dishDTO) throws SSDBQueryProcessingException {
         Dish dish = dishDTO.convertDishDtoToDish();
-        return ManageRestaurantService.addDish(
+        return manageRestaurantService.addDish(
                 restaurantId,
                 dish.getName(),
                 dish.getDescription(),
@@ -71,8 +80,8 @@ public class ManageRestaurantController {
      */
     @Endpoint(path = "/remove-dish", method = HttpMethod.DELETE)
     @Response(status = 200)
-    public static RestaurantDTO removeDish(@RequestParam("restaurant-id") int restaurantId, @RequestParam("dish-id") int dishId) throws SSDBQueryProcessingException {
-        return ManageRestaurantService.removeDish(
+    public RestaurantDTO removeDish(@RequestParam("restaurant-id") int restaurantId, @RequestParam("dish-id") int dishId) throws SSDBQueryProcessingException {
+        return manageRestaurantService.removeDish(
                 restaurantId,
                 dishId
         ).restaurantToRestaurantDTO();
@@ -88,9 +97,9 @@ public class ManageRestaurantController {
      */
     @Endpoint(path = "/update-dish", method = HttpMethod.PUT)
     @Response(status = 204)
-    public static RestaurantDTO updateDish(@RequestParam("restaurant-id") int restaurantId, @RequestBody DishDTO dishDTO) throws SSDBQueryProcessingException {
+    public RestaurantDTO updateDish(@RequestParam("restaurant-id") int restaurantId, @RequestBody DishDTO dishDTO) throws SSDBQueryProcessingException {
         Dish dish = dishDTO.convertDishDtoToDish();
-        return ManageRestaurantService.updateDish(
+        return manageRestaurantService.updateDish(
                 restaurantId,
                 dish.getId(),
                 dish.getPrice(),
@@ -108,7 +117,7 @@ public class ManageRestaurantController {
     @Response(status = 201) // Created
     public int addRestaurant(@RequestBody RestaurantDTO restaurantDto) {
         Restaurant restaurant = restaurantDto.convertRestaurantDtoToRestaurant();
-        ManageRestaurantService.addRestaurant(restaurant);
+        manageRestaurantService.addRestaurant(restaurant);
         return restaurant.getId();
     }
 
@@ -120,6 +129,6 @@ public class ManageRestaurantController {
     @Endpoint(path = "/delete/{restaurantId}", method = ssdbrestframework.HttpMethod.DELETE)
     @Response(status = 204) // No Content
     public void deleteRestaurant(@PathVariable("restaurantId") int restaurantId) {
-        ManageRestaurantService.deleteRestaurant(restaurantId);
+        manageRestaurantService.deleteRestaurant(restaurantId);
     }
 }

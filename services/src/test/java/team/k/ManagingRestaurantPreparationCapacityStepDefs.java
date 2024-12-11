@@ -3,7 +3,6 @@ package team.k;
 import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
-import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -14,7 +13,7 @@ import team.k.repository.RestaurantRepository;
 import team.k.repository.SubOrderRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
-import team.k.service.OrderService;
+import team.k.orderservice.OrderService;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
