@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import commonlibrary.dto.GroupOrderDTO;
 import commonlibrary.dto.SubOrderDTO;
 import commonlibrary.enumerations.OrderStatus;
+import commonlibrary.model.Location;
 import commonlibrary.model.RegisteredUser;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -79,13 +80,13 @@ public class GroupOrder {
         }
     }
 
-    public GroupOrderDTO convertGroupOrderToGroupOrderDto() {
+    public GroupOrderDTO convertGroupOrderToGroupOrderDto(Location location) {
         List<SubOrderDTO> convertedSubOrders = subOrders.stream()
                 .map(SubOrder::convertSubOrderToSubOrderDto)
                 .toList();
         return new GroupOrderDTO(id,
                 status.toString(),
-                deliveryLocationID,
+                location,
                 deliveryDateTime != null ? deliveryDateTime.toString() : "",
                 convertedSubOrders);
     }
