@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import ssdbrestframework.SSDBQueryProcessingException;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
-import team.k.repository.RestaurantRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -205,7 +204,11 @@ public class OrderService {
                 .collect(Collectors.toSet());
 
         // Conversion des plats désactivés et marquage
-        return RestaurantRepository.findById(restaurantId).getDishes().stream()
+        Restaurant restaurant = restaurantJPARepository.findById((long)restaurantId).orElse(null);
+        if(restaurant == null) {
+            throw new NoSuchElementException(RESTAURANT_NOT_FOUND);
+        }
+        return restaurant.getDishes().stream()
                 .map(dish -> {
                     boolean isAvailable = availableDishIds.contains(dish.getId());
                     return isAvailable ? dish.convertDishToDishDto() : dish.convertDishDisabledToDishDto();
