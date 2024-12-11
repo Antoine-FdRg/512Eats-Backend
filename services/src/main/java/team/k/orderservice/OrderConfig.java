@@ -18,7 +18,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@ComponentScan(basePackages = {"commonlibrary","team.k.service","team.k.orderservice"}) // Scanne les modèles et repositories
+@ComponentScan(basePackages = {"commonlibrary","team.k.orderservice"}) // Scanne les modèles et repositories
 @EnableJpaRepositories(basePackages = {"commonlibrary.repository"}) // Active les repositories
 public class OrderConfig {
 
@@ -46,7 +46,7 @@ public class OrderConfig {
         Properties properties = new Properties();
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
         properties.setProperty("hibernate.hbm2ddl.auto", "update");
-        properties.setProperty("hibernate.show_sql", "true");
+        properties.setProperty("hibernate.show_sql", "false");
         properties.setProperty("hibernate.format_sql", "true");
         return properties;
     }
