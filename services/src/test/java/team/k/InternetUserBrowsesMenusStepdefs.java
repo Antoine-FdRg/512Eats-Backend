@@ -45,8 +45,6 @@ public class InternetUserBrowsesMenusStepdefs {
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        dishJPARepository.deleteAll();
-        restaurantJPARepository.deleteAll();
     }
 
     // Remove the restaurant after each scenario
@@ -76,7 +74,10 @@ public class InternetUserBrowsesMenusStepdefs {
     @When("The user wants to have dishes non registered of the restaurant {string}")
     public void theUserWantsToHaveDishesNonRegisteredOfTheRestaurant(String restaurantName) {
         try {
-            restaurantDishes = restaurantService.getAllDishesFromRestaurant(restaurantJPARepository.findById((long)restaurant.getId()).orElseThrow(NoSuchElementException::new).getId());
+            restaurantDishes = restaurantService.getAllDishesFromRestaurant(
+                    restaurantJPARepository.findById(
+                            (long)restaurantB.getId()
+                    ).orElseThrow(NoSuchElementException::new).getId());
         } catch (NoSuchElementException e) {
             this.errorMessage = e;
         }
