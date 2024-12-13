@@ -59,6 +59,8 @@ plus long que le temps disponible, ce qui mettrait en retard le restaurant.
 
 ## 1.2 Points non implémentés relativement à la spécification et aux extensions requises
 
+Nous n'avons pas implémenté l'extension du login sur l'interface. IL n'y a pas de gestion de token ni de mot de passe.
+
 ## 1.3 Points forts
 
 ## 1.4 Points faibles
@@ -70,6 +72,20 @@ plus long que le temps disponible, ce qui mettrait en retard le restaurant.
 ## 2.2 Justification de l'architecture
 
 # 3. Qualité des codes
+
+En ce qui concerne l'auto-évaluation de notre code, voici nos observations : 
+Code de bonne qualité : 
+- Le code est lisible avec des noms de méthodes et de classes transparentes. 
+- Les scénarios sont clairs et englobent la totalité des specs attendues notamment le scénario avec les commandes d'un groupe Order. 
+- La gestion des erreurs est faite de sorte à envoyer des messages clairs et corrects concernant les problèmes ou les succès rencontrés afin d'avertir l'utilisateur du succès ou de l'échec de ses actions. Il est aussi pour nous plus pratique de débugger et de contrôler la maintenance de notre code. 
+- Sur le point de vue du partage des responsabilités, nous avons bien séparé les classes et les méthodes pour ne pas avoir trop de responsabilités dans une classe et rien dans les autres. 
+- Nous avons également fait tester notre interface utilisateurs à plusieurs personnes et avons eu des retours positifs sur la facilité d'utilisation de notre application.
+
+Code à améliorer : 
+- Nous avons encore certaines fonctionnalités à implémenter pour que notre projet soit complet et fonctionnel. Il manque :
+  - La gestion du profil de l'internet user ( notamment la navigation libre de tous les restaurants et leur carte qui n'est pas possible à ce jour)
+  - La gestion des localisations n'est pas totalement implémentée, à l'heure actuelle nous ne pouvons pas rentrer la localisation d'une groupe order à la fin de celle-ci elle doit être décidée dès le début. 
+- En ce qui concerne les endpoint que nous avons mis pour la communication REST. Ils ne sont pas conventionnels. En effet, dans nos controller, nous pouvons voir des endpoints avec des verbes dans le chemin, ou alors des path variable qui sont dans des request param. La cause de ce problème est notre implémentation du framework Rest qui traite les endpoints et les paramètres avec un système de Régex. 
 
 # 4. Gestion de projet
 
