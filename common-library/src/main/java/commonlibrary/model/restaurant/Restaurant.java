@@ -57,7 +57,7 @@ public class Restaurant {
     @CollectionTable(name = "food_types", joinColumns = @JoinColumn(name = "food_type_id"))
     @ElementCollection(fetch = FetchType.EAGER)
     private List<FoodType> foodTypes;
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private DiscountStrategy discountStrategy;
     private int averageOrderPreparationTime;
     private String description;

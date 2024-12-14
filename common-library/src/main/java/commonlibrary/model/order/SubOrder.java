@@ -49,7 +49,7 @@ public class SubOrder {
     private int userID;
     @ManyToOne(fetch = FetchType.LAZY)
     private RegisteredUser user;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Dish> dishes;
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
