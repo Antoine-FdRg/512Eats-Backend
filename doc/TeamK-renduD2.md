@@ -65,11 +65,39 @@ Nous n'avons pas implémenté l'extension du login sur l'interface. IL n'y a pas
 
 ## 1.4 Points faibles
 
-# 2. Conception
+# 2. Architecture
 
-## 2.1 Architecture
+## 2.1 Présentation générale
+Notre projet est architecturé de la manière suivante :
+![schema d'architectute](ressources/architecture.png)
+### 2.1.1 Client web
+Un client web est un projet à part de ce dépôt, il communique en REST avec le backend via l'[API gateway](#212-lapi-gateway)).
+Il permet une utilisation optimisée et ergonomique de notre application.
 
-## 2.2 Justification de l'architecture
+### 2.1.2 L'API gateway
+L'API gateway (disponible dans [ce package](../api) est l'interface de notre backend end. Le client web lui envoie 
+des requêtes HTTP qu'il "redirige" vers le [service métier](#213-les-services-métiers) adéquat. En exposant 
+plusieurs controllers REST, l'API gateway peut interroger simplement le service métier concerné par la requête et 
+ainsi envoyer la réponse reçue vers le [client web](#211-frontend). Pour simplifier fonctionnement et alléger son code, les 
+réponses 
+reçues par l'API gateway ne sont pas désérialisées, mais renvoyées telles quelles.
+
+### 2.1.3 Les services métiers
+Les services métiers sont les services qui gèrent les différentes 
+entités (disponible dans [ce package](../common-library/src/main/java/commonlibrary/model)) de notre application.
+Ils sont consommés par l'[API gateway](#212-lapi-gateway). 
+Ils sont responsables de la logique métier et utilisent les entités qu'ils récupèrent grâce à la [couche DAO](#214-la-couche-dao).
+
+### 2.1.4 La couche DAO
+La couche DAO (Data Access Object) est composée de repositories JPA (disponible dans
+[ce package](../common-library/src/main/java/commonlibrary/repository)) qui permettent de communiquer avec la base de 
+données.
+
+### 2.1.5 La base de données
+La base de données est une base de données relationnelle PostgreSQL. Elle est composée de plusieurs tables qui
+représentent les différentes entités de notre application. Elle est accessible par les [repositories JPA](#214-la-couche-dao).
+Elle est exécutée dans un conteneur Docker lancé via  [dokcer-compose](../docker-compose.yml)
+
 
 # 3. Qualité des codes
 
