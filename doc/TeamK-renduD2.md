@@ -71,8 +71,8 @@ Nous n'avons pas implémenté l'extension du login sur l'interface. IL n'y a pas
 Notre projet est architecturé de la manière suivante :
 ![schema d'architectute](ressources/architecture.png)
 ### 2.1.1 Client web
-Le [client web](#26-le-client-web) est un projet à part de ce dépôt, il communique en REST avec le backend via l'[API gateway]
-(#212-lapi-gateway)).
+Le [client web](#26-le-client-web) est un projet à part de ce dépôt, il communique en REST avec le backend via l'[API 
+gateway](#212-lapi-gateway)).
 Il permet une utilisation optimisée et ergonomique de notre application.
 
 ### 2.1.2 Backend
@@ -145,8 +145,12 @@ Certaines classes ne sont pas utilisées actuellement, elles sont conservées en
 ## 2.6 Le client web
 *inserer screenshot*
 
-## 2.7 Exemple de requête
-*insérer sequence*
+## 2.7 Exemples de requêtes
+### 2.7.1 Récupération des restaurants
+![diagrame de séquence](ressources/diagrame%20de%20séquence%20ajout%20plat%20commande.png)
+
+### 2.7.2 Ajout d'un plat dans une commande
+![diagrame de séquence](ressources/diagrame%20de%20séquence%20ajout%20plat%20commande.png)
 
 # 3. Qualité des codes
 
