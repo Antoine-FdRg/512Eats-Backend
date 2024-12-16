@@ -28,7 +28,6 @@ public class Dish {
     private String picture;
 
     private Dish(Builder builder) {
-//        this.id = builder.id;
         this.name = builder.name;
         this.description = builder.description;
         this.price = builder.price;
@@ -65,22 +64,11 @@ public class Dish {
     }
 
     public static class Builder {
-        private Integer id;
         private String name;
         private String description;
         private double price;
         private int preparationTime;
         private String picture;
-        private static int idCounter = 0;
-
-        public Builder() {
-//            this.id = idCounter++;
-        }
-
-        public Builder setId(int id) {
-            this.id = id;
-            return this;
-        }
 
         public Builder setName(String name) {
             this.name = name;
