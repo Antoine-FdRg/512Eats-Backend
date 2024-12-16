@@ -47,7 +47,7 @@ public class RegisteredUserUsesDiscountStepDefs {
     @Mock
     PaymentProcessor paymentProcessor;
 
-    Restaurant restaurant;
+    int restaurantID;
 
     @Autowired
     private RestaurantJPARepository restaurantJPARepository;
@@ -68,8 +68,27 @@ public class RegisteredUserUsesDiscountStepDefs {
     @Transactional
     @Given("an order containing {int} dishes is created by a registered user whose name is {string} and his role is {role}")
     public void anOrderContainingDishesIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(int number, String name, Role role) {
-        RegisteredUser registeredUser = new RegisteredUser(name, role);
-        restaurant = new Restaurant.Builder()
+        Restaurant internalRestaurant = initializeRestaurant();
+        internalRestaurant = restaurantJPARepository.findById((long) internalRestaurant.getId()).orElseThrow(NoSuchElementException::new);
+        restaurantID = internalRestaurant.getId();
+        internalRestaurant.addTimeSlot(
+                new TimeSlot(
+                        LocalDateTime.of(2025, 1, 1, 10, 0),
+                        internalRestaurant,
+                        3
+                )
+        );
+
+        registeredUserID = createAndPersistUser(name, role);
+        initializeUserOrderHistory(registeredUserID);
+        initializeUserOrder(number,registeredUserID);
+        RegisteredUser registeredUser = registeredUserJPARepository.findById((long) registeredUserID).orElseThrow(NoSuchElementException::new);
+        orderID = registeredUser.getCurrentOrder().getId();
+    }
+
+    @Transactional
+    protected Restaurant initializeRestaurant() {
+        Restaurant restaurant = new Restaurant.Builder()
                 .setName("Le restaurant")
                 .setDescription("Ce restaurant a plein de discount différente")
                 .setOpen(LocalTime.of(10, 0))
@@ -77,18 +96,23 @@ public class RegisteredUserUsesDiscountStepDefs {
                 .setAverageOrderPreparationTime(10)
                 .build();
         restaurantJPARepository.save(restaurant);
-        restaurant.addTimeSlot(
-                new TimeSlot(
-                        LocalDateTime.of(2025, 1, 1, 10, 0),
-                        restaurant,
-                        3
-                )
-        );
+        return restaurant;
+    }
 
+    @Transactional
+    protected int createAndPersistUser(String name, Role role) {
+        RegisteredUser registeredUser = new RegisteredUser(name, role);
+        registeredUserJPARepository.save(registeredUser);
+        return registeredUser.getId();
+    }
+
+    @Transactional
+    protected void initializeUserOrderHistory(int userID) {
+        RegisteredUser registeredUser = registeredUserJPARepository.findById((long) userID).orElseThrow(NoSuchElementException::new);
         // Initialisation des commandes de l'historique de l'utilisateur
         SubOrder previousOrder = new OrderBuilder()
                 .setUserID(registeredUser.getId())
-                .setRestaurantID(restaurant.getId())
+                .setRestaurantID(restaurantID)
                 .setDeliveryLocation(new Location.Builder()
                         .setNumber("1")
                         .setAddress("adresse")
@@ -98,18 +122,15 @@ public class RegisteredUserUsesDiscountStepDefs {
         for (int i = 0; i < 10; i++) {
             registeredUser.addOrderToHistory(previousOrder);
         }
-        registeredUserJPARepository.save(registeredUser);
-        initializeUserOrder(number, registeredUser);
-        registeredUserID = registeredUser.getId();
-        orderID = registeredUser.getCurrentOrder().getId();
     }
 
     @Transactional
-    protected void initializeUserOrder(int numberOfDishes, RegisteredUser registeredUser) {
+    protected void initializeUserOrder(int numberOfDishes, int userID) {
+        RegisteredUser registeredUser = registeredUserJPARepository.findById((long) userID).orElseThrow(NoSuchElementException::new);
         // Initialisation de la commande actuelle
         SubOrder order = new OrderBuilder()
                 .setUserID(registeredUser.getId())
-                .setRestaurantID(restaurant.getId())
+                .setRestaurantID(restaurantID)
                 .setDeliveryTime(LocalDateTime.of(2025, 1, 1, 10, 50))
                 .build();
 
@@ -125,6 +146,7 @@ public class RegisteredUserUsesDiscountStepDefs {
                 .setName("cheapest dish")
                 .setPrice(5.0)
                 .build();
+        subOrderJPARepository.save(order);
         order.addDish(cheapestDish);
         registeredUser.setCurrentOrder(order);
     }
@@ -132,7 +154,7 @@ public class RegisteredUserUsesDiscountStepDefs {
     @And("the restaurant have freeDishAfterXOrders discount")
     @Transactional
     public void theRestaurantHaveAUnconditionalDiscount() {
-        Restaurant restaurantToApplyDiscount = restaurantJPARepository.findById((long) restaurant.getId()).orElseThrow(NoSuchElementException::new);
+        Restaurant restaurantToApplyDiscount = restaurantJPARepository.findById((long) restaurantID).orElseThrow(NoSuchElementException::new);
         freeDiscount = new FreeDishAfterXOrders(restaurantToApplyDiscount.getId(), 10);
         restaurantToApplyDiscount.setDiscountStrategy(freeDiscount);
     }
@@ -154,7 +176,7 @@ public class RegisteredUserUsesDiscountStepDefs {
     @And("the restaurant have unconditional discount")
     @Transactional
     public void theRestaurantHaveUnconditionalDiscount() {
-        Restaurant restaurantToApplyDiscount = restaurantJPARepository.findById((long) restaurant.getId()).orElseThrow(NoSuchElementException::new);
+        Restaurant restaurantToApplyDiscount = restaurantJPARepository.findById((long) restaurantID).orElseThrow(NoSuchElementException::new);
         unconditionalDiscount = new UnconditionalDiscount(restaurantToApplyDiscount.getId(), 0.25);
         restaurantToApplyDiscount.setDiscountStrategy(unconditionalDiscount);
     }
@@ -167,8 +189,9 @@ public class RegisteredUserUsesDiscountStepDefs {
     }
 
     @And("the restaurant have Role discount")
+    @Transactional
     public void theRestaurantHaveRoleDiscount() {
-        Restaurant restaurantToApplyDiscount = restaurantJPARepository.findById((long) restaurant.getId()).orElseThrow(NoSuchElementException::new);
+        Restaurant restaurantToApplyDiscount = restaurantJPARepository.findById((long) restaurantID).orElseThrow(NoSuchElementException::new);
         roleDiscount = new RoleDiscount(restaurantToApplyDiscount.getId(), 0.2, Role.STUDENT);
         restaurantToApplyDiscount.setDiscountStrategy(roleDiscount);
     }
