@@ -1,0 +1,466 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "SSDB API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/management/add/restaurant": {
+      "post": {
+        "summary": "addRestaurant",
+        "operationId": "addRestaurant",
+        "parameters": []
+      }
+    },
+    "/management/delete/{restaurantId}": {
+      "delete": {
+        "summary": "deleteRestaurant",
+        "operationId": "deleteRestaurant",
+        "parameters": []
+      }
+    },
+    "/management/update-dish": {
+      "put": {
+        "summary": "updateDish",
+        "operationId": "updateDish",
+        "parameters": [
+          {
+            "name": "restaurant-id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/management/add-dish": {
+      "post": {
+        "summary": "addDish",
+        "operationId": "addDish",
+        "parameters": [
+          {
+            "name": "restaurant-id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/management/remove-dish": {
+      "delete": {
+        "summary": "removeDish",
+        "operationId": "removeDish",
+        "parameters": [
+          {
+            "name": "restaurant-id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dish-id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/management/update-restaurant-infos": {
+      "post": {
+        "summary": "updateRestaurantInfos",
+        "operationId": "updateRestaurantInfos",
+        "parameters": [
+          {
+            "name": "restaurant-id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/restaurants/food-types": {
+      "get": {
+        "summary": "getFoodTypes",
+        "operationId": "getFoodTypes",
+        "parameters": []
+      }
+    },
+    "/restaurants": {
+      "get": {
+        "summary": "getAllRestaurants",
+        "operationId": "getAllRestaurants",
+        "parameters": []
+      }
+    },
+    "/restaurants/dishes": {
+      "get": {
+        "summary": "getAllDishes",
+        "operationId": "getAllDishes",
+        "parameters": [
+          {
+            "name": "restaurant-id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/restaurants/by/availability": {
+      "get": {
+        "summary": "getRestaurantsByAvailability",
+        "operationId": "getRestaurantsByAvailability",
+        "parameters": []
+      }
+    },
+    "/restaurants/{restaurantName}": {
+      "get": {
+        "summary": "getRestaurantsByName",
+        "operationId": "getRestaurantsByName",
+        "parameters": []
+      }
+    },
+    "/restaurants/by/food-types": {
+      "get": {
+        "summary": "getRestaurantsByFoodType",
+        "operationId": "getRestaurantsByFoodType",
+        "parameters": [
+          {
+            "name": "food-types",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/restaurants/get/delivery-times/{restaurantId}/delivery-times/{day}": {
+      "get": {
+        "summary": "getAvailableDeliveryTimes",
+        "operationId": "getAvailableDeliveryTimes",
+        "parameters": []
+      }
+    },
+    "/orders/sub-order": {
+      "post": {
+        "summary": "createSuborder",
+        "operationId": "createSuborder",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/get/sub-order": {
+      "get": {
+        "summary": "getSubOrder",
+        "operationId": "getSubOrder",
+        "parameters": [
+          {
+            "name": "order-id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubOrderDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/add-dish": {
+      "post": {
+        "summary": "addDishToOrder",
+        "operationId": "addDishToOrder",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/pay": {
+      "post": {
+        "summary": "paySubOrder",
+        "operationId": "paySubOrder",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/available-dishes": {
+      "get": {
+        "summary": "getAvailableDishes",
+        "operationId": "getAvailableDishes",
+        "parameters": [
+          {
+            "name": "order-id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DishDTOList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/individual-order": {
+      "post": {
+        "summary": "createIndividualOrder",
+        "operationId": "createIndividualOrder",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/remove-dish": {
+      "delete": {
+        "summary": "removeDishFromOrder",
+        "operationId": "removeDishFromOrder",
+        "parameters": [
+          {
+            "name": "order-id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dish-id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/group-orders/place/{groupOrderId}": {
+      "post": {
+        "summary": "placeGroupOrder",
+        "operationId": "placeGroupOrder",
+        "parameters": []
+      }
+    },
+    "/group-orders/get/{groupOrderId}": {
+      "get": {
+        "summary": "findGroupOrderById",
+        "operationId": "findGroupOrderById",
+        "parameters": []
+      }
+    },
+    "/group-orders": {
+      "post": {
+        "summary": "createGroupOrder",
+        "operationId": "createGroupOrder",
+        "parameters": [
+          {
+            "name": "delivery-location-id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "delivery-date-time",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/group-orders/modify-delivery-datetime/{groupOrderId}": {
+      "put": {
+        "summary": "modifyGroupOrderDeliveryDateTime",
+        "operationId": "modifyGroupOrderDeliveryDateTime",
+        "parameters": [
+          {
+            "name": "delivery-date-time",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DishDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "preparationTime": {
+            "type": "integer"
+          },
+          "pictureURL": {
+            "type": "string"
+          }
+        }
+      },
+      "PaymentDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "id_counter": {
+            "type": "integer"
+          }
+        }
+      },
+      "SubOrderDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "price": {
+            "type": "string"
+          },
+          "restaurantId": {
+            "type": "integer"
+          },
+          "userId": {
+            "type": "integer"
+          },
+          "dishes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DishDTO"
+            }
+          },
+          "status": {
+            "type": "string"
+          },
+          "placedDate": {
+            "type": "string"
+          },
+          "deliveryDateTime": {
+            "type": "string"
+          },
+          "payment": {
+            "$ref": "#/components/schemas/PaymentDTO"
+          }
+        }
+      },
+      "DishDTOList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/DishDTO"
+        }
+      }
+    }
+  }
+}

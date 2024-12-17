@@ -1,0 +1,145 @@
+package team.k;
+
+import commonlibrary.enumerations.Role;
+import commonlibrary.external.PaymentProcessor;
+import commonlibrary.model.Dish;
+import commonlibrary.model.RegisteredUser;
+import commonlibrary.model.order.OrderBuilder;
+import commonlibrary.model.order.SubOrder;
+import commonlibrary.model.restaurant.Restaurant;
+import commonlibrary.model.restaurant.TimeSlot;
+import io.cucumber.java.Before;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import team.k.repository.RegisteredUserRepository;
+import team.k.repository.RestaurantRepository;
+import team.k.repository.SubOrderRepository;
+import commonlibrary.model.restaurant.discount.FreeDishAfterXOrders;
+import commonlibrary.model.restaurant.discount.RoleDiscount;
+import commonlibrary.model.restaurant.discount.UnconditionalDiscount;
+import team.k.orderservice.OrderService;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
+public class RegisteredUserUsesDiscountStepDefs {
+
+    RegisteredUser registeredUser;
+    SubOrder order;
+    FreeDishAfterXOrders freeDiscount;
+    UnconditionalDiscount unconditionalDiscount;
+    RoleDiscount roleDiscount;
+
+    @Mock
+    Dish dish;
+    @Mock
+    Dish dishCheapest;
+
+    @Mock
+    SubOrder previousOrder;
+
+    @Mock
+    PaymentProcessor paymentProcessor;
+
+    Restaurant restaurant;
+
+
+    @Before
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+
+    @Given("an order containing {int} dishes is created by a registered user whose name is {string} and his role is {role}")
+    public void anOrderContainingDishesIsCreatedByARegisteredUserWhoseNameIsAndHisRoleIsSTUDENT(int number, String name, Role role) {
+        registeredUser = spy(new RegisteredUser(name, role));
+        restaurant = new Restaurant.Builder()
+                .setName("Le restaurant")
+                .setDescription("Ce restaurant a plein de discount diffférente")
+                .setOpen(LocalTime.of(10, 0))
+                .setClose(LocalTime.of(22, 0))
+                .setAverageOrderPreparationTime(10)
+                .build();
+        RestaurantRepository.add(restaurant);
+        restaurant.addTimeSlot(
+                new TimeSlot(
+                        LocalDateTime.of(2025, 1, 1, 10, 0),
+                        restaurant,
+                        3
+                )
+        );
+        RegisteredUserRepository.add(registeredUser);
+        when(previousOrder.getRestaurantID()).thenReturn(restaurant.getId());
+        for (int i = 0; i < 10; i++) {
+            registeredUser.addOrderToHistory(previousOrder);
+        }
+        order = new OrderBuilder().setUserID(registeredUser.getId()).setRestaurantID(restaurant.getId())
+                .setDeliveryTime(LocalDateTime.of(2025, 1, 1, 10, 50)).build();
+        registeredUser.setCurrentOrder(order);
+        SubOrderRepository.add(order);
+        when(dish.getPrice()).thenReturn(10.0);
+        when(dishCheapest.getPrice()).thenReturn(5.0);
+        for (int i = 0; i < number - 1; i++) {
+            order.addDish(dish);
+        }
+        order.addDish(dishCheapest);
+    }
+
+    @And("the restaurant have freeDishAfterXOrders discount")
+    public void theRestaurantHaveAUnconditionalDiscount() {
+        freeDiscount = new FreeDishAfterXOrders(restaurant.getId(), 10);
+        restaurant.setDiscountStrategy(freeDiscount);
+    }
+
+    @When("The user pays the order with the discount")
+    public void theUserPaysTheOrderWithTheDiscount() {
+        when(paymentProcessor.processPayment(anyDouble())).thenReturn(true);
+        OrderService.paySubOrder(registeredUser.getId(), order.getId(), LocalDateTime.of(2025, 1, 1, 10, 00), paymentProcessor);
+    }
+
+    @Then("the cheapest dish is free in the order")
+    public void theCheapestDishIsFreeInTheOrder() {
+        assertEquals(90.0, order.getPrice(), 0);
+        assertEquals(90.0, order.getPayment().getAmount(), 0);
+    }
+
+
+    @And("the restaurant have unconditional discount")
+    public void theRestaurantHaveUnconditionalDiscount() {
+        unconditionalDiscount = new UnconditionalDiscount(restaurant.getId(), 0.25);
+        restaurant.setDiscountStrategy(unconditionalDiscount);
+    }
+
+    @Then("the price is lower than before")
+    public void thePriceIsLowerThanBefore() {
+        assertEquals(71.25, order.getPrice(), 0);
+        assertEquals(71.25, order.getPayment().getAmount(), 0);
+    }
+
+    @And("the restaurant have Role discount")
+    public void theRestaurantHaveRoleDiscount() {
+        roleDiscount = new RoleDiscount(restaurant.getId(), 0.2, Role.STUDENT);
+        restaurant.setDiscountStrategy(roleDiscount);
+    }
+
+    @Then("the price is lower than the previous one")
+    public void thePriceIsLowerThanThePreviousOne() {
+        assertEquals(76, order.getPrice(), 0);
+        assertEquals(76, order.getPayment().getAmount(), 0);
+    }
+
+
+    @Then("the price does not change")
+    public void thePriceDoesNotChange() {
+        assertEquals(95.0, order.getPrice(), 0);
+    }
+}

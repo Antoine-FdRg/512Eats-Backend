@@ -65,18 +65,99 @@ Nous n'avons pas implémenté l'extension du login sur l'interface. IL n'y a pas
 
 ## 1.4 Points faibles
 
-# 2. Conception
+# 2. Architecture
 
-## 2.1 Architecture
+## 2.1 Présentation générale
+Notre projet est architecturé de la manière suivante :
+![schema d'architectute](ressources/architecture.png)
+### 2.1.1 Client web
+Le [client web](#26-le-client-web) est un projet à part de ce dépôt, il communique en REST avec le backend via l'[API 
+gateway](#212-lapi-gateway)).
+Il permet une utilisation optimisée et ergonomique de notre application.
 
-## 2.2 Justification de l'architecture
+### 2.1.2 Backend
+Tout le code du backend est disponible dans ce dépôt. C'est un [projet maven 
+multimodule](https://www.baeldung.com/maven-multi-module).
+
+#### 2.1.2 L'API gateway
+L'API gateway (disponible dans [ce module](../api)) est l'interface de notre backend. Le client web lui envoie 
+des requêtes HTTP qu'elle "redirige" vers le [service métier](#213-les-services-métiers) adéquat. En exposant 
+plusieurs controllers REST, l'API gateway peut interroger simplement le service métier concerné par la requête et 
+ainsi envoyer la réponse reçue vers le [client web](#211-client-web). Pour simplifier fonctionnement et alléger son code, les 
+réponses reçues par l'API gateway ne sont pas désérialisées, mais renvoyées telles quelles.
+Sa documentation OpenAPI est disponible [ici](../api/openapi.json).
+
+#### 2.1.3 Les services métiers
+Les services métiers sont les services qui gèrent les différentes 
+entités (disponible dans [ce module](../common-library/src/main/java/commonlibrary/model)) de notre application.
+Ils sont consommés par l'[API gateway](#212-lapi-gateway). 
+Ils sont responsables de la logique métier et utilisent les entités qu'ils récupèrent grâce à la [couche DAO](#214-la-couche-dao).
+
+#### 2.1.4 La couche DAO
+La couche DAO (Data Access Object) est composée de repositories [JPA](#24-les-entités) (disponible dans
+[ce package](../common-library/src/main/java/commonlibrary/repository) du module [common-library](../common-library)) qui 
+permettent de communiquer avec la [base de données](#215-la-base-de-données).
+
+#### 2.1.5 La base de données
+La base de données est une base de données relationnelle PostgreSQL. Elle est composée de plusieurs tables qui
+représentent les différentes [entités](#24-les-entités) de notre application. Elle 
+est accessible par les[repositories JPA](#214-la-couche-dao).
+Elle est exécutée dans un conteneur Docker lancé via [dokcer-compose](../docker-compose.yml)
+
+## 2.2 Les services métiers
+Les services métiers sont les services qui gèrent les différentes fonctionnalités de notre application. Ils sont 
+découpés en plusieurs services pour plus de clarté, de lisibilité et de maintenabilité. Ils sont tous dans le module 
+[service](../services) et sont répartis en 4 packages :
+- [OrderService](../services/src/main/java/team/k/orderservice) : Gère les commandes
+- [RestaurantService](../services/src/main/java/team/k/restaurantservice) : Gère les restaurants et plus particulièrement
+la partie utile pour les clients
+- [GroupOrderService](../services/src/main/java/team/k/grouporderservice) : Gère les groupes de commandes
+- [ManagementService](../services/src/main/java/team/k/managementservice) : Administre les restaurants
+
+Chacun de ses packages contient :
+- Une classe exécutable qui permet de lancer le service et son serveur REST
+- Un controller qui expose les endpoints REST qui appellent les méthodes du service
+- Un service qui contient la logique métier
+- Une classe de configuration qui permet de configurer le service et notamment de définir les composants Spring à 
+  scanner
+
+## 2.3 Utliisation de Spring Data JPA
+Spring Data JPA est une bibliothèque qui permet de simplifier l'accès aux données en utilisant JPA. Elle permet de
+créer des repositories JPA en utilisant des interfaces. Ces repositories permettent de communiquer avec la base de
+données sans avoir à écrire de requêtes SQL, en effet, Spring Data JPA fournit des méthodes pour effectuer des
+opérations CRUD. Ces repositories étant des Beans Spring, ils sont à injecter dans les services métiers. C'est pour
+cette raison que les services métiers sont annotés avec `@Service`, ils sont eux, à injecter dans les controller. Il en
+va donc de même pour les controllers qui sont annotés avec `@Component`.
+
+## 2.4 Les entités
+Les entités sont les classes qui représentent les tables de la base de données, ce sont les modèles manipulés par les
+services métiers. Elles sont toutes dans le package [model](../common-library/src/main/java/commonlibrary/model) du 
+module [common-library](../common-library). Elles sont toutes annotées avec `@Entity` pour indiquer à JPA qu'elles
+représentent une table de la base de données. Elles sont aussi annotées avec `@Data` de Lombok pour générer notamment
+les getters et les setters.
+
+## 2.5 Les DTOs
+Les DTOs (Data Transfer Object) sont des classes qui permettent de transférer des données entre le backend et le
+frontend. Ils sont utilisés pour éviter de transférer des données inutiles et pour éviter de modifier les entités. Ils
+sont tous dans le package [dto](../common-library/src/main/java/commonlibrary/dto) du module [common-library](../common-library).
+Certaines classes ne sont pas utilisées actuellement, elles sont conservées en vue d'une potentielle utilisation.
+
+## 2.6 Le client web
+*inserer screenshot*
+
+## 2.7 Exemples de requêtes
+### 2.7.1 Récupération des restaurants
+![diagrame de séquence](ressources/diagrame%20de%20séquence%20ajout%20plat%20commande.png)
+
+### 2.7.2 Ajout d'un plat dans une commande
+![diagrame de séquence](ressources/diagrame%20de%20séquence%20ajout%20plat%20commande.png)
 
 # 3. Qualité des codes
 
 En ce qui concerne l'auto-évaluation de notre code, voici nos observations : 
 Code de bonne qualité : 
 - Le code est lisible avec des noms de méthodes et de classes transparentes. 
-- Les scénarios sont clairs et englobent la totalité des specs attendues notamment le scénario avec les commandes d'un groupe Order. 
+- Les scénarios sont clairs et englobent la totalité des specs attendues notamment le scénario avec les commandes d'un group order. 
 - La gestion des erreurs est faite de sorte à envoyer des messages clairs et corrects concernant les problèmes ou les succès rencontrés afin d'avertir l'utilisateur du succès ou de l'échec de ses actions. Il est aussi pour nous plus pratique de débugger et de contrôler la maintenance de notre code. 
 - Sur le point de vue du partage des responsabilités, nous avons bien séparé les classes et les méthodes pour ne pas avoir trop de responsabilités dans une classe et rien dans les autres. 
 - Nous avons également fait tester notre interface utilisateurs à plusieurs personnes et avons eu des retours positifs sur la facilité d'utilisation de notre application.
@@ -84,8 +165,8 @@ Code de bonne qualité :
 Code à améliorer : 
 - Nous avons encore certaines fonctionnalités à implémenter pour que notre projet soit complet et fonctionnel. Il manque :
   - La gestion du profil de l'internet user ( notamment la navigation libre de tous les restaurants et leur carte qui n'est pas possible à ce jour)
-  - La gestion des localisations n'est pas totalement implémentée, à l'heure actuelle nous ne pouvons pas rentrer la localisation d'une groupe order à la fin de celle-ci elle doit être décidée dès le début. 
-- En ce qui concerne les endpoint que nous avons mis pour la communication REST. Ils ne sont pas conventionnels. En effet, dans nos controller, nous pouvons voir des endpoints avec des verbes dans le chemin, ou alors des path variable qui sont dans des request param. La cause de ce problème est notre implémentation du framework Rest qui traite les endpoints et les paramètres avec un système de Régex. 
+  - La gestion des localisations n'est pas totalement implémentée, à l'heure actuelle nous ne pouvons pas rentrer la localisation d'un group order à la fin de celle-ci elle doit être décidée dès le début. 
+- En ce qui concerne les endpoints que nous avons mis pour la communication REST. Ils ne sont pas conventionnels. En effet, dans nos controllers, nous pouvons voir des endpoints avec des verbes dans le chemin, ou alors des "path variable" qui sont dans des request param. La cause de ce problème est notre implémentation du framework Rest qui traite les endpoints et les paramètres avec un système de Régex. 
 
 # 4. Gestion de projet
 
