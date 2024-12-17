@@ -170,7 +170,16 @@ Code à améliorer :
 
 # 4. Gestion de projet
 
+Pour la gestion de projet, nous avons utilisé la méthode Scrum. Nous avons donc mis en place les éléments suivants :
+- un backlog des issues à effecteur 
+- des sprints de 1 semaine 
+- des points réguliers pour faire le point sur l'avancement du projet
+
+Nous avons divisé l'équipe en deux binômes pour travailler sur les différentes parties du projet. Un des binômes avançait le back-end, la séparation en micro-services et la gestion de la base de données. L'autre binôme avançait sur le front-end et la gestion de l'interface utilisateur. 
+
+En ce qui concerne le front-end, une fois l'interface globale effectuée sur la base des user stories et des specs, le binôme est venu travailler sur le back-end pour la création de l'API gateway et des micro-services
 # 5.Restrospective
+
 
 # 6. Autoévaluation
 
