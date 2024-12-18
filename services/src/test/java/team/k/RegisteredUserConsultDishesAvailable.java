@@ -8,14 +8,12 @@ import commonlibrary.repository.RegisteredUserJPARepository;
 import commonlibrary.repository.RestaurantJPARepository;
 import commonlibrary.repository.SubOrderJPARepository;
 import commonlibrary.repository.TimeSlotJPARepository;
-import io.cucumber.java.Before;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import jakarta.transaction.Transactional;
-import org.mockito.MockitoAnnotations;
 import commonlibrary.model.Dish;
 import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
@@ -70,11 +68,6 @@ public class RegisteredUserConsultDishesAvailable {
                 .build();
     }
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     @Given("a registeredUser named {string} with the role {role}")
     @Transactional
     public void aRegisteredUserNamedWithTheRole(String name, Role role) {
@@ -86,11 +79,11 @@ public class RegisteredUserConsultDishesAvailable {
     public void aRestaurantNamedOpenFromTo(String name, int openHours, int openMinutes, int closeHours, int closeMinutes, int averageOrderPreparationTime) {
         LocalTime openTime = LocalTime.of(openHours, openMinutes);
         LocalTime closeTime = LocalTime.of(closeHours, closeMinutes);
-        restaurantID = createAndPersist(name, averageOrderPreparationTime, openTime, closeTime);
+        restaurantID = createAndPersistRestaurant(name, averageOrderPreparationTime, openTime, closeTime);
     }
 
     @Transactional
-    protected int createAndPersist(String name, int averageOrderPreparationTime, LocalTime openTime, LocalTime closeTime) {
+    protected int createAndPersistRestaurant(String name, int averageOrderPreparationTime, LocalTime openTime, LocalTime closeTime) {
         Restaurant restaurant = new Restaurant.Builder()
                 .setName(name)
                 .setOpen(openTime)
@@ -173,12 +166,8 @@ public class RegisteredUserConsultDishesAvailable {
     public void heCanSeeOnlyTheFollowingDishes(List<String> expectedDishes) {
         List<String> expectedDishNames = expectedDishes.stream().filter(Objects::nonNull).toList();
         List<String> actualDishNames = availableDishes.stream().filter(Objects::nonNull).map(Dish::getName).toList();
-        actualDishNames.forEach(n->{
-            assertTrue(expectedDishNames.contains(n));
-        });
-        expectedDishNames.forEach(n->{
-            assertTrue(actualDishNames.contains(n));
-        });
+        actualDishNames.forEach(n-> assertTrue(expectedDishNames.contains(n)));
+        expectedDishNames.forEach(n-> assertTrue(actualDishNames.contains(n)));
     }
 
     @And("Jack adds the dish {string} to his basket")
