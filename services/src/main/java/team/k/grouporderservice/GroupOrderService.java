@@ -28,7 +28,7 @@ public class GroupOrderService {
     private final RestaurantJPARepository restaurantJPARepository;
 
     @Autowired
-    GroupOrderService(LocationJPARepository locationJPARepository, GroupOrderJPARepository groupOrderJPARepository, RegisteredUserJPARepository registeredUserJPARepository, SubOrderJPARepository subOrderJPARepository, RestaurantJPARepository restaurantJPARepository) {
+    public GroupOrderService(LocationJPARepository locationJPARepository, GroupOrderJPARepository groupOrderJPARepository, RegisteredUserJPARepository registeredUserJPARepository, SubOrderJPARepository subOrderJPARepository, RestaurantJPARepository restaurantJPARepository) {
         this.locationJPARepository = locationJPARepository;
         this.groupOrderJPARepository = groupOrderJPARepository;
         this.registeredUserJPARepository = registeredUserJPARepository;
