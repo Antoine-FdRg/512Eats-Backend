@@ -6,12 +6,10 @@ import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.repository.DishJPARepository;
 import commonlibrary.repository.RestaurantJPARepository;
 import io.cucumber.java.After;
-import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import jakarta.transaction.Transactional;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import team.k.managementservice.ManageRestaurantService;
 import team.k.restaurantservice.RestaurantService;
@@ -41,11 +39,6 @@ public class InternetUserBrowsesMenusStepdefs {
     List<Dish> restaurantDishes;
 
     private NoSuchElementException errorMessage;
-
-    @Before
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     // Remove the restaurant after each scenario
     @After
