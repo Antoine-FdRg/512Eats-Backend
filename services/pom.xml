@@ -35,12 +35,6 @@
             <version>7.15.0</version>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.cucumber</groupId>-->
-<!--            <artifactId>cucumber-junit</artifactId>-->
-<!--            <version>7.14.0</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -89,6 +83,49 @@
                         <goals>
                             <goal>repackage</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>group-order-service</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>team.k.grouporderservice.GroupOrderAPI</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>management-service</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>team.k.managementservice.ManagementAPI</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>order-service</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>team.k.orderservice.OrderAPI</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>restaurant-service</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>team.k.restaurantservice.RestaurantAPI</mainClass>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
