@@ -44,7 +44,7 @@ public class RestaurantController {
             List<Dish> dishes = restaurantService.getAllDishesFromRestaurant(restaurantId);
             return dishes.stream().map(Dish::convertDishToDishDto).toList();
         } catch (NoSuchElementException e) {
-            throw new  SSDBQueryProcessingException(404, "Les dishes du restaurant id"+ restaurantId+"sont introuvables");
+            throw new SSDBQueryProcessingException(404, "Les dishes du restaurant id" + restaurantId + "sont introuvables");
         }
     }
 
@@ -63,7 +63,7 @@ public class RestaurantController {
      * Get all available delivery times of a restaurant on a specific day
      *
      * @param restaurantId the id of the restaurant
-     * @param day the specific day
+     * @param day          the specific day
      * @return the list of available delivery times
      */
     @Endpoint(path = "/get/delivery-times/{restaurantId}", method = ssdbrestframework.HttpMethod.GET)
@@ -74,10 +74,9 @@ public class RestaurantController {
         try {
             return restaurantService.getAllAvailableDeliveryTimesOfRestaurantOnDay(restaurantId, day);
         } catch (NoSuchElementException e) {
-            throw new SSDBQueryProcessingException(404,"No available delivery times");
+            throw new SSDBQueryProcessingException(404, "No available delivery times");
         }
     }
-
 
 
     /**
@@ -105,27 +104,31 @@ public class RestaurantController {
             List<Restaurant> restaurants = restaurantService.getRestaurantsByName(restaurantName);
             return restaurants.stream().map(Restaurant::convertRestaurantToRestaurantDTO).toList();
         } catch (NoSuchElementException e) {
-            throw new SSDBQueryProcessingException(404,"No restaurants found with the name: " + restaurantName);
+            throw new SSDBQueryProcessingException(404, "No restaurants found with the name: " + restaurantName);
         }
     }
 
     /**
      * Get restaurants by food types
      *
-     * @param foodTypes list of food types
+     * @param foodTypesStr list of food types
      * @return list of matching restaurants
      */
     @Endpoint(path = "/by/food-types", method = ssdbrestframework.HttpMethod.GET)
     @Response(status = 200) // OK
-    public List<RestaurantDTO> getRestaurantsByFoodType(@RequestParam("food-types") List<FoodType> foodTypes) throws SSDBQueryProcessingException {
+    public List<RestaurantDTO> getRestaurantsByFoodType(@RequestParam("food-types") String foodTypesStr) throws SSDBQueryProcessingException {
         try {
-            List<Restaurant> restaurants = restaurantService.getRestaurantsByFoodType(foodTypes);
+            List<String> foodTypes = List.of(foodTypesStr.split(","));
+            List<FoodType> foodTypesList = foodTypes.stream().map(FoodType::valueOf).toList();
+            List<Restaurant> restaurants = restaurantService.getRestaurantsByFoodType(foodTypesList);
             return restaurants
                     .stream()
                     .map(Restaurant::convertRestaurantToRestaurantDTO)
                     .toList();
         } catch (NoSuchElementException e) {
-            throw new SSDBQueryProcessingException(404,"No restaurants found with the food types: " + foodTypes);
+            throw new SSDBQueryProcessingException(404, "No restaurants found with the food types: " + foodTypesStr);
+        } catch (IllegalArgumentException e) {
+            throw new SSDBQueryProcessingException(400, "Invalid food type: " + e.getMessage());
         }
     }
 
@@ -144,7 +147,7 @@ public class RestaurantController {
                     .map(Restaurant::convertRestaurantToRestaurantDTO)
                     .toList();
         } catch (NoSuchElementException e) {
-            throw new SSDBQueryProcessingException(404,"No restaurants found with availability at: " + LocalDateTime.now());
+            throw new SSDBQueryProcessingException(404, "No restaurants found with availability at: " + LocalDateTime.now());
         }
     }
 

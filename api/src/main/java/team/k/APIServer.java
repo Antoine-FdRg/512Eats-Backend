@@ -21,8 +21,9 @@ public class APIServer {
             throw new SSDBQueryProcessingException(500, "Error while parsing the error message", e.getMessage());
         }
     }
+
     public static void main(String[] args) {
-        SSDBHttpServer serv = new SSDBHttpServer(8081, "team.k","api/");
+        SSDBHttpServer serv = new SSDBHttpServer(8081, "team.k", "./");
         serv.start();
     }
 }

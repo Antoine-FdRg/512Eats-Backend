@@ -65,8 +65,8 @@ public class GroupOrderController {
         if (groupOrder == null) {
             throw new SSDBQueryProcessingException(404, ERROR_GROUP_ORDER_NOT_FOUND + groupOrderId);
         }
-        Location deliveryLocation = locationJPARepository.findById((long)groupOrderId).orElse(null);
-        if(deliveryLocation == null) {
+        Location deliveryLocation = locationJPARepository.findById((long) groupOrder.getDeliveryLocationID()).orElse(null);
+        if (deliveryLocation == null) {
             throw new SSDBQueryProcessingException(404, "Delivery location not found");
         }
         return groupOrder.convertGroupOrderToGroupOrderDto(deliveryLocation);

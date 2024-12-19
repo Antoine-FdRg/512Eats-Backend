@@ -445,7 +445,7 @@ public class ManagementAPI {
         for (Restaurant restaurant : restaurants) {
             LocalTime open = restaurant.getOpen();
             LocalTime close = restaurant.getClose();
-            LocalDateTime currentSlotStart = LocalDateTime.of(2024, 12, 11, open.getHour(), open.getMinute());
+            LocalDateTime currentSlotStart = LocalDateTime.of(2024, 12, 20, open.getHour(), open.getMinute());
 
             Random random = new Random();
             while (currentSlotStart.toLocalTime().isBefore(close)) {

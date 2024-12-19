@@ -3,7 +3,7 @@
 # TEAM
 
 Ce projet a été concu par 4 personnes.\
-En plus du role de Software Developer (SD), chacun possède des spécificités complémentaires: 
+En plus du role de Software Developer (SD), chacun possède des spécificités complémentaires:
 
 - [Emma ALLAIN](https://github.com/emmaallain): Quality Assurance Engineer (QA)
 - [Roxane BACON](https://github.com/RoxaneBacon): Continuous Integration and Repository Manager (Ops)
@@ -14,6 +14,8 @@ En plus du role de Software Developer (SD), chacun possède des spécificités c
 
 ### [Voir la documentation](doc/README.md)
 
+### [Lien du rapport final D2](doc/TeamK-renduD2.pdf)
+
 ## User story :  A registered user place an individual order
 
 - [Lien user story #57](https://github.com/PNS-Conception/STE-24-25--teamk/issues/57)
@@ -21,6 +23,8 @@ En plus du role de Software Developer (SD), chacun possède des spécificités c
 ### As a Registered user, I want to place my order so that the restaurant can prepare the order
 
 ### [Lien feature](services/src/test/resources/features/team/k/RegisteredUserPlacesAnOrder.feature)
+
+### [Lien du kanban](https://github.com/orgs/PNS-Conception/projects/62/views/10)
 
 # Lancement & intallation du projet
 
@@ -40,9 +44,24 @@ En plus du role de Software Developer (SD), chacun possède des spécificités c
 
 ## Lancer le projet
 
-1. **Exécuter l'application** :
-   _Pour le moment, l'application ne contient pas de classe exécutable. Vous pouvez cependant lancer les tests unitaires
-   avec la commande ci-après :_
+1. Démarrer les services : Pour démarrer tous les services, exécuter cette commande :
+
+```shell
+cd services
+mvn clean install
+mvn exec:java@group-order-service
+mvn exec:java@management-service
+mvn exec:java@order-service
+mvn exec:java@restaurant-service
+```
+
+2. Démarrer l'api de routing
+
+```shell 
+cd api  
+mvn clean install
+mvn exec:java@api-server
+```
 
 # Tests
 

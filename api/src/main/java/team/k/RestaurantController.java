@@ -66,16 +66,17 @@ public class RestaurantController {
             @RequestParam("name") String name
     ) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
-        String parameter = "?";
+        String parameter = "";
         if (availability != null) {
             parameter += "/by/availability";
         } else if (foodTypes != null) {
-            parameter += "/by/food-type?food-types=" + foodTypes;
+            parameter += "/by/food-types?food-types=" + foodTypes;
         } else if (name != null) {
             parameter += "/by/name/" + name;
         } else {
             throw new IllegalArgumentException("No parameter provided");
         }
+        System.out.println("Going to " + RESTAURANT_SERVICE_URL + parameter);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI(RESTAURANT_SERVICE_URL + parameter))
