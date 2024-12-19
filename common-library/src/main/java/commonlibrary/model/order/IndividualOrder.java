@@ -1,6 +1,6 @@
 package commonlibrary.model.order;
 
-import commonlibrary.dto.DishDTO;
+import commonlibrary.dto.DishCreationDTO;
 import commonlibrary.dto.IndividualOrderDTO;
 import commonlibrary.model.Dish;
 import commonlibrary.model.Location;
@@ -31,7 +31,7 @@ public class IndividualOrder extends SubOrder {
     }
 
     public IndividualOrderDTO convertIndividualOrderToIndividualOrderDto() {
-        List<DishDTO> convertedDishes = getDishes().stream()
+        List<DishCreationDTO> convertedDishes = getDishes().stream()
                 .map(Dish::convertDishToDishDto)
                 .toList();
         return new IndividualOrderDTO(getId(), String.valueOf(getPrice()), getRestaurantID(), getUserID(), convertedDishes, getStatus().toString(), getPlacedDate().toString(), getDeliveryDate().toString(), getPayment().convertPaymentToPaymentDto(), deliveryLocation.convertLocationToLocationDto());

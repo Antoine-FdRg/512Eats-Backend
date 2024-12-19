@@ -2,16 +2,15 @@ package team.k;
 
 import commonlibrary.enumerations.FoodType;
 import commonlibrary.model.Dish;
+import commonlibrary.model.restaurant.Restaurant;
+import commonlibrary.repository.DishJPARepository;
+import commonlibrary.repository.RestaurantJPARepository;
 import io.cucumber.java.After;
-import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-
-import org.mockito.MockitoAnnotations;
-import team.k.repository.DishRepository;
-import team.k.repository.RestaurantRepository;
-import commonlibrary.model.restaurant.Restaurant;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import team.k.managementservice.ManageRestaurantService;
 import team.k.restaurantservice.RestaurantService;
 
@@ -24,6 +23,14 @@ import static junit.framework.TestCase.assertEquals;
 
 public class InternetUserBrowsesMenusStepdefs {
 
+    @Autowired
+    private ManageRestaurantService manageRestaurantService;
+    @Autowired
+    private RestaurantService restaurantService;
+    @Autowired
+    private RestaurantJPARepository restaurantJPARepository;
+    @Autowired
+    private DishJPARepository dishJPARepository;
 
     private Restaurant restaurant;
     Restaurant restaurantB;
@@ -33,40 +40,37 @@ public class InternetUserBrowsesMenusStepdefs {
 
     private NoSuchElementException errorMessage;
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        RestaurantRepository.clear();
-        DishRepository.clear();
-    }
-
     // Remove the restaurant after each scenario
     @After
     public void tearDown() {
         if (restaurant != null) {
-            ManageRestaurantService.deleteRestaurant(restaurant.getId());
+            manageRestaurantService.deleteRestaurant(restaurant.getId());
         }
     }
 
+    @Transactional
     @Given("A restaurant {string} with a dish {string} and a dish {string}")
     public void aRestaurantExistInTheListOfRestaurantsWithADishAndADish(String restaurantName, String dishNameA, String dishNameB) {
         dishes = new ArrayList<>();
         Dish dishA = new Dish.Builder().setName(dishNameA).setDescription("Description").setPrice(5).setPreparationTime(3).build();
-        DishRepository.add(dishA);
+        dishJPARepository.save(dishA);
         dishes.add(dishA);
         Dish dishB = new Dish.Builder().setName(dishNameB).setDescription("Description").setPrice(5).setPreparationTime(3).build();
-        DishRepository.add(dishB);
+        dishJPARepository.save(dishB);
         dishes.add(dishB);
         Restaurant restaurantA = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).build();
         restaurantA.addDish(dishA);
         restaurantA.addDish(dishB);
-        RestaurantRepository.add(restaurantA);
+        restaurantJPARepository.save(restaurantA);
     }
 
     @When("The user wants to have dishes non registered of the restaurant {string}")
     public void theUserWantsToHaveDishesNonRegisteredOfTheRestaurant(String restaurantName) {
         try {
-            restaurantDishes = RestaurantService.getAllDishesFromRestaurant(RestaurantRepository.findByName(restaurantName).getId());
+            restaurantDishes = restaurantService.getAllDishesFromRestaurant(
+                    restaurantJPARepository.findById(
+                            (long)restaurantB.getId()
+                    ).orElseThrow(NoSuchElementException::new).getId());
         } catch (NoSuchElementException e) {
             this.errorMessage = e;
         }
@@ -75,7 +79,7 @@ public class InternetUserBrowsesMenusStepdefs {
 
     @When("The user wants to have dishes of the restaurant {string}")
     public void theUserWantsToHaveDishesOfTheRestaurant(String restaurantName) {
-        restaurant = RestaurantService.getRestaurantByName(restaurantName);
+        restaurant = restaurantService.getRestaurantByName(restaurantName);
 
         try {
             restaurantDishes = restaurant.getDishes();
@@ -96,7 +100,7 @@ public class InternetUserBrowsesMenusStepdefs {
     @Given("A restaurant {string} with no dishes registered")
     public void aRestaurantWithNoDishesRegistered(String restaurantName) {
         restaurantB = new Restaurant.Builder().setName(restaurantName).setOpen(LocalTime.of(8, 0, 0)).setClose(LocalTime.of(22, 0, 0)).setFoodTypes(List.of(FoodType.ASIAN_FOOD, FoodType.POKEBOWL)).build();
-        ManageRestaurantService.addRestaurant(restaurantB);
+        manageRestaurantService.addRestaurant(restaurantB);
     }
 
     @Then("The user gets no dishes registered in the restaurant selected and have this message :{string}")

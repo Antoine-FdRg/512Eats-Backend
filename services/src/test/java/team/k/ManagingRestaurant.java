@@ -1,5 +1,6 @@
 package team.k;
 
+import commonlibrary.repository.RestaurantJPARepository;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -10,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import commonlibrary.model.Dish;
 import ssdbrestframework.SSDBQueryProcessingException;
-import team.k.repository.RestaurantRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import team.k.managementservice.ManageRestaurantService;
 
@@ -20,10 +20,11 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
 
 public class ManagingRestaurant {
     @Mock
-    private RestaurantRepository restaurantRepository;
+    private RestaurantJPARepository restaurantRepository;
     @InjectMocks
     private ManageRestaurantService manageRestaurantService;
     private Restaurant nagaRestaurant;
@@ -48,7 +49,7 @@ public class ManagingRestaurant {
         Dish dishB = new Dish.Builder().setName("burger").setDescription("Description").setPrice(5).setPreparationTime(0).build();
         nagaRestaurant.addDish(dishA);
         nagaRestaurant.addDish(dishB);
-        RestaurantRepository.add(nagaRestaurant);
+        when(restaurantRepository.findById(1L)).thenReturn(java.util.Optional.of(nagaRestaurant));
     }
 
     @When("the restaurant manager updates the open time to {string}")

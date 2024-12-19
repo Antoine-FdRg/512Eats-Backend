@@ -1,6 +1,6 @@
 package team.k.orderservice;
 
-import commonlibrary.dto.DishDTO;
+import commonlibrary.dto.DishCreationDTO;
 import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.external.PaymentFailedException;
 import commonlibrary.external.PaymentProcessor;
@@ -194,7 +194,7 @@ public class OrderService {
         return restaurant.getDishesReadyInLessThan(TimeSlot.DURATION - order.getPreparationTime());
     }
 
-    public List<DishDTO> getAvailableDishesDTO(int orderId) {
+    public List<DishCreationDTO> getAvailableDishesDTO(int orderId) {
         int restaurantId = this.getSubOrder(orderId).getRestaurantID();
 
         // Récupération des plats disponibles et du restaurant

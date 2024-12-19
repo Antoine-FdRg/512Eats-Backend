@@ -1,11 +1,12 @@
 Feature: Internet User can filter  restaurant
 
   Background:
-    Given a list of restaurants "512EatRestaurant" a "SUSHI" restaurant which is open from 12 to 15 and "512PokeRestaurant" a "SUSHI" restaurant opened from 12 to 13 with registered dishes
+    Given The restaurant "512EatRestaurant" a "SUSHI" restaurant open from 12 to 15 with the dish "maki" registered
+    And The restaurant "512PokeRestaurant" a "SUSHI" restaurant open from 12 to 13 with the dish "poke" registered
 
   Scenario: Internet User can filter restaurant by food type
     When Internet User selects a food type : "SUSHI"
-    Then Internet User should see the restaurant that serves that food type
+    Then Internet User should see the 2 restaurants that serves that food type
 
   Scenario: Internet User can filter restaurant by type of food but no restaurant found
     When Internet User selects a food type : "PIZZA"

@@ -1,4 +1,4 @@
-Feature: Individual order
+Feature: Suborder payment
 
   Background:
     Given a registeredUser called "Jack" with the role STUDENT

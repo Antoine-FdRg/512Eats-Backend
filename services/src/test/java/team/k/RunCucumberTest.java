@@ -1,5 +1,8 @@
 package team.k;
 
+import commonlibrary.enumerations.OrderStatus;
+import commonlibrary.enumerations.Role;
+import io.cucumber.java.ParameterType;
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
 import org.junit.platform.suite.api.SelectClasspathResource;
@@ -12,7 +15,6 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @Suite
 @IncludeEngines("cucumber")
 
-//Specifies the location of the feature files. The feature files are stored in the "features/biblio" directory within the classpath.
 @SelectClasspathResource("features/team/k")
 
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
@@ -20,4 +22,13 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 public class RunCucumberTest {
     // will run all features found on the classpath
     // in the same package as this class
+    @ParameterType("STUDENT|CAMPUS_EMPLOYEE")
+    public Role role(String role) {
+        return Role.valueOf(role);
+    }
+
+    @ParameterType("CREATED|PAID|PLACED|DELIVERING|COMPLETED|DISCOUNT_USED|CANCELED")
+    public OrderStatus status(String status) {
+        return OrderStatus.valueOf(status);
+    }
 }

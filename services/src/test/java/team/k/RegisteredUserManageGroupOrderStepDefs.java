@@ -3,23 +3,26 @@ package team.k;
 import commonlibrary.model.RegisteredUser;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
+import commonlibrary.repository.GroupOrderJPARepository;
+import commonlibrary.repository.IndividualOrderJPARepository;
+import commonlibrary.repository.LocationJPARepository;
+import commonlibrary.repository.RegisteredUserJPARepository;
+import commonlibrary.repository.RestaurantJPARepository;
+import commonlibrary.repository.SubOrderJPARepository;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
+import jakarta.transaction.Transactional;
 import org.mockito.MockitoAnnotations;
 import commonlibrary.model.Location;
 import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.enumerations.Role;
 import commonlibrary.model.order.GroupOrder;
 import commonlibrary.model.order.SubOrder;
-import team.k.repository.GroupOrderRepository;
-import team.k.repository.LocationRepository;
-import team.k.repository.RegisteredUserRepository;
-import team.k.repository.RestaurantRepository;
-import team.k.repository.SubOrderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import team.k.grouporderservice.GroupOrderService;
 import team.k.orderservice.OrderService;
 
@@ -33,25 +36,37 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-@
+
 public class RegisteredUserManageGroupOrderStepDefs {
+    @Autowired
+    private RestaurantJPARepository restaurantRepository;
+    @Autowired
+    private SubOrderJPARepository subOrderRepository;
+    @Autowired
+    private IndividualOrderJPARepository individualOrderRepository;
+    @Autowired
+    private RegisteredUserJPARepository registeredUserRepository;
+    @Autowired
+    private LocationJPARepository locationRepository;
+    @Autowired
+    private GroupOrderJPARepository groupOrderRepository;
+
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private GroupOrderService groupOrderService;
+
     Exception exception;
 
     Location location;
-    GroupOrder groupOrder;
-    int codeToShare;
+    private int groupOrderId;
 
-    RegisteredUser user1;
-    SubOrder paidSuborder;
-    private Restaurant restaurantTom;
+    private int paidSuborderId;
+    private int restaurantTomId;
 
-    RegisteredUser user2;
-    SubOrder unpaidSuborder;
-    private Restaurant restaurantLeo;
-
-
-    GroupOrderService groupOrderService;
-
+    private int unpaidSuborderId;
+    private int restaurantLeoId;
 
     @Before
     public void setUp() {
@@ -65,7 +80,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 .setAddress("123 Main St")
                 .setCity("Springfield")
                 .build();
-        LocationRepository.add(location);
+        locationRepository.save(location);
     }
 
 
@@ -80,7 +95,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 LocalTime.parse(timeSlotStart2)
         );
 
-        restaurantTom = new Restaurant.Builder()
+        Restaurant restaurantTom = new Restaurant.Builder()
                 .setName("Chez Joe")
                 .setDescription("Le restaurant préféré de Tom")
                 .setOpen(LocalTime.of(11, 0))
@@ -89,9 +104,10 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 .build();
         restaurantTom.addTimeSlot(new TimeSlot(timeSlotStartTime1, restaurantTom, 4));
         restaurantTom.addTimeSlot(new TimeSlot(timeSlotStartTime2, restaurantTom, 4));
-        RestaurantRepository.add(restaurantTom);
+        restaurantRepository.save(restaurantTom);
+        restaurantTomId = restaurantTom.getId();
 
-        restaurantLeo = new Restaurant.Builder()
+        Restaurant restaurantLeo = new Restaurant.Builder()
                 .setName("Chez James")
                 .setDescription("Le restaurant préféré de Leo")
                 .setOpen(LocalTime.of(11, 0))
@@ -100,7 +116,8 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 .build();
         restaurantLeo.addTimeSlot(new TimeSlot(timeSlotStartTime1, restaurantLeo, 4));
         restaurantLeo.addTimeSlot(new TimeSlot(timeSlotStartTime2, restaurantLeo, 4));
-        RestaurantRepository.add(restaurantLeo);
+        restaurantRepository.save(restaurantLeo);
+        restaurantLeoId = restaurantLeo.getId();
     }
 
     @When("the user creates a group order with the delivery location for the {string} at {string} on {string} at {string}")
@@ -113,7 +130,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 LocalDate.parse(currentDate),
                 LocalTime.parse(currentTime)
         );
-        codeToShare = groupOrderService.createGroupOrder(location.getId(), deliveryDateTime, currentDateTime);
+        groupOrderId = groupOrderService.createGroupOrder(location.getId(), deliveryDateTime, currentDateTime);
     }
 
     @Then("the group order is created and the delivery location is initialized and the delivery date time is the {string} at {string}")
@@ -123,14 +140,14 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 LocalTime.parse(orderTime)
         );
 
-        GroupOrder groupOrder = groupOrderService.findGroupOrderById(codeToShare);
+        GroupOrder groupOrder = groupOrderService.findGroupOrderById(groupOrderId);
         assertEquals(location.getId(), groupOrder.getDeliveryLocationID());
         assertEquals(deliveryDateTime, groupOrder.getDeliveryDateTime());
     }
 
     @Then("the group order is created and the delivery location and delivery date time are initialized")
     public void theGroupOrderIsCreatedAndTheDeliveryLocationAndDeliveryDateTimeAreInitialized() {
-        GroupOrder groupOrder = groupOrderService.findGroupOrderById(codeToShare);
+        GroupOrder groupOrder = groupOrderService.findGroupOrderById(groupOrderId);
         assertEquals(location.getId(), groupOrder.getDeliveryLocationID());
     }
 
@@ -145,7 +162,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 LocalTime.parse(currentTime)
         );
         try {
-            codeToShare = groupOrderService.createGroupOrder(-1, deliveryDateTime, currentDateTime);
+            groupOrderId = groupOrderService.createGroupOrder(-1, deliveryDateTime, currentDateTime);
         } catch (Exception e) {
             exception = e;
         }
@@ -153,7 +170,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
 
     @Then("the group order is not created")
     public void theGroupOrderIsNotCreated() {
-        assertNull(groupOrderService.findGroupOrderById(codeToShare));
+        assertNull(groupOrderService.findGroupOrderById(groupOrderId));
         assertNotNull(exception);
         assertEquals(NoSuchElementException.class, exception.getClass());
     }
@@ -165,7 +182,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 LocalTime.parse(currentTime)
         );
         try {
-            codeToShare = groupOrderService.createGroupOrder(location.getId(), null, currentDateTime);
+            groupOrderId = groupOrderService.createGroupOrder(location.getId(), null, currentDateTime);
         } catch (Exception e) {
             exception = e;
         }
@@ -173,18 +190,19 @@ public class RegisteredUserManageGroupOrderStepDefs {
 
     @Then("the group order is created and the delivery location is initialized but the delivery date time is not")
     public void theGroupOrderIsCreatedAndTheDeliveryLocationIsInitializedButTheDeliveryDateTimeIsNot() {
-        GroupOrder groupOrder = groupOrderService.findGroupOrderById(codeToShare);
+        GroupOrder groupOrder = groupOrderService.findGroupOrderById(groupOrderId);
         assertEquals(location.getId(), groupOrder.getDeliveryLocationID());
         assertNull(groupOrder.getDeliveryDateTime());
     }
 
     @Given("a group order created without a delivery datetime")
+    @Transactional
     public void aGroupOrderCreatedWithoutADeliveryDatetime() {
         GroupOrder groupOrder = new GroupOrder.Builder()
                 .withDeliveryLocationID(location.getId())
                 .build();
-        codeToShare = groupOrder.getId();
-        GroupOrderRepository.add(groupOrder);
+        groupOrderId = groupOrder.getId();
+        groupOrderRepository.save(groupOrder);
     }
 
     @When("the user modifies the delivery datetime to set {string} at {string} on {string} at {string}")
@@ -198,7 +216,7 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 LocalTime.parse(currentTime)
         );
         try {
-            groupOrderService.modifyGroupOrderDeliveryDateTime(codeToShare, deliveryDateTime, currentDateTime);
+            groupOrderService.modifyGroupOrderDeliveryDateTime(groupOrderId, deliveryDateTime, currentDateTime);
         } catch (Exception e) {
             exception = e;
         }
@@ -210,13 +228,13 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 LocalDate.parse(orderDate),
                 LocalTime.parse(orderTime)
         );
-        GroupOrder groupOrder = GroupOrderRepository.findGroupOrderById(codeToShare);
+        GroupOrder groupOrder = groupOrderRepository.findById((long) groupOrderId).orElseThrow(NoSuchElementException::new);
         assertEquals(deliveryDateTime,groupOrder.getDeliveryDateTime());
     }
 
     @Then("the group order is not modified and the delivery datetime is still null")
     public void theGroupOrderIsNotModifiedAndTheDeliveryDatetimeIsStillNull() {
-        GroupOrder groupOrder = GroupOrderRepository.findGroupOrderById(codeToShare);
+        GroupOrder groupOrder = groupOrderRepository.findById((long) groupOrderId).orElseThrow(NoSuchElementException::new);
         assertNull(groupOrder.getDeliveryDateTime());
     }
 
@@ -226,73 +244,84 @@ public class RegisteredUserManageGroupOrderStepDefs {
                 LocalDate.parse(orderDate),
                 LocalTime.parse(orderTime)
         );
-        groupOrder = new GroupOrder.Builder()
+        GroupOrder groupOrder = new GroupOrder.Builder()
                 .withDeliveryLocationID(location.getId())
                 .withDate(deliveryDateTime)
                 .build();
-        codeToShare = groupOrder.getId();
-        GroupOrderRepository.add(groupOrder);
+        groupOrderId = groupOrder.getId();
+        groupOrderRepository.save(groupOrder);
     }
 
 
     @And("a suborder of the user {string} with the status {status} added in the group order")
+    @Transactional
     public void aSuborderWithTheStatusAddedInTheGroupOrder(String name, OrderStatus status) {
-        user1 = new RegisteredUser(name, Role.STUDENT);
-        RegisteredUserRepository.add(user1);
-        int paidSuborderID = OrderService.createSuborder(user1.getId(), restaurantTom.getId(), codeToShare);
-        paidSuborder = SubOrderRepository.findById(paidSuborderID);
+        RegisteredUser user1 = new RegisteredUser(name, Role.STUDENT);
+        registeredUserRepository.save(user1);
+        paidSuborderId = orderService.createSuborder(user1.getId(), restaurantTomId, groupOrderId);
+        SubOrder paidSuborder = subOrderRepository.findById((long)paidSuborderId).orElseThrow(NoSuchElementException::new);
         paidSuborder.setStatus(status);
     }
 
     @And("a suborder of the user {string} not already placed with the status {status} added in the group order")
+    @Transactional
     public void aSuborderNotAlreadyPlacedWithTheStatusCREATEDAddedInTheGroupOrder(String name, OrderStatus status) {
-        user2 = new RegisteredUser(name, Role.STUDENT);
-        RegisteredUserRepository.add(user2);
-        int unpaidSuborderID = OrderService.createSuborder(user2.getId(), restaurantLeo.getId(), codeToShare);
-        unpaidSuborder = SubOrderRepository.findById(unpaidSuborderID);
+        RegisteredUser user2 = new RegisteredUser(name, Role.STUDENT);
+        registeredUserRepository.save(user2);
+        unpaidSuborderId = orderService.createSuborder(user2.getId(), restaurantLeoId, groupOrderId);
+        SubOrder unpaidSuborder = subOrderRepository.findById((long)unpaidSuborderId).orElseThrow(NoSuchElementException::new);
         unpaidSuborder.setStatus(status);
     }
 
     @When("a group is placed at {string} at {string}")
+    @Transactional
     public void aGroupIsPlacedAtAt(String orderDate, String orderTime) {
         LocalDateTime placedDateTime = LocalDateTime.of(
                 LocalDate.parse(orderDate),
                 LocalTime.parse(orderTime)
         );
-        groupOrderService.place(groupOrder.getId(), placedDateTime);
+        groupOrderService.place(groupOrderId, placedDateTime);
     }
 
 
     @Then("one suborder is placed and the other one is canceled")
     public void oneSuborderIsPlacedAndTheOtherOneIsCanceled() {
+        GroupOrder groupOrder = groupOrderRepository.findById((long) groupOrderId).orElseThrow(NoSuchElementException::new);
         assertEquals(OrderStatus.PLACED, groupOrder.getStatus());
+        SubOrder paidSuborder = subOrderRepository.findById((long)paidSuborderId).orElseThrow(NoSuchElementException::new);
         assertEquals(OrderStatus.PLACED, paidSuborder.getStatus());
+        SubOrder unpaidSuborder = subOrderRepository.findById((long)unpaidSuborderId).orElseThrow(NoSuchElementException::new);
         assertEquals(OrderStatus.CANCELED, unpaidSuborder.getStatus());
     }
 
 
     @Then("the suborder and the groupOrder are canceled")
     public void theSuborderAndTheGroupOrderIsCanceled() {
+        SubOrder unpaidSuborder = subOrderRepository.findById((long)unpaidSuborderId).orElseThrow(NoSuchElementException::new);
         assertEquals(OrderStatus.CANCELED, unpaidSuborder.getStatus());
+        GroupOrder groupOrder = groupOrderRepository.findById((long) groupOrderId).orElseThrow(NoSuchElementException::new);
         assertEquals(OrderStatus.CANCELED, groupOrder.getStatus());
     }
 
     @Then("the suborder and the groupOrder are placed")
     public void theSuborderAndTheGroupOrderIsPlaced() {
+        GroupOrder groupOrder = groupOrderRepository.findById((long) groupOrderId).orElseThrow(NoSuchElementException::new);
         assertEquals(OrderStatus.PLACED, groupOrder.getStatus());
+        SubOrder paidSuborder = groupOrder.getSubOrders().getFirst();
         assertEquals(OrderStatus.PLACED, paidSuborder.getStatus());
     }
 
 
-    @Then("the suborder is in the timeslot stating at {string} the {string} of the restaurant")
+    @And("the suborder is in the timeslot stating at {string} the {string} of the restaurant")
     public void theSuborderIsInTheTimeslotStatingAtTheOfTheRestaurant(String orderTime, String orderDate) {
         LocalDateTime timeSlotStartTime = LocalDateTime.of(
                 LocalDate.parse(orderDate),
                 LocalTime.parse(orderTime)
         );
+        Restaurant restaurantTom = restaurantRepository.findById((long)restaurantTomId).orElseThrow(NoSuchElementException::new);
         TimeSlot ts =  restaurantTom.getCurrentTimeSlot(timeSlotStartTime);
         assertNotNull(ts);
-        assertTrue(ts.getOrders().contains(paidSuborder));
+        assertTrue(ts.getOrders().stream().anyMatch(o -> o.getId() == paidSuborderId));
     }
 
 }

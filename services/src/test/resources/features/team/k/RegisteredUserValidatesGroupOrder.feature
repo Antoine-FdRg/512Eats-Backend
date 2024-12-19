@@ -11,7 +11,7 @@ Feature: A registered user validates a group order
     Given a suborder of the user "Tom" with the status PAID added in the group order
     When a group is placed at "2024-12-18" at "11:00"
     Then the suborder and the groupOrder are placed
-    Then the suborder is in the timeslot stating at "11:00" the "2024-12-18" of the restaurant
+    And the suborder is in the timeslot stating at "11:00" the "2024-12-18" of the restaurant
 
   Scenario:
     Given a suborder of the user "Leo" not already placed with the status CREATED added in the group order

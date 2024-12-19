@@ -4,20 +4,19 @@ import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.enumerations.Role;
 import commonlibrary.model.Location;
 import commonlibrary.model.RegisteredUser;
+import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
-import io.cucumber.java.Before;
-import io.cucumber.java.ParameterType;
+import commonlibrary.repository.LocationJPARepository;
+import commonlibrary.repository.RegisteredUserJPARepository;
+import commonlibrary.repository.RestaurantJPARepository;
+import commonlibrary.repository.SubOrderJPARepository;
+import commonlibrary.repository.TimeSlotJPARepository;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import team.k.repository.LocationRepository;
-import team.k.repository.RegisteredUserRepository;
-import team.k.repository.RestaurantRepository;
-import team.k.repository.SubOrderRepository;
-import team.k.repository.TimeSlotRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
 import team.k.orderservice.OrderService;
@@ -28,73 +27,90 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 
 public class IndividualOrderStepdefs {
-    RegisteredUser registeredUser;
-    Restaurant restaurant;
-    Location deliveryLocation;
+
+    @Autowired
+    private TimeSlotJPARepository timeSlotRepository;
+    @Autowired
+    private RestaurantJPARepository restaurantRepository;
+    @Autowired
+    private LocationJPARepository locationRepository;
+    @Autowired
+    private SubOrderJPARepository subOrderRepository;
+    @Autowired
+    private RegisteredUserJPARepository registeredUserRepository;
+
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private RestaurantService restaurantService;
+
+    int restaurantID;
+    int registeredUserID;
+    int deliveryLocationID;
 
     private IllegalArgumentException orderNotCreatedException;
     private List<LocalDateTime> effectivePossibleDeliveryTimes;
 
-    @ParameterType("STUDENT|CAMPUS_EMPLOYEE")
-    public Role role(String role) {
-        return Role.valueOf(role);
-    }
-
-    @ParameterType("CREATED|PAID|PLACED|DELIVERING|COMPLETED|DISCOUNT_USED|CANCELED")
-    public OrderStatus status(String status) {
-        return OrderStatus.valueOf(status);
-    }
-
-    @Before
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        RestaurantRepository.clear();
-        SubOrderRepository.clear();
-    }
-
-    @Given("a registeredUser named {string} with the role {role}")
+    @Given("the registeredUser named {string} with the role {role}")
+    @Transactional
     public void aRegisteredUserNamedWithTheRole(String name, Role role) {
-        registeredUser = new RegisteredUser(name, role);
-        RegisteredUserRepository.add(registeredUser);
+        initializeUser(name, role);
     }
 
-    @And("a restaurant named {string} open from {int}:{int} to {int}:{int} with an average order preparation time of {int} minutes")
+    @Transactional
+    protected void initializeUser(String userName, Role student) {
+        RegisteredUser user = new RegisteredUser(userName, student);
+        registeredUserRepository.save(user);
+        registeredUserID = user.getId();
+    }
+
+    @Transactional
+    @And("the restaurant named {string} open from {int}:{int} to {int}:{int} with an average order preparation time of {int} minutes")
     public void aRestaurantNamedOpenFromTo(String name, int openHours, int openMinutes, int closeHours, int closeMinutes, int averageOrderPreparationTime) {
         LocalTime openTime = LocalTime.of(openHours, openMinutes);
         LocalTime closeTime = LocalTime.of(closeHours, closeMinutes);
-        restaurant = new Restaurant.Builder()
+        restaurantID = createAndPersistRestaurant(name, averageOrderPreparationTime, openTime, closeTime);
+    }
+
+    @Transactional
+    protected int createAndPersistRestaurant(String name, int averageOrderPreparationTime, LocalTime openTime, LocalTime closeTime) {
+        Restaurant restaurant = new Restaurant.Builder()
                 .setName(name)
                 .setOpen(openTime)
                 .setClose(closeTime)
                 .setAverageOrderPreparationTime(averageOrderPreparationTime)
                 .build();
-        RestaurantRepository.add(restaurant);
+        restaurantRepository.save(restaurant);
+        return restaurant.getId();
     }
 
-    @And("with a productionCapacity of {int} for the timeslot beginning at {int}:{int} on {int}-{int}-{int}")
-    public void withAProduvtionCapacityOfForTheTimeslotAtOn(int productionCapacity, int startHours, int startMinutes, int startDay, int startMonth, int startYear) {
+    @Transactional
+    @And("with the productionCapacity {int} for the timeslot beginning at {int}:{int} on {int}-{int}-{int}")
+    public void withAProductionCapacityOfForTheTimeslotAtOn(int productionCapacity, int startHours, int startMinutes, int startDay, int startMonth, int startYear) {
         LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, startHours, startMinutes);
+        Restaurant restaurant = restaurantRepository.findById((long) restaurantID).orElseThrow(NoSuchElementException::new);
         TimeSlot timeSlot = new TimeSlot(startTime, restaurant, productionCapacity);
-        TimeSlotRepository.add(timeSlot);
-        RestaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
+        timeSlotRepository.save(timeSlot);
+        restaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
     }
 
-    @And("a delivery location with the number {string}, the street {string} and the city {string}")
+    @Transactional
+    @And("the delivery location with the number {string}, the street {string} and the city {string}")
     public void aDeliveryLocationWithTheNumberTheStreetAndTheCity(String streetNumber, String street, String city) {
-        deliveryLocation = new Location.Builder()
+        Location deliveryLocation = new Location.Builder()
                 .setNumber(String.valueOf(streetNumber))
                 .setAddress(street)
                 .setCity(city)
                 .build();
-        LocationRepository.add(deliveryLocation);
+        locationRepository.save(deliveryLocation);
     }
 
     @When("a registeredUser creates an order for the restaurant Naga with the deliveryPlace created for {int}h{int} on {int}-{int}-{int} the current date being {int}-{int}-{int} {int}:{int}")
@@ -102,7 +118,7 @@ public class IndividualOrderStepdefs {
         LocalDateTime deliveryTime = LocalDateTime.of(deliveryTimeYear, deliveryTimeMonth, deliveryTimeDay, deliveryTimeHours, deliveryTimeMinutes);
         LocalDateTime now = LocalDateTime.of(currentYear, currentMonth, currentDay, currentHours, currentMinutes);
         try {
-            OrderService.createIndividualOrder(registeredUser.getId(), restaurant.getId(), deliveryLocation.getId(), deliveryTime, now);
+            orderService.createIndividualOrder(registeredUserID, restaurantID, deliveryLocationID, deliveryTime, now);
         } catch (IllegalArgumentException e) {
             orderNotCreatedException = e;
         }
@@ -110,17 +126,21 @@ public class IndividualOrderStepdefs {
 
     @Then("the registeredUser should have his currentOrder with the status CREATED")
     public void theRegisteredUserShouldHaveACurrentOrderWithTheStatusCREATED() {
+        RegisteredUser registeredUser = registeredUserRepository.findById((long) registeredUserID).orElseThrow(NoSuchElementException::new);
         assertNotNull(registeredUser.getCurrentOrder());
         assertEquals(OrderStatus.CREATED, registeredUser.getCurrentOrder().getStatus());
     }
 
     @And("the registeredUser should have his currentOrder with no dishes")
     public void theRegisteredUserShouldHaveHisCurrentOrderWithNoDished() {
+        RegisteredUser registeredUser = registeredUserRepository.findById((long) registeredUserID).orElseThrow(NoSuchElementException::new);
         assertEquals(0, registeredUser.getCurrentOrder().getDishes().size());
     }
 
     @And("the restaurant should have {int} order with the status CREATED")
     public void theRestaurantShouldHaveAnOrderWithTheStatusCREATED(int numberOfOrders) {
+        Restaurant restaurant = restaurantRepository.findById((long) restaurantID).orElseThrow(NoSuchElementException::new);
+        RegisteredUser registeredUser = registeredUserRepository.findById((long) registeredUserID).orElseThrow(NoSuchElementException::new);
         TimeSlot timeSlot = restaurant.getPreviousTimeSlot(registeredUser.getCurrentOrder().getDeliveryDate());
         int nbOfOrderCreated = timeSlot.getNumberOfCreatedOrders();
         assertEquals(numberOfOrders, nbOfOrderCreated);
@@ -128,14 +148,15 @@ public class IndividualOrderStepdefs {
 
     @And("the order should have been added to the suborder repository")
     public void theOrderShouldHaveBeenAddedToTheSuborderRepository() {
-        assertNotNull(SubOrderRepository.findById(registeredUser.getCurrentOrder().getId()));
+        RegisteredUser registeredUser = registeredUserRepository.findById((long) registeredUserID).orElseThrow(NoSuchElementException::new);
+        assertNotNull(subOrderRepository.findById((long) registeredUser.getCurrentOrder().getId()));
     }
 
     @When("a registeredUser creates an order for the restaurant Naga with the deliveryPlace created but without delivery date the current date being {int}-{int}-{int} {int}:{int}")
     public void aRegisteredUserCreatesAnOrderForTheRestaurantNagaWithTheDeliveryPlaceCreatedButWithoutDeliveryDateTheCurrentDateBeing(int currentDay, int currentMonth, int currentYear, int currentHours, int currentMinutes) {
         LocalDateTime now = LocalDateTime.of(currentYear, currentMonth, currentDay, currentHours, currentMinutes);
         try {
-            OrderService.createIndividualOrder(registeredUser.getId(), restaurant.getId(), deliveryLocation.getId(), null, now);
+            orderService.createIndividualOrder(registeredUserID, restaurantID, deliveryLocationID, null, now);
         } catch (IllegalArgumentException e) {
             orderNotCreatedException = e;
         }
@@ -144,22 +165,37 @@ public class IndividualOrderStepdefs {
     @Then("the registeredUser should not have any currentOrder")
     public void theRegisteredUserShouldNotHaveAnyCurrentOrder() {
         assertEquals(IllegalArgumentException.class, orderNotCreatedException.getClass());
+        RegisteredUser registeredUser = registeredUserRepository.findById((long) registeredUserID).orElseThrow(NoSuchElementException::new);
         assertNull(registeredUser.getCurrentOrder());
     }
 
 
+    @Transactional
     @Given("another timeslot at Naga beginning at {int}h{int} on {int}-{int}-{int} but to many order already created on this timeslot")
     public void anotherTimeslotAtNagaBeginningAtHOnButToManyOrderAlreadyCreatedOnThisTimeslot(int startHours, int startMinutes, int startDay, int startMonth, int startYear) {
         LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, startHours, startMinutes);
+        Restaurant restaurant = restaurantRepository.findById((long) restaurantID).orElseThrow(NoSuchElementException::new);
         TimeSlot timeSlot = new TimeSlot(startTime, restaurant, 0);
-        SubOrder orderToFillTimeSlot1 = Mockito.mock(SubOrder.class);
-        SubOrder orderToFillTimeSlot2 = Mockito.mock(SubOrder.class);
+        SubOrder orderToFillTimeSlot1 = initializeSuborder(registeredUserID);
+        SubOrder orderToFillTimeSlot2 = initializeSuborder(registeredUserID);
         timeSlot.addOrder(orderToFillTimeSlot1);
         timeSlot.addOrder(orderToFillTimeSlot2);
-        TimeSlotRepository.add(timeSlot);
-        RestaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
+        timeSlotRepository.save(timeSlot);
+        restaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
     }
 
+    private SubOrder initializeSuborder(int registeredUserID) {
+        RegisteredUser registeredUser = registeredUserRepository.findById((long) registeredUserID).orElseThrow(NoSuchElementException::new);
+        SubOrder order = new OrderBuilder()
+                .setRestaurantID(restaurantID)
+                .setUserID(registeredUserID)
+                .build();
+        subOrderRepository.save(order);
+        registeredUser.addOrderToHistory(order);
+        return order;
+    }
+
+    @Transactional
     @Given("Naga has a productionCapacity of {int} for the all the timeslots of {int}-{int}-{int} starting at")
     public void nagaHasAProductionCapacityOfForTheAllTheTimeslotsOfStartingAt(int productionCapacity, int startDay, int startMonth, int startYear, List<String> startHours) {
         for (String timeslot : startHours) {
@@ -167,13 +203,14 @@ public class IndividualOrderStepdefs {
             int hours = Integer.parseInt(parts[0]);
             int minutes = Integer.parseInt(parts[1]);
             LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, hours, minutes);
+            Restaurant restaurant = restaurantRepository.findById((long) restaurantID).orElseThrow(NoSuchElementException::new);
             TimeSlot timeSlot = new TimeSlot(startTime, restaurant, productionCapacity);
-            TimeSlotRepository.add(timeSlot);
             restaurant.addTimeSlot(timeSlot);
         }
     }
 
 
+    @Transactional
     @And("the timeslots of {int}-{int}-{int} starting at following hours each have {int} {status} order\\(s)")
     public void theTimeslotsStartingAtFollowingHoursEachHaveNbStatusOrders(int startDay, int startMonth, int startYear, int numberOfOrders, OrderStatus status, List<String> startHours) {
         for (String timeslot : startHours) {
@@ -181,10 +218,15 @@ public class IndividualOrderStepdefs {
             int hours = Integer.parseInt(parts[0]);
             int minutes = Integer.parseInt(parts[1]);
             LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, hours, minutes);
+            Restaurant restaurant = restaurantRepository.findById((long) restaurantID).orElseThrow(NoSuchElementException::new);
             TimeSlot timeSlot = restaurant.getCurrentTimeSlot(startTime);
             for (int i = 0; i < numberOfOrders; i++) {
-                SubOrder order = Mockito.mock(SubOrder.class);
-                when(order.getStatus()).thenReturn(status);
+                SubOrder order = new OrderBuilder()
+                        .setRestaurantID(restaurantID)
+                        .setUserID(registeredUserID)
+                        .setStatus(status)
+                        .build();
+                subOrderRepository.save(order);
                 timeSlot.addOrder(order);
             }
         }
@@ -192,7 +234,8 @@ public class IndividualOrderStepdefs {
 
     @When("Jack consults the possible delivery times for the restaurant Naga for the {int}-{int}-{int}")
     public void jackConsultsThePossibleDeliveryTimesForTheRestaurantNaga(int day, int month, int year) {
-        effectivePossibleDeliveryTimes = RestaurantService.getAllAvailableDeliveryTimesOfRestaurantOnDay(restaurant.getId(), LocalDate.of(year, month, day));
+        Restaurant restaurant = restaurantRepository.findById((long) restaurantID).orElseThrow(NoSuchElementException::new);
+        effectivePossibleDeliveryTimes = restaurantService.getAllAvailableDeliveryTimesOfRestaurantOnDay(restaurant.getId(), LocalDate.of(year, month, day));
     }
 
     @Then("he can see the timeslots starting at following hours for the {int}-{int}-{int}")

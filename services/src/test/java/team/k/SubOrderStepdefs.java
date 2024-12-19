@@ -1,7 +1,10 @@
 package team.k;
 
 import commonlibrary.model.RegisteredUser;
-import io.cucumber.java.Before;
+import commonlibrary.repository.LocationJPARepository;
+import commonlibrary.repository.RegisteredUserJPARepository;
+import commonlibrary.repository.RestaurantJPARepository;
+import commonlibrary.repository.TimeSlotJPARepository;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -12,12 +15,9 @@ import commonlibrary.enumerations.Role;
 import commonlibrary.model.order.GroupOrder;
 import commonlibrary.model.order.OrderBuilder;
 import commonlibrary.model.order.SubOrder;
-import team.k.repository.LocationRepository;
-import team.k.repository.RegisteredUserRepository;
-import team.k.repository.RestaurantRepository;
-import team.k.repository.TimeSlotRepository;
 import commonlibrary.model.restaurant.Restaurant;
 import commonlibrary.model.restaurant.TimeSlot;
+import org.springframework.beans.factory.annotation.Autowired;
 import team.k.restaurantservice.RestaurantService;
 
 import java.time.LocalDate;
@@ -35,18 +35,22 @@ public class SubOrderStepdefs {
     GroupOrder groupOrder;
     SubOrder subOrder;
 
-    @Before
-    public void init() {
-        RestaurantRepository.clear();
-        TimeSlotRepository.clear();
-        RegisteredUserRepository.clear();
-        LocationRepository.clear();
-    }
+    @Autowired
+    private RestaurantService restaurantService;
+    @Autowired
+    private RegisteredUserJPARepository registeredUserJPARepository;
+    @Autowired
+    private RestaurantJPARepository restaurantJPARepository;
+    @Autowired
+    private TimeSlotJPARepository timeSlotJPARepository;
+    @Autowired
+    private LocationJPARepository locationJPARepository;
+
 
     @Given("a registeredUser called {string} with the role {role}")
     public void aRegisteredUserNamedWithTheRole(String name, Role role) {
         registeredUser = new RegisteredUser(name, role);
-        RegisteredUserRepository.add(registeredUser);
+        registeredUserJPARepository.save(registeredUser);
     }
 
     @And("a restaurant called {string} open from {int}:{int} to {int}:{int} with an average order preparation time of {int} minutes")
@@ -59,15 +63,15 @@ public class SubOrderStepdefs {
                 .setClose(closeTime)
                 .setAverageOrderPreparationTime(averageOrderPreparationTime)
                 .build();
-        RestaurantRepository.add(restaurant);
+        restaurantJPARepository.save(restaurant);
     }
 
     @And("with a productionCapacity of {int} on the timeslot beginning at {int}:{int} on {int}-{int}-{int}")
     public void withAProductionCapacityOfForTheTimeslotAtOn(int productionCapacity, int startHours, int startMinutes, int startDay, int startMonth, int startYear) {
         LocalDateTime startTime = LocalDateTime.of(startYear, startMonth, startDay, startHours, startMinutes);
         TimeSlot timeSlot = new TimeSlot(startTime, restaurant, productionCapacity);
-        TimeSlotRepository.add(timeSlot);
-        RestaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
+        timeSlotJPARepository.save(timeSlot);
+        restaurantService.addTimeSlotToRestaurant(restaurant.getId(), timeSlot.getId());
     }
 
     @And("the delivery location {string}, {string} in {string}")
@@ -77,7 +81,7 @@ public class SubOrderStepdefs {
                 .setAddress(street)
                 .setCity(city)
                 .build();
-        LocationRepository.add(deliveryLocation);
+        locationJPARepository.save(deliveryLocation);
     }
 
     @And("a group order created for {string} the {string}")

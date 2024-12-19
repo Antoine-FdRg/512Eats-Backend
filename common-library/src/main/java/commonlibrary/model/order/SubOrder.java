@@ -2,7 +2,7 @@ package commonlibrary.model.order;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import commonlibrary.dto.DishDTO;
+import commonlibrary.dto.DishCreationDTO;
 import commonlibrary.dto.SubOrderDTO;
 import commonlibrary.enumerations.OrderStatus;
 import commonlibrary.model.Dish;
@@ -49,7 +49,7 @@ public class SubOrder {
     private int userID;
     @ManyToOne(fetch = FetchType.LAZY)
     private RegisteredUser user;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Dish> dishes;
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
@@ -123,7 +123,7 @@ public class SubOrder {
     }
 
     public SubOrderDTO convertSubOrderToSubOrderDto() {
-        List<DishDTO> convertedDishes = dishes.stream()
+        List<DishCreationDTO> convertedDishes = dishes.stream()
                 .map(Dish::convertDishToDishDto)
                 .toList();
 

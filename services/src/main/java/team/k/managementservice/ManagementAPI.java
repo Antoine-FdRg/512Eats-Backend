@@ -17,6 +17,7 @@ import commonlibrary.repository.TimeSlotJPARepository;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Service;
 import ssdbrestframework.SSDBHttpServer;
+import team.k.CommonJPAConfig;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -35,7 +36,7 @@ public class ManagementAPI {
     private static AnnotationConfigApplicationContext context;
 
     public static void main(String[] args) {
-        context = new AnnotationConfigApplicationContext(ManagementConfig.class);
+        context = new AnnotationConfigApplicationContext(ManagementConfig.class, CommonJPAConfig.class);
         locationJPARepository = context.getBean(LocationJPARepository.class);
         groupOrderJPARepository = context.getBean(GroupOrderJPARepository.class);
         registeredUserJPARepository = context.getBean(RegisteredUserJPARepository.class);
@@ -43,7 +44,7 @@ public class ManagementAPI {
         restaurantJPARepository = context.getBean(RestaurantJPARepository.class);
         timeSlotJPARepository = context.getBean(TimeSlotJPARepository.class);
         SSDBHttpServer serv = new SSDBHttpServer(8084, "team.k.managementservice", "managementservice/", context);
-        initDataset();
+//        initDataset();
         serv.start();
     }
 

@@ -51,13 +51,13 @@ public class Restaurant {
     private LocalTime close;
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<TimeSlot> timeSlots;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Dish> dishes;
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "food_types", joinColumns = @JoinColumn(name = "food_type_id"))
     @ElementCollection(fetch = FetchType.EAGER)
     private List<FoodType> foodTypes;
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private DiscountStrategy discountStrategy;
     private int averageOrderPreparationTime;
     private String description;

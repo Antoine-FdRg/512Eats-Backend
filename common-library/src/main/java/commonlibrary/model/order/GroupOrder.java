@@ -15,6 +15,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -59,6 +60,7 @@ public class GroupOrder {
         this.subOrders.forEach(SubOrder::cancel);
     }
 
+    @Transactional
     public void place(LocalDateTime now, List<RegisteredUser> members) {
         boolean atLeastOneSuborderisPaid = false;
         for (SubOrder subOrder : this.getSubOrders()) {
