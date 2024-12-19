@@ -154,9 +154,9 @@ Notre projet est architecturé de la manière suivante :
 
 ### 2.1.1 Client web
 
-Le [client web](https://docs.google.com/document/d/14dnyKnp8ZtMsWTT1lN46xOGFPuthq5z2I1wiCW_2b80/edit#26-le-client-web)
+Le [client web](#26-le-client-web)
 est un projet à part de ce dépôt, il communique en REST avec le backend via
-l'[API gateway](https://docs.google.com/document/d/14dnyKnp8ZtMsWTT1lN46xOGFPuthq5z2I1wiCW_2b80/edit#212-lapi-gateway)).
+l'[API gateway](#212-lapi-gateway)).
 Il permet une utilisation optimisée et ergonomique de notre application.
 
 ### 2.1.2 Backend
@@ -166,55 +166,55 @@ un [projet maven multimodule](https://www.baeldung.com/maven-multi-module).
 
 #### 2.1.2 L'API gateway
 
-L'API gateway (disponible dans [ce module](http://../api)) est l'interface de notre backend. Le client web lui envoie
+L'API gateway (disponible dans [ce module](../api)) est l'interface de notre backend. Le client web lui envoie
 des requêtes HTTP qu'elle "redirige" vers
-le [service métier](https://docs.google.com/document/d/14dnyKnp8ZtMsWTT1lN46xOGFPuthq5z2I1wiCW_2b80/edit#213-les-services-m%C3%A9tiers)
+le [service métier](#213-les-services-métiers)
 adéquat. En exposant plusieurs controllers REST, l'API gateway peut interroger simplement le service métier concerné par
 la requête et ainsi envoyer la réponse reçue vers
-le [client web](https://docs.google.com/document/d/14dnyKnp8ZtMsWTT1lN46xOGFPuthq5z2I1wiCW_2b80/edit#211-client-web).
+le [client web](#211-client-web).
 Pour simplifier fonctionnement et alléger son code, les réponses reçues par l'API gateway ne sont pas désérialisées,
-mais renvoyées telles quelles. Sa documentation OpenAPI est disponible [ici](http://../api/openapi.json).
+mais renvoyées telles quelles. Sa documentation OpenAPI est disponible [ici](../api/openapi.json).
 
 #### 2.1.3 Les services métiers
 
 Les services métiers sont les services qui gèrent les différentes entités (disponible
-dans [ce module](http://../common-library/src/main/java/commonlibrary/model)) de notre application. Ils sont consommés
+dans [ce module](../common-library/src/main/java/commonlibrary/model)) de notre application. Ils sont consommés
 par
-l'[API gateway](https://docs.google.com/document/d/14dnyKnp8ZtMsWTT1lN46xOGFPuthq5z2I1wiCW_2b80/edit#212-lapi-gateway).
+l'[API gateway](#212-lapi-gateway).
 Ils sont responsables de la logique métier et utilisent les entités qu'ils récupèrent grâce à
-la [couche DAO](https://docs.google.com/document/d/14dnyKnp8ZtMsWTT1lN46xOGFPuthq5z2I1wiCW_2b80/edit#214-la-couche-dao).
+la [couche DAO](#214-la-couche-dao).
 
 #### 2.1.4 La couche DAO
 
 La couche DAO (Data Access Object) est composée de
-repositories [JPA](https://docs.google.com/document/d/14dnyKnp8ZtMsWTT1lN46xOGFPuthq5z2I1wiCW_2b80/edit#24-les-entit%C3%A9s) (
-disponible dans [ce package](http://../common-library/src/main/java/commonlibrary/repository) du
-module [common-library](http://../common-library)) qui permettent de communiquer avec
-la [base de données](https://docs.google.com/document/d/14dnyKnp8ZtMsWTT1lN46xOGFPuthq5z2I1wiCW_2b80/edit#215-la-base-de-donn%C3%A9es).
+repositories [JPA](#24-les-entités) (
+disponible dans [ce package](../common-library/src/main/java/commonlibrary/repository) du
+module [common-library](../common-library)) qui permettent de communiquer avec
+la [base de données](#215-la-base-de-données).
 
 #### 2.1.5 La base de données
 
 La base de données est une base de données relationnelle PostgreSQL. Elle est composée de plusieurs tables qui
 représentent les
-différentes [entités](https://docs.google.com/document/d/14dnyKnp8ZtMsWTT1lN46xOGFPuthq5z2I1wiCW_2b80/edit#24-les-entit%C3%A9s)
+différentes [entités](#24-les-entités)
 de notre application. Elle est accessible par
-les [repositories JPA](https://docs.google.com/document/d/14dnyKnp8ZtMsWTT1lN46xOGFPuthq5z2I1wiCW_2b80/edit#214-la-couche-dao).
-Elle est exécutée dans un conteneur Docker lancé via [dokcer-compose](http://../docker-compose.yml)
+les [repositories JPA](#214-la-couche-dao).
+Elle est exécutée dans un conteneur Docker lancé via [dokcer-compose](../docker-compose.yml)
 
 ## 2.2 Les services métiers
 
 Les services métiers sont les services qui gèrent les différentes fonctionnalités de notre application. Ils sont
 découpés en plusieurs services pour plus de clarté, de lisibilité et de maintenabilité. Ils sont tous dans le
-module [service](http://../services) et sont répartis en 4 packages :
+module [service](../services) et sont répartis en 4 packages :
 
-- [OrderService](http://../services/src/main/java/team/k/orderservice) : Gère les commandes
+- [OrderService](../services/src/main/java/team/k/orderservice) : Gère les commandes
 
-- [RestaurantService](http://../services/src/main/java/team/k/restaurantservice) : Gère les restaurants et plus
+- [RestaurantService](../services/src/main/java/team/k/restaurantservice) : Gère les restaurants et plus
   particulièrement la partie utile pour les clients
 
-- [GroupOrderService](http://../services/src/main/java/team/k/grouporderservice) : Gère les groupes de commandes
+- [GroupOrderService](../services/src/main/java/team/k/grouporderservice) : Gère les groupes de commandes
 
-- [ManagementService](http://../services/src/main/java/team/k/managementservice) : Administre les restaurants
+- [ManagementService](../services/src/main/java/team/k/managementservice) : Administre les restaurants
 
 Chacun de ses packages contient :
 
@@ -239,8 +239,8 @@ les controllers qui sont annotés avec `@Component`.
 ## 2.4 Les entités
 
 Les entités sont les classes qui représentent les tables de la base de données, ce sont les modèles manipulés par les
-services métiers. Elles sont toutes dans le package [model](http://../common-library/src/main/java/commonlibrary/model)
-du module [common-library](http://../common-library). Elles sont toutes annotées avec `@Entity` pour indiquer à JPA
+services métiers. Elles sont toutes dans le package [model](../common-library/src/main/java/commonlibrary/model)
+du module [common-library](../common-library). Elles sont toutes annotées avec `@Entity` pour indiquer à JPA
 qu'elles représentent une table de la base de données. Elles sont aussi annotées avec `@Data` de Lombok pour générer
 notamment les getters et les setters.
 
@@ -248,13 +248,15 @@ notamment les getters et les setters.
 
 Les DTOs (Data Transfer Object) sont des classes qui permettent de transférer des données entre le backend et le
 frontend. Ils sont utilisés pour éviter de transférer des données inutiles et pour éviter de modifier les entités. Ils
-sont tous dans le package [dto](http://../common-library/src/main/java/commonlibrary/dto) du
-module [common-library](http://../common-library). Certaines classes ne sont pas utilisées actuellement, elles sont
+sont tous dans le package [dto](../common-library/src/main/java/commonlibrary/dto) du
+module [common-library](../common-library). Certaines classes ne sont pas utilisées actuellement, elles sont
 conservées en vue d'une potentielle utilisation.
 
 ## 2.6 Le client web
 
 <img alt="UI.png" height="500" src="ressources/UI.png"/>
+<img alt="UI.png" height="500" src="ressources/UI-cart.png"/>
+<img alt="UI.png" height="500" src="ressources/UI-dishes.png"/>
 
 ## 2.7 Exemples de requêtes
 
@@ -301,8 +303,8 @@ Code à améliorer :
   logique.
 
 - Nous aurions aussi pu ajouter des interfaces pour diminuer le couplage :
-  - Orderable : pour abstraire le comportement commun des classes GroupOrder, SubOrder et IndividualOrder qui peuvent
-    être commandées
+    - Orderable : pour abstraire le comportement commun des classes GroupOrder, SubOrder et IndividualOrder qui peuvent
+      être commandées
 
 - Locatable : pour abstraite le comportement commun des classes GroupOrder et IndividualOrder, qui ont toutes les deux
   un
