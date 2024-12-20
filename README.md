@@ -3,7 +3,7 @@
 # TEAM
 
 Ce projet a été concu par 4 personnes.\
-En plus du role de Software Developer (SD), chacun possède des spécificités complémentaires: 
+En plus du role de Software Developer (SD), chacun possède des spécificités complémentaires:
 
 - [Emma ALLAIN](https://github.com/emmaallain): Quality Assurance Engineer (QA)
 - [Roxane BACON](https://github.com/RoxaneBacon): Continuous Integration and Repository Manager (Ops)
@@ -54,7 +54,7 @@ mvn test
 
 # Structuration globale
 
-## 1. Dossier .github
+## 1. Dossier `.github`
 
 -  ### [Workflows/maven.yml](.github/workflows/maven.yml) :
 
@@ -67,59 +67,87 @@ vérifier que le projet fonctionne correctement.
 Regroupe les modèles prédéfinis pour créer des issues, notamment pour les user stories et les bugs. Ces modèles
 facilitent la création de tickets pour le suivi des tâches ou des problèmes rencontrés.
 
-## 2. Dossier src
+## 2. Module `api`
 
-- ### Dossier [main](services/src/main) :
+- ### [src](api/src) :
+  Contient la passerelle API (API Gateway), servant d’interface entre le client web et les différents
+  services métiers. La documentation OpenAPI générée automatiquement se trouve dans [openapi.json]
+  (api/openapi.
+  json).
 
-Contient le code applicatif du projet. Au sein du package [team.k](services/src/main/java/team/k), nous retrouvons:
+## 3. Module `common-library`
 
-### [`team.k.common`](services/src/main/java/team/k/common)
+- ### [src/main/java/commonlibrary](common-library/src/main/java/commonlibrary) :
+  Ce module regroupe les classes communes, telles que :
+    - **DTO** : Définit les objets de transfert de données utilisés entre le frontend et le backend.
+    - **Enumerations** : Contient les énumérations utilisées dans l’ensemble du projet (ex. : `FoodType`,
+      `OrderStatus`).
+    - **Model** : Définit les entités métiers (ex. : `Dish`, `Location`).
+    - **Repository** : Contient les interfaces JPA pour l’accès aux données (ex. : `SubOrderRepository`,
+      `RestaurantRepository`).
 
-Ce package contient les classes communes utilisées dans tout le projet, telles que `Dish` et `Location`.
+- ### [src/test](common-library/src/test) :
+  Comprend des tests unitaires validant les fonctionnalités des composants communs.
 
-### [`team.k.enumerations`](services/src/main/java/team/k/enumerations)
+## 4. Dossier `services`
 
-Ce package contient les énumérations utilisées dans le projet, telles que `FoodType`, `OrderStatus`, et `Role`.
+- ### [src/main/java/team/k](services/src/main/java/team/k) :
+  Les services métiers sont organisés dans quatre modules principaux :
+    - **GroupOrderService** : Gère les commandes groupées.
+    - **ManagementService** : Administre les restaurants.
+    - **OrderService** : Gère les commandes individuelles.
+    - **RestaurantService** : Gère les informations liées aux restaurants (ex. : disponibilité des plats).
 
-### [`team.k.enumerations`](services/src/main/java/team/k/external)
+  Chaque module contient :
+    - **Un controller** : Exposent des endpoints REST.
+    - **Une classe service** : Contiennent la logique métier.
+    - **Une classe de configuration** : Définissent les composants nécessaires au fonctionnement des services.
 
-Ce package est composé de la relation avec l'acteur externe (ie le paiement)
+- ### [src/test/java/team/k](services/src/test/java/team/k) :
+  Implémente des tests fonctionnels avec **Cucumber** pour valider les user stories. Les scénarios sont définis dans le
+  dossier [features](services/src/test/resources/features/team/k).
 
-### [`team.k.order`](services/src/main/java/team/k/order)
+## 5. Dossier `ssdb-rest-framework`
 
-Ce package gère les commandes, y compris les sous-commandes (`SubOrder`), les commandes
-individuelles (`IndividualOrder`), les commandes de groupe (`GroupOrder`), et les paiements (`Payment`).
+- ### [src/main/java/ssdbrestframework](ssdb-rest-framework/src/main/java/ssdbrestframework) :
+  Ce module contient un framework REST personnalisé pour gérer les annotations et le traitement des requêtes HTTP. Les
+  principales classes incluent :
+    - **SSDBHttpServer** : Serveur HTTP personnalisable.
+    - **SSDBHandler** : Gestionnaire des requêtes.
+    - **Annotations** : Définissent les annotations personnalisées pour configurer les endpoints REST.
 
-### [`team.k.repository`](services/src/main/java/team/k/repository)
+- ### [docker-compose.yml](docker-compose.yml) :
+  Démarre la base de données PostgreSQL.
 
-Ce package contient les classes de dépôt pour accéder et manipuler les données des différentes entités, telles
-que `SubOrderRepository`, `RestaurantRepository`, `LocationRepository`, et `RegisteredUserRepository`.
+## 6. Dossier `doc`
 
-### [`team.k.restaurant`](services/src/main/java/team/k/restaurant)
+- #### [README](doc/README.md)
+  Ce fichier regroupe les liens vers les documents illustrant le projet
+- #### [classDiagram](doc/classDiagram.md)
+  Illustration de notre diagramme de classe
+- #### [sequenceDiagram](doc/sequenceDiagram.md)
+  Représentation de notre diagramme de séquence
+- #### [SlideO1](doc/slidesO1.pdf)
+  Slides de l'oral O1
+- #### [Rapport D1](doc/TeamK-renduD1.pdf)
+  Rapport rédigé concernant la modélisation et l'organisation du projet pour le premier rendu
+- #### [SlideO2](doc/slidesO2.pdf)
+  Slides de l'oral O2
+- #### [Rapport D2](doc/TeamK-renduD2.md)
+  Rapport rédigé concernant la réalisation et l'organisation du projet pour le deuxième rendu
 
-Ce package gère les restaurants, y compris les classes `Restaurant` et `TimeSlot`.
 
-### [`team.k.restaurant.discount`](services/src/main/java/team/k/restaurant/discount)
+- ### [ressources](doc/ressources) :
+  Contient les ressources liées à la documentation du projet :
+    - Diagrammes (ex. : [classDiagram.md](doc/classDiagram.md), [sequenceDiagram.md](doc/sequenceDiagram.md)).
+    - Présentations et rapports (
+      ex. : [TeamK-renduD1.pdf](doc/TeamK-renduD1.pdf), [TeamK-renduD2.pdf](doc/TeamK-renduD2.pdf)).
 
-Ce package contient les stratégies de réduction appliquées aux commandes de restaurant, telles
-que `DiscountStrategy`, `FreeDishAfterXOrders`, `RoleDiscount`, et `UnconditionalDiscount`.
+## 7. Fichier `pom.xml`
 
-### [`team.k.service`](services/src/main/java/team/k/service)
-
-Ce package contient les services pour gérer les opérations sur les restaurants et les commandes,
-comme `ManageRestaurantService` et `RestaurantService`.
-
-- ### Dossier [test](services/src/test) :
-
-Regroupe les tests unitaires et fonctionnels
-
-## 3. Dossier doc
-
-- #### [README](doc/README.md) : Ce fichier regroupe les liens vers les documents illustrant le projet
-- #### [classDiagram](doc/classDiagram.md) : Illustration de notre diagramme de classe
-- #### [sequenceDiagram](doc/sequenceDiagram.md): Représentation de notre diagramme de séquence
-- #### [SlideO1](doc/512Eats.pdf): Slide de l'oral O1
-- #### [Rapport](doc/TeamK-renduD1.pdf): Rapport rédigé concernant la modélisation et  l'organisation du projet
+- Gère les dépendances Maven nécessaires au projet, y compris :
+    - JDK 21.
+    - Bibliothèques Spring Data JPA et Cucumber pour les tests.
 
 ## 4. [pom.xml](pom.xml)
 
