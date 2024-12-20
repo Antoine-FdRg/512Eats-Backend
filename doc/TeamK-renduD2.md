@@ -100,7 +100,7 @@ Simplification de l’accès aux données avec un modèle orienté objet clair e
 
 - Des **tests Cucumber** ont été mis en place avant l’implémentation des services REST. Tous les tests sont actuellement
   fonctionnels, ils ont tous été corrigés pour valider l’ensemble du projet. La plupart sont comparables à des tests
-  d’intégration car ils utilisent une base de donnée H2 démarrée dans le contexte de test, stockée temporairement en
+  d’intégration car ils utilisent une base de données H2 démarrée dans le contexte de test, stockée temporairement en
   mémoire RAM. D’autres utilisent des mocks de nos repositories JPA.
 
 7. **Gestion des erreurs claires** :
@@ -306,7 +306,7 @@ Code à améliorer :
     - Orderable : pour abstraire le comportement commun des classes GroupOrder, SubOrder et IndividualOrder qui peuvent
       être commandées
 
-- Locatable : pour abstraite le comportement commun des classes GroupOrder et IndividualOrder, qui ont toutes les deux
+    - Locatable : pour abstraite le comportement commun des classes GroupOrder et IndividualOrder, qui ont toutes les deux
   un
   lieu de livraison
 
