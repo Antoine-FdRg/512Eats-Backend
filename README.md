@@ -1,5 +1,7 @@
 # 512 Eats
 
+![logo](doc/ressources/logo.png)
+
 # TEAM
 
 Ce projet a été concu par 4 personnes.\
@@ -99,9 +101,9 @@ facilitent la création de tickets pour le suivi des tâches ou des problèmes r
     - **RestaurantService** : Gère les informations liées aux restaurants (ex. : disponibilité des plats).
 
   Chaque module contient :
-    - **Un controller** : Exposent des endpoints REST.
-    - **Une classe service** : Contiennent la logique métier.
-    - **Une classe de configuration** : Définissent les composants nécessaires au fonctionnement des services.
+  - **Un controller** : Expose des endpoints REST.
+  - **Une classe service** : Contient la logique métier.
+  - **Une classe de configuration** : Définit les composants nécessaires au fonctionnement des services.
 
 - ### [src/test/java/team/k](services/src/test/java/team/k) :
   Implémente des tests fonctionnels avec **Cucumber** pour valider les user stories. Les scénarios sont définis dans le
@@ -141,7 +143,7 @@ facilitent la création de tickets pour le suivi des tâches ou des problèmes r
   Contient les ressources liées à la documentation du projet :
     - Diagrammes (ex. : [classDiagram.md](doc/classDiagram.md), [sequenceDiagram.md](doc/sequenceDiagram.md)).
     - Présentations et rapports (
-      ex. : [TeamK-renduD1.pdf](doc/TeamK-renduD1.pdf), [TeamK-renduD2.pdf](doc/TeamK-renduD2.pdf)).
+      ex. : [TeamK-renduD1.pdf](doc/TeamK-renduD1.pdf), [TeamK-renduD2.md](doc/TeamK-renduD2.md)).
 
 ## 7. Fichier `pom.xml`
 
